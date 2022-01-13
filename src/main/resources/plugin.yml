@@ -1,0 +1,9 @@
+name: PathfindingAPI
+version: 1.0
+author: Olijefferson
+main: xyz.oli.pathing.PathfindingPlugin
+api-version: 1.18
+
+commands:
+  finder:
+    description: Main finder command
