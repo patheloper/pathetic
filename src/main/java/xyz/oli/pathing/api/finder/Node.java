@@ -1,7 +1,6 @@
 package xyz.oli.pathing.api.finder;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
 
 import java.util.Objects;
 
@@ -20,10 +19,6 @@ public class Node implements Comparable<Node> {
 
     public Location getLocation() {
         return this.location.clone();
-    }
-
-    public boolean walkable() {
-        return this.location.getBlock().getType() == Material.AIR;
     }
 
     public Node getParent() {

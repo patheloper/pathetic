@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
 import xyz.oli.pathing.api.Path;
+import xyz.oli.pathing.api.strategy.PathfinderStrategy;
 
 import java.util.*;
 
@@ -27,9 +28,9 @@ public class PathFinder {
      * Uses the Node's parent Node in order to then retrace its steps once the end is reached.
      * @see PathFinder#retracePath(Node, Node, Location, Location)
      */
-    public PathResult findPath(Location start, Location target, final int maxChecks) {
+    public PathResult findPath(Location start, Location target, final int maxChecks, PathfinderStrategy strategy) {
 
-        if (!start.getWorld().getName().equalsIgnoreCase(target.getWorld().getName()))
+        if (!start.getWorld().getName().equalsIgnoreCase(target.getWorld().getName()) || !strategy.verifyEnd(start) || !strategy.verifyEnd(target))
             return new PathResult(PathSuccess.FAILED, new Path(start, target, EMPTY_LIST));
 
         if (start.getBlockX() == target.getBlockX() && start.getBlockY() == target.getBlockY() && start.getBlockZ() == target.getBlockZ()){
@@ -63,7 +64,7 @@ public class PathFinder {
 
             for (Node neighbourNode : getNeighbours(node, start, target)) {
 
-                if (!neighbourNode.walkable() || !processed.add(neighbourNode))
+                if (!strategy.isValid(neighbourNode.getLocation(), node.getLocation(), node.getParent() == null ? node.getLocation() : node.getParent().getLocation()) || !processed.add(neighbourNode))
                     continue;
 
                 queue.add(neighbourNode);
@@ -73,8 +74,8 @@ public class PathFinder {
         return new PathResult(PathSuccess.FAILED, new Path(start, target, EMPTY_LIST));
     }
 
-    public PathResult findPath(Location start, Location end) {
-        return this.findPath(start, end, 20000);
+    public PathResult findPath(Location start, Location end, PathfinderStrategy strategy) {
+        return this.findPath(start, end, 20000, strategy);
     }
 
     private PathResult retracePath(Node startNode, Node endNode, Location start, Location target) {
