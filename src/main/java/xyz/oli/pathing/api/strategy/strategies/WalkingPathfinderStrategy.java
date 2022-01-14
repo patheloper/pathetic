@@ -16,7 +16,7 @@ public class WalkingPathfinderStrategy extends PathfinderStrategy {
             return false;
 
         if (location.getBlockY() == previous.getBlockY()) {
-            if (location.clone().add(0,-1,0).getBlock().isPassable()) {
+            if (location.clone().add(0,-1,0).getBlock().isPassable() && location.clone().add(0, -2, 0).getBlock().isPassable()) {
                 return false;
             }
         }
