@@ -1,6 +1,7 @@
-package xyz.oli.pathing.api.strategy;
+package xyz.oli.pathing.api.strategy.strategies;
 
 import org.bukkit.Location;
+import xyz.oli.pathing.api.strategy.PathfinderStrategy;
 
 import java.util.Collections;
 import java.util.List;
@@ -13,12 +14,8 @@ public class WalkingPathfinderStrategy extends PathfinderStrategy {
 
         if (Collections.max(heights) - Collections.min(heights) > 2)
             return false;
-
-        if (location.clone().add(0,-1,0).getBlock().isPassable() && previous.clone().add(0,-1,0).getBlock().isPassable())
-            return false;
-
-        return true;
-
+    
+        return !location.clone().add(0, -1, 0).getBlock().isPassable() || !previous.clone().add(0, -1, 0).getBlock().isPassable();
     }
 
     @Override

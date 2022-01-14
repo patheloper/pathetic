@@ -3,7 +3,7 @@ package xyz.oli.pathing.api;
 import org.bukkit.Location;
 import xyz.oli.pathing.api.finder.PathFinder;
 import xyz.oli.pathing.api.finder.PathResult;
-import xyz.oli.pathing.api.strategy.WalkingPathfinderStrategy;
+import xyz.oli.pathing.api.strategy.strategies.WalkingPathfinderStrategy;
 
 public interface Finder {
 

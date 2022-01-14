@@ -1,6 +1,7 @@
-package xyz.oli.pathing.api.strategy;
+package xyz.oli.pathing.api.strategy.strategies;
 
 import org.bukkit.Location;
+import xyz.oli.pathing.api.strategy.PathfinderStrategy;
 
 public class DirectPathfinderStrategy extends PathfinderStrategy {
 
