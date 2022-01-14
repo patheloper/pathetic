@@ -12,8 +12,14 @@ public class WalkingPathfinderStrategy extends PathfinderStrategy {
 
         List<Integer> heights = List.of(location.getBlockY(), previous.getBlockY(), previouser.getBlockY());
 
-        if (Collections.max(heights) - Collections.min(heights) > 2)
+        if (Collections.max(heights) - Collections.min(heights) < 0)
             return false;
+
+        if (location.getBlockY() == previous.getBlockY()) {
+            if (location.clone().add(0,-1,0).getBlock().isPassable()) {
+                return false;
+            }
+        }
     
         return !location.clone().add(0, -1, 0).getBlock().isPassable() || !previous.clone().add(0, -1, 0).getBlock().isPassable();
     }
