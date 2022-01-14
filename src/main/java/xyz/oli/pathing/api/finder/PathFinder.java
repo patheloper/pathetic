@@ -10,7 +10,7 @@ import java.util.*;
 
 public class PathFinder {
 
-    private static final LinkedList<Location> EMPTY_LIST = new LinkedList<>();
+    private static final LinkedHashSet<Location> EMPTY_LIST = new LinkedHashSet<>();
 
     private final Vector[] offsets = {
 
@@ -34,8 +34,8 @@ public class PathFinder {
             return new PathResult(PathSuccess.FAILED, new Path(start, target, EMPTY_LIST));
 
         if (start.getBlockX() == target.getBlockX() && start.getBlockY() == target.getBlockY() && start.getBlockZ() == target.getBlockZ()){
-
-            LinkedList<Location> nodeList = new LinkedList<>();
+    
+            LinkedHashSet<Location> nodeList = new LinkedHashSet<>();
             nodeList.add(target);
 
             return new PathResult(PathSuccess.FOUND, new Path(start, target, nodeList));
@@ -79,8 +79,8 @@ public class PathFinder {
     }
 
     private PathResult retracePath(Node startNode, Node endNode, Location start, Location target) {
-
-        LinkedList<Location> path = new LinkedList<>();
+    
+        LinkedHashSet<Location> path = new LinkedHashSet<>();
         Node currentNode = endNode;
 
         while (!currentNode.equals(startNode)) {
@@ -90,8 +90,10 @@ public class PathFinder {
             currentNode = currentNode.getParent();
         }
 
-        Collections.reverse(path);
-        return new PathResult(PathSuccess.FOUND, new Path(start, target, path));
+        List<Location> pathReversed = new ArrayList<>(path);
+        Collections.reverse(pathReversed);
+        
+        return new PathResult(PathSuccess.FOUND, new Path(start, target, new LinkedHashSet<>(path)));
     }
 
     private Collection<Node> getNeighbours(Node node, Location start, Location target) {
