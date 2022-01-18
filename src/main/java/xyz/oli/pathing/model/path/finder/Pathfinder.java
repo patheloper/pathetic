@@ -1,14 +1,14 @@
-package xyz.oli.pathing.api.finder;
+package xyz.oli.pathing.model.path.finder;
 
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
-import xyz.oli.pathing.api.Path;
-import xyz.oli.pathing.api.strategy.PathfinderStrategy;
+import xyz.oli.pathing.model.path.Path;
+import xyz.oli.pathing.model.path.finder.strategy.PathfinderStrategy;
 
 import java.util.*;
 
-public class PathFinder {
+public class Pathfinder {
 
     private static final LinkedHashSet<Location> EMPTY_LIST = new LinkedHashSet<>();
 
@@ -26,19 +26,19 @@ public class PathFinder {
      * Uses the A* algorithm to find a path to the {@param target} from the {@param start}.
      *
      * Uses the Node's parent Node in order to then retrace its steps once the end is reached.
-     * @see PathFinder#retracePath(Node, Node, Location, Location)
+     * @see Pathfinder#retracePath(Node, Node, Location, Location)
      */
-    public PathResult findPath(Location start, Location target, final int maxChecks, PathfinderStrategy strategy) {
+    public PathfinderResult findPath(Location start, Location target, final int maxChecks, PathfinderStrategy strategy) {
 
         if (!start.getWorld().getName().equalsIgnoreCase(target.getWorld().getName()) || !strategy.verifyEnd(start) || !strategy.verifyEnd(target))
-            return new PathResult(PathSuccess.FAILED, new Path(start, target, EMPTY_LIST));
+            return new PathfinderResult(PathfinderSuccess.FAILED, new Path(start, target, EMPTY_LIST));
 
         if (start.getBlockX() == target.getBlockX() && start.getBlockY() == target.getBlockY() && start.getBlockZ() == target.getBlockZ()){
     
             LinkedHashSet<Location> nodeList = new LinkedHashSet<>();
             nodeList.add(target);
 
-            return new PathResult(PathSuccess.FOUND, new Path(start, target, nodeList));
+            return new PathfinderResult(PathfinderSuccess.FOUND, new Path(start, target, nodeList));
         }
 
         Node startNode = new Node(new Location(start.getWorld(), start.getBlockX() + 0.5, start.getBlockY(), start.getBlockZ() + 0.5), start, target);
@@ -71,14 +71,14 @@ public class PathFinder {
             }
         }
 
-        return new PathResult(PathSuccess.FAILED, new Path(start, target, EMPTY_LIST));
+        return new PathfinderResult(PathfinderSuccess.FAILED, new Path(start, target, EMPTY_LIST));
     }
 
-    public PathResult findPath(Location start, Location end, PathfinderStrategy strategy) {
+    public PathfinderResult findPath(Location start, Location end, PathfinderStrategy strategy) {
         return this.findPath(start, end, 20000, strategy);
     }
 
-    private PathResult retracePath(Node startNode, Node endNode, Location start, Location target) {
+    private PathfinderResult retracePath(Node startNode, Node endNode, Location start, Location target) {
     
         LinkedHashSet<Location> path = new LinkedHashSet<>();
         Node currentNode = endNode;
@@ -93,7 +93,7 @@ public class PathFinder {
         List<Location> pathReversed = new ArrayList<>(path);
         Collections.reverse(pathReversed);
         
-        return new PathResult(PathSuccess.FOUND, new Path(start, target, new LinkedHashSet<>(path)));
+        return new PathfinderResult(PathfinderSuccess.FOUND, new Path(start, target, new LinkedHashSet<>(path)));
     }
 
     private Collection<Node> getNeighbours(Node node, Location start, Location target) {

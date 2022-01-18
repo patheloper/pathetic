@@ -1,17 +1,18 @@
 package xyz.oli.pathing.api;
 
 import org.bukkit.Location;
-import xyz.oli.pathing.api.finder.PathFinder;
-import xyz.oli.pathing.api.finder.PathResult;
-import xyz.oli.pathing.api.strategy.strategies.WalkingPathfinderStrategy;
+import xyz.oli.pathing.model.path.Path;
+import xyz.oli.pathing.model.path.finder.Pathfinder;
+import xyz.oli.pathing.model.path.finder.PathfinderResult;
+import xyz.oli.pathing.model.path.finder.strategy.strategies.WalkingPathfinderStrategy;
 
 public interface Finder {
 
-    PathFinder pathfinder = new PathFinder();
+    Pathfinder pathfinder = new Pathfinder();
 
     static Path findPath(Location from, Location to) {
 
-        PathResult path = pathfinder.findPath(from, to, new WalkingPathfinderStrategy());
-        return path.path();
+        PathfinderResult path = pathfinder.findPath(from, to, new WalkingPathfinderStrategy());
+        return path.getPath();
     }
 }

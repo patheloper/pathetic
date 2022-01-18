@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import xyz.oli.pathing.api.Finder;
-import xyz.oli.pathing.api.Path;
+import xyz.oli.pathing.model.path.Path;
 
 import java.util.concurrent.CompletableFuture;
 import org.jetbrains.annotations.NotNull;

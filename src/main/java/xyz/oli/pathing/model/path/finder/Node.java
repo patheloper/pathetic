@@ -1,4 +1,4 @@
-package xyz.oli.pathing.api.finder;
+package xyz.oli.pathing.model.path.finder;
 
 import org.bukkit.Location;
 

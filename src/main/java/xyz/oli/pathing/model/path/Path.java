@@ -1,21 +1,18 @@
-package xyz.oli.pathing.api;
+package xyz.oli.pathing.model.path;
 
 import org.bukkit.Location;
 
-import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.Set;
 
 public class Path {
 
     private final Location start;
-    private final Location target;
+    private final Location end;
     private final LinkedHashSet<Location> path;
 
-    public Path(Location start, Location target, LinkedHashSet<Location> path) {
+    public Path(Location start, Location end, LinkedHashSet<Location> path) {
         this.start = start;
-        this.target = target;
+        this.end = end;
         this.path = path;
     }
 
@@ -27,7 +24,7 @@ public class Path {
         return this.start;
     }
 
-    public Location getTarget() {
-        return this.target;
+    public Location getEnd() {
+        return this.end;
     }
 }
