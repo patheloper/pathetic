@@ -1,6 +1,6 @@
 package xyz.oli.pathing.model.path.finder.strategy;
 
-import org.bukkit.Location;
+import xyz.oli.pathing.model.wrapper.PathBlock;
 
 public abstract class PathfinderStrategy {
 
@@ -11,12 +11,12 @@ public abstract class PathfinderStrategy {
      * @param previous The previous location
      * @param previouser The previous previous location
      */
-    public abstract boolean isValid(Location location, Location previous, Location previouser);
+    public abstract boolean isValid(PathBlock location, PathBlock previous, PathBlock previouser);
 
     /**
      * Implement the logic to see if a start/target is valid
      *
      * @param location The location to check
      */
-    public abstract boolean verifyEnd(Location location);
+    public abstract boolean verifyEnd(PathBlock location);
 }

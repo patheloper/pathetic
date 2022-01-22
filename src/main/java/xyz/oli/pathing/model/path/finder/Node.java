@@ -1,23 +1,23 @@
 package xyz.oli.pathing.model.path.finder;
 
-import org.bukkit.Location;
+import xyz.oli.pathing.model.wrapper.PathLocation;
 
 import java.util.Objects;
 
 public class Node implements Comparable<Node> {
 
     private Node parent;
-    private final Location location;
-    private final Location target;
-    private final Location start;
+    private final PathLocation location;
+    private final PathLocation target;
+    private final PathLocation start;
 
-    public Node(Location location, Location start, Location target) {
+    public Node(PathLocation location, PathLocation start, PathLocation target) {
         this.location = location;
         this.target = target;
         this.start = start;
     }
 
-    public Location getLocation() {
+    public PathLocation getLocation() {
         return this.location.clone();
     }
 
@@ -34,7 +34,7 @@ public class Node implements Comparable<Node> {
 
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Location nodeLocation = ((Node) o).getLocation();
+        PathLocation nodeLocation = ((Node) o).getLocation();
         return nodeLocation.getBlockX() == this.location.getBlockX() && nodeLocation.getBlockY() == this.location.getBlockY() && nodeLocation.getBlockZ() == this.location.getBlockZ();
     }
 

@@ -24,9 +24,9 @@ public class BukkitConverter {
     public static PathBlockType toPathBlockType(Block block) {
 
         if (block.isLiquid()) return PathBlockType.LIQUID;
-        if (block.getType().isSolid()) return PathBlockType.SOLID;
-        if (block.isPassable()) return PathBlockType.WALKABLES;
-
-        return PathBlockType.AIR;
+        else if (block.isEmpty()) return PathBlockType.AIR;
+        else if (block.isPassable()) return PathBlockType.WALKABLES;
+        else if (block.getType().isSolid()) return PathBlockType.SOLID;
+        else return PathBlockType.SOLID;
     }
 }

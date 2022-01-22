@@ -36,6 +36,7 @@ public class PathfindingCommand implements CommandExecutor {
 
             Stopwatch timer = Stopwatch.createStarted();
             Finder.findPath(options, pathfinderResult -> {
+                System.out.println(pathfinderResult.getPathfinderSuccess());
                 System.out.println(pathfinderResult.getPath().getLocations().size());
                 System.out.println("Method took: " + timer.stop());
                 pathfinderResult.getPath().getLocations().forEach( location -> player.sendBlockChange(location, Material.YELLOW_STAINED_GLASS.createBlockData()));

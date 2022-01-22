@@ -19,6 +19,10 @@ public class PathfinderResult {
     public boolean successful() {
         return pathfinderSuccess == PathfinderSuccess.FOUND;
     }
+
+    public PathfinderSuccess getPathfinderSuccess() {
+        return this.pathfinderSuccess;
+    }
 }
 
 enum PathfinderSuccess {

@@ -1,6 +1,8 @@
 package xyz.oli.pathing.model.path.finder;
 
 import org.bukkit.Location;
+import xyz.oli.pathing.model.wrapper.BukkitConverter;
+import xyz.oli.pathing.model.wrapper.PathLocation;
 import org.bukkit.util.Vector;
 
 import xyz.oli.pathing.model.path.Path;
@@ -26,26 +28,26 @@ public class Pathfinder {
      * Uses the A* algorithm to find a path to the {@param target} from the {@param start}.
      *
      * Uses the Node's parent Node in order to then retrace its steps once the end is reached.
-     * @see Pathfinder#retracePath(Node, Node, Location, Location)
+     * @see Pathfinder#retracePath(Node, Node, PathLocation, PathLocation)
      */
-    public PathfinderResult findPath(Location start, Location target, final int maxChecks, PathfinderStrategy strategy) {
+    public PathfinderResult findPath(PathLocation start, PathLocation target, final int maxChecks, PathfinderStrategy strategy) {
 
-        if (!start.getWorld().getName().equalsIgnoreCase(target.getWorld().getName()) || !strategy.verifyEnd(start) || !strategy.verifyEnd(target))
-            return new PathfinderResult(PathfinderSuccess.FAILED, new Path(start, target, EMPTY_LIST));
+        if (!start.getPathWorld().equals(target.getPathWorld()) || !strategy.verifyEnd(start.getBlock()) || !strategy.verifyEnd(target.getBlock()))
+            return new PathfinderResult(PathfinderSuccess.FAILED, new Path(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), EMPTY_LIST));
 
         if (start.getBlockX() == target.getBlockX() && start.getBlockY() == target.getBlockY() && start.getBlockZ() == target.getBlockZ()){
     
             LinkedHashSet<Location> nodeList = new LinkedHashSet<>();
-            nodeList.add(target);
+            nodeList.add(BukkitConverter.toLocation(target));
 
-            return new PathfinderResult(PathfinderSuccess.FOUND, new Path(start, target, nodeList));
+            return new PathfinderResult(PathfinderSuccess.FOUND, new Path(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), nodeList));
         }
 
-        Node startNode = new Node(new Location(start.getWorld(), start.getBlockX() + 0.5, start.getBlockY(), start.getBlockZ() + 0.5), start, target);
-        Node targetNode = new Node(new Location(target.getWorld(), target.getBlockX() + 0.5, target.getBlockY(), target.getBlockZ() + 0.5), start, target);
+        Node startNode = new Node(new PathLocation(start.getPathWorld(), start.getBlockX() + 0.5, start.getBlockY(), start.getBlockZ() + 0.5), start, target);
+        Node targetNode = new Node(new PathLocation(target.getPathWorld(), target.getBlockX() + 0.5, target.getBlockY(), target.getBlockZ() + 0.5), start, target);
 
         PriorityQueue<Node> queue = new PriorityQueue<>();
-        Set<Node> processed = new HashSet<>();
+        Set<PathLocation> processed = new HashSet<>();
 
         queue.add(startNode);
 
@@ -64,28 +66,30 @@ public class Pathfinder {
 
             for (Node neighbourNode : getNeighbours(node, start, target)) {
 
-                if (!strategy.isValid(neighbourNode.getLocation(), node.getLocation(), node.getParent() == null ? node.getLocation() : node.getParent().getLocation()) || !processed.add(neighbourNode))
+                if (!strategy.isValid(neighbourNode.getLocation().getBlock(),
+                        node.getLocation().getBlock(),
+                        node.getParent() == null ? node.getLocation().getBlock() : node.getParent().getLocation().getBlock()) || !processed.add(neighbourNode.getLocation()))
                     continue;
 
                 queue.add(neighbourNode);
             }
         }
 
-        return new PathfinderResult(PathfinderSuccess.FAILED, new Path(start, target, EMPTY_LIST));
+        return new PathfinderResult(PathfinderSuccess.FAILED, new Path(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), EMPTY_LIST));
     }
 
-    public PathfinderResult findPath(Location start, Location end, PathfinderStrategy strategy) {
+    public PathfinderResult findPath(PathLocation start, PathLocation end, PathfinderStrategy strategy) {
         return this.findPath(start, end, 20000, strategy);
     }
 
-    private PathfinderResult retracePath(Node startNode, Node endNode, Location start, Location target) {
+    private PathfinderResult retracePath(Node startNode, Node endNode, PathLocation start, PathLocation target) {
     
         LinkedHashSet<Location> path = new LinkedHashSet<>();
         Node currentNode = endNode;
 
         while (!currentNode.equals(startNode)) {
 
-            path.add(currentNode.getLocation());
+            path.add(BukkitConverter.toLocation(currentNode.getLocation()));
             if (currentNode.getParent() == null) break;
             currentNode = currentNode.getParent();
         }
@@ -93,10 +97,10 @@ public class Pathfinder {
         List<Location> pathReversed = new ArrayList<>(path);
         Collections.reverse(pathReversed);
         
-        return new PathfinderResult(PathfinderSuccess.FOUND, new Path(start, target, new LinkedHashSet<>(path)));
+        return new PathfinderResult(PathfinderSuccess.FOUND, new Path(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), new LinkedHashSet<>(pathReversed)));
     }
 
-    private Collection<Node> getNeighbours(Node node, Location start, Location target) {
+    private Collection<Node> getNeighbours(Node node, PathLocation start, PathLocation target) {
 
         ArrayList<Node> neighbours = new ArrayList<>(this.offsets.length);
 

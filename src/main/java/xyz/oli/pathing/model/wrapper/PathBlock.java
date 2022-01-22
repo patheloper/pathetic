@@ -17,4 +17,24 @@ public class PathBlock {
     public PathBlockType getPathBlockType() {
         return this.pathBlockType;
     }
+
+    public boolean isEmpty() {
+        return this.pathBlockType == PathBlockType.AIR;
+    }
+
+    public boolean isPassable() {
+        return this.pathBlockType == PathBlockType.AIR || this.pathBlockType == PathBlockType.WALKABLES;
+    }
+
+    public int getBlockX() {
+        return this.pathLocation.getBlockX();
+    }
+
+    public int getBlockY() {
+        return this.pathLocation.getBlockY();
+    }
+
+    public int getBlockZ() {
+        return this.pathLocation.getBlockZ();
+    }
 }
