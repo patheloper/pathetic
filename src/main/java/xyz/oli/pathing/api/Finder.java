@@ -1,18 +1,35 @@
 package xyz.oli.pathing.api;
 
-import org.bukkit.Location;
-import xyz.oli.pathing.model.path.Path;
 import xyz.oli.pathing.model.path.finder.Pathfinder;
 import xyz.oli.pathing.model.path.finder.PathfinderResult;
-import xyz.oli.pathing.model.path.finder.strategy.strategies.WalkingPathfinderStrategy;
+
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ForkJoinPool;
+import java.util.function.Consumer;
 
 public interface Finder {
 
-    Pathfinder pathfinder = new Pathfinder();
+    ForkJoinPool FORK_JOIN_POOL = new ForkJoinPool(Runtime.getRuntime().availableProcessors(), ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, true);
+    Pathfinder pathFinder = new Pathfinder();
 
-    static Path findPath(Location from, Location to) {
+    static Optional<PathfinderResult> findPath(PathfinderOptions options, Consumer<PathfinderResult> callback) {
 
-        PathfinderResult path = pathfinder.findPath(from, to, new WalkingPathfinderStrategy());
-        return path.getPath();
+        if (options.isAsyncMode()) {
+            CompletableFuture.supplyAsync( () ->
+                    pathFinder.findPath(options.getStart(), options.getTarget(), options.getStrategy()),
+                    FORK_JOIN_POOL).thenAccept(pathResult -> {
+                if (callback != null) callback.accept(pathResult);
+            });
+            return Optional.empty();
+        }
+
+        PathfinderResult pathResult = pathFinder.findPath(options.getStart(), options.getTarget(), options.getStrategy());
+        if (callback != null) callback.accept(pathResult);
+        return Optional.of(pathResult);
+    }
+
+    static Optional<PathfinderResult> findPath(PathfinderOptions options) {
+        return findPath(options, null);
     }
 }

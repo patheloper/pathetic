@@ -10,9 +10,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import xyz.oli.pathing.api.Finder;
-import xyz.oli.pathing.model.path.Path;
+import xyz.oli.pathing.api.PathfinderOptions;
+import xyz.oli.pathing.api.PathfinderOptionsBuilder;
+import xyz.oli.pathing.model.path.finder.strategy.strategies.*;
 
-import java.util.concurrent.CompletableFuture;
 import org.jetbrains.annotations.NotNull;
 
 public class PathfindingCommand implements CommandExecutor {
@@ -26,17 +27,21 @@ public class PathfindingCommand implements CommandExecutor {
             eyeLocation.setX(eyeLocation.getX() + direction.getX());
             eyeLocation.setY(eyeLocation.getY() + direction.getY());
             eyeLocation.setZ(eyeLocation.getZ() + direction.getZ());
-            CompletableFuture.supplyAsync( () -> {
-                Stopwatch timer = Stopwatch.createStarted();
-                Path path = Finder.findPath(player.getLocation(), eyeLocation);
+            PathfinderOptions options = new PathfinderOptionsBuilder()
+                    .start(player.getLocation())
+                    .target(eyeLocation)
+                    .asyncMode(true)
+                    .strategy(new WalkingPathfinderStrategy())
+                    .build();
+
+            Stopwatch timer = Stopwatch.createStarted();
+            Finder.findPath(options, pathfinderResult -> {
+                System.out.println(pathfinderResult.getPath().getLocations().size());
                 System.out.println("Method took: " + timer.stop());
-                return path;
-            }).thenAccept(path -> {
-                System.out.println(path.getPath().size());
-                path.getPath().forEach( location -> player.sendBlockChange(location, Material.YELLOW_STAINED_GLASS.createBlockData()));
+                pathfinderResult.getPath().getLocations().forEach( location -> player.sendBlockChange(location, Material.YELLOW_STAINED_GLASS.createBlockData()));
             });
         }
 
-         return false;
+         return true;
     }
 }

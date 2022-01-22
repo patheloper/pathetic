@@ -5,9 +5,16 @@ public class PathBlock {
     private final PathBlockType pathBlockType;
     private final PathLocation pathLocation;
     
-    private PathBlock(PathLocation pathLocation, PathBlockType pathBlockType) {
+    public PathBlock(PathLocation pathLocation, PathBlockType pathBlockType) {
         this.pathLocation = pathLocation;
         this.pathBlockType = pathBlockType;
     }
-    
+
+    public PathLocation getPathLocation() {
+        return this.pathLocation;
+    }
+
+    public PathBlockType getPathBlockType() {
+        return this.pathBlockType;
+    }
 }

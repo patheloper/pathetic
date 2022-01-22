@@ -16,7 +16,7 @@ public class Path {
         this.path = path;
     }
 
-    public LinkedHashSet<Location> getPath() {
+    public LinkedHashSet<Location> getLocations() {
         return this.path;
     }
 
