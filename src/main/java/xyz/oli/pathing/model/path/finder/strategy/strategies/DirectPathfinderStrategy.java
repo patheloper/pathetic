@@ -11,11 +11,8 @@ public class DirectPathfinderStrategy extends PathfinderStrategy {
     }
 
     @Override
-    public boolean verifyEnd(PathBlock location) {
-        System.out.println("valid end: " + location.isEmpty());
-        System.out.println(location.getPathBlockType());
-        System.out.println("valid end: " + location.getPathLocation());
-        return location.isEmpty();
+    public boolean verifyEnd(PathBlock block) {
+        return block.isEmpty();
     }
 
 }

@@ -1,6 +1,7 @@
 package xyz.oli.pathing.model.wrapper;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 
 public class BukkitConverter {
@@ -27,6 +28,13 @@ public class BukkitConverter {
         else if (block.isEmpty()) return PathBlockType.AIR;
         else if (block.isPassable()) return PathBlockType.WALKABLES;
         else if (block.getType().isSolid()) return PathBlockType.SOLID;
+        else return PathBlockType.SOLID;
+    }
+
+    public static PathBlockType toPathBlockType(Material material) {
+
+        if (material.isAir()) return PathBlockType.AIR;
+        else if (material.isSolid()) return PathBlockType.SOLID;
         else return PathBlockType.SOLID;
     }
 }

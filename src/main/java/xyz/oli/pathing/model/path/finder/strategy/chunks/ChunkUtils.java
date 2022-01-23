@@ -1,11 +1,11 @@
 package xyz.oli.pathing.model.path.finder.strategy.chunks;
 
-import org.bukkit.Chunk;
+import java.util.UUID;
 
 public class ChunkUtils {
 
-    public static long getChunkKey(final Chunk chunk) {
-        return (chunk.getX() & 0xFFFF) | ((chunk.getZ() & 0xFF) << 16) | ((chunk.getWorld().getUID().getMostSignificantBits() & 0xFF) << 24);
+    public static long getChunkKey(final UUID world, final int x, final int z) {
+        return (x & 0xFFFF) | ((z & 0xFF) << 16) | ((world.getMostSignificantBits() & 0xFF) << 24);
     }
 
 }

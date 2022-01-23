@@ -1,10 +1,10 @@
 package xyz.oli.pathing.model.path.finder;
 
 import org.bukkit.Location;
-import xyz.oli.pathing.model.wrapper.BukkitConverter;
-import xyz.oli.pathing.model.wrapper.PathLocation;
 import org.bukkit.util.Vector;
 
+import xyz.oli.pathing.model.wrapper.BukkitConverter;
+import xyz.oli.pathing.model.wrapper.PathLocation;
 import xyz.oli.pathing.model.path.Path;
 import xyz.oli.pathing.model.path.finder.strategy.PathfinderStrategy;
 
@@ -65,6 +65,9 @@ public class Pathfinder {
             }
 
             for (Node neighbourNode : getNeighbours(node, start, target)) {
+
+                if (neighbourNode.equals(targetNode))
+                    return retracePath(startNode, neighbourNode, start, target);
 
                 if (!strategy.isValid(neighbourNode.getLocation().getBlock(),
                         node.getLocation().getBlock(),
