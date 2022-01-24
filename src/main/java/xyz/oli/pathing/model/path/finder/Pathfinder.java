@@ -53,12 +53,11 @@ public class Pathfinder {
 
         int depth = 0;
 
-        while (!queue.isEmpty()) {
+        while (!queue.isEmpty() && depth <= maxChecks) {
 
             Node node = queue.poll();
 
             depth++;
-            if (depth >= maxChecks) break;
 
             if (node.equals(targetNode)) {
                 return retracePath(startNode, node, start, target);

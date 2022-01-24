@@ -23,7 +23,7 @@ public class PathBlock {
     }
 
     public boolean isPassable() {
-        return this.pathBlockType == PathBlockType.AIR || this.pathBlockType == PathBlockType.WALKABLES;
+        return this.pathBlockType == PathBlockType.AIR || this.pathBlockType == PathBlockType.OTHER;
     }
 
     public int getBlockX() {

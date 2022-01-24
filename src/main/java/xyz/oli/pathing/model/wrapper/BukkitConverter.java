@@ -26,7 +26,7 @@ public class BukkitConverter {
 
         if (block.isLiquid()) return PathBlockType.LIQUID;
         else if (block.isEmpty()) return PathBlockType.AIR;
-        else if (block.isPassable()) return PathBlockType.WALKABLES;
+        else if (block.isPassable()) return PathBlockType.OTHER;
         else if (block.getType().isSolid()) return PathBlockType.SOLID;
         else return PathBlockType.SOLID;
     }
@@ -35,6 +35,16 @@ public class BukkitConverter {
 
         if (material.isAir()) return PathBlockType.AIR;
         else if (material.isSolid()) return PathBlockType.SOLID;
-        else return PathBlockType.SOLID;
+
+        switch (material) {
+            case WATER, LAVA -> {
+                return PathBlockType.LIQUID;
+            }
+            case GRASS, TALL_GRASS -> {
+                return PathBlockType.OTHER;
+            }
+        }
+
+        return PathBlockType.SOLID;
     }
 }
