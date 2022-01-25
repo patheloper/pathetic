@@ -30,7 +30,7 @@ public class PathfindingCommand implements CommandExecutor {
             PathfinderOptions options = new PathfinderOptionsBuilder()
                     .start(player.getLocation())
                     .target(eyeLocation)
-                    .asyncMode(true)
+                    .asyncMode(false)
                     .strategy(new WalkingPathfinderStrategy())
                     .build();
 

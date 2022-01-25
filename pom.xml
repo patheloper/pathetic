@@ -33,6 +33,17 @@
     </repositories>
 
     <dependencies>
+
+        <!-- Legacy
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>1.12.1-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        -->
+
+        <!-- Modern -->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>

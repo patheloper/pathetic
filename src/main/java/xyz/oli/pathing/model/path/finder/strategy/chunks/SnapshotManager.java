@@ -21,7 +21,7 @@ public class SnapshotManager {
 
         if (snapshots.containsKey(key)) {
             ChunkSnapshot snapshot = snapshots.get(key);
-            return new PathBlock(location, BukkitConverter.toPathBlockType(snapshot.getBlockType(location.getBlockX() - chunkX * 16, location.getBlockY(), location.getBlockZ() - chunkZ * 16)));
+            return new PathBlock(location, BukkitConverter.toPathBlockType(ChunkUtils.getMaterial(snapshot, location.getBlockX() - chunkX * 16, location.getBlockY(), location.getBlockZ() - chunkZ * 16)));
         }
         return fetchAndGetBlock(location, chunkX, chunkZ, key);
     }
@@ -30,7 +30,7 @@ public class SnapshotManager {
         try {
             ChunkSnapshot chunkSnapshot = location.getPathWorld().getWorld().getChunkAt(chunkX, chunkZ).getChunkSnapshot();
             snapshots.put(key, chunkSnapshot);
-            PathBlockType pathBlockType = BukkitConverter.toPathBlockType(chunkSnapshot.getBlockType(location.getBlockX() - chunkX * 16, location.getBlockY(), location.getBlockZ() - chunkZ * 16));
+            PathBlockType pathBlockType = BukkitConverter.toPathBlockType(ChunkUtils.getMaterial(chunkSnapshot, location.getBlockX() - chunkX * 16, location.getBlockY(), location.getBlockZ() - chunkZ * 16));
             return new PathBlock(location, pathBlockType);
         }catch (Exception e) {
             PathfindingPlugin.getInstance().getLogger().warning("Error fetching Block: " + e.getMessage());
