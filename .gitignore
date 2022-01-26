@@ -1,2 +1,6 @@
 /target/
 /.idea/
+*.iml
+/PathingLegacy/target/
+/PathingMain/target/
+dependency-reduced-pom.xml
