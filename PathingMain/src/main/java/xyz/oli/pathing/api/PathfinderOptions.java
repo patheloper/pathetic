@@ -1,6 +1,7 @@
 package xyz.oli.pathing.api;
 
 import org.bukkit.Location;
+
 import xyz.oli.pathing.model.path.finder.strategy.PathfinderStrategy;
 
 public class PathfinderOptions {

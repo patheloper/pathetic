@@ -4,6 +4,9 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
+import xyz.oli.pathing.PathfindingPlugin;
+import xyz.oli.pathing.material.MaterialParser;
+
 public class BukkitConverter {
 
     public static Location toLocation(PathLocation pathLocation) {
@@ -24,17 +27,24 @@ public class BukkitConverter {
 
     public static PathBlockType toPathBlockType(Block block) {
 
-        if (block.isLiquid()) return PathBlockType.LIQUID;
-        else if (block.isEmpty()) return PathBlockType.AIR;
-        else if (block.isPassable()) return PathBlockType.OTHER;
-        else if (block.getType().isSolid()) return PathBlockType.SOLID;
+        MaterialParser parser = PathfindingPlugin.getInstance().getParser();
+
+        if (parser.isLiquid(block)) return PathBlockType.LIQUID;
+        else if (parser.isAir(block)) return PathBlockType.AIR;
+        else if (parser.isPassable(block)) return PathBlockType.OTHER;
+        else if (parser.isSolid(block)) return PathBlockType.SOLID;
         else return PathBlockType.SOLID;
     }
 
     public static PathBlockType toPathBlockType(Material material) {
 
-        if (material.isAir()) return PathBlockType.AIR;
-        else if (material.isSolid()) return PathBlockType.SOLID;
+        MaterialParser parser = PathfindingPlugin.getInstance().getParser();
+
+        if (parser.isAir(material))
+            return PathBlockType.AIR;
+
+        else if (parser.isSolid(material))
+            return PathBlockType.SOLID;
 
         switch (material) {
             case WATER, LAVA -> {

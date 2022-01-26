@@ -2,6 +2,7 @@ package xyz.oli.pathing.model.wrapper;
 
 import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
+
 import xyz.oli.pathing.model.path.finder.strategy.chunks.SnapshotManager;
 
 import java.util.Objects;

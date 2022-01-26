@@ -1,6 +1,7 @@
 package xyz.oli.pathing.commands;
 
 import com.google.common.base.Stopwatch;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -31,7 +32,7 @@ public class PathfindingCommand implements CommandExecutor {
                     .start(player.getLocation())
                     .target(eyeLocation)
                     .asyncMode(false)
-                    .strategy(new WalkingPathfinderStrategy())
+                    .strategy(new DirectPathfinderStrategy())
                     .build();
 
             Stopwatch timer = Stopwatch.createStarted();
