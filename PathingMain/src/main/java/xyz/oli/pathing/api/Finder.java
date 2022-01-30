@@ -8,12 +8,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Consumer;
 
+import org.jetbrains.annotations.NotNull;
+
 public interface Finder {
 
     ForkJoinPool FORK_JOIN_POOL = new ForkJoinPool(Runtime.getRuntime().availableProcessors(), ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, true);
     Pathfinder pathFinder = new Pathfinder();
 
-    static void findPath(PathfinderOptions options, Consumer<PathfinderResult> callback) {
+    static void findPath(@NotNull PathfinderOptions options, Consumer<PathfinderResult> callback) {
 
         if (options.isAsyncMode()) {
             CompletableFuture.supplyAsync( () ->

@@ -2,12 +2,14 @@ package xyz.oli.pathing.commands;
 
 import com.google.common.base.Stopwatch;
 
+import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
 import xyz.oli.pathing.api.Finder;
@@ -23,14 +25,15 @@ public class PathfindingCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
 
         if (commandSender instanceof Player player) {
-            Location eyeLocation = player.getEyeLocation();
-            Vector direction = eyeLocation.getDirection().clone().multiply(200);
-            eyeLocation.setX(eyeLocation.getX() + direction.getX());
-            eyeLocation.setZ(eyeLocation.getZ() + direction.getZ());
-            eyeLocation.setY(eyeLocation.getWorld().getHighestBlockYAt(eyeLocation.getBlockX(), eyeLocation.getBlockZ()) + 1);
+            RayTraceResult traceResult = player.rayTraceBlocks(600, FluidCollisionMode.ALWAYS);
+
+            if (traceResult == null || traceResult.getHitBlock() == null || traceResult.getHitBlockFace() == null) return true;
+
+            Location hit = traceResult.getHitBlock().getRelative(traceResult.getHitBlockFace()).getLocation();
+
             PathfinderOptions options = new PathfinderOptionsBuilder()
                     .start(player.getLocation())
-                    .target(eyeLocation)
+                    .target(hit)
                     .asyncMode(false)
                     .strategy(new DirectPathfinderStrategy())
                     .build();
@@ -39,7 +42,7 @@ public class PathfindingCommand implements CommandExecutor {
             Finder.findPath(options, pathfinderResult -> {
                 System.out.println(pathfinderResult.getPathfinderSuccess());
                 System.out.println(pathfinderResult.getPath().getLocations().size());
-                System.out.println("Method took: " + timer.stop());
+                System.out.println("Method took : " + timer.stop());
                 pathfinderResult.getPath().getLocations().forEach( location -> player.sendBlockChange(location, Material.YELLOW_STAINED_GLASS.createBlockData()));
             });
         }

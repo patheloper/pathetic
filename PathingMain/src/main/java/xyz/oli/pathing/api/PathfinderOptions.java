@@ -4,6 +4,8 @@ import org.bukkit.Location;
 
 import xyz.oli.pathing.model.path.finder.strategy.PathfinderStrategy;
 
+import org.jetbrains.annotations.NotNull;
+
 public class PathfinderOptions {
 
     private final Location start;
@@ -18,7 +20,7 @@ public class PathfinderOptions {
         this.strategy = strategy;
     }
 
-    public PathfinderOptions(PathfinderOptionsBuilder builder) {
+    public PathfinderOptions(@NotNull PathfinderOptionsBuilder builder) {
         this.start = builder.start;
         this.target = builder.target;
         this.asyncMode = builder.asyncMode;

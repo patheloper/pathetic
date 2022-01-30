@@ -1,19 +1,21 @@
 package xyz.oli.pathing.model.path.finder.strategy.chunks;
 
-import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChunkSnapshot;
 
+import org.jetbrains.annotations.NotNull;
 import xyz.oli.pathing.PathfindingPlugin;
 import xyz.oli.pathing.model.wrapper.BukkitConverter;
 import xyz.oli.pathing.model.wrapper.PathBlock;
 import xyz.oli.pathing.model.wrapper.PathBlockType;
 import xyz.oli.pathing.model.wrapper.PathLocation;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class SnapshotManager {
 
-    private static final Long2ObjectOpenHashMap<ChunkSnapshot> snapshots = new Long2ObjectOpenHashMap<>();
+    private static final Map<Long, ChunkSnapshot> snapshots = new HashMap<>();
 
     public static PathBlock getBlock(PathLocation location) {
         int chunkX = location.getBlockX() >> 4;
@@ -41,24 +43,8 @@ public class SnapshotManager {
 
     private static void addSnapshot(long key, ChunkSnapshot snapshot) {
         snapshots.put(key, snapshot);
-        Bukkit.getScheduler().runTaskLaterAsynchronously(PathfindingPlugin.getInstance(), new SnapshotGC(snapshots, key), 1200);
-    }
-}
-
-class SnapshotGC implements Runnable {
-
-    private final long key;
-    private final Long2ObjectOpenHashMap<ChunkSnapshot> snapshots;
-
-    public SnapshotGC(Long2ObjectOpenHashMap<ChunkSnapshot> snapshots, long key) {
-        this.snapshots = snapshots;
-        this.key = key;
-    }
-
-    @Override
-    public void run() {
-        if (snapshots.containsKey(this.key)) {
-            snapshots.remove(this.key);
-        }
+        Bukkit.getScheduler().runTaskLaterAsynchronously(PathfindingPlugin.getInstance(), () -> {
+            snapshots.remove(key, snapshot);
+        }, 1200);
     }
 }

@@ -7,25 +7,32 @@ import org.bukkit.block.Block;
 import xyz.oli.pathing.PathfindingPlugin;
 import xyz.oli.pathing.material.MaterialParser;
 
+import org.jetbrains.annotations.NotNull;
+
 public class BukkitConverter {
 
-    public static Location toLocation(PathLocation pathLocation) {
+    @NotNull
+    public static Location toLocation(@NotNull PathLocation pathLocation) {
         return new Location(pathLocation.getPathWorld().getWorld(), pathLocation.getX(), pathLocation.getY(), pathLocation.getZ());
     }
 
-    public static PathLocation toPathLocation(Location location) {
+    @NotNull
+    public static PathLocation toPathLocation(@NotNull Location location) {
         return new PathLocation(new PathWorld(location.getWorld().getUID()), location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 
-    public static Block toBlock(PathBlock pathBlock) {
+    @NotNull
+    public static Block toBlock(@NotNull PathBlock pathBlock) {
         return toLocation(pathBlock.getPathLocation()).getBlock();
     }
 
-    public static PathBlock toPathBlock(Block block) {
+    @NotNull
+    public static PathBlock toPathBlock(@NotNull Block block) {
         return new PathBlock(new PathLocation(new PathWorld(block.getWorld().getUID()), block.getX(), block.getY(), block.getZ()), toPathBlockType(block));
     }
 
-    public static PathBlockType toPathBlockType(Block block) {
+    @NotNull
+    public static PathBlockType toPathBlockType(@NotNull Block block) {
 
         MaterialParser parser = PathfindingPlugin.getInstance().getParser();
 
@@ -36,7 +43,8 @@ public class BukkitConverter {
         else return PathBlockType.SOLID;
     }
 
-    public static PathBlockType toPathBlockType(Material material) {
+    @NotNull
+    public static PathBlockType toPathBlockType(@NotNull Material material) {
 
         MaterialParser parser = PathfindingPlugin.getInstance().getParser();
 
