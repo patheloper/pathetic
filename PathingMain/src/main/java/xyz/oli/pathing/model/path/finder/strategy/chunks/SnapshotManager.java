@@ -35,7 +35,7 @@ public class SnapshotManager {
             return new PathBlock(location, pathBlockType);
         }catch (Exception e) {
             PathfindingPlugin.getInstance().getLogger().warning("Error fetching Block: " + e.getMessage());
-            return null;
+            return new PathBlock(location, PathBlockType.SOLID);
         }
     }
 

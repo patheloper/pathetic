@@ -14,7 +14,6 @@ public class ChunkUtils {
     }
 
     public static Material getMaterial(ChunkSnapshot chunkSnapshot, int x, int y, int z) {
-
         return PathfindingPlugin.getInstance().getParser().getMaterial(chunkSnapshot, x, y, z);
     }
 
