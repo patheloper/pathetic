@@ -2,6 +2,7 @@ package xyz.oli.pathing.model.path.finder.strategy.chunks;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChunkSnapshot;
 
 import xyz.oli.pathing.PathfindingPlugin;
@@ -29,12 +30,35 @@ public class SnapshotManager {
     private static PathBlock fetchAndGetBlock(PathLocation location, int chunkX, int chunkZ, long key) {
         try {
             ChunkSnapshot chunkSnapshot = location.getPathWorld().getWorld().getChunkAt(chunkX, chunkZ).getChunkSnapshot();
-            snapshots.put(key, chunkSnapshot);
+            addSnapshot(key, chunkSnapshot);
             PathBlockType pathBlockType = BukkitConverter.toPathBlockType(ChunkUtils.getMaterial(chunkSnapshot, location.getBlockX() - chunkX * 16, location.getBlockY(), location.getBlockZ() - chunkZ * 16));
             return new PathBlock(location, pathBlockType);
         }catch (Exception e) {
             PathfindingPlugin.getInstance().getLogger().warning("Error fetching Block: " + e.getMessage());
             return null;
+        }
+    }
+
+    private static void addSnapshot(long key, ChunkSnapshot snapshot) {
+        snapshots.put(key, snapshot);
+        Bukkit.getScheduler().runTaskLaterAsynchronously(PathfindingPlugin.getInstance(), new SnapshotGC(snapshots, key), 1200);
+    }
+}
+
+class SnapshotGC implements Runnable {
+
+    private final long key;
+    private final Long2ObjectOpenHashMap<ChunkSnapshot> snapshots;
+
+    public SnapshotGC(Long2ObjectOpenHashMap<ChunkSnapshot> snapshots, long key) {
+        this.snapshots = snapshots;
+        this.key = key;
+    }
+
+    @Override
+    public void run() {
+        if (snapshots.containsKey(this.key)) {
+            snapshots.remove(this.key);
         }
     }
 }

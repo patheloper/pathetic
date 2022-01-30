@@ -25,14 +25,17 @@ public class PathfindingCommand implements CommandExecutor {
         if (commandSender instanceof Player player) {
             Location eyeLocation = player.getEyeLocation();
             Vector direction = eyeLocation.getDirection().clone().multiply(200);
-            eyeLocation.setX(eyeLocation.getX() + direction.getX());
-            eyeLocation.setY(eyeLocation.getY() + direction.getY());
-            eyeLocation.setZ(eyeLocation.getZ() + direction.getZ());
+            //eyeLocation.setX(eyeLocation.getX() + direction.getX());
+            eyeLocation.setX(-884);
+            //eyeLocation.setY(eyeLocation.getY() + direction.getY());
+            eyeLocation.setY(73);
+            //eyeLocation.setZ(eyeLocation.getZ() + direction.getZ());
+            eyeLocation.setZ(2235);
             PathfinderOptions options = new PathfinderOptionsBuilder()
                     .start(player.getLocation())
                     .target(eyeLocation)
                     .asyncMode(false)
-                    .strategy(new DirectPathfinderStrategy())
+                    .strategy(new WalkingPathfinderStrategy())
                     .build();
 
             Stopwatch timer = Stopwatch.createStarted();

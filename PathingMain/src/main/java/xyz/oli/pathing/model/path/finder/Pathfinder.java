@@ -1,8 +1,11 @@
 package xyz.oli.pathing.model.path.finder;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
+import xyz.oli.pathing.event.PathingFinishedEvent;
+import xyz.oli.pathing.event.PathingStartFindEvent;
 import xyz.oli.pathing.model.wrapper.BukkitConverter;
 import xyz.oli.pathing.model.wrapper.PathLocation;
 import xyz.oli.pathing.model.path.Path;
@@ -32,7 +35,10 @@ public class Pathfinder {
      */
     public PathfinderResult findPath(PathLocation start, PathLocation target, final int maxChecks, PathfinderStrategy strategy) {
 
-        if (!start.getPathWorld().equals(target.getPathWorld()) || !strategy.verifyEnd(start.getBlock()) || !strategy.verifyEnd(target.getBlock()))
+        PathingStartFindEvent startFindEvent = new PathingStartFindEvent(start, target, strategy);
+        Bukkit.getPluginManager().callEvent(startFindEvent);
+
+        if (!start.getPathWorld().equals(target.getPathWorld()) || !strategy.verifyEnd(start.getBlock()) || !strategy.verifyEnd(target.getBlock()) || (startFindEvent.isCancelled()))
             return new PathfinderResult(PathfinderSuccess.FAILED, new Path(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), EMPTY_LIST));
 
         if (start.getBlockX() == target.getBlockX() && start.getBlockY() == target.getBlockY() && start.getBlockZ() == target.getBlockZ()){
@@ -98,6 +104,9 @@ public class Pathfinder {
 
         List<Location> pathReversed = new ArrayList<>(path);
         Collections.reverse(pathReversed);
+
+        PathingFinishedEvent pathingFinishedEvent = new PathingFinishedEvent(start, target, pathReversed);
+        Bukkit.getPluginManager().callEvent(pathingFinishedEvent);
         
         return new PathfinderResult(PathfinderSuccess.FOUND, new Path(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), new LinkedHashSet<>(pathReversed)));
     }
