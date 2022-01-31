@@ -3,7 +3,6 @@ package xyz.oli.pathing.model.path.finder.strategy.chunks;
 import org.bukkit.Bukkit;
 import org.bukkit.ChunkSnapshot;
 
-import org.jetbrains.annotations.NotNull;
 import xyz.oli.pathing.PathfindingPlugin;
 import xyz.oli.pathing.model.wrapper.BukkitConverter;
 import xyz.oli.pathing.model.wrapper.PathBlock;

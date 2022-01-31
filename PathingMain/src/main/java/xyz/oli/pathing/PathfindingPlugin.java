@@ -5,7 +5,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import xyz.oli.pathing.material.legacy.LegacyMaterialHandler;
 import xyz.oli.pathing.material.MaterialParser;
-import xyz.oli.pathing.commands.PathfindingCommand;
 import xyz.oli.pathing.model.path.finder.strategy.chunks.materialparser.ModernMaterialParser;
 
 public class PathfindingPlugin extends JavaPlugin {
@@ -22,8 +21,6 @@ public class PathfindingPlugin extends JavaPlugin {
         }else {
             parser = new ModernMaterialParser();
         }
-
-        getCommand("finder").setExecutor(new PathfindingCommand());
 
         getLogger().info("Plugin Is Enabled");
     }

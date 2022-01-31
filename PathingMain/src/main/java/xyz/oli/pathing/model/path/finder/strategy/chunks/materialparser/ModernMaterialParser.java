@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public class ModernMaterialParser extends MaterialParser {
 
     @Override
-    public Material getMaterial(@NotNull ChunkSnapshot snapshot, int x, int y, int z) {
+    public @NotNull Material getMaterial(@NotNull ChunkSnapshot snapshot, int x, int y, int z) {
         return snapshot.getBlockType(x,y,z);
     }
 
