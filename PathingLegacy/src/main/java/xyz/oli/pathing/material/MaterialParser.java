@@ -1,25 +1,24 @@
 package xyz.oli.pathing.material;
 
+import lombok.NonNull;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
-import org.jetbrains.annotations.NotNull;
+public interface MaterialParser {
 
-public abstract class MaterialParser {
+    @NonNull
+    Material getMaterial(@NonNull ChunkSnapshot snapshot, int x, int y, int z);
 
-    @NotNull
-    public abstract Material getMaterial(@NotNull ChunkSnapshot snapshot, int x, int y, int z);
+    boolean isAir(@NonNull Block block);
 
-    public abstract boolean isAir(@NotNull Block block);
+    boolean isLiquid(@NonNull Block block);
 
-    public abstract boolean isLiquid(@NotNull Block block);
+    boolean isPassable(@NonNull Block block);
 
-    public abstract boolean isPassable(@NotNull Block block);
+    boolean isSolid(@NonNull Block block);
 
-    public abstract boolean isSolid(@NotNull Block block);
+    boolean isSolid(@NonNull Material material);
 
-    public abstract boolean isSolid(@NotNull Material material);
-
-    public abstract boolean isAir(@NotNull Material material);
+    boolean isAir(@NonNull Material material);
 }

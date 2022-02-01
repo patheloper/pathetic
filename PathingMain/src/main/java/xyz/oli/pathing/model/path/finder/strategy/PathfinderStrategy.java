@@ -1,10 +1,9 @@
 package xyz.oli.pathing.model.path.finder.strategy;
 
+import lombok.NonNull;
 import xyz.oli.pathing.model.wrapper.PathBlock;
 
-import org.jetbrains.annotations.NotNull;
-
-public abstract class PathfinderStrategy {
+public interface PathfinderStrategy {
 
     /**
      * Implement the logic to see if a given location is valid for a strategy
@@ -13,12 +12,12 @@ public abstract class PathfinderStrategy {
      * @param previous The previous location
      * @param previouser The previous previous location
      */
-    public abstract boolean isValid(@NotNull PathBlock current, @NotNull PathBlock previous, @NotNull PathBlock previouser);
+    boolean isValid(@NonNull PathBlock current, @NonNull PathBlock previous, @NonNull PathBlock previouser);
 
     /**
      * Implement the logic to see if a start/target is valid
      *
      * @param location The location to check
      */
-    public abstract boolean verifyEnd(@NotNull PathBlock location);
+    boolean verifyEnd(@NonNull PathBlock location);
 }

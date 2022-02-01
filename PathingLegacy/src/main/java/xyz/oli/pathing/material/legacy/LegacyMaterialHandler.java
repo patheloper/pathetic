@@ -1,46 +1,47 @@
 package xyz.oli.pathing.material.legacy;
 
+import lombok.NonNull;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
-import org.jetbrains.annotations.NotNull;
 import xyz.oli.pathing.material.MaterialParser;
 
-public class LegacyMaterialHandler extends MaterialParser {
+// class doesn't really seem useful. More redundant boilerplate
+public class LegacyMaterialHandler implements MaterialParser {
 
     @Override
-    public @NotNull Material getMaterial(@NotNull ChunkSnapshot snapshot, int x, int y, int z) {
-        return Material.getMaterial(snapshot.getBlockTypeId(x,y,z));
+    public @NonNull Material getMaterial(@NonNull ChunkSnapshot snapshot, int x, int y, int z) {
+        return Material.getMaterial(snapshot.getBlockTypeId(x,y,z)); // seems weird, everything deprecated
     }
 
     @Override
-    public boolean isAir(@NotNull Block block) {
+    public boolean isAir(@NonNull Block block) {
         return block.isEmpty();
     }
 
     @Override
-    public boolean isLiquid(@NotNull Block block) {
+    public boolean isLiquid(@NonNull Block block) {
         return block.isLiquid();
     }
 
     @Override
-    public boolean isPassable(@NotNull Block block) {
+    public boolean isPassable(@NonNull Block block) {
         return !block.getType().isBlock();
     }
 
     @Override
-    public boolean isSolid(@NotNull Block block) {
+    public boolean isSolid(@NonNull Block block) {
         return block.getType().isSolid();
     }
 
     @Override
-    public boolean isSolid(@NotNull Material material) {
+    public boolean isSolid(@NonNull Material material) {
         return material.isSolid();
     }
 
     @Override
-    public boolean isAir(@NotNull Material material) {
+    public boolean isAir(@NonNull Material material) {
         return material == Material.AIR;
     }
 

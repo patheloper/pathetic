@@ -39,14 +39,14 @@ public class Pathfinder {
         Bukkit.getPluginManager().callEvent(startFindEvent);
 
         if (!start.getPathWorld().equals(target.getPathWorld()) || !strategy.verifyEnd(start.getBlock()) || !strategy.verifyEnd(target.getBlock()) || (startFindEvent.isCancelled()))
-            return new PathfinderResult(PathfinderSuccess.FAILED, new Path(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), EMPTY_LIST));
+            return new PathfinderResult(PathfinderResult.PathfinderSuccess.FAILED, new Path(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), EMPTY_LIST));
 
         if (start.getBlockX() == target.getBlockX() && start.getBlockY() == target.getBlockY() && start.getBlockZ() == target.getBlockZ()){
     
             LinkedHashSet<Location> nodeList = new LinkedHashSet<>();
             nodeList.add(BukkitConverter.toLocation(target));
 
-            return new PathfinderResult(PathfinderSuccess.FOUND, new Path(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), nodeList));
+            return new PathfinderResult(PathfinderResult.PathfinderSuccess.FOUND, new Path(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), nodeList));
         }
 
         Node startNode = new Node(new PathLocation(start.getPathWorld(), start.getBlockX() + 0.5, start.getBlockY(), start.getBlockZ() + 0.5), start, target);
@@ -83,7 +83,7 @@ public class Pathfinder {
             }
         }
 
-        return new PathfinderResult(PathfinderSuccess.FAILED, new Path(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), EMPTY_LIST));
+        return new PathfinderResult(PathfinderResult.PathfinderSuccess.FAILED, new Path(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), EMPTY_LIST));
     }
 
     public PathfinderResult findPath(PathLocation start, PathLocation end, PathfinderStrategy strategy) {
@@ -108,7 +108,7 @@ public class Pathfinder {
         PathingFinishedEvent pathingFinishedEvent = new PathingFinishedEvent(start, target, pathReversed);
         Bukkit.getPluginManager().callEvent(pathingFinishedEvent);
         
-        return new PathfinderResult(PathfinderSuccess.FOUND, new Path(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), new LinkedHashSet<>(pathReversed)));
+        return new PathfinderResult(PathfinderResult.PathfinderSuccess.FOUND, new Path(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), new LinkedHashSet<>(pathReversed)));
     }
 
     private Collection<Node> getNeighbours(Node node, PathLocation start, PathLocation target) {

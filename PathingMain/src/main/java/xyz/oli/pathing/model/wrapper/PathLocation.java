@@ -1,13 +1,15 @@
 package xyz.oli.pathing.model.wrapper;
 
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
 
 import xyz.oli.pathing.model.path.finder.strategy.chunks.SnapshotManager;
 
-import java.util.Objects;
-
-public class PathLocation implements Cloneable{
+@ToString
+@EqualsAndHashCode
+public class PathLocation implements Cloneable {
 
     private final PathWorld pathWorld;
     private double x, y, z;
@@ -48,6 +50,7 @@ public class PathLocation implements Cloneable{
         return (int) Math.floor(this.z);
     }
 
+    @Override
     public PathLocation clone() {
         return new PathLocation(this.pathWorld, this.x, this.y, this.z);
     }
@@ -72,29 +75,5 @@ public class PathLocation implements Cloneable{
 
     public PathBlock getBlock() {
         return SnapshotManager.getBlock(this);
-    }
-
-    @Override
-    public String toString() {
-        final StringBuffer sb = new StringBuffer("PathLocation{");
-        sb.append("pathWorld=").append(pathWorld);
-        sb.append(", x=").append(x);
-        sb.append(", y=").append(y);
-        sb.append(", z=").append(z);
-        sb.append('}');
-        return sb.toString();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        PathLocation other = (PathLocation) o;
-        return Double.compare(other.x, x) == 0 && Double.compare(other.y, y) == 0 && Double.compare(other.z, z) == 0 && pathWorld.equals(other.pathWorld);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(pathWorld, x, y, z);
     }
 }

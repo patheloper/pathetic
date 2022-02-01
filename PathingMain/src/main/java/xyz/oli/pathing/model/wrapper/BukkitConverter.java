@@ -1,5 +1,7 @@
 package xyz.oli.pathing.model.wrapper;
 
+import lombok.NonNull;
+import lombok.experimental.UtilityClass;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -7,32 +9,31 @@ import org.bukkit.block.Block;
 import xyz.oli.pathing.PathfindingPlugin;
 import xyz.oli.pathing.material.MaterialParser;
 
-import org.jetbrains.annotations.NotNull;
-
+@UtilityClass
 public class BukkitConverter {
 
-    @NotNull
-    public static Location toLocation(@NotNull PathLocation pathLocation) {
+    @NonNull
+    public Location toLocation(@NonNull PathLocation pathLocation) {
         return new Location(pathLocation.getPathWorld().getWorld(), pathLocation.getX(), pathLocation.getY(), pathLocation.getZ());
     }
 
-    @NotNull
-    public static PathLocation toPathLocation(@NotNull Location location) {
+    @NonNull
+    public PathLocation toPathLocation(@NonNull Location location) {
         return new PathLocation(new PathWorld(location.getWorld().getUID()), location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 
-    @NotNull
-    public static Block toBlock(@NotNull PathBlock pathBlock) {
+    @NonNull
+    public Block toBlock(@NonNull PathBlock pathBlock) {
         return toLocation(pathBlock.getPathLocation()).getBlock();
     }
 
-    @NotNull
-    public static PathBlock toPathBlock(@NotNull Block block) {
+    @NonNull
+    public PathBlock toPathBlock(@NonNull Block block) {
         return new PathBlock(new PathLocation(new PathWorld(block.getWorld().getUID()), block.getX(), block.getY(), block.getZ()), toPathBlockType(block));
     }
 
-    @NotNull
-    public static PathBlockType toPathBlockType(@NotNull Block block) {
+    @NonNull
+    public PathBlockType toPathBlockType(@NonNull Block block) {
 
         MaterialParser parser = PathfindingPlugin.getInstance().getParser();
 
@@ -43,8 +44,8 @@ public class BukkitConverter {
         else return PathBlockType.SOLID;
     }
 
-    @NotNull
-    public static PathBlockType toPathBlockType(@NotNull Material material) {
+    @NonNull
+    public PathBlockType toPathBlockType(@NonNull Material material) {
 
         MaterialParser parser = PathfindingPlugin.getInstance().getParser();
 
