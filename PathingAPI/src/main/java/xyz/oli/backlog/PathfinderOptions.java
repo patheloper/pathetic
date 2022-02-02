@@ -1,4 +1,4 @@
-package xyz.oli.pathing;
+package xyz.oli.backlog;
 
 import lombok.AllArgsConstructor;
 import lombok.NonNull;

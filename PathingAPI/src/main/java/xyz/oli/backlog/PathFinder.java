@@ -1,4 +1,4 @@
-package xyz.oli.pathing;
+package xyz.oli.backlog;
 
 import lombok.NonNull;
 import xyz.oli.pathing.model.path.finder.Pathfinder;
