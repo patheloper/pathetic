@@ -5,7 +5,7 @@ import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
-import xyz.oli.pathing.material.MaterialParser;
+import xyz.oli.material.MaterialParser;
 
 // why is that in main?
 public class ModernMaterialParser implements MaterialParser {

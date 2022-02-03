@@ -5,7 +5,7 @@ import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
-import xyz.oli.pathing.material.MaterialParser;
+import xyz.oli.material.MaterialParser;
 
 // class doesn't really seem useful. More redundant boilerplate
 public class LegacyMaterialHandler implements MaterialParser {

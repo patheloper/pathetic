@@ -3,7 +3,7 @@ package xyz.oli.pathing;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import xyz.oli.pathing.material.legacy.LegacyMaterialHandler;
-import xyz.oli.pathing.material.MaterialParser;
+import xyz.oli.material.MaterialParser;
 import xyz.oli.pathing.model.path.finder.strategy.chunks.materialparser.ModernMaterialParser;
 import xyz.oli.pathing.util.BukkitVersionUtil;
 

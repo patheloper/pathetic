@@ -9,7 +9,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 
 import xyz.oli.pathing.PathfindingPlugin;
-import xyz.oli.pathing.material.MaterialParser;
+import xyz.oli.material.MaterialParser;
 
 @UtilityClass
 public class BukkitConverter {
