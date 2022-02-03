@@ -20,9 +20,7 @@ public class PathFinder {
         if (pathfinderOptions.isAsyncMode()) {
             CompletableFuture.supplyAsync( () ->
                             pathFinder.findPath(BukkitConverter.toPathLocation(pathfinderOptions.getStart()), BukkitConverter.toPathLocation(pathfinderOptions.getTarget()), pathfinderOptions.getStrategy()),
-                    PathingAPI.FORK_JOIN_POOL).thenAccept(pathResult -> {
-                callback.accept(pathResult);
-            });
+                    PathingAPI.FORK_JOIN_POOL).thenAccept(callback);
             return;
         }
 
