@@ -1,7 +1,7 @@
 package xyz.oli.pathing.model.path.finder.strategy;
 
 import lombok.NonNull;
-import xyz.oli.pathing.model.wrapper.PathBlock;
+import xyz.oli.wrapper.PathBlock;
 
 public interface PathfinderStrategy {
 

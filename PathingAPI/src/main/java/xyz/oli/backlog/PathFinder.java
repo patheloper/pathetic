@@ -3,7 +3,7 @@ package xyz.oli.backlog;
 import lombok.NonNull;
 import xyz.oli.pathing.model.path.finder.Pathfinder;
 import xyz.oli.pathing.model.path.finder.PathfinderResult;
-import xyz.oli.pathing.model.wrapper.BukkitConverter;
+import xyz.oli.wrapper.BukkitConverter;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;

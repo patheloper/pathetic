@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import lombok.Value;
 import org.bukkit.Location;
 
-import xyz.oli.pathing.model.wrapper.PathLocation;
+import xyz.oli.wrapper.PathLocation;
 
 import java.util.List;
 

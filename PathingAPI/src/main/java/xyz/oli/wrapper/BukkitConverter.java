@@ -1,9 +1,11 @@
-package xyz.oli.pathing.model.wrapper;
+package xyz.oli.wrapper;
 
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 
 import xyz.oli.pathing.PathfindingPlugin;
@@ -14,12 +16,12 @@ public class BukkitConverter {
 
     @NonNull
     public Location toLocation(@NonNull PathLocation pathLocation) {
-        return new Location(pathLocation.getPathWorld().getWorld(), pathLocation.getX(), pathLocation.getY(), pathLocation.getZ());
+        return new Location(toWorld(pathLocation.getPathWorld()), pathLocation.getX(), pathLocation.getY(), pathLocation.getZ());
     }
 
     @NonNull
     public PathLocation toPathLocation(@NonNull Location location) {
-        return new PathLocation(new PathWorld(location.getWorld().getUID()), location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        return new PathLocation(toPathWorld(location.getWorld()), location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 
     @NonNull
@@ -29,7 +31,16 @@ public class BukkitConverter {
 
     @NonNull
     public PathBlock toPathBlock(@NonNull Block block) {
-        return new PathBlock(new PathLocation(new PathWorld(block.getWorld().getUID()), block.getX(), block.getY(), block.getZ()), toPathBlockType(block));
+        return new PathBlock(new PathLocation(toPathWorld(block.getWorld()), block.getX(), block.getY(), block.getZ()), toPathBlockType(block));
+    }
+    
+    public World toWorld(@NonNull PathWorld pathWorld) {
+        return Bukkit.getWorld(pathWorld.getUuid());
+    }
+    
+    @NonNull
+    public PathWorld toPathWorld(@NonNull World world) {
+        return new PathWorld(world.getUID(), world.getName());
     }
 
     @NonNull

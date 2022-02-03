@@ -1,4 +1,4 @@
-package xyz.oli.pathing.model.wrapper;
+package xyz.oli.wrapper;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

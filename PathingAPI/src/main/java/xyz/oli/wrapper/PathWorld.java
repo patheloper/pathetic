@@ -1,30 +1,28 @@
-package xyz.oli.pathing.model.wrapper;
+package xyz.oli.wrapper;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
 
-import java.util.Objects;
 import java.util.UUID;
 
 @ToString(onlyExplicitlyIncluded = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class PathWorld {
 
-     // TODO world name 
-
     @Getter
     @EqualsAndHashCode.Include
     @ToString.Include
     private final UUID uuid;
     
-    public PathWorld(UUID uuid) {
+    @Getter
+    @EqualsAndHashCode.Exclude
+    @ToString.Include
+    private final String name;
+    
+    public PathWorld(UUID uuid, String name) {
+        
         this.uuid = uuid;
+        this.name = name;
     }
-
-    public World getWorld() {
-        return Bukkit.getWorld(this.uuid);
-    } // we have a converter for this
 }

@@ -1,4 +1,4 @@
-package xyz.oli.pathing.model.wrapper;
+package xyz.oli.wrapper;
 
 /**
  * Enum to represent the block type of wrapped blocks

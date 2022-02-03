@@ -5,10 +5,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChunkSnapshot;
 
 import xyz.oli.pathing.PathfindingPlugin;
-import xyz.oli.pathing.model.wrapper.BukkitConverter;
-import xyz.oli.pathing.model.wrapper.PathBlock;
-import xyz.oli.pathing.model.wrapper.PathBlockType;
-import xyz.oli.pathing.model.wrapper.PathLocation;
+import xyz.oli.wrapper.BukkitConverter;
+import xyz.oli.wrapper.PathBlock;
+import xyz.oli.wrapper.PathBlockType;
+import xyz.oli.wrapper.PathLocation;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +32,7 @@ public class SnapshotManager {
 
     private PathBlock fetchAndGetBlock(PathLocation location, int chunkX, int chunkZ, long key) {
         try {
-            ChunkSnapshot chunkSnapshot = location.getPathWorld().getWorld().getChunkAt(chunkX, chunkZ).getChunkSnapshot();
+            ChunkSnapshot chunkSnapshot = BukkitConverter.toWorld(location.getPathWorld()).getChunkAt(chunkX, chunkZ).getChunkSnapshot();
             addSnapshot(key, chunkSnapshot);
             PathBlockType pathBlockType = BukkitConverter.toPathBlockType(ChunkUtils.getMaterial(chunkSnapshot, location.getBlockX() - chunkX * 16, location.getBlockY(), location.getBlockZ() - chunkZ * 16));
             return new PathBlock(location, pathBlockType);

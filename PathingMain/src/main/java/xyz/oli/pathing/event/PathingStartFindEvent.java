@@ -1,11 +1,10 @@
 package xyz.oli.pathing.event;
 
 import lombok.*;
-import lombok.experimental.FieldNameConstants;
 import org.bukkit.event.Cancellable;
 
 import xyz.oli.pathing.model.path.finder.strategy.PathfinderStrategy;
-import xyz.oli.pathing.model.wrapper.PathLocation;
+import xyz.oli.wrapper.PathLocation;
 
 public class PathingStartFindEvent extends PathingEvent implements Cancellable {
 
