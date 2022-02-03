@@ -1,4 +1,4 @@
-package xyz.oli.pathing.event;
+package xyz.oli.event;
 
 import com.google.common.collect.ImmutableList;
 import lombok.Value;

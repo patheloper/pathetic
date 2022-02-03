@@ -1,4 +1,4 @@
-package xyz.oli.pathing.event;
+package xyz.oli.event;
 
 import lombok.NonNull;
 import org.bukkit.event.Event;

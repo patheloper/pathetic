@@ -2,8 +2,7 @@ package xyz.oli.backlog;
 
 import lombok.Builder;
 import org.bukkit.Location;
-
-import xyz.oli.pathing.model.path.finder.strategy.PathfinderStrategy;
+import xyz.oli.pathing.PathfinderStrategy;
 
 @Builder
 public class PathfinderOptionsBuilder {

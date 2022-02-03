@@ -1,9 +1,9 @@
-package xyz.oli.pathing.event;
+package xyz.oli.event;
 
 import lombok.*;
 import org.bukkit.event.Cancellable;
 
-import xyz.oli.pathing.model.path.finder.strategy.PathfinderStrategy;
+import xyz.oli.pathing.PathfinderStrategy;
 import xyz.oli.wrapper.PathLocation;
 
 public class PathingStartFindEvent extends PathingEvent implements Cancellable {

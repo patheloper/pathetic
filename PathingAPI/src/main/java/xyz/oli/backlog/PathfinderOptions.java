@@ -4,8 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.Value;
 import org.bukkit.Location;
-
-import xyz.oli.pathing.model.path.finder.strategy.PathfinderStrategy;
+import xyz.oli.pathing.PathfinderStrategy;
 
 @Value
 @AllArgsConstructor

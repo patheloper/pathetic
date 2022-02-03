@@ -4,10 +4,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
-import xyz.oli.pathing.event.PathingFinishedEvent;
-import xyz.oli.pathing.event.PathingStartFindEvent;
+import xyz.oli.event.PathingFinishedEvent;
+import xyz.oli.event.PathingStartFindEvent;
+import xyz.oli.pathing.PathfinderStrategy;
 import xyz.oli.pathing.model.path.Path;
-import xyz.oli.pathing.model.path.finder.strategy.PathfinderStrategy;
 import xyz.oli.wrapper.BukkitConverter;
 import xyz.oli.wrapper.PathLocation;
 
