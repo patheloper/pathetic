@@ -2,6 +2,6 @@ package xyz.oli.pathing;
 
 public interface Rule {
     
-    void doStuff(/**/);
+    void doStuff(/* maybe the Path */);
     
 }
