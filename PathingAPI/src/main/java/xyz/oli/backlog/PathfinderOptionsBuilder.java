@@ -7,11 +7,10 @@ import xyz.oli.pathing.PathfinderStrategy;
 @Builder
 public class PathfinderOptionsBuilder {
 
-    // why is this protected?
-    protected Location start;
-    protected Location target;
-    protected boolean asyncMode;
-    protected PathfinderStrategy strategy;
+    public Location start;
+    public Location target;
+    public boolean asyncMode;
+    public PathfinderStrategy strategy;
 
     public PathfinderOptions build() {
         return new PathfinderOptions(this);
