@@ -10,11 +10,11 @@ public class Path implements xyz.oli.pathing.Path {
 
     Location start;
     Location end;
-    LinkedHashSet<Location> path;
+    LinkedHashSet<Location> locations;
 
     @Override
-    public LinkedHashSet<Location> getPath() {
-        return this.path;
+    public LinkedHashSet<Location> getLocations() {
+        return this.locations;
     }
 
     @Override

@@ -10,7 +10,7 @@ public interface Path {
      *
      * @return LinkedHashSet<Location> The locations of the pathfinding
      */
-    LinkedHashSet<Location> getPath();
+    LinkedHashSet<Location> getLocations();
 
     /**
      * Returns the start location of the path
