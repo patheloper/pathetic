@@ -8,7 +8,6 @@ import org.bukkit.block.Block;
 public interface MaterialParser {
 
     /**
-     *
      * @param snapshot The snapshot go get a value from
      * @param x The x to check
      * @param y The y to check
@@ -18,6 +17,11 @@ public interface MaterialParser {
     @NonNull
     Material getMaterial(@NonNull ChunkSnapshot snapshot, int x, int y, int z);
 
+    /**
+     * Checks the block for being air
+     * @param block the block to check
+     * @return Boolean True = Air, False = Not Air
+     */
     boolean isAir(@NonNull Block block);
 
     /**
