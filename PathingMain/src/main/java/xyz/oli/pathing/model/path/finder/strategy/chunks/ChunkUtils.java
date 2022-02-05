@@ -5,7 +5,7 @@ import lombok.experimental.UtilityClass;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
 
-import xyz.oli.pathing.PathfindingPlugin;
+import xyz.oli.PathingAPI;
 
 import java.util.UUID;
 
@@ -17,7 +17,7 @@ public class ChunkUtils {
     }
 
     public Material getMaterial(ChunkSnapshot chunkSnapshot, int x, int y, int z) {
-        return PathfindingPlugin.getInstance().getParser().getMaterial(chunkSnapshot, x, y, z);
+        return PathingAPI.getParser().getMaterial(chunkSnapshot, x, y, z);
     }
 
     private long getaLong(UUID world, int x, int z) { // whatever that do

@@ -1,28 +1,27 @@
 package xyz.oli.pathing.model.path.finder;
 
 import lombok.AllArgsConstructor;
-import lombok.Value;
+import xyz.oli.pathing.PathResult;
 import xyz.oli.pathing.model.path.Path;
 
-@Value
 @AllArgsConstructor
-public class PathfinderResult {
+public class PathfinderResult implements PathResult {
     
     PathfinderSuccess pathfinderSuccess;
     Path path;
 
+    @Override
     public boolean successful() {
         return pathfinderSuccess == PathfinderSuccess.FOUND;
     }
 
-    enum PathfinderSuccess {
-        /**
-         * The Path was successfully found for a given strategy
-         */
-        FOUND,
-        /**
-         * The Path wasn't found, either the start/finish were invalid, it reached its max search depth, or it couldn't find more locations
-         */
-        FAILED
+    @Override
+    public PathfinderSuccess getPathfinderSuccess() {
+        return this.pathfinderSuccess;
+    }
+
+    @Override
+    public xyz.oli.pathing.Path getPath() {
+        return this.path;
     }
 }

@@ -2,34 +2,33 @@ package xyz.oli.pathing;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
+import xyz.oli.PathingAPI;
 import xyz.oli.pathing.material.legacy.LegacyMaterialHandler;
-import xyz.oli.material.MaterialParser;
+import xyz.oli.pathing.model.path.finder.PathfinderImpl;
+import xyz.oli.pathing.model.path.finder.strategy.chunks.SnapshotManager;
 import xyz.oli.pathing.model.path.finder.strategy.chunks.materialparser.ModernMaterialParser;
 import xyz.oli.pathing.util.BukkitVersionUtil;
 
 public class PathfindingPlugin extends JavaPlugin {
 
     static PathfindingPlugin instance;
-    private MaterialParser parser;
 
     @Override
-    public void onEnable() {
+    public void onLoad() {
         instance = this;
 
         if (BukkitVersionUtil.isUnder(13)) {
-            parser = new LegacyMaterialHandler();
+            PathingAPI.setParser(new LegacyMaterialHandler());
         } else {
-            parser = new ModernMaterialParser();
+            PathingAPI.setParser(new ModernMaterialParser());
         }
 
-        getLogger().info("Plugin Is Enabled"); // lol
+        PathingAPI.setSnapshotManager(new SnapshotManager());
+
+        PathingAPI.setPathfinder(new PathfinderImpl());
     }
 
     public static PathfindingPlugin getInstance() {
         return instance;
-    }
-
-    public MaterialParser getParser() {
-        return parser;
     }
 }

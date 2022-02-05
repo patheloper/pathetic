@@ -7,7 +7,6 @@ import org.bukkit.block.Block;
 
 import xyz.oli.material.MaterialParser;
 
-// why is that in main?
 public class ModernMaterialParser implements MaterialParser {
 
     @Override

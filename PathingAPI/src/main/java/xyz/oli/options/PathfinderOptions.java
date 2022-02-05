@@ -1,12 +1,14 @@
-package xyz.oli.backlog;
+package xyz.oli.options;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;
 import org.bukkit.Location;
 import xyz.oli.pathing.PathfinderStrategy;
 
 @Value
+@Builder
 @AllArgsConstructor
 public class PathfinderOptions {
 

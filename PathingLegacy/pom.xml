@@ -39,7 +39,7 @@
             <groupId>xyz.oli</groupId>
             <artifactId>PathingAPI</artifactId>
             <version>1.0</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

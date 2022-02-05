@@ -8,7 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
-import xyz.oli.pathing.PathfindingPlugin;
+import xyz.oli.PathingAPI;
 import xyz.oli.material.MaterialParser;
 
 @UtilityClass
@@ -21,6 +21,9 @@ public class BukkitConverter {
 
     @NonNull
     public PathLocation toPathLocation(@NonNull Location location) {
+        if (location.getWorld() == null) {
+            throw new NullPointerException("World is null");
+        }
         return new PathLocation(toPathWorld(location.getWorld()), location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 
@@ -46,7 +49,7 @@ public class BukkitConverter {
     @NonNull
     public PathBlockType toPathBlockType(@NonNull Block block) {
 
-        MaterialParser parser = PathfindingPlugin.getInstance().getParser();
+        MaterialParser parser = PathingAPI.getParser();
 
         if (parser.isLiquid(block)) return PathBlockType.LIQUID;
         else if (parser.isAir(block)) return PathBlockType.AIR;
@@ -58,7 +61,7 @@ public class BukkitConverter {
     @NonNull
     public PathBlockType toPathBlockType(@NonNull Material material) {
 
-        MaterialParser parser = PathfindingPlugin.getInstance().getParser();
+        MaterialParser parser = PathingAPI.getParser();
 
         if (parser.isAir(material))
             return PathBlockType.AIR;

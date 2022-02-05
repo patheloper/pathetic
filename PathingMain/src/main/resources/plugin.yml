@@ -5,3 +5,4 @@ authors:
   - Luziferium
 main: xyz.oli.pathing.PathfindingPlugin
 api-version: 1.18
+load: STARTUP

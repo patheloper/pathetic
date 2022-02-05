@@ -5,7 +5,7 @@ import lombok.ToString;
 import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
 
-import xyz.oli.pathing.model.path.finder.strategy.chunks.SnapshotManager;
+import xyz.oli.PathingAPI;
 
 @ToString
 @EqualsAndHashCode
@@ -74,6 +74,6 @@ public class PathLocation implements Cloneable {
     }
 
     public PathBlock getBlock() {
-        return SnapshotManager.getBlock(this);
+        return PathingAPI.getSnapshotManager().getBlock(this);
     }
 }

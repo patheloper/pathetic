@@ -1,6 +1,5 @@
 package xyz.oli.pathing.model.path.finder.strategy.chunks;
 
-import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.ChunkSnapshot;
 
@@ -13,11 +12,11 @@ import xyz.oli.wrapper.PathLocation;
 import java.util.HashMap;
 import java.util.Map;
 
-@UtilityClass
-public class SnapshotManager {
+public class SnapshotManager implements xyz.oli.pathing.SnapshotManager {
 
     private final Map<Long, ChunkSnapshot> snapshots = new HashMap<>();
 
+    @Override
     public PathBlock getBlock(PathLocation location) {
         int chunkX = location.getBlockX() >> 4;
         int chunkZ = location.getBlockZ() >> 4;
@@ -44,8 +43,6 @@ public class SnapshotManager {
 
     private void addSnapshot(long key, ChunkSnapshot snapshot) {
         snapshots.put(key, snapshot);
-        Bukkit.getScheduler().runTaskLaterAsynchronously(PathfindingPlugin.getInstance(), () -> {
-            snapshots.remove(key, snapshot);
-        }, 1200);
+        Bukkit.getScheduler().runTaskLaterAsynchronously(PathfindingPlugin.getInstance(), () -> snapshots.remove(key, snapshot), 1200);
     }
 }
