@@ -20,7 +20,7 @@ public class ChunkUtils {
         return PathingAPI.getParser().getMaterial(chunkSnapshot, x, y, z);
     }
 
-    private long getaLong(UUID world, int x, int z) { // whatever that do
+    private long getaLong(UUID world, int x, int z) {
         return x & 0xFFFF | (z & 0xFF) << 16 | (world.getMostSignificantBits() & 0xFF) << 24;
     }
 

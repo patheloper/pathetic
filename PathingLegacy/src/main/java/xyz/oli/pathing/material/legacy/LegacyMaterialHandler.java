@@ -7,12 +7,11 @@ import org.bukkit.block.Block;
 
 import xyz.oli.material.MaterialParser;
 
-// class doesn't really seem useful. More redundant boilerplate
 public class LegacyMaterialHandler implements MaterialParser {
 
     @Override
     public @NonNull Material getMaterial(@NonNull ChunkSnapshot snapshot, int x, int y, int z) {
-        return Material.getMaterial(snapshot.getBlockTypeId(x,y,z)); // seems weird, everything deprecated
+        return Material.getMaterial(snapshot.getBlockTypeId(x,y,z));
     }
 
     @Override
