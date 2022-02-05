@@ -1,7 +1,6 @@
 package xyz.oli.pathing.util;
 
 import lombok.NonNull;
-import xyz.oli.pathing.PathResult;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ForkJoinPool;
@@ -12,7 +11,11 @@ public class PathingScheduler {
 
     private static final ForkJoinPool FORK_JOIN_POOL = new ForkJoinPool(Runtime.getRuntime().availableProcessors(), ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, true);
 
-    public static void runAsync(Supplier<PathResult> supplier, @NonNull Consumer<PathResult> callback) {
+    public static <T> void runAsync(@NonNull Supplier<T> supplier, @NonNull Consumer<T> callback) {
         CompletableFuture.supplyAsync(supplier, FORK_JOIN_POOL).thenAccept(callback);
+    }
+
+    public static <T> CompletableFuture<T> supplyAsync(@NonNull Supplier<T> supplier) {
+        return CompletableFuture.supplyAsync(supplier, FORK_JOIN_POOL);
     }
 }
