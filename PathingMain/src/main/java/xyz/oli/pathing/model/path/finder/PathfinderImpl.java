@@ -7,6 +7,8 @@ import org.bukkit.Location;
 import xyz.oli.options.PathfinderOptions;
 import xyz.oli.pathing.PathResult;
 import xyz.oli.pathing.PathfinderStrategy;
+import xyz.oli.pathing.model.path.finder.pathfinder.Pathfinder;
+import xyz.oli.pathing.model.path.finder.pathfinder.PathfinderResult;
 import xyz.oli.pathing.strategies.DirectPathfinderStrategy;
 import xyz.oli.pathing.util.PathingScheduler;
 import xyz.oli.wrapper.BukkitConverter;
