@@ -25,16 +25,15 @@ public class Pathetic {
         logger = javaPlugin.getLogger();
         
         Bukkit.getServicesManager().register(PathfinderFactory.class, new PathfinderFactoryImpl(), javaPlugin, ServicePriority.Highest);
-
-        PathingScheduler.setPlugin(javaPlugin);
-
+    
         MaterialParser parser;
-
         if (BukkitVersionUtil.isUnder(13)) parser = new LegacyMaterialParser();
         else parser = new ModernMaterialParser();
-
-        PathingAPI.setFields(parser, new SnapshotManager());
+    
         BStatsHandler.init(javaPlugin);
+        
+        PathingAPI.setFields(parser, new SnapshotManager());
+        PathingScheduler.setPlugin(javaPlugin);
     }
     
     public static Logger getPluginLogger() {
