@@ -19,7 +19,9 @@ public class Pathfinder {
 
     private static final LinkedHashSet<Location> EMPTY_LIST = new LinkedHashSet<>();
 
-    private final Vector[] offsets = {
+    private static final int MAX_CHECKS = 20000;
+    
+    private static final Vector[] OFFSETS = {
 
             new Vector(1,0,0),
             new Vector(-1,0,0),
@@ -95,7 +97,7 @@ public class Pathfinder {
     }
 
     public PathfinderResult findPath(PathLocation start, PathLocation end, PathfinderStrategy strategy) {
-        return this.findPath(start, end, 20000, strategy);
+        return this.findPath(start, end, MAX_CHECKS, strategy);
     }
 
     private PathfinderResult retracePath(Node startNode, Node endNode, PathLocation start, PathLocation target) {
@@ -123,9 +125,9 @@ public class Pathfinder {
 
     private Collection<Node> getNeighbours(Node node, PathLocation start, PathLocation target) {
 
-        ArrayList<Node> neighbours = new ArrayList<>(this.offsets.length);
+        ArrayList<Node> neighbours = new ArrayList<>(this.OFFSETS.length);
 
-        for (Vector offset : this.offsets) {
+        for (Vector offset : this.OFFSETS) {
 
             Vector midpoint = new Vector();
 

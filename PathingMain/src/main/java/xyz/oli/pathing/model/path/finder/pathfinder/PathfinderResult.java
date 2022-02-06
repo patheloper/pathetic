@@ -1,8 +1,8 @@
 package xyz.oli.pathing.model.path.finder.pathfinder;
 
 import lombok.AllArgsConstructor;
+import xyz.oli.pathing.Path;
 import xyz.oli.pathing.PathResult;
-import xyz.oli.pathing.model.path.Path;
 
 @AllArgsConstructor
 public class PathfinderResult implements PathResult {
@@ -21,7 +21,7 @@ public class PathfinderResult implements PathResult {
     }
 
     @Override
-    public xyz.oli.pathing.Path getPath() {
+    public Path getPath() {
         return this.path;
     }
 }

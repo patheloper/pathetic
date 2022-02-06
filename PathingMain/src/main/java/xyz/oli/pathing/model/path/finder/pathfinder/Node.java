@@ -16,17 +16,17 @@ public class Node implements Comparable<Node> {
         this.target = target;
         this.start = start;
     }
-
-    public PathLocation getLocation() {
-        return this.location.clone();
+    
+    public void setParent(Node parent) {
+        this.parent = parent;
     }
-
+    
     public Node getParent() {
         return this.parent;
     }
 
-    public void setParent(Node parent) {
-        this.parent = parent;
+    public PathLocation getLocation() {
+        return this.location.clone();
     }
 
     @Override

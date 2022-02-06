@@ -60,6 +60,7 @@ public class PathLocation implements Cloneable {
     }
 
     public PathLocation add(final double x, final double y, final double z) {
+        
         this.x += x;
         this.y += y;
         this.z += z;
@@ -67,9 +68,20 @@ public class PathLocation implements Cloneable {
     }
 
     public PathLocation add(final Vector vector) {
-        this.x += vector.getX();
-        this.y += vector.getY();
-        this.z += vector.getZ();
+        add(vector.getX(), vector.getY(), vector.getZ());
+        return this;
+    }
+    
+    public PathLocation subtract(final double x, final double y, final double z) {
+        
+        this.x -= x;
+        this.y -= y;
+        this.z -= z;
+        return this;
+    }
+    
+    public PathLocation subtract(final Vector vector) {
+        subtract(vector.getX(), vector.getY(), vector.getZ());
         return this;
     }
 

@@ -7,7 +7,7 @@ import org.bukkit.block.Block;
 
 import xyz.oli.material.MaterialParser;
 
-public class LegacyMaterialHandler implements MaterialParser {
+public class LegacyMaterialParser implements MaterialParser {
 
     @Override
     public @NonNull Material getMaterial(@NonNull ChunkSnapshot snapshot, int x, int y, int z) {

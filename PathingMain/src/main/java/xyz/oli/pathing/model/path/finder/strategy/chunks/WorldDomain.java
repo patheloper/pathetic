@@ -18,7 +18,7 @@ public class WorldDomain {
         return Optional.ofNullable(this.snapshotMap.getOrDefault(key, null));
     }
 
-    public void putSnapshot(final long key, final ChunkSnapshot snapshot) {
+    public void addSnapshot(final long key, final ChunkSnapshot snapshot) {
         this.snapshotMap.put(key, snapshot);
     }
 

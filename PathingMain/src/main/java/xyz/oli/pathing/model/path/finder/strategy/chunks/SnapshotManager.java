@@ -3,7 +3,7 @@ package xyz.oli.pathing.model.path.finder.strategy.chunks;
 import lombok.NonNull;
 import org.bukkit.ChunkSnapshot;
 
-import xyz.oli.pathing.PathfindingPlugin;
+import xyz.oli.pathing.Pathetic;
 import xyz.oli.pathing.util.PathingScheduler;
 import xyz.oli.wrapper.BukkitConverter;
 import xyz.oli.wrapper.PathBlock;
@@ -21,34 +21,46 @@ public class SnapshotManager implements xyz.oli.pathing.SnapshotManager {
 
     @Override
     public PathBlock getBlock(@NonNull PathLocation location) {
+        
         int chunkX = location.getBlockX() >> 4;
         int chunkZ = location.getBlockZ() >> 4;
         long key = ChunkUtils.getChunkKey(chunkX, chunkZ);
 
         if (snapshots.containsKey(location.getPathWorld().getUuid())) {
+            
             WorldDomain worldDomain = snapshots.get(location.getPathWorld().getUuid());
             Optional<ChunkSnapshot> snapshot = worldDomain.getSnapshot(key);
+            
             if (snapshot.isPresent()) return new PathBlock(location, BukkitConverter.toPathBlockType(ChunkUtils.getMaterial(snapshot.get(), location.getBlockX() - chunkX * 16, location.getBlockY(), location.getBlockZ() - chunkZ * 16)));
         }
+        
         return fetchAndGetBlock(location, chunkX, chunkZ, key);
     }
 
     private PathBlock fetchAndGetBlock(@NonNull PathLocation location, int chunkX, int chunkZ, long key) {
+        
         try {
+            
             ChunkSnapshot chunkSnapshot = BukkitConverter.toWorld(location.getPathWorld()).getChunkAt(chunkX, chunkZ).getChunkSnapshot();
             addSnapshot(location, key, chunkSnapshot);
+            
             PathBlockType pathBlockType = BukkitConverter.toPathBlockType(ChunkUtils.getMaterial(chunkSnapshot, location.getBlockX() - chunkX * 16, location.getBlockY(), location.getBlockZ() - chunkZ * 16));
             return new PathBlock(location, pathBlockType);
-        }catch (Exception e) {
-            PathfindingPlugin.getPluginLogger().warning("Error fetching Block: " + e.getMessage());
+            
+        } catch (Exception e) {
+            
+            Pathetic.getPluginLogger().warning("Error fetching Block: " + e.getMessage());
             return new PathBlock(location, PathBlockType.SOLID);
         }
     }
 
     private void addSnapshot(@NonNull PathLocation location, long key, @NonNull ChunkSnapshot snapshot) {
+        
         if (!snapshots.containsKey(location.getPathWorld().getUuid())) snapshots.put(location.getPathWorld().getUuid(), new WorldDomain());
+        
         WorldDomain worldDomain = snapshots.get(location.getPathWorld().getUuid());
-        worldDomain.putSnapshot(key, snapshot);
+        worldDomain.addSnapshot(key, snapshot);
+        
         PathingScheduler.runLaterAsync(() -> worldDomain.removeSnapshot(key), 1200L);
     }
 }

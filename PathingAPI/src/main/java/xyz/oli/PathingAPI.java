@@ -16,25 +16,30 @@ public class PathingAPI {
     private MaterialParser parser = null;
     private SnapshotManager snapshotManager = null;
 
-    public Pathfinder getPathfinder() {
+    public Pathfinder instantiateNewPathfinder() {
+        
         RegisteredServiceProvider<PathfinderFactory> registration = Bukkit.getServicesManager().getRegistration(PathfinderFactory.class);
-        return registration != null ? registration.getProvider().newPathfinder() : null;
+        
+        if(registration == null)
+            throw new IllegalStateException();
+        
+        return registration.getProvider().newPathfinder();
     }
-
+    
+    public void setFields(@NonNull MaterialParser parser, @NonNull SnapshotManager snapshotManager) {
+        
+        if (PathingAPI.parser != null || PathingAPI.snapshotManager != null)
+            throw new UnsupportedOperationException("Cannot redefine singleton MaterialParser");
+        
+        PathingAPI.parser = parser;
+        PathingAPI.snapshotManager = snapshotManager;
+    }
+    
     public MaterialParser getParser() {
         return parser;
     }
 
     public SnapshotManager getSnapshotManager() {
         return snapshotManager;
-    }
-
-    public static void setFields(@NonNull MaterialParser parser, @NonNull SnapshotManager snapshotManager) {
-
-        if (PathingAPI.parser != null || PathingAPI.snapshotManager != null) {
-            throw new UnsupportedOperationException("Cannot redefine singleton MaterialParser");
-        }
-            PathingAPI.parser = parser;
-            PathingAPI.snapshotManager = snapshotManager;
     }
 }
