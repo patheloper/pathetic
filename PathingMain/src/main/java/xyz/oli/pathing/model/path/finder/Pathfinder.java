@@ -7,6 +7,7 @@ import org.bukkit.util.Vector;
 import xyz.oli.event.PathingFinishedEvent;
 import xyz.oli.event.PathingStartFindEvent;
 import xyz.oli.pathing.PathfinderStrategy;
+import xyz.oli.pathing.bstats.BStatsHandler;
 import xyz.oli.pathing.model.path.Path;
 import xyz.oli.pathing.util.PathingScheduler;
 import xyz.oli.wrapper.BukkitConverter;
@@ -35,6 +36,8 @@ public class Pathfinder {
      * @see Pathfinder#retracePath(Node, Node, PathLocation, PathLocation)
      */
     public PathfinderResult findPath(PathLocation start, PathLocation target, final int maxChecks, PathfinderStrategy strategy) {
+
+        BStatsHandler.addPath();
 
         PathingStartFindEvent startFindEvent = new PathingStartFindEvent(start, target, strategy);
         PathingScheduler.runOnMain(() -> Bukkit.getPluginManager().callEvent(startFindEvent));

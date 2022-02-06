@@ -4,6 +4,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import xyz.oli.PathingAPI;
 import xyz.oli.material.MaterialParser;
+import xyz.oli.pathing.bstats.BStatsHandler;
 import xyz.oli.pathing.material.legacy.LegacyMaterialHandler;
 import xyz.oli.pathing.model.path.finder.PathfinderImpl;
 import xyz.oli.pathing.model.path.finder.strategy.chunks.SnapshotManager;
@@ -33,6 +34,8 @@ public class PathfindingPlugin extends JavaPlugin {
         else parser = new ModernMaterialParser();
 
         PathingAPI.setFields(parser, new SnapshotManager(), new PathfinderImpl());
+
+        new BStatsHandler(this);
     }
 
     public static Logger getPluginLogger() {

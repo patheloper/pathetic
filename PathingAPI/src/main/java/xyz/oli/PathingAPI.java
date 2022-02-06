@@ -26,10 +26,10 @@ public class PathingAPI {
     }
 
     public static void setFields(@NonNull MaterialParser parser, @NonNull SnapshotManager snapshotManager, @NonNull Pathfinder pathfinder) {
+
         if (PathingAPI.parser != null || PathingAPI.snapshotManager != null || PathingAPI.pathfinder != null) {
             throw new UnsupportedOperationException("Cannot redefine singleton MaterialParser");
         }
-
             PathingAPI.parser = parser;
             PathingAPI.snapshotManager = snapshotManager;
             PathingAPI.pathfinder = pathfinder;
