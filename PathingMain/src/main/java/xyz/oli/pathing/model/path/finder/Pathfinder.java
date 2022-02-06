@@ -42,8 +42,10 @@ public class Pathfinder {
         PathingStartFindEvent startFindEvent = new PathingStartFindEvent(start, target, strategy);
         PathingScheduler.runOnMain(() -> Bukkit.getPluginManager().callEvent(startFindEvent));
 
-        if (!start.getPathWorld().equals(target.getPathWorld()) || !strategy.endIsValid(start.getBlock()) || !strategy.endIsValid(target.getBlock()) || (startFindEvent.isCancelled()))
+        if (!start.getPathWorld().equals(target.getPathWorld()) || !strategy.endIsValid(start.getBlock()) || !strategy.endIsValid(target.getBlock()) || (startFindEvent.isCancelled())) {
+            BStatsHandler.addFailedPath();
             return new PathfinderResult(PathfinderResult.PathfinderSuccess.INVALID, new Path(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), EMPTY_LIST));
+        }
 
         if (start.getBlockX() == target.getBlockX() && start.getBlockY() == target.getBlockY() && start.getBlockZ() == target.getBlockZ()){
     
@@ -87,6 +89,8 @@ public class Pathfinder {
             }
         }
 
+        BStatsHandler.addFailedPath();
+
         return new PathfinderResult(PathfinderResult.PathfinderSuccess.FAILED, new Path(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), EMPTY_LIST));
     }
 
@@ -111,6 +115,8 @@ public class Pathfinder {
 
         PathingFinishedEvent pathingFinishedEvent = new PathingFinishedEvent(start, target, pathReversed);
         PathingScheduler.runOnMain(() -> Bukkit.getPluginManager().callEvent(pathingFinishedEvent));
+
+        BStatsHandler.addLength(pathReversed.size());
         
         return new PathfinderResult(PathfinderResult.PathfinderSuccess.FOUND, new Path(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), new LinkedHashSet<>(pathReversed)));
     }
