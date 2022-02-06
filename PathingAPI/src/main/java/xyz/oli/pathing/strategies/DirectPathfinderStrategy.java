@@ -12,7 +12,7 @@ public class DirectPathfinderStrategy implements PathfinderStrategy {
     }
 
     @Override
-    public boolean verifyEnd(@NonNull PathBlock block) {
+    public boolean endIsValid(@NonNull PathBlock block) {
         return block.isEmpty();
     }
 

@@ -19,6 +19,6 @@ public interface PathfinderStrategy {
      *
      * @param location The location to check
      */
-    boolean verifyEnd(@NonNull PathBlock location);
+    boolean endIsValid(@NonNull PathBlock location);
     
 }

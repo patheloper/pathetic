@@ -9,6 +9,7 @@ import xyz.oli.event.PathingStartFindEvent;
 import xyz.oli.pathing.PathfinderStrategy;
 import xyz.oli.pathing.PathfindingPlugin;
 import xyz.oli.pathing.model.path.Path;
+import xyz.oli.pathing.util.PathingScheduler;
 import xyz.oli.wrapper.BukkitConverter;
 import xyz.oli.wrapper.PathLocation;
 
@@ -37,10 +38,10 @@ public class Pathfinder {
     public PathfinderResult findPath(PathLocation start, PathLocation target, final int maxChecks, PathfinderStrategy strategy) {
 
         PathingStartFindEvent startFindEvent = new PathingStartFindEvent(start, target, strategy);
-        Bukkit.getScheduler().runTask(PathfindingPlugin.getInstance(), () -> Bukkit.getPluginManager().callEvent(startFindEvent));
+        PathingScheduler.runOnMain(() -> Bukkit.getPluginManager().callEvent(startFindEvent));
 
-        if (!start.getPathWorld().equals(target.getPathWorld()) || !strategy.verifyEnd(start.getBlock()) || !strategy.verifyEnd(target.getBlock()) || (startFindEvent.isCancelled()))
-            return new PathfinderResult(PathfinderResult.PathfinderSuccess.FAILED, new Path(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), EMPTY_LIST));
+        if (!start.getPathWorld().equals(target.getPathWorld()) || !strategy.endIsValid(start.getBlock()) || !strategy.endIsValid(target.getBlock()) || (startFindEvent.isCancelled()))
+            return new PathfinderResult(PathfinderResult.PathfinderSuccess.INVALID, new Path(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), EMPTY_LIST));
 
         if (start.getBlockX() == target.getBlockX() && start.getBlockY() == target.getBlockY() && start.getBlockZ() == target.getBlockZ()){
     
@@ -107,7 +108,7 @@ public class Pathfinder {
         Collections.reverse(pathReversed);
 
         PathingFinishedEvent pathingFinishedEvent = new PathingFinishedEvent(start, target, pathReversed);
-        Bukkit.getScheduler().runTask(PathfindingPlugin.getInstance(), () -> Bukkit.getPluginManager().callEvent(pathingFinishedEvent));
+        PathingScheduler.runOnMain(() -> Bukkit.getPluginManager().callEvent(pathingFinishedEvent));
         
         return new PathfinderResult(PathfinderResult.PathfinderSuccess.FOUND, new Path(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), new LinkedHashSet<>(pathReversed)));
     }

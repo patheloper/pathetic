@@ -15,7 +15,7 @@ public class WalkingPathfinderStrategy implements PathfinderStrategy {
     }
 
     @Override
-    public boolean verifyEnd(@NonNull PathBlock block) {
+    public boolean endIsValid(@NonNull PathBlock block) {
         return block.isPassable() && block.getPathLocation().clone().add(0,1,0).getBlock().isPassable() && !block.getPathLocation().clone().add(0,-1,0).getBlock().isPassable();
     }
 

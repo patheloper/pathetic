@@ -1,9 +1,9 @@
 package xyz.oli.pathing.model.path.finder.strategy.chunks;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChunkSnapshot;
 
 import xyz.oli.pathing.PathfindingPlugin;
+import xyz.oli.pathing.util.PathingScheduler;
 import xyz.oli.wrapper.BukkitConverter;
 import xyz.oli.wrapper.PathBlock;
 import xyz.oli.wrapper.PathBlockType;
@@ -36,13 +36,13 @@ public class SnapshotManager implements xyz.oli.pathing.SnapshotManager {
             PathBlockType pathBlockType = BukkitConverter.toPathBlockType(ChunkUtils.getMaterial(chunkSnapshot, location.getBlockX() - chunkX * 16, location.getBlockY(), location.getBlockZ() - chunkZ * 16));
             return new PathBlock(location, pathBlockType);
         }catch (Exception e) {
-            PathfindingPlugin.getInstance().getLogger().warning("Error fetching Block: " + e.getMessage());
+            PathfindingPlugin.getPluginLogger().warning("Error fetching Block: " + e.getMessage());
             return new PathBlock(location, PathBlockType.SOLID);
         }
     }
 
     private void addSnapshot(long key, ChunkSnapshot snapshot) {
         snapshots.put(key, snapshot);
-        Bukkit.getScheduler().runTaskLaterAsynchronously(PathfindingPlugin.getInstance(), () -> snapshots.remove(key, snapshot), 1200);
+        PathingScheduler.runLaterAsync(() -> snapshots.remove(key, snapshot), 1200L);
     }
 }

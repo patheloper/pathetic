@@ -1,5 +1,6 @@
 package xyz.oli;
 
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import xyz.oli.material.MaterialParser;
 import xyz.oli.pathing.Pathfinder;
@@ -24,24 +25,13 @@ public class PathingAPI {
         return snapshotManager;
     }
 
-    public static void setParser(MaterialParser parser) {
-        if (PathingAPI.parser != null) {
+    public static void setFields(@NonNull MaterialParser parser, @NonNull SnapshotManager snapshotManager, @NonNull Pathfinder pathfinder) {
+        if (PathingAPI.parser != null || PathingAPI.snapshotManager != null || PathingAPI.pathfinder != null) {
             throw new UnsupportedOperationException("Cannot redefine singleton MaterialParser");
         }
-        PathingAPI.parser = parser;
-    }
 
-    public static void setSnapshotManager(SnapshotManager snapshotManager) {
-        if (PathingAPI.snapshotManager != null) {
-            throw new UnsupportedOperationException("Cannot redefine singleton SnapshotManager");
-        }
-        PathingAPI.snapshotManager = snapshotManager;
-    }
-
-    public static void setPathfinder(Pathfinder pathfinder) {
-        if (PathingAPI.pathfinder != null) {
-            throw new UnsupportedOperationException("Cannot redefine singleton Pathfinder");
-        }
-        PathingAPI.pathfinder = pathfinder;
+            PathingAPI.parser = parser;
+            PathingAPI.snapshotManager = snapshotManager;
+            PathingAPI.pathfinder = pathfinder;
     }
 }

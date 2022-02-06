@@ -1,6 +1,7 @@
 package xyz.oli.event;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.event.Cancellable;
 
 import xyz.oli.pathing.PathfinderStrategy;
