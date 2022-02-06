@@ -7,7 +7,6 @@ import org.bukkit.util.Vector;
 import xyz.oli.event.PathingFinishedEvent;
 import xyz.oli.event.PathingStartFindEvent;
 import xyz.oli.pathing.PathfinderStrategy;
-import xyz.oli.pathing.PathfindingPlugin;
 import xyz.oli.pathing.model.path.Path;
 import xyz.oli.pathing.util.PathingScheduler;
 import xyz.oli.wrapper.BukkitConverter;
