@@ -34,8 +34,7 @@ public class PathfindingPlugin extends JavaPlugin {
         else parser = new ModernMaterialParser();
 
         PathingAPI.setFields(parser, new SnapshotManager(), new PathfinderImpl());
-
-        new BStatsHandler(this);
+        BStatsHandler.init(this);
     }
 
     public static Logger getPluginLogger() {

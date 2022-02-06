@@ -37,13 +37,13 @@ public class Pathfinder {
      */
     public PathfinderResult findPath(PathLocation start, PathLocation target, final int maxChecks, PathfinderStrategy strategy) {
 
-        BStatsHandler.addPath();
+        BStatsHandler.increasePathCount();
 
         PathingStartFindEvent startFindEvent = new PathingStartFindEvent(start, target, strategy);
         PathingScheduler.runOnMain(() -> Bukkit.getPluginManager().callEvent(startFindEvent));
 
         if (!start.getPathWorld().equals(target.getPathWorld()) || !strategy.endIsValid(start.getBlock()) || !strategy.endIsValid(target.getBlock()) || (startFindEvent.isCancelled())) {
-            BStatsHandler.addFailedPath();
+            BStatsHandler.increaseFailedPathCount();
             return new PathfinderResult(PathfinderResult.PathfinderSuccess.INVALID, new Path(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), EMPTY_LIST));
         }
 
@@ -89,7 +89,7 @@ public class Pathfinder {
             }
         }
 
-        BStatsHandler.addFailedPath();
+        BStatsHandler.increaseFailedPathCount();
 
         return new PathfinderResult(PathfinderResult.PathfinderSuccess.FAILED, new Path(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), EMPTY_LIST));
     }
