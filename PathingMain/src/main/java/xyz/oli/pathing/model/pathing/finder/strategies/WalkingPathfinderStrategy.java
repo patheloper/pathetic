@@ -1,4 +1,4 @@
-package xyz.oli.pathing.model.path.finder.strategies;
+package xyz.oli.pathing.model.pathing.finder.strategies;
 
 import lombok.NonNull;
 import xyz.oli.pathing.PathfinderStrategy;

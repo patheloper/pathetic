@@ -1,4 +1,4 @@
-package xyz.oli.pathing.model.path.world;
+package xyz.oli.pathing.model.pathing.world;
 
 import org.bukkit.ChunkSnapshot;
 

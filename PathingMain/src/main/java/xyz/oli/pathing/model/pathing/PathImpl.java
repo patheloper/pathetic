@@ -1,4 +1,4 @@
-package xyz.oli.pathing.model.path;
+package xyz.oli.pathing.model.pathing;
 
 import lombok.AllArgsConstructor;
 import org.bukkit.Location;

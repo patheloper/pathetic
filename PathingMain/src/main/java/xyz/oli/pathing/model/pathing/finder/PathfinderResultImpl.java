@@ -1,4 +1,4 @@
-package xyz.oli.pathing.model.path.finder.pathfinder;
+package xyz.oli.pathing.model.pathing.finder;
 
 import lombok.AllArgsConstructor;
 import xyz.oli.pathing.Path;

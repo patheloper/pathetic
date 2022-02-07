@@ -1,4 +1,4 @@
-package xyz.oli.pathing.model.path.finder.pathfinder;
+package xyz.oli.pathing.model.pathing.finder;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -9,7 +9,7 @@ import xyz.oli.event.PathingStartFindEvent;
 import xyz.oli.pathing.PathfinderResult;
 import xyz.oli.pathing.PathfinderStrategy;
 import xyz.oli.pathing.bstats.BStatsHandler;
-import xyz.oli.pathing.model.path.PathImpl;
+import xyz.oli.pathing.model.pathing.PathImpl;
 import xyz.oli.pathing.util.PathingScheduler;
 import xyz.oli.wrapper.BukkitConverter;
 import xyz.oli.wrapper.PathLocation;
