@@ -45,20 +45,6 @@ public class PathfinderImpl implements xyz.oli.pathing.Pathfinder {
         return CompletableFuture.supplyAsync(() -> seekPath(start, target, strategy), FORK_JOIN_POOL);
     }
     
-    /**
-     * Uses the A* algorithm to find a path to the {@param target} from the {@param start}.
-     * <p>
-     * Uses the Node's parent Node in order to then retrace its steps once the end is reached.
-     *
-     * @see PathfinderImpl#retracePath(Node, Node, PathLocation, PathLocation)
-     */
-    /*
-    @Override
-    public PathfinderResultImpl findPath(PathLocation start, PathLocation target, PathfinderStrategy strategy, final int maxChecks, boolean async) {
-    
-    }
-     */
-    
     /* refactor */
     /* renamed for now since overlap with {@link #findPath} */
     private PathfinderResult seekPath(PathLocation start, PathLocation target, PathfinderStrategy strategy) {
