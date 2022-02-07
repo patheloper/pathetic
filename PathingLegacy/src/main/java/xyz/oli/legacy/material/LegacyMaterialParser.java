@@ -1,4 +1,4 @@
-package xyz.oli.pathing.legacy.material;
+package xyz.oli.legacy.material;
 
 import lombok.NonNull;
 import org.bukkit.ChunkSnapshot;

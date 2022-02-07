@@ -9,7 +9,7 @@ import xyz.oli.api.PathingAPI;
 import xyz.oli.api.material.MaterialParser;
 import xyz.oli.api.pathing.PathfinderFactory;
 import xyz.oli.pathing.bstats.BStatsHandler;
-import xyz.oli.pathing.legacy.material.LegacyMaterialParser;
+import xyz.oli.legacy.material.LegacyMaterialParser;
 import xyz.oli.pathing.model.pathing.finder.factory.PathfinderFactoryImpl;
 import xyz.oli.pathing.model.pathing.world.chunk.SnapshotManagerImpl;
 import xyz.oli.pathing.model.pathing.world.material.parser.ModernMaterialParser;
