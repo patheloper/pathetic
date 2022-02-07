@@ -1,9 +1,10 @@
-package xyz.oli.pathing.model.path.finder.strategy.chunks;
+package xyz.oli.pathing.model.path.world.chunk;
 
 import lombok.NonNull;
 import org.bukkit.ChunkSnapshot;
 
 import xyz.oli.pathing.Pathetic;
+import xyz.oli.pathing.model.path.world.WorldDomain;
 import xyz.oli.pathing.util.ChunkUtils;
 import xyz.oli.pathing.util.PathingScheduler;
 import xyz.oli.wrapper.BukkitConverter;

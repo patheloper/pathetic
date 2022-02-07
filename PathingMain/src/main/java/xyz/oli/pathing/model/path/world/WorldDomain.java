@@ -1,4 +1,4 @@
-package xyz.oli.pathing.model.path.finder.strategy.chunks;
+package xyz.oli.pathing.model.path.world;
 
 import org.bukkit.ChunkSnapshot;
 

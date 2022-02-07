@@ -1,4 +1,4 @@
-package xyz.oli.pathing.model.path.finder.strategy.chunks.materialparser;
+package xyz.oli.pathing.model.path.world.material.parser;
 
 import lombok.NonNull;
 import org.bukkit.ChunkSnapshot;
