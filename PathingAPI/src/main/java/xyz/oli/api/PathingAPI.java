@@ -29,7 +29,7 @@ public class PathingAPI {
     public void setFields(@NonNull MaterialParser parser, @NonNull SnapshotManager snapshotManager) {
         
         if (PathingAPI.parser != null || PathingAPI.snapshotManager != null)
-            throw new UnsupportedOperationException("Cannot redefine singleton MaterialParser");
+            throw new IllegalStateException("Cannot redefine singleton MaterialParser");
         
         PathingAPI.parser = parser;
         PathingAPI.snapshotManager = snapshotManager;
