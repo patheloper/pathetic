@@ -4,6 +4,7 @@ import lombok.NonNull;
 import org.bukkit.ChunkSnapshot;
 
 import xyz.oli.pathing.Pathetic;
+import xyz.oli.pathing.SnapshotManager;
 import xyz.oli.pathing.model.pathing.world.WorldDomain;
 import xyz.oli.pathing.util.ChunkUtils;
 import xyz.oli.pathing.util.PathingScheduler;
@@ -17,7 +18,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-public class SnapshotManagerImpl implements xyz.oli.pathing.SnapshotManager {
+public class SnapshotManagerImpl implements SnapshotManager {
 
     private final Map<UUID, WorldDomain> snapshots = new HashMap<>();
 

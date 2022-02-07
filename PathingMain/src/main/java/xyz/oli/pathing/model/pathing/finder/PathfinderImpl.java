@@ -6,6 +6,7 @@ import org.bukkit.util.Vector;
 
 import xyz.oli.event.PathingFinishedEvent;
 import xyz.oli.event.PathingStartFindEvent;
+import xyz.oli.pathing.Pathfinder;
 import xyz.oli.pathing.PathfinderResult;
 import xyz.oli.pathing.PathfinderStrategy;
 import xyz.oli.pathing.bstats.BStatsHandler;
@@ -18,7 +19,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ForkJoinPool;
 
-public class PathfinderImpl implements xyz.oli.pathing.Pathfinder {
+public class PathfinderImpl implements Pathfinder {
     
     private static final ForkJoinPool FORK_JOIN_POOL = new ForkJoinPool(Runtime.getRuntime().availableProcessors(), ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, true);
     private static final LinkedHashSet<Location> EMPTY_LIST = new LinkedHashSet<>();
