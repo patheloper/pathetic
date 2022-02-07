@@ -1,6 +1,7 @@
 package xyz.oli.pathing;
 
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.ServicePriority;
 
 import org.bukkit.plugin.java.JavaPlugin;
@@ -20,8 +21,15 @@ public class Pathetic {
 
     private static Logger logger;
     
+    /**
+     * @throws IllegalStateException If an attempt is made to initialize more than 1 time
+     */
     public static void initialize(JavaPlugin javaPlugin) {
-
+    
+        RegisteredServiceProvider<PathfinderFactory> registration = Bukkit.getServicesManager().getRegistration(PathfinderFactory.class);
+        if(registration != null)
+            throw new IllegalStateException("Can't be initialized twice");
+        
         logger = javaPlugin.getLogger();
         
         Bukkit.getServicesManager().register(PathfinderFactory.class, new PathfinderFactoryImpl(), javaPlugin, ServicePriority.Highest);
