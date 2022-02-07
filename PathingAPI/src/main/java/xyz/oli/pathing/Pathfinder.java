@@ -1,52 +1,14 @@
 package xyz.oli.pathing;
 
-import lombok.NonNull;
-import org.bukkit.Location;
-import xyz.oli.options.PathfinderOptions;
+import xyz.oli.wrapper.PathLocation;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
 
+/* maybe make it an abstract class so we can pass Options etc. via constructor */
 public interface Pathfinder {
-
-    /**
-     * Finds a path using the PathfinderOptions and taking the callback as an argument
-     * @param pathfinderOptions The options
-     * @param callback The callback consumer
-     */
-    void findPath(@NonNull PathfinderOptions pathfinderOptions, @NonNull Consumer<PathResult> callback);
-
-    /**
-     * Finds a path between two locations
-     * @param startLocation The start location
-     * @param targetLocation The target location
-     * @return CompletableFuture<PathResult> The CF that will contain the result of the find
-     */
-    CompletableFuture<PathResult> findPath(@NonNull Location startLocation, @NonNull Location targetLocation);
-
-    /**
-     * Finds a path between two locations
-     * @param startLocation The start location
-     * @param targetLocation The target location
-     * @param strategy The strategy to follow
-     * @return CompletableFuture<PathResult> The CF that will contain the result of the find
-     */
-    CompletableFuture<PathResult> findPath(@NonNull Location startLocation, @NonNull Location targetLocation, @NonNull PathfinderStrategy strategy);
-
-    /**
-     * Finds a path synchronously and returns the result
-     * @param startLocation The start location
-     * @param targetLocation The target location
-     * @return PathResult - The result of the Pathfinding
-     */
-    PathResult findPathNow(@NonNull Location startLocation, @NonNull Location targetLocation);
-
-    /**
-     * Finds a path synchronously and returns the result
-     * @param startLocation The start location
-     * @param targetLocation The target location
-     * @param strategy The strategy to follow
-     * @return PathResult - The result of the Pathfinding
-     */
-    PathResult findPathNow(@NonNull Location startLocation, @NonNull Location targetLocation, @NonNull PathfinderStrategy strategy);
+    
+    PathfinderResult findPath(PathLocation start, PathLocation target, PathfinderStrategy strategy);
+    
+    CompletableFuture<PathfinderResult> findPathAsync(PathLocation start, PathLocation target, PathfinderStrategy strategy);
+    
 }

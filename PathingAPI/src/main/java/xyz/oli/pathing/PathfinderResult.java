@@ -1,6 +1,6 @@
 package xyz.oli.pathing;
 
-public interface PathResult {
+public interface PathfinderResult {
 
     /**
      * Returns the success

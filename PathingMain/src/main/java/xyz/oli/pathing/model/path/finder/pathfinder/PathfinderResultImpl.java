@@ -2,10 +2,9 @@ package xyz.oli.pathing.model.path.finder.pathfinder;
 
 import lombok.AllArgsConstructor;
 import xyz.oli.pathing.Path;
-import xyz.oli.pathing.PathResult;
 
 @AllArgsConstructor
-public class PathfinderResult implements PathResult {
+public class PathfinderResultImpl implements xyz.oli.pathing.PathfinderResult {
     
     PathfinderSuccess pathfinderSuccess;
     Path path;
