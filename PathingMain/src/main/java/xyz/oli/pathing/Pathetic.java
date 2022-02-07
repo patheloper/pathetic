@@ -5,8 +5,9 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.ServicePriority;
 
 import org.bukkit.plugin.java.JavaPlugin;
-import xyz.oli.PathingAPI;
-import xyz.oli.material.MaterialParser;
+import xyz.oli.api.PathingAPI;
+import xyz.oli.api.material.MaterialParser;
+import xyz.oli.api.pathing.PathfinderFactory;
 import xyz.oli.pathing.bstats.BStatsHandler;
 import xyz.oli.pathing.material.legacy.LegacyMaterialParser;
 import xyz.oli.pathing.model.pathing.finder.factory.PathfinderFactoryImpl;

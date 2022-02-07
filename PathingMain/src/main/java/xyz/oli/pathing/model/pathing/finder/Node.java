@@ -1,6 +1,6 @@
 package xyz.oli.pathing.model.pathing.finder;
 
-import xyz.oli.wrapper.PathLocation;
+import xyz.oli.api.wrapper.PathLocation;
 
 import java.util.Objects;
 

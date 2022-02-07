@@ -4,16 +4,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
-import xyz.oli.event.PathingFinishedEvent;
-import xyz.oli.event.PathingStartFindEvent;
-import xyz.oli.pathing.Pathfinder;
-import xyz.oli.pathing.PathfinderResult;
-import xyz.oli.pathing.PathfinderStrategy;
+import xyz.oli.api.event.PathingFinishedEvent;
+import xyz.oli.api.event.PathingStartFindEvent;
+import xyz.oli.api.pathing.Pathfinder;
+import xyz.oli.api.pathing.PathfinderResult;
+import xyz.oli.api.pathing.PathfinderStrategy;
 import xyz.oli.pathing.bstats.BStatsHandler;
 import xyz.oli.pathing.model.pathing.PathImpl;
 import xyz.oli.pathing.util.PathingScheduler;
-import xyz.oli.wrapper.BukkitConverter;
-import xyz.oli.wrapper.PathLocation;
+import xyz.oli.api.wrapper.BukkitConverter;
+import xyz.oli.api.wrapper.PathLocation;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;

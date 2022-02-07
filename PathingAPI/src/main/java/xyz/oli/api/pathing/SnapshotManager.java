@@ -1,7 +1,7 @@
-package xyz.oli.pathing;
+package xyz.oli.api.pathing;
 
-import xyz.oli.wrapper.PathBlock;
-import xyz.oli.wrapper.PathLocation;
+import xyz.oli.api.wrapper.PathBlock;
+import xyz.oli.api.wrapper.PathLocation;
 
 public interface SnapshotManager {
 

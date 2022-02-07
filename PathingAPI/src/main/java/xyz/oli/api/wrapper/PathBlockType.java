@@ -1,4 +1,4 @@
-package xyz.oli.wrapper;
+package xyz.oli.api.wrapper;
 
 /**
  * Enum to represent the block type of wrapped blocks

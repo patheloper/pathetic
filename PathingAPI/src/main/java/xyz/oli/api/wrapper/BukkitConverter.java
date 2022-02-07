@@ -1,4 +1,4 @@
-package xyz.oli.wrapper;
+package xyz.oli.api.wrapper;
 
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
@@ -8,8 +8,8 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
-import xyz.oli.PathingAPI;
-import xyz.oli.material.MaterialParser;
+import xyz.oli.api.PathingAPI;
+import xyz.oli.api.material.MaterialParser;
 
 @UtilityClass
 public class BukkitConverter {

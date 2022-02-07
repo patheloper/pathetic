@@ -5,7 +5,7 @@ import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
-import xyz.oli.material.MaterialParser;
+import xyz.oli.api.material.MaterialParser;
 
 public class LegacyMaterialParser implements MaterialParser {
 

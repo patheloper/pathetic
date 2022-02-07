@@ -4,14 +4,14 @@ import lombok.NonNull;
 import org.bukkit.ChunkSnapshot;
 
 import xyz.oli.pathing.Pathetic;
-import xyz.oli.pathing.SnapshotManager;
+import xyz.oli.api.pathing.SnapshotManager;
 import xyz.oli.pathing.model.pathing.world.WorldDomain;
 import xyz.oli.pathing.util.ChunkUtils;
 import xyz.oli.pathing.util.PathingScheduler;
-import xyz.oli.wrapper.BukkitConverter;
-import xyz.oli.wrapper.PathBlock;
-import xyz.oli.wrapper.PathBlockType;
-import xyz.oli.wrapper.PathLocation;
+import xyz.oli.api.wrapper.BukkitConverter;
+import xyz.oli.api.wrapper.PathBlock;
+import xyz.oli.api.wrapper.PathBlockType;
+import xyz.oli.api.wrapper.PathLocation;
 
 import java.util.HashMap;
 import java.util.Map;

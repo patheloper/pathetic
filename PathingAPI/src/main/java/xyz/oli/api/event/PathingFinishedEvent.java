@@ -1,10 +1,10 @@
-package xyz.oli.event;
+package xyz.oli.api.event;
 
 import com.google.common.collect.ImmutableList;
 import lombok.Getter;
 import org.bukkit.Location;
 
-import xyz.oli.wrapper.PathLocation;
+import xyz.oli.api.wrapper.PathLocation;
 
 import java.util.List;
 

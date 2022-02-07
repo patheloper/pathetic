@@ -1,11 +1,11 @@
-package xyz.oli.wrapper;
+package xyz.oli.api.wrapper;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
 
-import xyz.oli.PathingAPI;
+import xyz.oli.api.PathingAPI;
 
 @ToString
 @EqualsAndHashCode

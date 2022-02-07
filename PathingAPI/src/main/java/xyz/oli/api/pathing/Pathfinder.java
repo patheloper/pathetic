@@ -1,6 +1,6 @@
-package xyz.oli.pathing;
+package xyz.oli.api.pathing;
 
-import xyz.oli.wrapper.PathLocation;
+import xyz.oli.api.wrapper.PathLocation;
 
 import java.util.concurrent.CompletableFuture;
 

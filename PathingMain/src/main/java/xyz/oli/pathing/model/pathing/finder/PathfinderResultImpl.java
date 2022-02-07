@@ -1,8 +1,8 @@
 package xyz.oli.pathing.model.pathing.finder;
 
 import lombok.AllArgsConstructor;
-import xyz.oli.pathing.Path;
-import xyz.oli.pathing.PathfinderResult;
+import xyz.oli.api.pathing.Path;
+import xyz.oli.api.pathing.PathfinderResult;
 
 @AllArgsConstructor
 public class PathfinderResultImpl implements PathfinderResult {

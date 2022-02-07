@@ -2,7 +2,7 @@ package xyz.oli.pathing.model.pathing;
 
 import lombok.AllArgsConstructor;
 import org.bukkit.Location;
-import xyz.oli.pathing.Path;
+import xyz.oli.api.pathing.Path;
 
 import java.util.LinkedHashSet;
 

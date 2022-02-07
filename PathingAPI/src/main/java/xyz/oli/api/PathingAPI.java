@@ -1,14 +1,14 @@
-package xyz.oli;
+package xyz.oli.api;
 
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
-import xyz.oli.material.MaterialParser;
-import xyz.oli.pathing.Pathfinder;
-import xyz.oli.pathing.PathfinderFactory;
-import xyz.oli.pathing.SnapshotManager;
+import xyz.oli.api.material.MaterialParser;
+import xyz.oli.api.pathing.Pathfinder;
+import xyz.oli.api.pathing.PathfinderFactory;
+import xyz.oli.api.pathing.SnapshotManager;
 
 @UtilityClass
 public class PathingAPI {

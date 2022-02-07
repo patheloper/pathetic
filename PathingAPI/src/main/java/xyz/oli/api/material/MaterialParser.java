@@ -1,4 +1,4 @@
-package xyz.oli.material;
+package xyz.oli.api.material;
 
 import lombok.NonNull;
 import org.bukkit.ChunkSnapshot;

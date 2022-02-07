@@ -4,7 +4,7 @@ import lombok.experimental.UtilityClass;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
 
-import xyz.oli.PathingAPI;
+import xyz.oli.api.PathingAPI;
 
 @UtilityClass
 public class ChunkUtils {
