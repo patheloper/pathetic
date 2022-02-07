@@ -1,4 +1,4 @@
-package xyz.oli.pathing.model.path.finder.strategy.chunks;
+package xyz.oli.pathing.util;
 
 import lombok.experimental.UtilityClass;
 import org.bukkit.ChunkSnapshot;

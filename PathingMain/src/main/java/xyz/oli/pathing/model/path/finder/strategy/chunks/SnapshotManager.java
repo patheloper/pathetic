@@ -4,6 +4,7 @@ import lombok.NonNull;
 import org.bukkit.ChunkSnapshot;
 
 import xyz.oli.pathing.Pathetic;
+import xyz.oli.pathing.util.ChunkUtils;
 import xyz.oli.pathing.util.PathingScheduler;
 import xyz.oli.wrapper.BukkitConverter;
 import xyz.oli.wrapper.PathBlock;
