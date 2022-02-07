@@ -25,7 +25,7 @@ public class PathfinderImpl implements xyz.oli.pathing.Pathfinder {
     }
 
     @Override
-    public void findPath(@NonNull PathfinderOptions pathfinderOptions, @NonNull Consumer<PathResult> callback) {
+    public void findPathAsync(@NonNull PathfinderOptions pathfinderOptions, @NonNull Consumer<PathResult> callback) {
 
         if (pathfinderOptions.isAsyncMode()) {
             PathingScheduler.runAsync(() -> pathFinder.findPath(BukkitConverter.toPathLocation(pathfinderOptions.getStart()), BukkitConverter.toPathLocation(pathfinderOptions.getTarget()), pathfinderOptions.getStrategy()), callback);
@@ -37,22 +37,22 @@ public class PathfinderImpl implements xyz.oli.pathing.Pathfinder {
     }
 
     @Override
-    public CompletableFuture<PathResult> findPath(@NonNull Location startLocation, @NonNull Location targetLocation) {
-        return this.findPath(startLocation, targetLocation, new DirectPathfinderStrategy());
+    public CompletableFuture<PathResult> findPathAsync(@NonNull Location startLocation, @NonNull Location targetLocation) {
+        return this.findPathAsync(startLocation, targetLocation, new DirectPathfinderStrategy());
     }
 
     @Override
-    public CompletableFuture<PathResult> findPath(@NonNull Location startLocation, @NonNull Location targetLocation, @NonNull PathfinderStrategy strategy) {
+    public CompletableFuture<PathResult> findPathAsync(@NonNull Location startLocation, @NonNull Location targetLocation, @NonNull PathfinderStrategy strategy) {
         return PathingScheduler.supplyAsync(() -> pathFinder.findPath(BukkitConverter.toPathLocation(startLocation), BukkitConverter.toPathLocation(targetLocation), strategy));
     }
 
     @Override
-    public PathResult findPathNow(@NonNull Location startLocation, @NonNull Location targetLocation) {
-        return this.findPathNow(startLocation, targetLocation, new DirectPathfinderStrategy());
+    public PathResult findPathSync(@NonNull Location startLocation, @NonNull Location targetLocation) {
+        return this.findPathSync(startLocation, targetLocation, new DirectPathfinderStrategy());
     }
 
     @Override
-    public PathResult findPathNow(@NonNull Location startLocation, @NonNull Location targetLocation, @NonNull PathfinderStrategy strategy) {
+    public PathResult findPathSync(@NonNull Location startLocation, @NonNull Location targetLocation, @NonNull PathfinderStrategy strategy) {
         return pathFinder.findPath(BukkitConverter.toPathLocation(startLocation), BukkitConverter.toPathLocation(targetLocation), strategy);
     }
 }

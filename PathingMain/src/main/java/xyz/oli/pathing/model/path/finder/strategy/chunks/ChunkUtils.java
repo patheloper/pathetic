@@ -4,7 +4,7 @@ import lombok.experimental.UtilityClass;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
 
-import xyz.oli.PathingAPI;
+import xyz.oli.PatheticAPI;
 
 @UtilityClass
 public class ChunkUtils {
@@ -14,7 +14,7 @@ public class ChunkUtils {
     }
 
     public Material getMaterial(ChunkSnapshot chunkSnapshot, int x, int y, int z) {
-        return PathingAPI.getParser().getMaterial(chunkSnapshot, x, y, z);
+        return PatheticAPI.getParser().getMaterial(chunkSnapshot, x, y, z);
     }
 
     private long getaLong(final int x, final int z) {

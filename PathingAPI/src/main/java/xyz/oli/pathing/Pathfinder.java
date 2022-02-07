@@ -14,7 +14,7 @@ public interface Pathfinder {
      * @param pathfinderOptions The options
      * @param callback The callback consumer
      */
-    void findPath(@NonNull PathfinderOptions pathfinderOptions, @NonNull Consumer<PathResult> callback);
+    void findPathAsync(@NonNull PathfinderOptions pathfinderOptions, @NonNull Consumer<PathResult> callback);
 
     /**
      * Finds a path between two locations
@@ -22,7 +22,7 @@ public interface Pathfinder {
      * @param targetLocation The target location
      * @return CompletableFuture<PathResult> The CF that will contain the result of the find
      */
-    CompletableFuture<PathResult> findPath(@NonNull Location startLocation, @NonNull Location targetLocation);
+    CompletableFuture<PathResult> findPathAsync(@NonNull Location startLocation, @NonNull Location targetLocation);
 
     /**
      * Finds a path between two locations
@@ -31,7 +31,7 @@ public interface Pathfinder {
      * @param strategy The strategy to follow
      * @return CompletableFuture<PathResult> The CF that will contain the result of the find
      */
-    CompletableFuture<PathResult> findPath(@NonNull Location startLocation, @NonNull Location targetLocation, @NonNull PathfinderStrategy strategy);
+    CompletableFuture<PathResult> findPathAsync(@NonNull Location startLocation, @NonNull Location targetLocation, @NonNull PathfinderStrategy strategy);
 
     /**
      * Finds a path synchronously and returns the result
@@ -39,7 +39,7 @@ public interface Pathfinder {
      * @param targetLocation The target location
      * @return PathResult - The result of the Pathfinding
      */
-    PathResult findPathNow(@NonNull Location startLocation, @NonNull Location targetLocation);
+    PathResult findPathSync(@NonNull Location startLocation, @NonNull Location targetLocation);
 
     /**
      * Finds a path synchronously and returns the result
@@ -48,5 +48,5 @@ public interface Pathfinder {
      * @param strategy The strategy to follow
      * @return PathResult - The result of the Pathfinding
      */
-    PathResult findPathNow(@NonNull Location startLocation, @NonNull Location targetLocation, @NonNull PathfinderStrategy strategy);
+    PathResult findPathSync(@NonNull Location startLocation, @NonNull Location targetLocation, @NonNull PathfinderStrategy strategy);
 }
