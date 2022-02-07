@@ -9,7 +9,7 @@ import xyz.oli.event.PathingStartFindEvent;
 import xyz.oli.pathing.PathfinderResult;
 import xyz.oli.pathing.PathfinderStrategy;
 import xyz.oli.pathing.bstats.BStatsHandler;
-import xyz.oli.pathing.model.path.Path;
+import xyz.oli.pathing.model.path.PathImpl;
 import xyz.oli.pathing.util.PathingScheduler;
 import xyz.oli.wrapper.BukkitConverter;
 import xyz.oli.wrapper.PathLocation;
@@ -56,7 +56,7 @@ public class PathfinderImpl implements xyz.oli.pathing.Pathfinder {
     
         if (!start.getPathWorld().equals(target.getPathWorld()) || !strategy.endIsValid(start.getBlock()) || !strategy.endIsValid(target.getBlock()) || (startFindEvent.isCancelled())) {
             BStatsHandler.increaseFailedPathCount();
-            return new PathfinderResultImpl(PathfinderResultImpl.PathfinderSuccess.INVALID, new Path(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), EMPTY_LIST));
+            return new PathfinderResultImpl(PathfinderResultImpl.PathfinderSuccess.INVALID, new PathImpl(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), EMPTY_LIST));
         }
     
         if (start.getBlockX() == target.getBlockX() && start.getBlockY() == target.getBlockY() && start.getBlockZ() == target.getBlockZ()) {
@@ -64,7 +64,7 @@ public class PathfinderImpl implements xyz.oli.pathing.Pathfinder {
             LinkedHashSet<Location> nodeList = new LinkedHashSet<>();
             nodeList.add(BukkitConverter.toLocation(target));
         
-            return new PathfinderResultImpl(PathfinderResultImpl.PathfinderSuccess.FOUND, new Path(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), nodeList));
+            return new PathfinderResultImpl(PathfinderResultImpl.PathfinderSuccess.FOUND, new PathImpl(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), nodeList));
         }
     
         Node startNode = new Node(new PathLocation(start.getPathWorld(), start.getBlockX() + 0.5, start.getBlockY(), start.getBlockZ() + 0.5), start, target);
@@ -103,7 +103,7 @@ public class PathfinderImpl implements xyz.oli.pathing.Pathfinder {
     
         BStatsHandler.increaseFailedPathCount();
     
-        return new PathfinderResultImpl(PathfinderResultImpl.PathfinderSuccess.FAILED, new Path(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), EMPTY_LIST));
+        return new PathfinderResultImpl(PathfinderResultImpl.PathfinderSuccess.FAILED, new PathImpl(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), EMPTY_LIST));
     }
     
     private PathfinderResultImpl retracePath(Node startNode, Node endNode, PathLocation start, PathLocation target) {
@@ -126,7 +126,7 @@ public class PathfinderImpl implements xyz.oli.pathing.Pathfinder {
         
         BStatsHandler.addLength(pathReversed.size());
         
-        return new PathfinderResultImpl(PathfinderResultImpl.PathfinderSuccess.FOUND, new Path(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), new LinkedHashSet<>(pathReversed)));
+        return new PathfinderResultImpl(PathfinderResultImpl.PathfinderSuccess.FOUND, new PathImpl(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), new LinkedHashSet<>(pathReversed)));
     }
     
     private Collection<Node> getNeighbours(Node node, PathLocation start, PathLocation target) {

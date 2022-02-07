@@ -10,7 +10,7 @@ import xyz.oli.material.MaterialParser;
 import xyz.oli.pathing.bstats.BStatsHandler;
 import xyz.oli.pathing.material.legacy.LegacyMaterialParser;
 import xyz.oli.pathing.model.path.finder.PathfinderFactoryImpl;
-import xyz.oli.pathing.model.path.world.chunk.SnapshotManager;
+import xyz.oli.pathing.model.path.world.chunk.SnapshotManagerImpl;
 import xyz.oli.pathing.model.path.world.material.parser.ModernMaterialParser;
 import xyz.oli.pathing.util.BukkitVersionUtil;
 import xyz.oli.pathing.util.PathingScheduler;
@@ -40,7 +40,7 @@ public class Pathetic {
     
         BStatsHandler.init(javaPlugin);
         
-        PathingAPI.setFields(parser, new SnapshotManager());
+        PathingAPI.setFields(parser, new SnapshotManagerImpl());
         PathingScheduler.setPlugin(javaPlugin);
     }
     

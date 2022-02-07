@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-public class SnapshotManager implements xyz.oli.pathing.SnapshotManager {
+public class SnapshotManagerImpl implements xyz.oli.pathing.SnapshotManager {
 
     private final Map<UUID, WorldDomain> snapshots = new HashMap<>();
 

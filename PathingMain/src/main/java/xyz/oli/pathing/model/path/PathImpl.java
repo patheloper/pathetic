@@ -6,7 +6,7 @@ import org.bukkit.Location;
 import java.util.LinkedHashSet;
 
 @AllArgsConstructor
-public class Path implements xyz.oli.pathing.Path {
+public class PathImpl implements xyz.oli.pathing.Path {
 
     Location start;
     Location end;
