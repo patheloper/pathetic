@@ -11,6 +11,7 @@ import xyz.oli.api.wrapper.PathLocation;
 @Value
 @Builder
 @AllArgsConstructor
+/* not sure if still needed for only 3 args */
 public class PathfinderOptions {
     
     PathLocation start;

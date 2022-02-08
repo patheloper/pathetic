@@ -5,7 +5,6 @@ import xyz.oli.api.wrapper.PathLocation;
 
 import java.util.concurrent.CompletableFuture;
 
-/* maybe make it an abstract class so we can pass Options etc. via constructor */
 public abstract class Pathfinder {
     
     protected final PathfinderOptions options;
