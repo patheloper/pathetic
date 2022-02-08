@@ -7,7 +7,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import xyz.oli.api.PatheticAPI;
 import xyz.oli.api.material.MaterialParser;
 import xyz.oli.api.pathing.factory.PathfinderFactory;
-import xyz.oli.pathing.bstats.BStatsHandler;
+import xyz.oli.pathing.model.finder.bstats.BStatsHandler;
 import xyz.oli.legacy.material.LegacyMaterialParser;
 import xyz.oli.pathing.model.finder.factory.PathfinderFactoryImpl;
 import xyz.oli.pathing.model.world.chunk.SnapshotManagerImpl;

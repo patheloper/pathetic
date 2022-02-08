@@ -1,4 +1,4 @@
-package xyz.oli.pathing.bstats;
+package xyz.oli.pathing.model.finder.bstats;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;

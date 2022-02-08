@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>PathingPlugin</artifactId>
+        <artifactId>PatheticPlugin</artifactId>
         <groupId>xyz.oli</groupId>
         <version>1.0</version>
     </parent>
 
-    <artifactId>PathingAPI</artifactId>
+    <artifactId>PatheticAPI</artifactId>
     <version>1.0</version>
 
     <properties>
@@ -40,5 +40,4 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
-
 </project>
