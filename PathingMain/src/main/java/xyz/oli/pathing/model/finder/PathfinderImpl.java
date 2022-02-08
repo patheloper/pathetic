@@ -19,11 +19,9 @@ import xyz.oli.api.wrapper.PathLocation;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ForkJoinPool;
 
 public class PathfinderImpl extends Pathfinder {
     
-    private static final ForkJoinPool FORK_JOIN_POOL = new ForkJoinPool(Runtime.getRuntime().availableProcessors(), ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, true);
     private static final LinkedHashSet<Location> EMPTY_LIST = new LinkedHashSet<>();
     
     private static final int MAX_CHECKS = 20000;
@@ -49,11 +47,9 @@ public class PathfinderImpl extends Pathfinder {
     
     @Override
     public CompletableFuture<PathfinderResult> findPathAsync() {
-        return CompletableFuture.supplyAsync(() -> seekPath(options.getStart(), options.getTarget(), options.getStrategy()), FORK_JOIN_POOL);
+        return PathingScheduler.supplyAsync(() -> seekPath(options.getStart(), options.getTarget(), options.getStrategy()));
     }
-    
-    /* refactor */
-    /* renamed for now since overlap with {@link #findPath} */
+
     private PathfinderResult seekPath(PathLocation start, PathLocation target, PathfinderStrategy strategy) {
     
         BStatsHandler.increasePathCount();
