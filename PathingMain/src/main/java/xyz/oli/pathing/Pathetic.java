@@ -12,7 +12,7 @@ import xyz.oli.pathing.bstats.BStatsHandler;
 import xyz.oli.legacy.material.LegacyMaterialParser;
 import xyz.oli.pathing.model.finder.factory.PathfinderFactoryImpl;
 import xyz.oli.pathing.model.world.chunk.SnapshotManagerImpl;
-import xyz.oli.pathing.model.world.material.parser.ModernMaterialParser;
+import xyz.oli.pathing.model.world.material.ModernMaterialParser;
 import xyz.oli.pathing.util.BukkitVersionUtil;
 import xyz.oli.pathing.util.PathingScheduler;
 
