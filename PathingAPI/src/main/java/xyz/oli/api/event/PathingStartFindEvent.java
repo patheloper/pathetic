@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.event.Cancellable;
 
-import xyz.oli.api.pathing.PathfinderStrategy;
+import xyz.oli.api.pathing.strategy.PathfinderStrategy;
 import xyz.oli.api.wrapper.PathLocation;
 
 public class PathingStartFindEvent extends PathingEvent implements Cancellable {

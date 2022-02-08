@@ -1,4 +1,4 @@
-package xyz.oli.api.pathing;
+package xyz.oli.api.pathing.result;
 
 public interface PathfinderResult {
 

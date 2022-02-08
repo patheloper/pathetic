@@ -6,10 +6,10 @@ import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import xyz.oli.api.material.MaterialParser;
-import xyz.oli.api.options.PathfinderOptions;
+import xyz.oli.api.pathing.options.PathfinderOptions;
 import xyz.oli.api.pathing.Pathfinder;
-import xyz.oli.api.pathing.PathfinderFactory;
-import xyz.oli.api.pathing.SnapshotManager;
+import xyz.oli.api.pathing.factory.PathfinderFactory;
+import xyz.oli.api.pathing.world.chunk.SnapshotManager;
 
 @UtilityClass
 public class PathingAPI {

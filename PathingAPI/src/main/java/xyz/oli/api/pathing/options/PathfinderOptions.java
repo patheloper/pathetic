@@ -1,11 +1,10 @@
-package xyz.oli.api.options;
+package xyz.oli.api.pathing.options;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;
-import org.bukkit.Location;
-import xyz.oli.api.pathing.PathfinderStrategy;
+import xyz.oli.api.pathing.strategy.PathfinderStrategy;
 import xyz.oli.api.wrapper.PathLocation;
 
 @Value

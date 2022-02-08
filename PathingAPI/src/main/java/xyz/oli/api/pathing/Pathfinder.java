@@ -1,7 +1,7 @@
 package xyz.oli.api.pathing;
 
-import xyz.oli.api.options.PathfinderOptions;
-import xyz.oli.api.wrapper.PathLocation;
+import xyz.oli.api.pathing.options.PathfinderOptions;
+import xyz.oli.api.pathing.result.PathfinderResult;
 
 import java.util.concurrent.CompletableFuture;
 

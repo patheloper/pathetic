@@ -1,4 +1,4 @@
-package xyz.oli.api.pathing;
+package xyz.oli.api.pathing.world.chunk;
 
 import xyz.oli.api.wrapper.PathBlock;
 import xyz.oli.api.wrapper.PathLocation;

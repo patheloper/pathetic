@@ -4,7 +4,7 @@ import lombok.NonNull;
 import org.bukkit.ChunkSnapshot;
 
 import xyz.oli.pathing.Pathetic;
-import xyz.oli.api.pathing.SnapshotManager;
+import xyz.oli.api.pathing.world.chunk.SnapshotManager;
 import xyz.oli.pathing.model.pathing.world.WorldDomain;
 import xyz.oli.pathing.util.ChunkUtils;
 import xyz.oli.pathing.util.PathingScheduler;

@@ -1,4 +1,4 @@
-package xyz.oli.api.pathing;
+package xyz.oli.api.pathing.strategy;
 
 import lombok.NonNull;
 import xyz.oli.api.wrapper.PathBlock;

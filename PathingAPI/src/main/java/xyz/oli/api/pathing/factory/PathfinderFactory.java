@@ -1,6 +1,7 @@
-package xyz.oli.api.pathing;
+package xyz.oli.api.pathing.factory;
 
-import xyz.oli.api.options.PathfinderOptions;
+import xyz.oli.api.pathing.Pathfinder;
+import xyz.oli.api.pathing.options.PathfinderOptions;
 
 public interface PathfinderFactory {
 
