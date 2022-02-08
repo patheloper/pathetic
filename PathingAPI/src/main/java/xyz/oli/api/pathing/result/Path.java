@@ -1,28 +1,29 @@
 package xyz.oli.api.pathing.result;
 
-import org.bukkit.Location;
+import xyz.oli.api.wrapper.PathLocation;
 
 import java.util.LinkedHashSet;
 
 public interface Path {
+    
     /**
      * Returns the path from the Pathfinder
      *
      * @return LinkedHashSet<Location> The locations of the pathfinding
      */
-    LinkedHashSet<Location> getLocations();
+    LinkedHashSet<PathLocation> getLocations();
 
     /**
      * Returns the start location of the path
      *
      * @return Location the start location
      */
-    Location getStart();
+    PathLocation getStart();
 
     /**
      * Returns the end location of the path
      *
      * @return Location the end location
      */
-    Location getEnd();
+    PathLocation getEnd();
 }

@@ -1,30 +1,30 @@
 package xyz.oli.pathing.model;
 
 import lombok.AllArgsConstructor;
-import org.bukkit.Location;
 import xyz.oli.api.pathing.result.Path;
+import xyz.oli.api.wrapper.PathLocation;
 
 import java.util.LinkedHashSet;
 
 @AllArgsConstructor
 public class PathImpl implements Path {
 
-    Location start;
-    Location end;
-    LinkedHashSet<Location> locations;
+    PathLocation start;
+    PathLocation end;
+    LinkedHashSet<PathLocation> locations;
 
     @Override
-    public LinkedHashSet<Location> getLocations() {
+    public LinkedHashSet<PathLocation> getLocations() {
         return this.locations;
     }
 
     @Override
-    public Location getStart() {
+    public PathLocation getStart() {
         return this.start;
     }
 
     @Override
-    public Location getEnd() {
+    public PathLocation getEnd() {
         return this.end;
     }
 }

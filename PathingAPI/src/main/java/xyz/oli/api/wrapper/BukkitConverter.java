@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
+import org.bukkit.util.Vector;
 import xyz.oli.api.PathingAPI;
 import xyz.oli.api.material.MaterialParser;
 
@@ -27,6 +28,16 @@ public class BukkitConverter {
         return new PathLocation(toPathWorld(location.getWorld()), location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 
+    @NonNull
+    public Vector toVector(PathVector pathVector) {
+        return new Vector(pathVector.getX(), pathVector.getY(), pathVector.getZ());
+    }
+    
+    @NonNull
+    public PathVector toPathVector(Vector vector) {
+        return new PathVector(vector.getX(), vector.getY(), vector.getZ());
+    }
+    
     @NonNull
     public Block toBlock(@NonNull PathBlock pathBlock) {
         return toLocation(pathBlock.getPathLocation()).getBlock();

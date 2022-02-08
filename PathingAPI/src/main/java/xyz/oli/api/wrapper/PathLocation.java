@@ -3,7 +3,6 @@ package xyz.oli.api.wrapper;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.bukkit.util.NumberConversions;
-import org.bukkit.util.Vector;
 
 import xyz.oli.api.PathingAPI;
 
@@ -67,7 +66,7 @@ public class PathLocation implements Cloneable {
         return this;
     }
 
-    public PathLocation add(final Vector vector) {
+    public PathLocation add(final PathVector vector) {
         add(vector.getX(), vector.getY(), vector.getZ());
         return this;
     }
@@ -80,7 +79,7 @@ public class PathLocation implements Cloneable {
         return this;
     }
     
-    public PathLocation subtract(final Vector vector) {
+    public PathLocation subtract(final PathVector vector) {
         subtract(vector.getX(), vector.getY(), vector.getZ());
         return this;
     }

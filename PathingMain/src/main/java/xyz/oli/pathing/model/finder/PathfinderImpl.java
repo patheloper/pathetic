@@ -1,8 +1,5 @@
 package xyz.oli.pathing.model.finder;
 
-import org.bukkit.Location;
-import org.bukkit.util.Vector;
-
 import xyz.oli.api.event.PathingFinishedEvent;
 import xyz.oli.api.event.PathingStartFindEvent;
 import xyz.oli.api.pathing.options.PathfinderOptions;
@@ -10,10 +7,10 @@ import xyz.oli.api.pathing.Pathfinder;
 import xyz.oli.api.pathing.result.PathfinderResult;
 import xyz.oli.api.pathing.result.PathfinderSuccess;
 import xyz.oli.api.pathing.strategy.PathfinderStrategy;
+import xyz.oli.api.wrapper.PathVector;
 import xyz.oli.pathing.bstats.BStatsHandler;
 import xyz.oli.pathing.model.PathImpl;
 import xyz.oli.pathing.util.EventUtil;
-import xyz.oli.api.wrapper.BukkitConverter;
 import xyz.oli.api.wrapper.PathLocation;
 
 import java.util.*;
@@ -23,18 +20,18 @@ import java.util.concurrent.ForkJoinPool;
 public class PathfinderImpl extends Pathfinder {
     
     private static final ForkJoinPool FORK_JOIN_POOL = new ForkJoinPool(Runtime.getRuntime().availableProcessors(), ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, true);
-    private static final LinkedHashSet<Location> EMPTY_LIST = new LinkedHashSet<>();
+    private static final LinkedHashSet<PathLocation> EMPTY_SET = new LinkedHashSet<>();
     
     private static final int MAX_CHECKS = 20000;
     
-    private static final Vector[] OFFSETS = {
+    private static final PathVector[] OFFSETS = {
             
-            new Vector(1, 0, 0),
-            new Vector(-1, 0, 0),
-            new Vector(0, 0, 1),
-            new Vector(0, 0, -1),
-            new Vector(0, 1, 0),
-            new Vector(0, -1, 0),
+            new PathVector(1, 0, 0),
+            new PathVector(-1, 0, 0),
+            new PathVector(0, 0, 1),
+            new PathVector(0, 0, -1),
+            new PathVector(0, 1, 0),
+            new PathVector(0, -1, 0),
     };
     
     public PathfinderImpl(PathfinderOptions options) {
@@ -62,7 +59,7 @@ public class PathfinderImpl extends Pathfinder {
             
             BStatsHandler.increaseFailedPathCount();
             
-            PathfinderResultImpl pathfinderResult = new PathfinderResultImpl(PathfinderSuccess.INVALID, new PathImpl(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), EMPTY_LIST));
+            PathfinderResultImpl pathfinderResult = new PathfinderResultImpl(PathfinderSuccess.INVALID, new PathImpl(start, target, EMPTY_SET));
             EventUtil.callEvent(new PathingFinishedEvent(pathfinderResult));
             
             return pathfinderResult;
@@ -70,10 +67,10 @@ public class PathfinderImpl extends Pathfinder {
     
         if (start.getBlockX() == target.getBlockX() && start.getBlockY() == target.getBlockY() && start.getBlockZ() == target.getBlockZ()) {
         
-            LinkedHashSet<Location> nodeList = new LinkedHashSet<>();
-            nodeList.add(BukkitConverter.toLocation(target));
+            LinkedHashSet<PathLocation> nodeList = new LinkedHashSet<>();
+            nodeList.add(target);
     
-            PathfinderResultImpl pathfinderResult = new PathfinderResultImpl(PathfinderSuccess.FOUND, new PathImpl(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), nodeList));
+            PathfinderResultImpl pathfinderResult = new PathfinderResultImpl(PathfinderSuccess.FOUND, new PathImpl(start, target, nodeList));
             EventUtil.callEvent(new PathingFinishedEvent(pathfinderResult));
             
             return pathfinderResult;
@@ -83,12 +80,11 @@ public class PathfinderImpl extends Pathfinder {
         Node targetNode = new Node(new PathLocation(target.getPathWorld(), target.getBlockX() + 0.5, target.getBlockY(), target.getBlockZ() + 0.5), start, target);
     
         PriorityQueue<Node> queue = new PriorityQueue<>();
+        queue.add(startNode);
+        
         Set<PathLocation> processed = new HashSet<>();
     
-        queue.add(startNode);
-    
         int depth = 0;
-    
         while (!queue.isEmpty() && depth <= MAX_CHECKS) {
         
             Node node = queue.poll();
@@ -124,7 +120,7 @@ public class PathfinderImpl extends Pathfinder {
     
         BStatsHandler.increaseFailedPathCount();
     
-        PathfinderResultImpl pathfinderResult = new PathfinderResultImpl(PathfinderSuccess.FAILED, new PathImpl(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), EMPTY_LIST));
+        PathfinderResultImpl pathfinderResult = new PathfinderResultImpl(PathfinderSuccess.FAILED, new PathImpl(start, target, EMPTY_SET));
         EventUtil.callEvent(new PathingFinishedEvent(pathfinderResult));
         
         return pathfinderResult;
@@ -132,31 +128,31 @@ public class PathfinderImpl extends Pathfinder {
     
     private PathfinderResult retracePath(Node startNode, Node endNode, PathLocation start, PathLocation target) {
         
-        LinkedHashSet<Location> path = new LinkedHashSet<>();
+        LinkedHashSet<PathLocation> path = new LinkedHashSet<>();
         Node currentNode = endNode;
         
         while (!currentNode.equals(startNode)) {
             
-            path.add(BukkitConverter.toLocation(currentNode.getLocation()));
+            path.add(currentNode.getLocation());
             if (currentNode.getParent() == null) break;
             currentNode = currentNode.getParent();
         }
         
-        List<Location> pathReversed = new ArrayList<>(path);
+        List<PathLocation> pathReversed = new ArrayList<>(path);
         Collections.reverse(pathReversed);
     
         BStatsHandler.addLength(pathReversed.size());
         
-        return new PathfinderResultImpl(PathfinderSuccess.FOUND, new PathImpl(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), new LinkedHashSet<>(pathReversed)));
+        return new PathfinderResultImpl(PathfinderSuccess.FOUND, new PathImpl(start, target, new LinkedHashSet<>(pathReversed)));
     }
     
     private Collection<Node> getNeighbours(Node node, PathLocation start, PathLocation target) {
         
         ArrayList<Node> neighbours = new ArrayList<>(OFFSETS.length);
         
-        for (Vector offset : OFFSETS) {
-            
-            Vector midpoint = new Vector();
+        for (PathVector offset : OFFSETS) {
+    
+            PathVector midpoint = new PathVector();
             
             if (offset.getY() != 0)
                 midpoint.setX(offset.getX() / 2).setZ(offset.getZ() / 2);
