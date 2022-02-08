@@ -9,7 +9,7 @@ import xyz.oli.api.pathing.result.PathfinderSuccess;
 import xyz.oli.api.pathing.strategy.PathfinderStrategy;
 import xyz.oli.api.pathing.strategy.strategies.DirectPathfinderStrategy;
 import xyz.oli.api.wrapper.PathVector;
-import xyz.oli.pathing.model.finder.bstats.BStatsHandler;
+import xyz.oli.pathing.bstats.BStatsHandler;
 import xyz.oli.pathing.model.PathImpl;
 import xyz.oli.pathing.util.EventUtil;
 import xyz.oli.api.wrapper.PathLocation;
