@@ -13,22 +13,23 @@ import xyz.oli.pathing.model.finder.factory.PathfinderFactoryImpl;
 import xyz.oli.pathing.model.world.chunk.SnapshotManagerImpl;
 import xyz.oli.pathing.model.world.material.ModernMaterialParser;
 import xyz.oli.pathing.util.BukkitVersionUtil;
-import xyz.oli.pathing.util.PathingScheduler;
 
 import java.util.logging.Logger;
 
 public class Pathetic {
 
-    private static Logger logger = null;
+    private static JavaPlugin instance;
+    private static Logger logger;
     
     /**
      * @throws IllegalStateException If an attempt is made to initialize more than 1 time
      */
     public static void initialize(JavaPlugin javaPlugin) {
 
-        if(logger != null)
+        if(instance != null)
             throw new IllegalStateException("Can't be initialized twice");
         
+        instance = javaPlugin;
         logger = javaPlugin.getLogger();
         
         Bukkit.getServicesManager().register(PathfinderFactory.class, new PathfinderFactoryImpl(), javaPlugin, ServicePriority.Highest);
@@ -40,10 +41,15 @@ public class Pathetic {
         BStatsHandler.init(javaPlugin);
 
         PathingAPI.setFields(parser, new SnapshotManagerImpl());
-        PathingScheduler.setPlugin(javaPlugin);
+    }
+    
+    public static JavaPlugin getPluginInstance() {
+        return instance;
     }
     
     public static Logger getPluginLogger() {
         return logger;
     }
+    
+    private Pathetic() {}
 }

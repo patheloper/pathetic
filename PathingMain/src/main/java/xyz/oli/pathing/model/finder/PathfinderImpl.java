@@ -1,6 +1,5 @@
 package xyz.oli.pathing.model.finder;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
@@ -13,15 +12,17 @@ import xyz.oli.api.pathing.result.PathfinderSuccess;
 import xyz.oli.api.pathing.strategy.PathfinderStrategy;
 import xyz.oli.pathing.bstats.BStatsHandler;
 import xyz.oli.pathing.model.PathImpl;
-import xyz.oli.pathing.util.PathingScheduler;
+import xyz.oli.pathing.util.EventUtil;
 import xyz.oli.api.wrapper.BukkitConverter;
 import xyz.oli.api.wrapper.PathLocation;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ForkJoinPool;
 
 public class PathfinderImpl extends Pathfinder {
     
+    private static final ForkJoinPool FORK_JOIN_POOL = new ForkJoinPool(Runtime.getRuntime().availableProcessors(), ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, true);
     private static final LinkedHashSet<Location> EMPTY_LIST = new LinkedHashSet<>();
     
     private static final int MAX_CHECKS = 20000;
@@ -47,27 +48,35 @@ public class PathfinderImpl extends Pathfinder {
     
     @Override
     public CompletableFuture<PathfinderResult> findPathAsync() {
-        return PathingScheduler.supplyAsync(() -> seekPath(options.getStart(), options.getTarget(), options.getStrategy()));
+        return CompletableFuture.supplyAsync(() -> seekPath(options.getStart(), options.getTarget(), options.getStrategy()), FORK_JOIN_POOL);
     }
 
     private PathfinderResult seekPath(PathLocation start, PathLocation target, PathfinderStrategy strategy) {
     
         BStatsHandler.increasePathCount();
     
-        PathingStartFindEvent startFindEvent = new PathingStartFindEvent(start, target, strategy);
-        PathingScheduler.runOnMain(() -> Bukkit.getPluginManager().callEvent(startFindEvent));
+        PathingStartFindEvent pathingStartFindEvent = new PathingStartFindEvent(start, target, strategy);
+        EventUtil.callEvent(pathingStartFindEvent);
     
-        if (!start.getPathWorld().equals(target.getPathWorld()) || !strategy.endIsValid(start.getBlock()) || !strategy.endIsValid(target.getBlock()) || (startFindEvent.isCancelled())) {
+        if (!start.getPathWorld().equals(target.getPathWorld()) || !strategy.endIsValid(start.getBlock()) || !strategy.endIsValid(target.getBlock()) || pathingStartFindEvent.isCancelled()) {
+            
             BStatsHandler.increaseFailedPathCount();
-            return new PathfinderResultImpl(PathfinderSuccess.INVALID, new PathImpl(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), EMPTY_LIST));
+            
+            PathfinderResultImpl pathfinderResult = new PathfinderResultImpl(PathfinderSuccess.INVALID, new PathImpl(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), EMPTY_LIST));
+            EventUtil.callEvent(new PathingFinishedEvent(pathfinderResult));
+            
+            return pathfinderResult;
         }
     
         if (start.getBlockX() == target.getBlockX() && start.getBlockY() == target.getBlockY() && start.getBlockZ() == target.getBlockZ()) {
         
             LinkedHashSet<Location> nodeList = new LinkedHashSet<>();
             nodeList.add(BukkitConverter.toLocation(target));
-        
-            return new PathfinderResultImpl(PathfinderSuccess.FOUND, new PathImpl(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), nodeList));
+    
+            PathfinderResultImpl pathfinderResult = new PathfinderResultImpl(PathfinderSuccess.FOUND, new PathImpl(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), nodeList));
+            EventUtil.callEvent(new PathingFinishedEvent(pathfinderResult));
+            
+            return pathfinderResult;
         }
     
         Node startNode = new Node(new PathLocation(start.getPathWorld(), start.getBlockX() + 0.5, start.getBlockY(), start.getBlockZ() + 0.5), start, target);
@@ -87,13 +96,22 @@ public class PathfinderImpl extends Pathfinder {
             depth++;
         
             if (node.equals(targetNode)) {
-                return retracePath(startNode, node, start, target);
+                
+                PathfinderResult result = retracePath(startNode, node, start, target);
+                EventUtil.callEvent(new PathingFinishedEvent(result));
+                
+                return result;
             }
         
             for (Node neighbourNode : getNeighbours(node, start, target)) {
             
-                if (neighbourNode.equals(targetNode))
-                    return retracePath(startNode, neighbourNode, start, target);
+                if (neighbourNode.equals(targetNode)) {
+    
+                    PathfinderResult result = retracePath(startNode, neighbourNode, start, target);
+                    EventUtil.callEvent(new PathingFinishedEvent(result));
+                    
+                    return result;
+                }
             
                 if (!strategy.isValid(neighbourNode.getLocation().getBlock(),
                         node.getLocation().getBlock(),
@@ -106,10 +124,13 @@ public class PathfinderImpl extends Pathfinder {
     
         BStatsHandler.increaseFailedPathCount();
     
-        return new PathfinderResultImpl(PathfinderSuccess.FAILED, new PathImpl(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), EMPTY_LIST));
+        PathfinderResultImpl pathfinderResult = new PathfinderResultImpl(PathfinderSuccess.FAILED, new PathImpl(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), EMPTY_LIST));
+        EventUtil.callEvent(new PathingFinishedEvent(pathfinderResult));
+        
+        return pathfinderResult;
     }
     
-    private PathfinderResultImpl retracePath(Node startNode, Node endNode, PathLocation start, PathLocation target) {
+    private PathfinderResult retracePath(Node startNode, Node endNode, PathLocation start, PathLocation target) {
         
         LinkedHashSet<Location> path = new LinkedHashSet<>();
         Node currentNode = endNode;
@@ -123,10 +144,7 @@ public class PathfinderImpl extends Pathfinder {
         
         List<Location> pathReversed = new ArrayList<>(path);
         Collections.reverse(pathReversed);
-        
-        PathingFinishedEvent pathingFinishedEvent = new PathingFinishedEvent(start, target, pathReversed);
-        PathingScheduler.runOnMain(() -> Bukkit.getPluginManager().callEvent(pathingFinishedEvent));
-        
+    
         BStatsHandler.addLength(pathReversed.size());
         
         return new PathfinderResultImpl(PathfinderSuccess.FOUND, new PathImpl(BukkitConverter.toLocation(start), BukkitConverter.toLocation(target), new LinkedHashSet<>(pathReversed)));

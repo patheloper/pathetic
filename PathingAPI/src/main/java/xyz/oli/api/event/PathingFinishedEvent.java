@@ -1,27 +1,15 @@
 package xyz.oli.api.event;
 
-import com.google.common.collect.ImmutableList;
 import lombok.Getter;
-import org.bukkit.Location;
 
-import xyz.oli.api.wrapper.PathLocation;
-
-import java.util.List;
+import xyz.oli.api.pathing.result.PathfinderResult;
 
 public class PathingFinishedEvent extends PathingEvent {
 
     @Getter
-    PathLocation start;
+    PathfinderResult pathfinderResult;
 
-    @Getter
-    PathLocation target;
-
-    @Getter
-    List<Location> locations;
-
-    public PathingFinishedEvent(PathLocation start, PathLocation target, List<Location> locations) {
-        this.start = start;
-        this.target = target;
-        this.locations = ImmutableList.copyOf(locations);
+    public PathingFinishedEvent(PathfinderResult result) {
+        this.pathfinderResult = result;
     }
 }

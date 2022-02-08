@@ -1,13 +1,13 @@
 package xyz.oli.pathing.model.world.chunk;
 
 import lombok.NonNull;
+import org.bukkit.Bukkit;
 import org.bukkit.ChunkSnapshot;
 
 import xyz.oli.pathing.Pathetic;
 import xyz.oli.api.pathing.world.chunk.SnapshotManager;
 import xyz.oli.pathing.model.world.WorldDomain;
 import xyz.oli.pathing.util.ChunkUtils;
-import xyz.oli.pathing.util.PathingScheduler;
 import xyz.oli.api.wrapper.BukkitConverter;
 import xyz.oli.api.wrapper.PathBlock;
 import xyz.oli.api.wrapper.PathBlockType;
@@ -63,7 +63,7 @@ public class SnapshotManagerImpl implements SnapshotManager {
         
         WorldDomain worldDomain = snapshots.get(location.getPathWorld().getUuid());
         worldDomain.addSnapshot(key, snapshot);
-        
-        PathingScheduler.runLaterAsync(() -> worldDomain.removeSnapshot(key), 1200L);
+    
+        Bukkit.getScheduler().runTaskLater(Pathetic.getPluginInstance(), () -> worldDomain.removeSnapshot(key), 1200L);
     }
 }
