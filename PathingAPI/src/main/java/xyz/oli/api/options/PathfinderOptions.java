@@ -6,21 +6,20 @@ import lombok.NonNull;
 import lombok.Value;
 import org.bukkit.Location;
 import xyz.oli.api.pathing.PathfinderStrategy;
+import xyz.oli.api.wrapper.PathLocation;
 
 @Value
 @Builder
 @AllArgsConstructor
 public class PathfinderOptions {
-
-    boolean asyncMode;
-    Location start;
-    Location target;
+    
+    PathLocation start;
+    PathLocation target;
     PathfinderStrategy strategy;
 
     public PathfinderOptions(@NonNull PathfinderOptionsBuilder builder) {
         this.start = builder.start;
         this.target = builder.target;
-        this.asyncMode = builder.asyncMode;
         this.strategy = builder.strategy;
     }
 }

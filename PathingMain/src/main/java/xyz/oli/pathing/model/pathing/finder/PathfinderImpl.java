@@ -6,6 +6,7 @@ import org.bukkit.util.Vector;
 
 import xyz.oli.api.event.PathingFinishedEvent;
 import xyz.oli.api.event.PathingStartFindEvent;
+import xyz.oli.api.options.PathfinderOptions;
 import xyz.oli.api.pathing.Pathfinder;
 import xyz.oli.api.pathing.PathfinderResult;
 import xyz.oli.api.pathing.PathfinderStrategy;
@@ -19,7 +20,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ForkJoinPool;
 
-public class PathfinderImpl implements Pathfinder {
+public class PathfinderImpl extends Pathfinder {
     
     private static final ForkJoinPool FORK_JOIN_POOL = new ForkJoinPool(Runtime.getRuntime().availableProcessors(), ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, true);
     private static final LinkedHashSet<Location> EMPTY_LIST = new LinkedHashSet<>();
@@ -36,14 +37,18 @@ public class PathfinderImpl implements Pathfinder {
             new Vector(0, -1, 0),
     };
     
-    @Override
-    public PathfinderResult findPath(PathLocation start, PathLocation target, PathfinderStrategy strategy) {
-        return seekPath(start, target, strategy);
+    public PathfinderImpl(PathfinderOptions options) {
+        super(options);
     }
     
     @Override
-    public CompletableFuture<PathfinderResult> findPathAsync(PathLocation start, PathLocation target, PathfinderStrategy strategy) {
-        return CompletableFuture.supplyAsync(() -> seekPath(start, target, strategy), FORK_JOIN_POOL);
+    public PathfinderResult findPath() {
+        return seekPath(options.getStart(), options.getTarget(), options.getStrategy());
+    }
+    
+    @Override
+    public CompletableFuture<PathfinderResult> findPathAsync() {
+        return CompletableFuture.supplyAsync(() -> seekPath(options.getStart(), options.getTarget(), options.getStrategy()), FORK_JOIN_POOL);
     }
     
     /* refactor */
