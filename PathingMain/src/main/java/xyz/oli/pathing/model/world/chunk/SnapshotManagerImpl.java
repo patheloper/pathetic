@@ -1,11 +1,11 @@
-package xyz.oli.pathing.model.pathing.world.chunk;
+package xyz.oli.pathing.model.world.chunk;
 
 import lombok.NonNull;
 import org.bukkit.ChunkSnapshot;
 
 import xyz.oli.pathing.Pathetic;
 import xyz.oli.api.pathing.world.chunk.SnapshotManager;
-import xyz.oli.pathing.model.pathing.world.WorldDomain;
+import xyz.oli.pathing.model.world.WorldDomain;
 import xyz.oli.pathing.util.ChunkUtils;
 import xyz.oli.pathing.util.PathingScheduler;
 import xyz.oli.api.wrapper.BukkitConverter;
