@@ -3,6 +3,7 @@ package xyz.oli.pathing.model.pathing.finder;
 import lombok.AllArgsConstructor;
 import xyz.oli.api.pathing.result.Path;
 import xyz.oli.api.pathing.result.PathfinderResult;
+import xyz.oli.api.pathing.result.PathfinderSuccess;
 
 @AllArgsConstructor
 public class PathfinderResultImpl implements PathfinderResult {
