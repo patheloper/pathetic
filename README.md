@@ -1,4 +1,6 @@
-# PathingAPI
+# Path-eticAPI
+
+A Simple and intuitive pathfinding API for Spigot plugins
 
 ### Example Usage
 ```java
@@ -9,7 +11,7 @@ PathfinderOptions options = PathfinderOptions.builder()
         .strategy(new DirectPathfinderStrategy())
         .build();
 
-PathingAPI.getPathfinder().findPath(options, pathfinderResult -> {
+PatheticAPI.instantiateNewPathfinder().findPathAsync(options, pathfinderResult -> {
     pathfinderResult.getPath().getLocations().forEach(location -> player.sendBlockChange(location, 
     Material.YELLOW_STAINED_GLASS.createBlockData()));
 });
