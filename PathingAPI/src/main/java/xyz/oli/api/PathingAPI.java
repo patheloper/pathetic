@@ -6,7 +6,6 @@ import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import xyz.oli.api.material.MaterialParser;
-import xyz.oli.api.pathing.options.PathfinderOptions;
 import xyz.oli.api.pathing.Pathfinder;
 import xyz.oli.api.pathing.factory.PathfinderFactory;
 import xyz.oli.api.pathing.world.chunk.SnapshotManager;
@@ -17,14 +16,14 @@ public class PathingAPI {
     private MaterialParser parser = null;
     private SnapshotManager snapshotManager = null;
 
-    public Pathfinder instantiateNewPathfinder(PathfinderOptions options) {
+    public Pathfinder instantiateNewPathfinder() {
         
         RegisteredServiceProvider<PathfinderFactory> registration = Bukkit.getServicesManager().getRegistration(PathfinderFactory.class);
         
         if(registration == null)
             throw new IllegalStateException();
         
-        return registration.getProvider().newPathfinder(options);
+        return registration.getProvider().newPathfinder();
     }
     
     public void setFields(@NonNull MaterialParser parser, @NonNull SnapshotManager snapshotManager) {
