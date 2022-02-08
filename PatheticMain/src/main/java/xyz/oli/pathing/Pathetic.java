@@ -1,5 +1,4 @@
 package xyz.oli.pathing;
-package xyz.oli.pathing;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.ServicePriority;
