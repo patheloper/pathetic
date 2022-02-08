@@ -4,7 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.ServicePriority;
 
 import org.bukkit.plugin.java.JavaPlugin;
-import xyz.oli.api.PathingAPI;
+import xyz.oli.api.PatheticAPI;
 import xyz.oli.api.material.MaterialParser;
 import xyz.oli.api.pathing.factory.PathfinderFactory;
 import xyz.oli.pathing.bstats.BStatsHandler;
@@ -40,7 +40,7 @@ public class Pathetic {
 
         BStatsHandler.init(javaPlugin);
 
-        PathingAPI.setFields(parser, new SnapshotManagerImpl());
+        PatheticAPI.setFields(parser, new SnapshotManagerImpl());
     }
     
     public static JavaPlugin getPluginInstance() {

@@ -9,7 +9,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 
 import org.bukkit.util.Vector;
-import xyz.oli.api.PathingAPI;
+import xyz.oli.api.PatheticAPI;
 import xyz.oli.api.material.MaterialParser;
 
 @UtilityClass
@@ -60,7 +60,7 @@ public class BukkitConverter {
     @NonNull
     public PathBlockType toPathBlockType(@NonNull Block block) {
 
-        MaterialParser parser = PathingAPI.getParser();
+        MaterialParser parser = PatheticAPI.getParser();
 
         if (parser.isLiquid(block)) return PathBlockType.LIQUID;
         else if (parser.isAir(block)) return PathBlockType.AIR;
@@ -72,7 +72,7 @@ public class BukkitConverter {
     @NonNull
     public PathBlockType toPathBlockType(@NonNull Material material) {
 
-        MaterialParser parser = PathingAPI.getParser();
+        MaterialParser parser = PatheticAPI.getParser();
 
         if (parser.isAir(material))
             return PathBlockType.AIR;

@@ -11,7 +11,7 @@ import xyz.oli.api.pathing.factory.PathfinderFactory;
 import xyz.oli.api.pathing.world.chunk.SnapshotManager;
 
 @UtilityClass
-public class PathingAPI {
+public class PatheticAPI {
 
     private MaterialParser parser = null;
     private SnapshotManager snapshotManager = null;
@@ -28,11 +28,11 @@ public class PathingAPI {
     
     public void setFields(@NonNull MaterialParser parser, @NonNull SnapshotManager snapshotManager) {
         
-        if (PathingAPI.parser != null || PathingAPI.snapshotManager != null)
+        if (PatheticAPI.parser != null || PatheticAPI.snapshotManager != null)
             throw new IllegalStateException("Cannot redefine singleton MaterialParser");
         
-        PathingAPI.parser = parser;
-        PathingAPI.snapshotManager = snapshotManager;
+        PatheticAPI.parser = parser;
+        PatheticAPI.snapshotManager = snapshotManager;
     }
     
     public MaterialParser getParser() {
