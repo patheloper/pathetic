@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>xyz.oli</groupId>
-    <artifactId>PathingPlugin</artifactId>
+    <artifactId>PatheticPlugin</artifactId>
     <packaging>pom</packaging>
     <version>1.0</version>
 
@@ -15,9 +15,9 @@
     </properties>
 
     <modules>
-        <module>PathingMain</module>
-        <module>PathingLegacy</module>
-        <module>PathingAPI</module>
+        <module>PatheticMain</module>
+        <module>PatheticLegacy</module>
+        <module>PatheticAPI</module>
     </modules>
 
 </project>
