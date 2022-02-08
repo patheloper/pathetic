@@ -3,7 +3,7 @@ package xyz.oli.api.pathing.result;
 public interface PathfinderResult {
     
     /**
-     * @return Path the Path
+     * @return The Path if found
      */
     Path getPath();
     
@@ -13,8 +13,7 @@ public interface PathfinderResult {
     boolean successful();
     
     /**
-     * Returns the success
-     * @return PathfinderSuccess
+     * @return The Success as Enum
      */
     PathfinderSuccess getPathfinderSuccess();
 }

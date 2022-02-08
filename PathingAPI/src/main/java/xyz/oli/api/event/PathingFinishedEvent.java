@@ -4,6 +4,10 @@ import lombok.Getter;
 
 import xyz.oli.api.pathing.result.PathfinderResult;
 
+/**
+ * An event called when a pathfinder finishes pathing. Therefore the result does not matter.
+ * Means that the event is called even if the pathing fails.
+ */
 public class PathingFinishedEvent extends PathingEvent {
 
     @Getter

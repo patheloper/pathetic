@@ -7,23 +7,17 @@ import java.util.LinkedHashSet;
 public interface Path {
     
     /**
-     * Returns the path from the Pathfinder
-     *
-     * @return LinkedHashSet<Location> The locations of the pathfinding
+     * Returns the path from the Pathfinder as a {@link LinkedHashSet} full of {@link PathLocation}
      */
     LinkedHashSet<PathLocation> getLocations();
 
     /**
      * Returns the start location of the path
-     *
-     * @return Location the start location
      */
     PathLocation getStart();
 
     /**
-     * Returns the end location of the path
-     *
-     * @return Location the end location
+     * Returns the target location of the path
      */
-    PathLocation getEnd();
+    PathLocation getTarget();
 }

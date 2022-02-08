@@ -7,6 +7,9 @@ import org.bukkit.event.Cancellable;
 import xyz.oli.api.pathing.strategy.PathfinderStrategy;
 import xyz.oli.api.wrapper.PathLocation;
 
+/**
+ * An event called when a Pathfinder starts pathing.
+ */
 public class PathingStartFindEvent extends PathingEvent implements Cancellable {
 
     @Setter

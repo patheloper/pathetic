@@ -24,7 +24,7 @@ public class PathImpl implements Path {
     }
 
     @Override
-    public PathLocation getEnd() {
+    public PathLocation getTarget() {
         return this.end;
     }
 }
