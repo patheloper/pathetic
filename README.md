@@ -1,6 +1,6 @@
 # Path-eticAPI
 
-A Simple and intuitive pathfinding API for Spigot plugins
+A Simple and intuitive pathfinding API for Spigot & Paper plugins
 
 ### Example Usage
 ```java
