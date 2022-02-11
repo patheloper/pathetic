@@ -1,6 +1,5 @@
 package xyz.oli.api;
 
-import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
 import org.bukkit.Bukkit;
@@ -13,33 +12,31 @@ import xyz.oli.api.pathing.world.chunk.SnapshotManager;
 @UtilityClass
 public class PatheticAPI {
 
-    private MaterialParser parser = null;
-    private SnapshotManager snapshotManager = null;
+    private final RegisteredServiceProvider<MaterialParser> parserRegistration = Bukkit.getServicesManager().getRegistration(MaterialParser.class);
+    private final RegisteredServiceProvider<SnapshotManager> snapshotManagerRegistration = Bukkit.getServicesManager().getRegistration(SnapshotManager.class);
+    private final RegisteredServiceProvider<PathfinderFactory> finderFactoryRegistration = Bukkit.getServicesManager().getRegistration(PathfinderFactory.class);
 
     public Pathfinder instantiateNewPathfinder() {
-        
-        RegisteredServiceProvider<PathfinderFactory> registration = Bukkit.getServicesManager().getRegistration(PathfinderFactory.class);
-        
-        if(registration == null)
+
+        if(finderFactoryRegistration == null)
             throw new IllegalStateException();
         
-        return registration.getProvider().newPathfinder();
-    }
-    
-    public void setFields(@NonNull MaterialParser parser, @NonNull SnapshotManager snapshotManager) {
-        
-        if (PatheticAPI.parser != null || PatheticAPI.snapshotManager != null)
-            throw new IllegalStateException("Cannot redefine singleton MaterialParser");
-        
-        PatheticAPI.parser = parser;
-        PatheticAPI.snapshotManager = snapshotManager;
+        return finderFactoryRegistration.getProvider().newPathfinder();
     }
     
     public MaterialParser getParser() {
-        return parser;
+
+        if(parserRegistration == null)
+            throw new IllegalStateException();
+
+        return parserRegistration.getProvider();
     }
 
     public SnapshotManager getSnapshotManager() {
-        return snapshotManager;
+
+        if(snapshotManagerRegistration == null)
+            throw new IllegalStateException();
+
+        return snapshotManagerRegistration.getProvider();
     }
 }

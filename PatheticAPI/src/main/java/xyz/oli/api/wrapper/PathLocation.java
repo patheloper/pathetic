@@ -2,6 +2,7 @@ package xyz.oli.api.wrapper;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.bukkit.Location;
 import org.bukkit.util.NumberConversions;
 
 import xyz.oli.api.PatheticAPI;
@@ -86,5 +87,9 @@ public class PathLocation implements Cloneable {
 
     public PathBlock getBlock() {
         return PatheticAPI.getSnapshotManager().getBlock(this);
+    }
+
+    public Location getBukkitLocation() {
+        return BukkitConverter.toLocation(this);
     }
 }

@@ -1,8 +1,8 @@
-name: PathfindingAPI
+name: PatheticAPI
 version: 1.0
 authors:
   - Olijeffers0n
   - Luziferium
-main: xyz.oli.pathing.PathfindingPlugin
+main: xyz.oli.pathing.PatheticPlugin
 api-version: 1.18
 load: STARTUP

@@ -7,6 +7,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import xyz.oli.api.PatheticAPI;
 import xyz.oli.api.material.MaterialParser;
 import xyz.oli.api.pathing.factory.PathfinderFactory;
+import xyz.oli.api.pathing.world.chunk.SnapshotManager;
 import xyz.oli.pathing.bstats.BStatsHandler;
 import xyz.oli.legacy.material.LegacyMaterialParser;
 import xyz.oli.pathing.model.finder.factory.PathfinderFactoryImpl;
@@ -20,7 +21,7 @@ public class Pathetic {
 
     private static JavaPlugin instance;
     private static Logger logger;
-    
+
     /**
      * @throws IllegalStateException If an attempt is made to initialize more than 1 time
      */
@@ -28,28 +29,28 @@ public class Pathetic {
 
         if(instance != null)
             throw new IllegalStateException("Can't be initialized twice");
-        
+
         instance = javaPlugin;
         logger = javaPlugin.getLogger();
-        
-        Bukkit.getServicesManager().register(PathfinderFactory.class, new PathfinderFactoryImpl(), javaPlugin, ServicePriority.Highest);
 
         MaterialParser parser;
         if (BukkitVersionUtil.isUnder(13)) parser = new LegacyMaterialParser();
         else parser = new ModernMaterialParser();
 
-        BStatsHandler.init(javaPlugin);
+        Bukkit.getServicesManager().register(PathfinderFactory.class, new PathfinderFactoryImpl(), javaPlugin, ServicePriority.Highest);
+        Bukkit.getServicesManager().register(MaterialParser.class, parser, javaPlugin, ServicePriority.Highest);
+        Bukkit.getServicesManager().register(SnapshotManager.class, new SnapshotManagerImpl(), javaPlugin, ServicePriority.Highest);
 
-        PatheticAPI.setFields(parser, new SnapshotManagerImpl());
+        BStatsHandler.init(javaPlugin);
     }
     
     public static JavaPlugin getPluginInstance() {
         return instance;
     }
-    
+
     public static Logger getPluginLogger() {
         return logger;
     }
-    
+
     private Pathetic() {}
 }
