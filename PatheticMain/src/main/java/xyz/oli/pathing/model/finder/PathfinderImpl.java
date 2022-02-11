@@ -1,7 +1,9 @@
 package xyz.oli.pathing.model.finder;
 
 import lombok.NonNull;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import xyz.oli.api.event.PathingFinishedEvent;
 import xyz.oli.api.event.PathingStartFindEvent;
 import xyz.oli.api.pathing.Pathfinder;
@@ -37,8 +39,7 @@ public class PathfinderImpl implements Pathfinder {
             new PathVector(0, 1, 0),
             new PathVector(0, -1, 0),
     };
-    
-    
+
     private PathfinderStrategy strategy = DEFAULT_STRATEGY;
 
     @Override
@@ -91,8 +92,8 @@ public class PathfinderImpl implements Pathfinder {
             return pathfinderResult;
         }
         
-        Node startNode = new Node(new PathLocation(start.getPathWorld(), start.getBlockX() + 0.5, start.getBlockY(), start.getBlockZ() + 0.5), start, target);
-        Node targetNode = new Node(new PathLocation(target.getPathWorld(), target.getBlockX() + 0.5, target.getBlockY(), target.getBlockZ() + 0.5), start, target);
+        Node startNode = new Node(new PathLocation(start.getPathWorld(), start.getBlockX() + 0.5, start.getBlockY(), start.getBlockZ() + 0.5), start, target, 0);
+        Node targetNode = new Node(new PathLocation(target.getPathWorld(), target.getBlockX() + 0.5, target.getBlockY(), target.getBlockZ() + 0.5), start, target, 0);
         
         PriorityQueue<Node> queue = new PriorityQueue<>();
         queue.add(startNode);
@@ -122,6 +123,13 @@ public class PathfinderImpl implements Pathfinder {
                     EventUtil.callEvent(new PathingFinishedEvent(result));
                     
                     return result;
+                }
+
+                if (queue.contains(neighbourNode)) {
+                    if (queue.removeIf(node1 -> node1.getLocation().equals(neighbourNode.getLocation()) && node1.getDepth() > neighbourNode.getDepth())) {
+                        queue.add(neighbourNode);
+                        continue;
+                    }
                 }
                 
                 if (!strategy.isValid(neighbourNode.getLocation().getBlock(),
@@ -172,7 +180,7 @@ public class PathfinderImpl implements Pathfinder {
             if (offset.getY() != 0)
                 midpoint.setX(offset.getX() / 2).setZ(offset.getZ() / 2);
             
-            Node neighbourNode = new Node(node.getLocation().add(offset).add(midpoint), start, target);
+            Node neighbourNode = new Node(node.getLocation().add(offset).add(midpoint), start, target, node.getDepth() + 1);
             neighbourNode.setParent(node);
             
             neighbours.add(neighbourNode);

@@ -6,17 +6,23 @@ import java.util.Objects;
 
 public class Node implements Comparable<Node> {
 
+    private final Integer depth;
     private Node parent;
     private final PathLocation location;
     private final PathLocation target;
     private final PathLocation start;
 
-    public Node(PathLocation location, PathLocation start, PathLocation target) {
+    public Node(PathLocation location, PathLocation start, PathLocation target, Integer depth) {
         this.location = location;
         this.target = target;
         this.start = start;
+        this.depth = depth;
     }
-    
+
+    public Integer getDepth() {
+        return this.depth;
+    }
+
     public void setParent(Node parent) {
         this.parent = parent;
     }
