@@ -49,7 +49,7 @@ public class PathfinderImpl implements Pathfinder {
     }
 
     @Override
-    public Pathfinder setMaxChecks(int maxChecks) {
+    public Pathfinder setMaxChecks(final int maxChecks) {
         MAX_CHECKS = maxChecks;
         return this;
     }
@@ -106,23 +106,15 @@ public class PathfinderImpl implements Pathfinder {
             Node node = queue.poll();
             
             depth++;
-            
+
             if (node.equals(targetNode)) {
-                
-                PathfinderResult result = retracePath(startNode, node, start, target);
-                EventUtil.callEvent(new PathingFinishedEvent(result));
-                
-                return result;
+                return checkTarget(node, startNode, start, target);
             }
             
             for (Node neighbourNode : getNeighbours(node, start, target)) {
-                
+
                 if (neighbourNode.equals(targetNode)) {
-                    
-                    PathfinderResult result = retracePath(startNode, neighbourNode, start, target);
-                    EventUtil.callEvent(new PathingFinishedEvent(result));
-                    
-                    return result;
+                    return checkTarget(neighbourNode, startNode, start, target);
                 }
 
                 if (queue.contains(neighbourNode)) {
@@ -147,6 +139,13 @@ public class PathfinderImpl implements Pathfinder {
         EventUtil.callEvent(new PathingFinishedEvent(pathfinderResult));
         
         return pathfinderResult;
+    }
+
+    private PathfinderResult checkTarget(Node currentNode, Node startNode, PathLocation start, PathLocation target) {
+        PathfinderResult result = retracePath(startNode, currentNode, start, target);
+        EventUtil.callEvent(new PathingFinishedEvent(result));
+
+        return result;
     }
     
     private PathfinderResult retracePath(Node startNode, Node endNode, PathLocation start, PathLocation target) {
