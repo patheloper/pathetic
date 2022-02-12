@@ -8,7 +8,7 @@ import xyz.oli.pathing.Pathetic;
 import xyz.oli.api.pathing.world.chunk.SnapshotManager;
 import xyz.oli.pathing.model.world.WorldDomain;
 import xyz.oli.pathing.util.ChunkUtils;
-import xyz.oli.api.wrapper.BukkitConverter;
+import xyz.oli.utils.BukkitConverter;
 import xyz.oli.api.wrapper.PathBlock;
 import xyz.oli.api.wrapper.PathBlockType;
 import xyz.oli.api.wrapper.PathLocation;

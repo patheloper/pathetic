@@ -18,6 +18,7 @@
         <module>PatheticMain</module>
         <module>PatheticLegacy</module>
         <module>PatheticAPI</module>
+        <module>PatheticUtils</module>
     </modules>
 
 </project>

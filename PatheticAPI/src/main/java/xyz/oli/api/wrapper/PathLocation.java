@@ -2,8 +2,6 @@ package xyz.oli.api.wrapper;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import org.bukkit.Location;
-import org.bukkit.util.NumberConversions;
 
 import xyz.oli.api.PatheticAPI;
 
@@ -56,7 +54,11 @@ public class PathLocation implements Cloneable {
     }
 
     public double distance(PathLocation otherLocation) {
-        return Math.sqrt(NumberConversions.square(this.x - otherLocation.x) + NumberConversions.square((this.y - otherLocation.y) * 1.1) + NumberConversions.square(this.z - otherLocation.z));
+        return Math.sqrt(square(this.x - otherLocation.x) + square((this.y - otherLocation.y) * 1.1) + square(this.z - otherLocation.z));
+    }
+
+    private double square(double value) {
+        return value * value;
     }
 
     public PathLocation add(final double x, final double y, final double z) {
@@ -89,7 +91,4 @@ public class PathLocation implements Cloneable {
         return PatheticAPI.getSnapshotManager().getBlock(this);
     }
 
-    public Location getBukkitLocation() {
-        return BukkitConverter.toLocation(this);
-    }
 }

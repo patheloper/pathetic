@@ -1,9 +1,6 @@
 package xyz.oli.pathing.model.finder;
 
 import lombok.NonNull;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
 import xyz.oli.api.event.PathingFinishedEvent;
 import xyz.oli.api.event.PathingStartFindEvent;
 import xyz.oli.api.pathing.Pathfinder;
@@ -11,7 +8,6 @@ import xyz.oli.api.pathing.result.PathfinderResult;
 import xyz.oli.api.pathing.result.PathfinderSuccess;
 import xyz.oli.api.pathing.strategy.PathfinderStrategy;
 import xyz.oli.api.pathing.strategy.strategies.DirectPathfinderStrategy;
-import xyz.oli.api.wrapper.BukkitConverter;
 import xyz.oli.api.wrapper.PathVector;
 import xyz.oli.pathing.bstats.BStatsHandler;
 import xyz.oli.pathing.model.PathImpl;
@@ -55,13 +51,13 @@ public class PathfinderImpl implements Pathfinder {
     }
 
     @Override
-    public PathfinderResult findPath(Location start, Location target) {
-        return seekPath(BukkitConverter.toPathLocation(start), BukkitConverter.toPathLocation(target), strategy);
+    public PathfinderResult findPath(PathLocation start, PathLocation target) {
+        return seekPath(start, target, strategy);
     }
     
     @Override
-    public CompletableFuture<PathfinderResult> findPathAsync(Location start, Location target) {
-        return CompletableFuture.supplyAsync(() -> seekPath(BukkitConverter.toPathLocation(start), BukkitConverter.toPathLocation(target), strategy), FORK_JOIN_POOL);
+    public CompletableFuture<PathfinderResult> findPathAsync(PathLocation start, PathLocation target) {
+        return CompletableFuture.supplyAsync(() -> seekPath(start, target, strategy), FORK_JOIN_POOL);
     }
     
     private PathfinderResult seekPath(PathLocation start, PathLocation target, PathfinderStrategy strategy) {
