@@ -79,9 +79,6 @@ public class BukkitConverter {
         if (parser.isAir(material))
             return PathBlockType.AIR;
 
-        else if (parser.isSolid(material))
-            return PathBlockType.SOLID;
-
         switch (material) {
             case WATER, LAVA: return PathBlockType.LIQUID;
             case GRASS, TALL_GRASS: return PathBlockType.OTHER;
