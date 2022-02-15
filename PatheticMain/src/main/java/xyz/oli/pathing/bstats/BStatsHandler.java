@@ -14,9 +14,21 @@ public class BStatsHandler {
         
         Metrics metrics = new Metrics(plugin, 14215);
     
-        metrics.addCustomChart(new Metrics.SingleLineChart("paths_created", () -> pathsCreated));
-        metrics.addCustomChart(new Metrics.SingleLineChart("failed_attempts", () -> failedPaths));
-        metrics.addCustomChart(new Metrics.SingleLineChart("length_of_pathfinding_-_blocks", () -> lengthOfPaths));
+        metrics.addCustomChart(new Metrics.SingleLineChart("paths_created", () -> {
+            int paths = pathsCreated;
+            pathsCreated = 0;
+            return paths;
+        }));
+        metrics.addCustomChart(new Metrics.SingleLineChart("failed_attempts", () -> {
+            int failed = failedPaths;
+            failedPaths = 0;
+            return failed;
+        }));
+        metrics.addCustomChart(new Metrics.SingleLineChart("length_of_pathfinding_-_blocks", () -> {
+            int length = lengthOfPaths;
+            lengthOfPaths = 0;
+            return length;
+        }));
     }
     
     public static void increasePathCount() {
