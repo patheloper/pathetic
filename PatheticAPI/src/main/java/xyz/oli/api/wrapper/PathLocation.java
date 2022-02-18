@@ -1,6 +1,7 @@
 package xyz.oli.api.wrapper;
 
 import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 import lombok.ToString;
 
 import xyz.oli.api.PatheticAPI;
@@ -12,7 +13,7 @@ public class PathLocation implements Cloneable {
     private final PathWorld pathWorld;
     private double x, y, z;
     
-    public PathLocation(PathWorld pathWorld, double x, double y, double z) {
+    public PathLocation(@NonNull PathWorld pathWorld, double x, double y, double z) {
         
         this.pathWorld = pathWorld;
         this.x = x;
