@@ -11,27 +11,36 @@ public class WalkingPathfinderStrategy implements PathfinderStrategy {
 
     @Override
     public boolean isValid(@NonNull PathBlock current, @NonNull PathBlock previous, @NonNull PathBlock previouser) {
-        return current.isEmpty() && current.getPathLocation().clone().add(0,1,0).getBlock().isEmpty() && this.validateJump(current, previous, previouser);
+
+        List<Integer> heights = List.of(current.getBlockY(), previous.getBlockY(), previouser.getBlockY());
+
+        boolean currentIsValid = this.blockIsValid(current);
+        boolean previousIsValid = this.blockIsValid(previous);
+        boolean previouserIsValid = this.blockIsValid(previouser);
+
+        int dy = Collections.max(heights) - Collections.min(heights);
+
+        if (dy == 1) {
+            // This means that two of the locations are valid, which allows for a jump of one block
+            return (Collections.frequency(List.of(currentIsValid, previousIsValid, previouserIsValid), true) >= 2 || previouserIsValid) && current.isPassable();
+        }else if (dy >= 2) {
+            // Change in height of more than 1 means its impossible to traverse
+            return false;
+        }
+        // Didn't change height
+        return (Collections.frequency(List.of(currentIsValid, previousIsValid, previouserIsValid), true) >= 2 || previouserIsValid) && current.isPassable();
     }
 
     @Override
     public boolean endIsValid(@NonNull PathBlock block) {
-        return block.isPassable() && block.getPathLocation().clone().add(0,1,0).getBlock().isPassable() && !block.getPathLocation().clone().add(0,-1,0).getBlock().isPassable();
+        return this.blockIsValid(block);
     }
 
-    private boolean validateJump(PathBlock current, PathBlock previous, PathBlock previouser) {
+    private boolean blockIsValid(PathBlock block) {
+        boolean passableValid = block.isPassable();
+        boolean belowValid = !block.getPathLocation().clone().subtract(0, 1, 0).getBlock().isPassable();
+        boolean aboveValid = block.getPathLocation().clone().add(0, 1, 0).getBlock().isPassable();
 
-        List<Integer> heights = List.of(current.getBlockY(), previous.getBlockY(), previouser.getBlockY());
-
-        if (Collections.max(heights) - Collections.min(heights) < 0)
-            return false;
-
-        if (current.getBlockY() == previous.getBlockY()) {
-            if (current.getPathLocation().clone().add(0,-1,0).getBlock().isPassable() && current.getPathLocation().clone().add(0, -2, 0).getBlock().isPassable()) {
-                return false;
-            }
-        }
-
-        return !current.getPathLocation().clone().add(0, -1, 0).getBlock().isPassable() || !previous.getPathLocation().clone().add(0, -1, 0).getBlock().isPassable();
+        return aboveValid && passableValid && belowValid;
     }
 }
