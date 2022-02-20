@@ -22,13 +22,13 @@ public class WalkingPathfinderStrategy implements PathfinderStrategy {
 
         if (dy == 1) {
             // This means that two of the locations are valid, which allows for a jump of one block
-            return (Collections.frequency(List.of(currentIsValid, previousIsValid, previouserIsValid), true) >= 2 || previouserIsValid) && current.isPassable();
+            return (previouserIsValid || Collections.frequency(List.of(currentIsValid, previousIsValid, previouserIsValid), true) >= 2) && current.isPassable();
         }else if (dy >= 2) {
             // Change in height of more than 1 means its impossible to traverse
             return false;
         }
         // Didn't change height
-        return (Collections.frequency(List.of(currentIsValid, previousIsValid, previouserIsValid), true) >= 2 || previouserIsValid) && current.isPassable();
+        return (previouserIsValid || Collections.frequency(List.of(currentIsValid, previousIsValid, previouserIsValid), true) >= 2) && current.isPassable();
     }
 
     @Override
