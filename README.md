@@ -8,10 +8,9 @@ class PathExample {
     
     public void displayPath(Location startLocation, Location endLocation) {
         Pathfinder pathFinder = PatheticAPI.instantiateNewPathfinder();
-        pathFinder.findPathAsync(startLocation, endLocation).thenAccept(pathfinderResult -> {
-            pathfinderResult.getPath().getLocations().forEach(location -> player.sendBlockChange(location, 
-            Material.YELLOW_STAINED_GLASS.createBlockData()));
-        });
+        pathFinder.findPathAsync(startLocation, endLocation).thenAccept(pathfinderResult -> 
+                pathfinderResult.getPath().getLocations().forEach(location -> 
+                        player.sendBlockChange(location, Material.YELLOW_STAINED_GLASS.createBlockData())));
     }
 }
 ```
