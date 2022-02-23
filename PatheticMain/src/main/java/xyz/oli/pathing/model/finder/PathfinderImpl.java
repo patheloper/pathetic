@@ -67,7 +67,7 @@ public class PathfinderImpl implements Pathfinder {
         PathingStartFindEvent pathingStartFindEvent = new PathingStartFindEvent(start, target, strategy);
         EventUtil.callEvent(pathingStartFindEvent);
         
-        if (!start.getPathWorld().equals(target.getPathWorld()) || !strategy.endIsValid(start.getBlock()) || !strategy.endIsValid(target.getBlock()) || pathingStartFindEvent.isCancelled()) {
+        if (!start.getPathWorld().equals(target.getPathWorld()) || !strategy.isValid(start.getBlock(), null, null) || !strategy.isValid(target.getBlock(), null, null) || pathingStartFindEvent.isCancelled()) {
             
             BStatsHandler.increaseFailedPathCount();
             
@@ -157,8 +157,10 @@ public class PathfinderImpl implements Pathfinder {
         }
         
         List<PathLocation> pathReversed = new ArrayList<>(path);
+
+        pathReversed.add(start);
         Collections.reverse(pathReversed);
-        
+
         BStatsHandler.addLength(pathReversed.size());
         
         return new PathfinderResultImpl(PathfinderSuccess.FOUND, new PathImpl(start, target, new LinkedHashSet<>(pathReversed)));

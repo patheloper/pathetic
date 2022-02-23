@@ -7,13 +7,8 @@ import xyz.oli.api.wrapper.PathBlock;
 public class DirectPathfinderStrategy implements PathfinderStrategy {
 
     @Override
-    public boolean isValid(@NonNull PathBlock current, @NonNull PathBlock previous, @NonNull PathBlock previouser) {
+    public boolean isValid(@NonNull PathBlock current, PathBlock previous, PathBlock previouser) {
         return current.isEmpty();
-    }
-
-    @Override
-    public boolean endIsValid(@NonNull PathBlock block) {
-        return block.isEmpty();
     }
 
 }

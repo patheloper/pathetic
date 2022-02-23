@@ -10,7 +10,9 @@ import java.util.List;
 public class WalkingPathfinderStrategy implements PathfinderStrategy {
 
     @Override
-    public boolean isValid(@NonNull PathBlock current, @NonNull PathBlock previous, @NonNull PathBlock previouser) {
+    public boolean isValid(@NonNull PathBlock current, PathBlock previous, PathBlock previouser) {
+
+        if (previous == null && previouser == null) return blockIsValid(current);
 
         List<Integer> heights = List.of(current.getBlockY(), previous.getBlockY(), previouser.getBlockY());
 
@@ -29,11 +31,6 @@ public class WalkingPathfinderStrategy implements PathfinderStrategy {
         }
         // Didn't change height
         return (previouserIsValid || Collections.frequency(List.of(currentIsValid, previousIsValid, previouserIsValid), true) >= 2) && current.isPassable();
-    }
-
-    @Override
-    public boolean endIsValid(@NonNull PathBlock block) {
-        return this.blockIsValid(block);
     }
 
     private boolean blockIsValid(PathBlock block) {

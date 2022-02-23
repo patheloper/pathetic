@@ -9,16 +9,9 @@ public interface PathfinderStrategy {
      * Implement the logic to see if a given location is valid for a strategy
      *
      * @param current The current block to check
-     * @param previous The previous location
-     * @param previouser The previous previous location
+     * @param previous Nullable, The previous block to check
+     * @param previouser Nullable, The block before the previous to check
      */
-    boolean isValid(@NonNull PathBlock current, @NonNull PathBlock previous, @NonNull PathBlock previouser);
-    
-    /**
-     * Implement the logic to see if a start/target is valid
-     *
-     * @param location The location to check
-     */
-    boolean endIsValid(@NonNull PathBlock location);
-    
+    boolean isValid(@NonNull PathBlock current, PathBlock previous, PathBlock previouser);
+
 }
