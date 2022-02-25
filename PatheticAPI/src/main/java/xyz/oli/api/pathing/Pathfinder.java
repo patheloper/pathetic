@@ -24,9 +24,4 @@ public interface Pathfinder {
      */
     Pathfinder setStrategy(@NonNull PathfinderStrategy strategy);
 
-    /**
-     * Set the max check depth
-     */
-    Pathfinder setMaxChecks(int maxChecks);
-
 }

@@ -20,8 +20,7 @@ import java.util.concurrent.ForkJoinPool;
 
 public class PathfinderImpl implements Pathfinder {
     
-    private static int MAX_CHECKS = 20000;
-    
+    private static final int MAX_CHECKS = 30000;
     private static final ForkJoinPool FORK_JOIN_POOL = new ForkJoinPool(Runtime.getRuntime().availableProcessors(), ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, true);
     private static final LinkedHashSet<PathLocation> EMPTY_SET = new LinkedHashSet<>();
     private static final PathfinderStrategy DEFAULT_STRATEGY = new DirectPathfinderStrategy();
@@ -41,12 +40,6 @@ public class PathfinderImpl implements Pathfinder {
     @Override
     public Pathfinder setStrategy(@NonNull PathfinderStrategy strategy) {
         this.strategy = strategy;
-        return this;
-    }
-
-    @Override
-    public Pathfinder setMaxChecks(final int maxChecks) {
-        MAX_CHECKS = maxChecks;
         return this;
     }
 
