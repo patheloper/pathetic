@@ -13,6 +13,7 @@ import xyz.oli.pathing.bstats.BStatsHandler;
 import xyz.oli.pathing.model.PathImpl;
 import xyz.oli.pathing.util.EventUtil;
 import xyz.oli.api.wrapper.PathLocation;
+import xyz.oli.pathing.util.WatchdogHelper;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -91,6 +92,9 @@ public class PathfinderImpl implements Pathfinder {
         
         int depth = 0;
         while (!queue.isEmpty() && depth <= MAX_CHECKS) {
+
+            if (depth % 1000 == 0)
+                WatchdogHelper.tickWatchdog();
             
             Node node = queue.poll();
             
