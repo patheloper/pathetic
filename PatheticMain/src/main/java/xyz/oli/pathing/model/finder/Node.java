@@ -52,7 +52,7 @@ public class Node implements Comparable<Node> {
     }
 
     public double priorityKey() {
-        return (this.target.distance(this.location) + this.start.distance(this.location)) * (Math.pow(Math.E,(this.target.distance(this.location)/ this.length)))/(10);
+        return (this.target.distance(this.location) + this.start.distance(this.location)) * (Math.pow(1.08,(this.target.distance(this.location)/ this.length) - 1));
     }
 
     @Override
