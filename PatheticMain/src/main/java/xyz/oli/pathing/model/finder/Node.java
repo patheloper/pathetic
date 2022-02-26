@@ -11,12 +11,14 @@ public class Node implements Comparable<Node> {
     private final PathLocation location;
     private final PathLocation target;
     private final PathLocation start;
+    private final Double length;
 
     public Node(PathLocation location, PathLocation start, PathLocation target, Integer depth) {
         this.location = location;
         this.target = target;
         this.start = start;
         this.depth = depth;
+        this.length = this.start.distance(this.target);
     }
 
     public Integer getDepth() {
@@ -50,7 +52,7 @@ public class Node implements Comparable<Node> {
     }
 
     public double priorityKey() {
-        return this.target.distance(this.location) + this.start.distance(this.location);
+        return (this.target.distance(this.location) + this.start.distance(this.location)) * (Math.pow(Math.E,(this.target.distance(this.location)/ this.length)))/(10);
     }
 
     @Override

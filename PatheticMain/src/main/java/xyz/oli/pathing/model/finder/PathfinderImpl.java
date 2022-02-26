@@ -97,7 +97,7 @@ public class PathfinderImpl implements Pathfinder {
                 WatchdogHelper.tickWatchdog();
             
             Node node = queue.poll();
-            
+
             depth++;
 
             if (node.equals(targetNode)) {
@@ -121,7 +121,7 @@ public class PathfinderImpl implements Pathfinder {
                         node.getLocation().getBlock(),
                         node.getParent() == null ? node.getLocation().getBlock() : node.getParent().getLocation().getBlock()) || !processed.add(neighbourNode.getLocation()))
                     continue;
-                
+
                 queue.add(neighbourNode);
             }
         }
@@ -159,8 +159,10 @@ public class PathfinderImpl implements Pathfinder {
         Collections.reverse(pathReversed);
 
         BStatsHandler.addLength(pathReversed.size());
-        
-        return new PathfinderResultImpl(PathfinderSuccess.FOUND, new PathImpl(start, target, new LinkedHashSet<>(pathReversed)));
+
+        PathfinderResultImpl pathfinderResult = new PathfinderResultImpl(PathfinderSuccess.FOUND, new PathImpl(start, target, new LinkedHashSet<>(pathReversed)));
+        EventUtil.callEvent(new PathingFinishedEvent(pathfinderResult));
+        return pathfinderResult;
     }
     
     private Collection<Node> getNeighbours(Node node, PathLocation start, PathLocation target) {
