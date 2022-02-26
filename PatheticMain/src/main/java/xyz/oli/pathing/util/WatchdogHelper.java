@@ -1,14 +1,14 @@
 package xyz.oli.pathing.util;
 
-import org.bukkit.Bukkit;
-
+import lombok.experimental.UtilityClass;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+@UtilityClass
 public class WatchdogHelper {
 
-    private static Class<?> watchdogClazz = null;
-    private static Method tickMethod = null;
+    private Class<?> watchdogClazz;
+    private Method tickMethod;
 
     static {
         try {
@@ -19,8 +19,8 @@ public class WatchdogHelper {
         }
     }
 
-    public static void tickWatchdog() {
-        if (Bukkit.isPrimaryThread() && tickMethod != null && watchdogClazz != null) {
+    public void tickWatchdog() {
+        if (tickMethod != null && watchdogClazz != null) {
             try {
                 tickMethod.invoke(watchdogClazz, null);
             } catch (IllegalAccessException | InvocationTargetException e) {
