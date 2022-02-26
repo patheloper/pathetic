@@ -55,7 +55,13 @@ public class PathLocation implements Cloneable {
     }
 
     public double distance(PathLocation otherLocation) {
-        return Math.sqrt(square(this.x - otherLocation.x) + square((this.y - otherLocation.y) * 1.1) + square(this.z - otherLocation.z));
+        return this.sqrt(square(this.x - otherLocation.x) + square((this.y - otherLocation.y) * 1.1) + square(this.z - otherLocation.z));
+    }
+
+    private double sqrt(double input) {
+        double sqrt = Double.longBitsToDouble(((Double.doubleToLongBits(input)-(1L<<52))>>1) + (1L <<61));
+        double better = (sqrt + input/sqrt)/2.0;
+        return (better + input/better)/2.0;
     }
 
     private double square(double value) {
