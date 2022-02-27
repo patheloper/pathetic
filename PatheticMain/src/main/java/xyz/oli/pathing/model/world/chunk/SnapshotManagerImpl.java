@@ -34,7 +34,8 @@ public class SnapshotManagerImpl implements SnapshotManager {
             WorldDomain worldDomain = snapshots.get(location.getPathWorld().getUuid());
             Optional<ChunkSnapshot> snapshot = worldDomain.getSnapshot(key);
             
-            if (snapshot.isPresent()) return new PathBlock(location, BukkitConverter.toPathBlockType(ChunkUtils.getMaterial(snapshot.get(), location.getBlockX() - chunkX * 16, location.getBlockY(), location.getBlockZ() - chunkZ * 16)));
+            if (snapshot.isPresent())
+                return new PathBlock(location, BukkitConverter.toPathBlockType(ChunkUtils.getMaterial(snapshot.get(), location.getBlockX() - chunkX * 16, location.getBlockY(), location.getBlockZ() - chunkZ * 16)));
         }
         
         return fetchAndGetBlock(location, chunkX, chunkZ, key);

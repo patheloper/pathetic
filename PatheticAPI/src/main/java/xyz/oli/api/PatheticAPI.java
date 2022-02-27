@@ -1,5 +1,6 @@
 package xyz.oli.api;
 
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
 import org.bukkit.Bukkit;
@@ -16,7 +17,7 @@ public class PatheticAPI {
     private final RegisteredServiceProvider<SnapshotManager> snapshotManagerRegistration = Bukkit.getServicesManager().getRegistration(SnapshotManager.class);
     private final RegisteredServiceProvider<PathfinderFactory> finderFactoryRegistration = Bukkit.getServicesManager().getRegistration(PathfinderFactory.class);
 
-    public Pathfinder instantiateNewPathfinder() {
+    public @NonNull Pathfinder instantiateNewPathfinder() {
 
         if(finderFactoryRegistration == null)
             throw new IllegalStateException();
@@ -24,7 +25,7 @@ public class PatheticAPI {
         return finderFactoryRegistration.getProvider().newPathfinder();
     }
     
-    public MaterialParser getParser() {
+    public @NonNull MaterialParser getParser() {
 
         if(parserRegistration == null)
             throw new IllegalStateException();
@@ -32,7 +33,7 @@ public class PatheticAPI {
         return parserRegistration.getProvider();
     }
 
-    public SnapshotManager getSnapshotManager() {
+    public @NonNull SnapshotManager getSnapshotManager() {
 
         if(snapshotManagerRegistration == null)
             throw new IllegalStateException();
