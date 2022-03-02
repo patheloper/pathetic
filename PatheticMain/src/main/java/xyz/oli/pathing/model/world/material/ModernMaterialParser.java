@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 
 import xyz.oli.api.material.MaterialParser;
+import xyz.oli.pathing.Pathetic;
 
 public class ModernMaterialParser implements MaterialParser {
 
@@ -13,10 +14,10 @@ public class ModernMaterialParser implements MaterialParser {
     public @NonNull Material getMaterial(@NonNull ChunkSnapshot snapshot, int x, int y, int z) {
         try {
             return snapshot.getBlockType(x, y, z);
-        }catch (ArrayIndexOutOfBoundsException ignored) {
-            System.out.println("X: " + x + " Y: " + y + " Z: " + z);
+        }catch (Exception ignored) {
+            Pathetic.getPluginLogger().warning("Error Fetching block: (X: " + x + ",Y: " + y + ",Z: " + z + ")");
+            return Material.STONE;
         }
-        return Material.STONE;
     }
 
     @Override
