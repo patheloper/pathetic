@@ -110,7 +110,7 @@ public class PathfinderImpl implements Pathfinder {
                     }
                 }
                 
-                if (!strategy.isValid(neighbourNode.getLocation().getBlock(),
+                if (!this.verifyLocation(neighbourNode.getLocation()) || !strategy.isValid(neighbourNode.getLocation().getBlock(),
                         node.getLocation().getBlock(),
                         node.getParent() == null ? node.getLocation().getBlock() : node.getParent().getLocation().getBlock()) || !processed.add(neighbourNode.getLocation()))
                     continue;
@@ -172,5 +172,9 @@ public class PathfinderImpl implements Pathfinder {
         }
         
         return neighbours;
+    }
+
+    private boolean verifyLocation(PathLocation location) {
+        return location.getPathWorld().getMinHeight() < location.getBlockY() && location.getBlockY() < location.getPathWorld().getMaxHeight();
     }
 }

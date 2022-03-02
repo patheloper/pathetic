@@ -51,12 +51,12 @@ public class Node implements Comparable<Node> {
         return Objects.hash(this.location);
     }
 
-    public double priorityKey() {
-        return (this.target.distance(this.location) + this.start.distance(this.location)) * (Math.pow(1.08,(this.target.distance(this.location)/ this.length) - 1));
+    public double getPriorityKey() {
+        return (this.target.distance(this.location) + this.start.distance(this.location)) * (Math.pow(10, (this.target.distance(this.location)/ this.length) - 1) + 0.9);
     }
 
     @Override
     public int compareTo(Node otherNode) {
-        return (int) Math.signum(this.priorityKey() - otherNode.priorityKey());
+        return (int) Math.signum(this.getPriorityKey() - otherNode.getPriorityKey());
     }
 }

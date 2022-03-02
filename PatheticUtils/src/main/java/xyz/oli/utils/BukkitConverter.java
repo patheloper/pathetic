@@ -56,7 +56,7 @@ public class BukkitConverter {
 
     @NonNull
     public PathWorld toPathWorld(@NonNull World world) {
-        return new PathWorld(world.getUID(), world.getName());
+        return new PathWorld(world.getUID(), world.getName(), world.getMinHeight(), world.getMaxHeight());
     }
 
     @NonNull

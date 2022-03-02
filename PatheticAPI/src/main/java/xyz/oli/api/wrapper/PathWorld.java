@@ -14,15 +14,27 @@ public class PathWorld {
     @EqualsAndHashCode.Include
     @ToString.Include
     private final UUID uuid;
+
+    @Getter
+    @EqualsAndHashCode.Include
+    @ToString.Include
+    private final Integer minHeight;
+
+    @Getter
+    @EqualsAndHashCode.Include
+    @ToString.Include
+    private final Integer maxHeight;
     
     @Getter
     @EqualsAndHashCode.Exclude
     @ToString.Include
     private final String name;
     
-    public PathWorld(UUID uuid, String name) {
+    public PathWorld(UUID uuid, String name, Integer minHeight, Integer maxHeight) {
         
         this.uuid = uuid;
         this.name = name;
+        this.minHeight = minHeight;
+        this.maxHeight = maxHeight;
     }
 }

@@ -11,7 +11,12 @@ public class ModernMaterialParser implements MaterialParser {
 
     @Override
     public @NonNull Material getMaterial(@NonNull ChunkSnapshot snapshot, int x, int y, int z) {
-        return snapshot.getBlockType(x,y,z);
+        try {
+            return snapshot.getBlockType(x, y, z);
+        }catch (ArrayIndexOutOfBoundsException ignored) {
+            System.out.println("X: " + x + " Y: " + y + " Z: " + z);
+        }
+        return Material.STONE;
     }
 
     @Override
