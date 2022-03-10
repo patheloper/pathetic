@@ -74,21 +74,25 @@ public class PathfinderImpl implements Pathfinder {
 
             return callFinish(PathfinderSuccess.FOUND, new PathImpl(start, target, nodeList));
         }
-        
+
+        Optional<Path> path = LOSPathfinder.tryDirect(start, target);
+        if (path.isPresent())
+            return callFinish(PathfinderSuccess.FOUND, path.get());
+
         Node startNode = new Node(new PathLocation(start.getPathWorld(), start.getBlockX() + 0.5, start.getBlockY(), start.getBlockZ() + 0.5), start, target, 0);
         Node targetNode = new Node(new PathLocation(target.getPathWorld(), target.getBlockX() + 0.5, target.getBlockY(), target.getBlockZ() + 0.5), start, target, 0);
-        
+
         PriorityQueue<Node> queue = new PriorityQueue<>();
         queue.add(startNode);
-        
+
         Set<PathLocation> processed = new HashSet<>();
-        
+
         int depth = 0;
         while (!queue.isEmpty() && depth <= MAX_CHECKS) {
 
             if (Bukkit.isPrimaryThread() && depth % 1000 == 0)
                 WatchdogHelper.tickWatchdog();
-            
+
             Node node = queue.poll();
 
             depth++;
@@ -96,7 +100,7 @@ public class PathfinderImpl implements Pathfinder {
             if (node.equals(targetNode)) {
                 return callFinish(PathfinderSuccess.FOUND, retracePath(node, startNode, start, target));
             }
-            
+
             for (Node neighbourNode : getNeighbours(node, start, target)) {
 
                 if (neighbourNode.equals(targetNode)) {
@@ -109,7 +113,7 @@ public class PathfinderImpl implements Pathfinder {
                         continue;
                     }
                 }
-                
+
                 if (!this.verifyLocation(neighbourNode.getLocation()) || !strategy.isValid(neighbourNode.getLocation().getBlock(),
                         node.getLocation().getBlock(),
                         node.getParent() == null ? node.getLocation().getBlock() : node.getParent().getLocation().getBlock()) || !processed.add(neighbourNode.getLocation()))
@@ -118,9 +122,9 @@ public class PathfinderImpl implements Pathfinder {
                 queue.add(neighbourNode);
             }
         }
-        
+
         BStatsHandler.increaseFailedPathCount();
-        
+
         return callFinish(PathfinderSuccess.FAILED, new PathImpl(start, target, EMPTY_SET));
     }
 
@@ -131,19 +135,19 @@ public class PathfinderImpl implements Pathfinder {
 
         return pathfinderResult;
     }
-    
+
     private Path retracePath(Node endNode, Node startNode, PathLocation start, PathLocation target) {
-        
+
         LinkedHashSet<PathLocation> path = new LinkedHashSet<>();
         Node currentNode = endNode;
-        
+
         while (!currentNode.equals(startNode)) {
-            
+
             path.add(currentNode.getLocation());
             if (currentNode.getParent() == null) break;
             currentNode = currentNode.getParent();
         }
-        
+
         List<PathLocation> pathReversed = new ArrayList<>(path);
 
         pathReversed.add(start);
@@ -153,24 +157,24 @@ public class PathfinderImpl implements Pathfinder {
 
         return new PathImpl(start, target, new LinkedHashSet<>(pathReversed));
     }
-    
+
     private Collection<Node> getNeighbours(Node node, PathLocation start, PathLocation target) {
-        
+
         ArrayList<Node> neighbours = new ArrayList<>(OFFSETS.length);
-        
+
         for (PathVector offset : OFFSETS) {
-            
+
             PathVector midpoint = new PathVector();
-            
+
             if (offset.getY() != 0)
                 midpoint.setX(offset.getX() / 2).setZ(offset.getZ() / 2);
-            
+
             Node neighbourNode = new Node(node.getLocation().add(offset).add(midpoint), start, target, node.getDepth() + 1);
             neighbourNode.setParent(node);
-            
+
             neighbours.add(neighbourNode);
         }
-        
+
         return neighbours;
     }
 

@@ -1,10 +1,10 @@
 package xyz.oli.pathing;
 
+import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.ServicePriority;
-
 import org.bukkit.plugin.java.JavaPlugin;
-import xyz.oli.api.PatheticAPI;
+
 import xyz.oli.api.material.MaterialParser;
 import xyz.oli.api.pathing.factory.PathfinderFactory;
 import xyz.oli.api.pathing.world.chunk.SnapshotManager;
@@ -17,6 +17,7 @@ import xyz.oli.pathing.util.BukkitVersionUtil;
 
 import java.util.logging.Logger;
 
+@UtilityClass
 public class Pathetic {
 
     private static JavaPlugin instance;
@@ -51,6 +52,4 @@ public class Pathetic {
     public static Logger getPluginLogger() {
         return logger;
     }
-
-    private Pathetic() {}
 }
