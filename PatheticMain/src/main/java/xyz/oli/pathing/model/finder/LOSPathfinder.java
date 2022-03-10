@@ -31,7 +31,7 @@ public class LOSPathfinder {
 
         final PathVector fullLine = end.toVector().subtract(start.toVector());
         final double fullLength = fullLine.length();
-        final PathVector deltaLine = fullLine.clone().normalize().multiply(1);
+        final PathVector deltaLine = fullLine.clone().normalize();
 
         final List<PathLocation> locations = new ArrayList<>((int) (fullLength));
 
