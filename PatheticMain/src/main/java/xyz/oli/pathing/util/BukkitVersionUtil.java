@@ -6,8 +6,13 @@ import org.bukkit.Bukkit;
 @UtilityClass
 public class BukkitVersionUtil {
 
-    private final double current = current();
+    private final double current;
 
+    static {
+        String version = Bukkit.getBukkitVersion().split("-")[0];
+        current = Double.parseDouble(version.split("\\.")[1]);
+    }
+    
     public double get() {
         return current;
     }
@@ -22,11 +27,6 @@ public class BukkitVersionUtil {
 
     public boolean isEquals(double version) {
         return current == version;
-    }
-
-    private double current() {
-        String version = Bukkit.getBukkitVersion().split("-")[0];
-        return Double.parseDouble(version.split("\\.")[1]);
     }
 
 }
