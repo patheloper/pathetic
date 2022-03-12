@@ -6,11 +6,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 @UtilityClass
 public class BStatsHandler {
     
-    private static int pathsCreated = 0;
-    private static int failedPaths = 0;
-    private static int lengthOfPaths = 0;
+    private int pathsCreated = 0;
+    private int failedPaths = 0;
+    private int lengthOfPaths = 0;
     
-    public static void init(JavaPlugin plugin) {
+    public void init(JavaPlugin plugin) {
         
         Metrics metrics = new Metrics(plugin, 14215);
     
@@ -31,15 +31,15 @@ public class BStatsHandler {
         }));
     }
     
-    public static void increasePathCount() {
+    public void increasePathCount() {
         pathsCreated++;
     }
     
-    public static void increaseFailedPathCount() {
+    public void increaseFailedPathCount() {
         failedPaths++;
     }
     
-    public static void addLength(final int value) {
+    public void addLength(final int value) {
         lengthOfPaths += value;
     }
 }
