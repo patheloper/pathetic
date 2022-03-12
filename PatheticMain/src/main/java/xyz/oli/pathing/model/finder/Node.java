@@ -36,7 +36,11 @@ public class Node implements Comparable<Node> {
     public PathLocation getLocation() {
         return this.location.clone();
     }
-
+    
+    public double getPriorityKey() {
+        return (this.target.distance(this.location) + this.start.distance(this.location)) * (Math.pow(10, (this.target.distance(this.location)/ this.length) - 1) + 0.9);
+    }
+    
     @Override
     public boolean equals(Object o) {
 
@@ -49,10 +53,6 @@ public class Node implements Comparable<Node> {
     @Override
     public int hashCode() {
         return Objects.hash(this.location);
-    }
-
-    public double getPriorityKey() {
-        return (this.target.distance(this.location) + this.start.distance(this.location)) * (Math.pow(10, (this.target.distance(this.location)/ this.length) - 1) + 0.9);
     }
 
     @Override
