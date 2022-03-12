@@ -13,7 +13,7 @@ public class Node implements Comparable<Node> {
     private final PathLocation start;
     private final Double length;
 
-    public Node(PathLocation location, PathLocation start, PathLocation target, Integer depth) {
+    Node(PathLocation location, PathLocation start, PathLocation target, Integer depth) {
         this.location = location;
         this.target = target;
         this.start = start;

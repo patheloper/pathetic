@@ -25,11 +25,11 @@ public class PathfinderImpl implements Pathfinder {
     
     private static final int MAX_CHECKS = 30000;
     private static final ForkJoinPool FORK_JOIN_POOL = new ForkJoinPool(Runtime.getRuntime().availableProcessors(), ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, true);
-    private static final LinkedHashSet<PathLocation> EMPTY_SET = new LinkedHashSet<>();
+   
+    private static final LinkedHashSet<PathLocation> EMPTY_LINKED_HASHSET = new LinkedHashSet<>();
     private static final PathfinderStrategy DEFAULT_STRATEGY = new DirectPathfinderStrategy();
     
     private static final PathVector[] OFFSETS = {
-            
             new PathVector(1, 0, 0),
             new PathVector(-1, 0, 0),
             new PathVector(0, 0, 1),
@@ -58,70 +58,90 @@ public class PathfinderImpl implements Pathfinder {
     
     private @NonNull PathfinderResult seekPath(PathLocation start, PathLocation target, PathfinderStrategy strategy) {
         
-        BStatsHandler.increasePathCount();
-        
-        PathingStartFindEvent pathingStartFindEvent = new PathingStartFindEvent(start, target, strategy);
-        EventUtil.callEvent(pathingStartFindEvent);
-        
-        if (!start.getPathWorld().equals(target.getPathWorld()) || !strategy.isValid(start.getBlock(), null, null) || !strategy.isValid(target.getBlock(), null, null) || pathingStartFindEvent.isCancelled()) {
-            BStatsHandler.increaseFailedPathCount();
-            return callFinish(PathfinderSuccess.INVALID, new PathImpl(start, target, EMPTY_SET));
-        }
-        
-        if (start.getBlockX() == target.getBlockX() && start.getBlockY() == target.getBlockY() && start.getBlockZ() == target.getBlockZ()) {
-            LinkedHashSet<PathLocation> nodeList = new LinkedHashSet<>();
-            nodeList.add(target);
-            
-            return callFinish(PathfinderSuccess.FOUND, new PathImpl(start, target, nodeList));
-        }
+        PathingStartFindEvent pathingStartFindEvent = callStart(start, target, strategy);
+        if(pathingStartFindEvent.isCancelled())
+            return callFinish(PathfinderSuccess.CANCELLED, new PathImpl(start, target, EMPTY_LINKED_HASHSET));
     
-        Node startNode = new Node(new PathLocation(start.getPathWorld(), start.getBlockX() + 0.5, start.getBlockY(), start.getBlockZ() + 0.5), start, target, 0);
-        Node targetNode = new Node(new PathLocation(target.getPathWorld(), target.getBlockX() + 0.5, target.getBlockY(), target.getBlockZ() + 0.5), start, target, 0);
+        if (!start.getPathWorld().equals(target.getPathWorld())
+                || !strategy.isValid(start.getBlock(), null, null)
+                || !strategy.isValid(target.getBlock(), null, null))
+            return callFinish(PathfinderSuccess.INVALID, new PathImpl(start, target, EMPTY_LINKED_HASHSET));
+        
+        if (start.getBlockX() == target.getBlockX() && start.getBlockY() == target.getBlockY() && start.getBlockZ() == target.getBlockZ())
+            return callFinish(PathfinderSuccess.FOUND, new PathImpl(start, target, (LinkedHashSet<PathLocation>) Collections.singleton(target)));
+    
+        Node startNode = new Node(start.add(0.5, 0.5, 0.5), start, target, 0);
+        Node targetNode = new Node(target.add(0.5, 0.5, 0.5), start, target, 0);
         
         PriorityQueue<Node> queue = new PriorityQueue<>();
         queue.add(startNode);
         
+        Optional<Path> pathOptional = processNodeQueue(queue, startNode, start, targetNode, target);
+        return pathOptional.map(path -> callFinish(PathfinderSuccess.FOUND, path)).orElseGet(() -> callFinish(PathfinderSuccess.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
+    }
+    
+    private Optional<Path> processNodeQueue(Queue<Node> queue, Node startNode, PathLocation start, Node targetNode, PathLocation target) {
+    
         Set<PathLocation> processed = new HashSet<>();
-        
+    
         int depth = 0;
         while (!queue.isEmpty() && depth <= MAX_CHECKS) {
-            
+        
             if (Bukkit.isPrimaryThread() && depth % 1000 == 0)
                 WatchdogHelper.tickWatchdog();
-            
+        
             Node node = queue.poll();
-            
+            if(node == null)
+                throw new IllegalStateException("Something exploded randomly");
+        
             depth++;
-            
-            if (node.equals(targetNode)) {
-                return callFinish(PathfinderSuccess.FOUND, retracePath(node, startNode, start, target));
-            }
-            
-            for (Node neighbourNode : getNeighbours(node, start, target)) {
-                
-                if (neighbourNode.equals(targetNode)) {
-                    return callFinish(PathfinderSuccess.FOUND, retracePath(neighbourNode, startNode, start, target));
-                }
-                
-                if (queue.contains(neighbourNode)) {
-                    if (queue.removeIf(node1 -> node1.getLocation().equals(neighbourNode.getLocation()) && node1.getDepth() > neighbourNode.getDepth())) {
-                        queue.add(neighbourNode);
-                        continue;
-                    }
-                }
-                
-                if (!this.verifyLocation(neighbourNode.getLocation()) || !strategy.isValid(neighbourNode.getLocation().getBlock(),
-                        node.getLocation().getBlock(),
-                        node.getParent() == null ? node.getLocation().getBlock() : node.getParent().getLocation().getBlock()) || !processed.add(neighbourNode.getLocation()))
-                    continue;
-                
-                queue.add(neighbourNode);
-            }
+        
+            if (node.equals(targetNode))
+                return Optional.of(retracePath(node, startNode, start, target));
+
+            Optional<Path> pathOptional = processNeighbourNodes(queue, node, startNode, start, targetNode, target, processed);
+            if(pathOptional.isPresent())
+                return pathOptional;
         }
         
-        BStatsHandler.increaseFailedPathCount();
+        return Optional.empty();
+    }
+    
+    private Optional<Path> processNeighbourNodes(Queue<Node> queue, Node node, Node startNode, PathLocation start, Node targetNode, PathLocation target, Set<PathLocation> processed) {
+    
+        for (Node neighbourNode : getNeighbours(node, start, target)) {
         
-        return callFinish(PathfinderSuccess.FAILED, new PathImpl(start, target, EMPTY_SET));
+            if (neighbourNode.equals(targetNode))
+                return Optional.of(retracePath(neighbourNode, startNode, start, target));
+        
+            if(validateNode(queue, neighbourNode, processed))
+                queue.add(neighbourNode);
+        }
+        
+        return Optional.empty();
+    }
+    
+    private boolean validateNode(Queue<Node> queue, Node node, Set<PathLocation> processed) {
+    
+        boolean validateNode = queue.contains(node)
+                && queue.removeIf(node1 -> node1.getLocation().equals(node.getLocation())
+                && node1.getDepth() > node.getDepth());
+    
+        boolean verifyLocation = this.verifyLocation(node.getLocation())
+                || strategy.isValid(node.getLocation().getBlock(), node.getLocation().getBlock(), node.getParent() == null ? node.getLocation().getBlock() : node.getParent().getLocation().getBlock())
+                || processed.add(node.getLocation());
+        
+        return validateNode || verifyLocation;
+    }
+    
+    private PathingStartFindEvent callStart(PathLocation start, PathLocation target, PathfinderStrategy strategy) {
+        
+        PathingStartFindEvent pathingStartFindEvent = new PathingStartFindEvent(start, target, strategy);
+        EventUtil.callEvent(pathingStartFindEvent);
+    
+        BStatsHandler.increasePathCount();
+    
+        return pathingStartFindEvent;
     }
     
     private PathfinderResult callFinish(PathfinderSuccess success, Path path) {
@@ -129,29 +149,39 @@ public class PathfinderImpl implements Pathfinder {
         PathfinderResult pathfinderResult = new PathfinderResultImpl(success, path);
         EventUtil.callEvent(new PathingFinishedEvent(pathfinderResult));
         
+        if(success != PathfinderSuccess.FOUND)
+            BStatsHandler.increaseFailedPathCount();
+    
         return pathfinderResult;
     }
     
     private Path retracePath(Node endNode, Node startNode, PathLocation start, PathLocation target) {
         
         LinkedHashSet<PathLocation> path = new LinkedHashSet<>();
-        Node currentNode = endNode;
         
+        Node currentNode = endNode;
         while (!currentNode.equals(startNode)) {
             
             path.add(currentNode.getLocation());
-            if (currentNode.getParent() == null) break;
+            
+            if (currentNode.getParent() == null)
+                break;
+            
             currentNode = currentNode.getParent();
         }
         
-        List<PathLocation> pathReversed = new ArrayList<>(path);
+        return new PathImpl(start, target, new LinkedHashSet<>(reverseAndConvertPathContentCollection(path, start)));
+    }
+    
+    private List<PathLocation> reverseAndConvertPathContentCollection(Collection<PathLocation> collection, PathLocation start) {
         
+        List<PathLocation> pathReversed = new ArrayList<>(collection);
         pathReversed.add(start);
+    
         Collections.reverse(pathReversed);
-        
         BStatsHandler.addLength(pathReversed.size());
         
-        return new PathImpl(start, target, new LinkedHashSet<>(pathReversed));
+        return pathReversed;
     }
     
     private Collection<Node> getNeighbours(Node node, PathLocation start, PathLocation target) {

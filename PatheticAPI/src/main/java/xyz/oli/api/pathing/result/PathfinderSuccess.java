@@ -14,6 +14,11 @@ public enum PathfinderSuccess {
     /**
      * The Path wasn't found, It couldn't verify the start and finish locations
      */
-    INVALID
+    INVALID,
+    
+    /**
+     * The Pathfinder got cancelled through {@link xyz.oli.api.event.PathingStartFindEvent}
+     */
+    CANCELLED
     
 }
