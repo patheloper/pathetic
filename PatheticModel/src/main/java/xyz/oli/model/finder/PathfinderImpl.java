@@ -1,4 +1,4 @@
-package xyz.oli.pathing.model.finder;
+package xyz.oli.model.finder;
 
 import lombok.NonNull;
 import org.bukkit.Bukkit;
@@ -11,11 +11,11 @@ import xyz.oli.api.pathing.result.PathfinderSuccess;
 import xyz.oli.api.pathing.strategy.PathfinderStrategy;
 import xyz.oli.api.pathing.strategy.strategies.DirectPathfinderStrategy;
 import xyz.oli.api.wrapper.PathVector;
-import xyz.oli.pathing.bstats.BStatsHandler;
-import xyz.oli.pathing.model.PathImpl;
-import xyz.oli.pathing.util.EventUtil;
+import xyz.oli.model.PathImpl;
+import xyz.oli.bstats.BStatsHandler;
+import xyz.oli.util.EventUtil;
 import xyz.oli.api.wrapper.PathLocation;
-import xyz.oli.pathing.util.WatchdogHelper;
+import xyz.oli.util.WatchdogHelper;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;

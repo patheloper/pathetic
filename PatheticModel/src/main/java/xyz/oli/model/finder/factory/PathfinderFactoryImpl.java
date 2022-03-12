@@ -1,8 +1,8 @@
-package xyz.oli.pathing.model.finder.factory;
+package xyz.oli.model.finder.factory;
 
 import xyz.oli.api.pathing.Pathfinder;
 import xyz.oli.api.pathing.factory.PathfinderFactory;
-import xyz.oli.pathing.model.finder.PathfinderImpl;
+import xyz.oli.model.finder.PathfinderImpl;
 
 public class PathfinderFactoryImpl implements PathfinderFactory {
 

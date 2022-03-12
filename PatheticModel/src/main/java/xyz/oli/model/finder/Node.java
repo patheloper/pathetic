@@ -1,4 +1,4 @@
-package xyz.oli.pathing.model.finder;
+package xyz.oli.model.finder;
 
 import xyz.oli.api.wrapper.PathLocation;
 

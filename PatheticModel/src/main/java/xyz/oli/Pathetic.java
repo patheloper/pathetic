@@ -1,4 +1,4 @@
-package xyz.oli.pathing;
+package xyz.oli;
 
 import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
@@ -8,12 +8,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 import xyz.oli.api.material.MaterialParser;
 import xyz.oli.api.pathing.factory.PathfinderFactory;
 import xyz.oli.api.pathing.world.chunk.SnapshotManager;
-import xyz.oli.pathing.bstats.BStatsHandler;
+import xyz.oli.bstats.BStatsHandler;
 import xyz.oli.legacy.material.LegacyMaterialParser;
-import xyz.oli.pathing.model.finder.factory.PathfinderFactoryImpl;
-import xyz.oli.pathing.model.world.chunk.SnapshotManagerImpl;
-import xyz.oli.pathing.model.world.material.ModernMaterialParser;
-import xyz.oli.pathing.util.BukkitVersionUtil;
+import xyz.oli.model.finder.factory.PathfinderFactoryImpl;
+import xyz.oli.model.world.chunk.SnapshotManagerImpl;
+import xyz.oli.model.world.material.ModernMaterialParser;
+import xyz.oli.util.BukkitVersionUtil;
 
 import java.util.logging.Logger;
 

@@ -1,9 +1,9 @@
-package xyz.oli.pathing.util;
+package xyz.oli.util;
 
 import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import xyz.oli.api.event.PathingEvent;
-import xyz.oli.pathing.Pathetic;
+import xyz.oli.Pathetic;
 
 @UtilityClass
 public class EventUtil {

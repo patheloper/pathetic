@@ -1,4 +1,4 @@
-package xyz.oli.pathing.util;
+package xyz.oli.util;
 
 import lombok.experimental.UtilityClass;
 import java.lang.reflect.InvocationTargetException;

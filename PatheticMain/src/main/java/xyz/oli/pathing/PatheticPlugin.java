@@ -1,6 +1,7 @@
 package xyz.oli.pathing;
 
 import org.bukkit.plugin.java.JavaPlugin;
+import xyz.oli.Pathetic;
 
 public class PatheticPlugin extends JavaPlugin {
     

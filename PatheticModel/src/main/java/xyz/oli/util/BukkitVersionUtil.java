@@ -1,4 +1,4 @@
-package xyz.oli.pathing.util;
+package xyz.oli.util;
 
 import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;

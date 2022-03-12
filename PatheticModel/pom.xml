@@ -2,11 +2,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>PatheticPlugin</artifactId>
+        <groupId>xyz.oli</groupId>
+        <version>1.0</version>
+    </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>xyz.oli</groupId>
-    <artifactId>PatheticMain</artifactId>
-    <version>1.0</version>
+    <artifactId>PatheticModel</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -19,24 +22,6 @@
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
     </repositories>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.3.0-SNAPSHOT</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 
     <dependencies>
         <dependency>
@@ -55,7 +40,21 @@
 
         <dependency>
             <groupId>xyz.oli</groupId>
-            <artifactId>PatheticModel</artifactId>
+            <artifactId>PatheticLegacy</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>xyz.oli</groupId>
+            <artifactId>PatheticAPI</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>xyz.oli</groupId>
+            <artifactId>PatheticUtils</artifactId>
             <version>1.0</version>
             <scope>compile</scope>
         </dependency>

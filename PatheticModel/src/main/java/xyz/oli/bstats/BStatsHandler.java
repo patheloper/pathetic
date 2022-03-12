@@ -1,4 +1,4 @@
-package xyz.oli.pathing.bstats;
+package xyz.oli.bstats;
 
 import lombok.experimental.UtilityClass;
 import org.bukkit.plugin.java.JavaPlugin;

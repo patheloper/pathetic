@@ -1,12 +1,12 @@
-package xyz.oli.pathing.model.world.material;
+package xyz.oli.model.world.material;
 
 import lombok.NonNull;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
+import xyz.oli.Pathetic;
 import xyz.oli.api.material.MaterialParser;
-import xyz.oli.pathing.Pathetic;
 
 public class ModernMaterialParser implements MaterialParser {
 
