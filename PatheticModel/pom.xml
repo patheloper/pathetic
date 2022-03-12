@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>PatheticPlugin</artifactId>
-        <groupId>xyz.oli</groupId>
+        <groupId>xyz.ollieee</groupId>
         <version>1.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -57,21 +57,21 @@
         </dependency>
 
         <dependency>
-            <groupId>xyz.oli</groupId>
+            <groupId>xyz.ollieee</groupId>
             <artifactId>PatheticLegacy</artifactId>
             <version>1.0</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
-            <groupId>xyz.oli</groupId>
+            <groupId>xyz.ollieee</groupId>
             <artifactId>PatheticAPI</artifactId>
             <version>1.0</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
-            <groupId>xyz.oli</groupId>
+            <groupId>xyz.ollieee</groupId>
             <artifactId>PatheticUtils</artifactId>
             <version>1.0</version>
             <scope>compile</scope>
