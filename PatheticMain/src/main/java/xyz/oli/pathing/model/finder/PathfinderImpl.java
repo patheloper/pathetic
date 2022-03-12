@@ -96,11 +96,11 @@ public class PathfinderImpl implements Pathfinder {
             return callFinish(PathfinderSuccess.FOUND, new PathImpl(start, target, nodeList));
         }
     
-        Optional<PathLocation> path = LOSHelper.findFirstObstacle(start, target);
-        if (!path.isPresent())
+        Optional<PathLocation> firstObstacleLocation = LOSHelper.findFirstObstacle(start, target);
+        if (!firstObstacleLocation.isPresent())
             return callFinish(PathfinderSuccess.FOUND, new PathImpl(start, target, line(start, target)));
     
-        Node startNode = new Node(path.get(), start, target, 0);
+        Node startNode = new Node(firstObstacleLocation.get(), start, target, 0);
         Node targetNode = new Node(new PathLocation(target.getPathWorld(), target.getBlockX() + 0.5, target.getBlockY(), target.getBlockZ() + 0.5), start, target, 0);
         
         PriorityQueue<Node> queue = new PriorityQueue<>();
