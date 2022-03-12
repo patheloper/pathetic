@@ -2,9 +2,6 @@ package xyz.oli.api.wrapper;
 
 import lombok.Getter;
 
-import org.bukkit.util.NumberConversions;
-import org.bukkit.util.Vector;
-
 @Getter
 public class PathVector implements Cloneable{
     
@@ -62,11 +59,11 @@ public class PathVector implements Cloneable{
         return this;
     }
 
-    public double length() {
-        return Math.sqrt(NumberConversions.square(this.x) + NumberConversions.square(this.y) + NumberConversions.square(this.z));
+    private double square(double value){
+        return value * value;
     }
 
-    public Vector toBukkit() {
-        return new Vector(this.x, this.y, this.z);
+    public double length() {
+        return Math.sqrt(this.square(this.x) + this.square(this.y) + this.square(this.z));
     }
 }

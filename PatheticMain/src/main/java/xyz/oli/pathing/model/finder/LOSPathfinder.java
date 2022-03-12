@@ -1,6 +1,7 @@
 package xyz.oli.pathing.model.finder;
 
 import org.bukkit.FluidCollisionMode;
+import org.bukkit.Location;
 import org.bukkit.util.RayTraceResult;
 
 import xyz.oli.api.pathing.result.Path;
@@ -8,6 +9,7 @@ import xyz.oli.api.wrapper.PathLocation;
 import xyz.oli.api.wrapper.PathVector;
 import xyz.oli.pathing.Pathetic;
 import xyz.oli.pathing.model.PathImpl;
+import xyz.oli.utils.BukkitConverter;
 
 import java.util.*;
 
@@ -17,7 +19,8 @@ public class LOSPathfinder {
 
         Pathetic.getPluginLogger().info("Using LOS");
 
-        RayTraceResult result = start.toBukkit().getWorld().rayTraceBlocks(start.toBukkit(), target.toVector().subtract(start.toVector()).toBukkit(), start.distance(target) + 1, FluidCollisionMode.ALWAYS, false);
+        Location location = BukkitConverter.toLocation(start);
+        RayTraceResult result = location.getWorld().rayTraceBlocks(location, BukkitConverter.toVector(target.toVector().subtract(start.toVector())), start.distance(target) + 1, FluidCollisionMode.ALWAYS, false);
 
         Pathetic.getPluginLogger().info(result == null ? "null" : result.toString());
 

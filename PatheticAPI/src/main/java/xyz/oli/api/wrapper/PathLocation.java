@@ -4,10 +4,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.util.NumberConversions;
-
 import xyz.oli.api.PatheticAPI;
 
 @ToString
@@ -64,8 +60,12 @@ public class PathLocation implements Cloneable {
         return (better + input/better)/2.0;
     }
 
+    private double square(double value){
+        return value * value;
+    }
+
     public double distance(PathLocation otherLocation) {
-        return sqrt(NumberConversions.square(this.x - otherLocation.x) + NumberConversions.square((this.y - otherLocation.y) * 1.1) + NumberConversions.square(this.z - otherLocation.z));
+        return sqrt(this.square(this.x - otherLocation.x) + this.square((this.y - otherLocation.y) * 1.1) + this.square(this.z - otherLocation.z));
     }
 
     public PathLocation add(final double x, final double y, final double z) {
@@ -100,10 +100,6 @@ public class PathLocation implements Cloneable {
 
     public PathBlock getBlock() {
         return PatheticAPI.getSnapshotManager().getBlock(this);
-    }
-
-    public Location toBukkit() {
-        return new Location(Bukkit.getWorld(this.pathWorld.getUuid()), this.x, this.y, this.z);
     }
 
 }
