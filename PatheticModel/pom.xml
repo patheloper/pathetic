@@ -5,7 +5,7 @@
     <parent>
         <artifactId>PatheticPlugin</artifactId>
         <groupId>xyz.ollieee</groupId>
-        <version>1.0</version>
+        <version>1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -59,21 +59,21 @@
         <dependency>
             <groupId>xyz.ollieee</groupId>
             <artifactId>PatheticLegacy</artifactId>
-            <version>1.0</version>
+            <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>xyz.ollieee</groupId>
             <artifactId>PatheticAPI</artifactId>
-            <version>1.0</version>
+            <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>xyz.ollieee</groupId>
             <artifactId>PatheticUtils</artifactId>
-            <version>1.0</version>
+            <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
