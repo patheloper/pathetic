@@ -13,8 +13,22 @@ import xyz.oli.utils.BukkitConverter;
 
 import java.util.*;
 
-public class LOSPathfinder {
+public class LOSHelper {
 
+    public static Optional<PathLocation> findFirstObstacle(PathLocation start, PathLocation target) {
+    
+        Location location = BukkitConverter.toLocation(start);
+        RayTraceResult result = location.getWorld().rayTraceBlocks(location, BukkitConverter.toVector(target.toVector().subtract(start.toVector())), start.distance(target) + 1, FluidCollisionMode.ALWAYS, false);
+        
+        if(result == null)
+            return Optional.empty();
+    
+        Location hitLocation = result.getHitBlock().getLocation();
+        target = BukkitConverter.toPathLocation(hitLocation);
+        
+        return Optional.of(target);
+    }
+    
     public static Optional<Path> tryDirect(PathLocation start, PathLocation target) {
 
         Pathetic.getPluginLogger().info("Using LOS");
@@ -24,12 +38,15 @@ public class LOSPathfinder {
 
         Pathetic.getPluginLogger().info(result == null ? "null" : result.toString());
 
-        if (result == null) {
+        if (result == null)
             return Optional.of(new PathImpl(start, target, new LinkedHashSet<>(line(start, target))));
-        }
+        
+        Location hitLocation = result.getHitBlock().getLocation();
+        target = BukkitConverter.toPathLocation(hitLocation);
+        
         return Optional.empty();
     }
-
+    
     private static List<PathLocation> line(final PathLocation start, final PathLocation end) {
 
         final PathVector fullLine = end.toVector().subtract(start.toVector());
