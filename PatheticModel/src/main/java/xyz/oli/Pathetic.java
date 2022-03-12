@@ -22,7 +22,7 @@ public class Pathetic {
 
     private static JavaPlugin instance;
     private static Logger logger;
-
+    
     /**
      * @throws IllegalStateException If an attempt is made to initialize more than 1 time
      */
@@ -43,6 +43,7 @@ public class Pathetic {
         Bukkit.getServicesManager().register(SnapshotManager.class, new SnapshotManagerImpl(), javaPlugin, ServicePriority.Highest);
 
         BStatsHandler.init(javaPlugin);
+        logger.info("PatheticAPI successfully initialized");
     }
     
     public static JavaPlugin getPluginInstance() {
