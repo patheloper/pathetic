@@ -38,27 +38,6 @@ public class PathfinderImpl implements Pathfinder {
             new PathVector(0, -1, 0),
     };
     
-    private static LinkedHashSet<PathLocation> line(final PathLocation start, final PathLocation end) {
-        
-        final PathVector fullLine = end.toVector().subtract(start.toVector());
-        final double fullLength = fullLine.length();
-        final PathVector deltaLine = fullLine.clone().normalize();
-        
-        final List<PathLocation> locations = new ArrayList<>((int) (fullLength));
-        
-        locations.add(start);
-        
-        for (int i = 0; i < (int) (fullLength); i++) {
-            final PathLocation nextLocation = locations.get(locations.size() - 1).clone().add(deltaLine);
-            locations.add(nextLocation);
-        }
-        
-        locations.remove(start);
-        locations.add(end);
-        
-        return new LinkedHashSet<>(locations);
-    }
-    
     private PathfinderStrategy strategy = DEFAULT_STRATEGY;
     
     @Override
