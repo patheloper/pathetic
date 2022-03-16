@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>xyz.ollieee</groupId>
-    <artifactId>PatheticPlugin</artifactId>
+    <artifactId>pathetic-main</artifactId>
     <packaging>pom</packaging>
     <version>1.0.1</version>
 
@@ -15,11 +15,11 @@
     </properties>
 
     <modules>
-        <module>PatheticMain</module>
-        <module>PatheticLegacy</module>
-        <module>PatheticAPI</module>
-        <module>PatheticUtils</module>
-        <module>PatheticModel</module>
+        <module>pathetic-plugin</module>
+        <module>pathetic-legacy</module>
+        <module>pathetic-api</module>
+        <module>pathetic-utils</module>
+        <module>pathetic-model</module>
     </modules>
 
 </project>

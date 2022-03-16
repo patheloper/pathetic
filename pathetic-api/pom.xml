@@ -4,9 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>xyz.ollieee</groupId>
-    <artifactId>PatheticMain</artifactId>
-    <version>1.0.0</version>
+    <parent>
+        <artifactId>pathetic-main</artifactId>
+        <groupId>xyz.ollieee</groupId>
+        <version>1.0.1</version>
+    </parent>
+
+    <artifactId>pathetic-api</artifactId>
+    <version>1.0.1</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -19,24 +24,6 @@
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
     </repositories>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 
     <dependencies>
         <dependency>
@@ -52,13 +39,5 @@
             <version>1.18.22</version>
             <scope>provided</scope>
         </dependency>
-
-        <dependency>
-            <groupId>xyz.ollieee</groupId>
-            <artifactId>PatheticModel</artifactId>
-            <version>1.0.1</version>
-            <scope>compile</scope>
-        </dependency>
     </dependencies>
-
 </project>
