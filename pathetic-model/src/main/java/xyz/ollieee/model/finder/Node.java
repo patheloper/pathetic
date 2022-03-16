@@ -20,6 +20,7 @@ public class Node implements Comparable<Node> {
         this.target = target;
         this.start = start;
         this.depth = depth;
+        
         this.length = this.start.distance(this.target);
     }
 
