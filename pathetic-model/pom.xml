@@ -60,13 +60,6 @@
 
         <dependency>
             <groupId>xyz.ollieee</groupId>
-            <artifactId>pathetic-main</artifactId>
-            <version>1.0.1</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>xyz.ollieee</groupId>
             <artifactId>pathetic-api</artifactId>
             <version>1.0.1</version>
             <scope>compile</scope>
@@ -75,6 +68,13 @@
         <dependency>
             <groupId>xyz.ollieee</groupId>
             <artifactId>pathetic-utils</artifactId>
+            <version>1.0.1</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>xyz.ollieee</groupId>
+            <artifactId>pathetic-legacy</artifactId>
             <version>1.0.1</version>
             <scope>compile</scope>
         </dependency>
