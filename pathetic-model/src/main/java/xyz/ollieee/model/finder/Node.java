@@ -7,22 +7,20 @@ import java.util.Objects;
 public class Node implements Comparable<Node> {
 
     private final Integer depth;
-    private Node parent;
     private final PathLocation location;
     private final PathLocation target;
     private final PathLocation start;
     private final Double length;
+    
+    private Node parent;
 
     Node(PathLocation location, PathLocation start, PathLocation target, Integer depth) {
+        
         this.location = location;
         this.target = target;
         this.start = start;
         this.depth = depth;
         this.length = this.start.distance(this.target);
-    }
-
-    public Integer getDepth() {
-        return this.depth;
     }
 
     public void setParent(Node parent) {
@@ -31,6 +29,10 @@ public class Node implements Comparable<Node> {
     
     public Node getParent() {
         return this.parent;
+    }
+    
+    public Integer getDepth() {
+        return this.depth;
     }
 
     public PathLocation getLocation() {
