@@ -13,31 +13,44 @@ import xyz.ollieee.api.pathing.world.chunk.SnapshotManager;
 @UtilityClass
 public class PatheticAPI {
 
-    private final RegisteredServiceProvider<MaterialParser> parserRegistration = Bukkit.getServicesManager().getRegistration(MaterialParser.class);
-    private final RegisteredServiceProvider<SnapshotManager> snapshotManagerRegistration = Bukkit.getServicesManager().getRegistration(SnapshotManager.class);
-    private final RegisteredServiceProvider<PathfinderFactory> finderFactoryRegistration = Bukkit.getServicesManager().getRegistration(PathfinderFactory.class);
+    private final RegisteredServiceProvider<MaterialParser> parserRegistration;
+    private final RegisteredServiceProvider<SnapshotManager> snapshotManagerRegistration;
+    private final RegisteredServiceProvider<PathfinderFactory> finderFactoryRegistration;
 
-    public @NonNull Pathfinder instantiateNewPathfinder() {
+    static {
 
-        if(finderFactoryRegistration == null)
-            throw new IllegalStateException();
-        
+        parserRegistration = Bukkit.getServicesManager().getRegistration(MaterialParser.class);
+        snapshotManagerRegistration = Bukkit.getServicesManager().getRegistration(SnapshotManager.class);
+        finderFactoryRegistration = Bukkit.getServicesManager().getRegistration(PathfinderFactory.class);
+
+        if(parserRegistration == null || snapshotManagerRegistration == null || finderFactoryRegistration == null)
+            throw new IllegalStateException("Services registration has failed");
+    }
+
+    /**
+     * Returns a new Pathfinder instance
+     * @return {@link Pathfinder} The new pathfinder instance
+     */
+    @NonNull
+    public Pathfinder instantiateNewPathfinder() {
         return finderFactoryRegistration.getProvider().newPathfinder();
     }
-    
-    public @NonNull MaterialParser getParser() {
 
-        if(parserRegistration == null)
-            throw new IllegalStateException();
-
+    /**
+     * Returns the material parser instance
+     * @return {@link MaterialParser} The parser instance
+     */
+    @NonNull
+    public MaterialParser getParser() {
         return parserRegistration.getProvider();
     }
 
-    public @NonNull SnapshotManager getSnapshotManager() {
-
-        if(snapshotManagerRegistration == null)
-            throw new IllegalStateException();
-
+    /**
+     * Returns the snapshot manager instance
+     * @return {@link SnapshotManager} The snapshot manager instance
+     */
+    @NonNull
+    public SnapshotManager getSnapshotManager() {
         return snapshotManagerRegistration.getProvider();
     }
 }

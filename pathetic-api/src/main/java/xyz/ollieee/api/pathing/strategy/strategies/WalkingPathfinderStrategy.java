@@ -7,6 +7,10 @@ import xyz.ollieee.api.wrapper.PathBlock;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * A {@link PathfinderStrategy} useful for walking. Not perfect and a WIP
+ * @deprecated WIP
+ */
 public class WalkingPathfinderStrategy implements PathfinderStrategy {
 
     @Override

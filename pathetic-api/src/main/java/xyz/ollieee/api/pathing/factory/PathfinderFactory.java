@@ -5,7 +5,7 @@ import xyz.ollieee.api.pathing.Pathfinder;
 public interface PathfinderFactory {
 
     /**
-     * Instantiates and returns a new Pathfinder instance
+     * Instantiates and returns a new {@link Pathfinder} instance
      */
     Pathfinder newPathfinder();
 }

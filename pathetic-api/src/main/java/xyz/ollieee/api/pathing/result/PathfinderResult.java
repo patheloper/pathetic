@@ -3,17 +3,17 @@ package xyz.ollieee.api.pathing.result;
 public interface PathfinderResult {
     
     /**
-     * @return The Path if found
+     * @return The {@link Path} if found
      */
     Path getPath();
     
     /**
-     * @return Boolean whether it was successful
+     * @return whether it was successful
      */
     boolean successful();
     
     /**
-     * @return The Success as Enum
+     * @return The success as a {@link PathfinderSuccess}
      */
     PathfinderSuccess getPathfinderSuccess();
 }

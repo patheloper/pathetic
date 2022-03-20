@@ -65,7 +65,7 @@ public class PathLocation implements Cloneable {
     }
 
     public double distance(PathLocation otherLocation) {
-        return sqrt(this.square(this.x - otherLocation.x) + this.square((this.y - otherLocation.y) * 1.1) + this.square(this.z - otherLocation.z));
+        return sqrt(this.square(this.x - otherLocation.x) + this.square(this.y - otherLocation.y) + this.square(this.z - otherLocation.z));
     }
 
     public PathLocation add(final double x, final double y, final double z) {

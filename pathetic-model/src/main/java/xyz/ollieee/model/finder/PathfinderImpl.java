@@ -92,7 +92,7 @@ public class PathfinderImpl implements Pathfinder {
         
             Node node = queue.poll();
             if(node == null)
-                throw new IllegalStateException("Something exploded randomly");
+                throw new IllegalStateException("Something unexpected happened");
         
             depth++;
         

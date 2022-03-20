@@ -13,11 +13,13 @@ public interface Path {
 
     /**
      * Returns the start location of the path
+     * @return {@link PathLocation} The location of the start
      */
     PathLocation getStart();
 
     /**
      * Returns the target location of the path
+     * @return {@link PathLocation} The location of the target
      */
     PathLocation getTarget();
 }

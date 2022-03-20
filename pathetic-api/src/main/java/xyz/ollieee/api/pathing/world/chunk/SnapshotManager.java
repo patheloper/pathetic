@@ -8,7 +8,7 @@ public interface SnapshotManager {
     /**
      * Gets the block at a location
      * @param location the location to check
-     * @return PathBlock the block
+     * @return {@link PathBlock} the block
      */
     PathBlock getBlock(PathLocation location);
 }
