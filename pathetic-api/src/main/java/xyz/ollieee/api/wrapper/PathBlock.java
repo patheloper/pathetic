@@ -1,6 +1,5 @@
 package xyz.ollieee.api.wrapper;
 
-import lombok.Getter;
 import lombok.Value;
 
 /**
