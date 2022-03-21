@@ -10,10 +10,16 @@ import java.util.concurrent.CompletableFuture;
 public interface Pathfinder {
     
     /**
-     * Tries to find a Path from {@param start} to {@param target} with the set {@link xyz.ollieee.api.pathing.strategy.PathfinderStrategy} or default {@link xyz.ollieee.api.pathing.strategy.strategies.DirectPathfinderStrategy}
+     * Tries to find a Path from {@param start} to {@param target} with the default {@link xyz.ollieee.api.pathing.strategy.strategies.DirectPathfinderStrategy}
      * @return {@link PathfinderResult} the result
      */
     PathfinderResult findPath(PathLocation start, PathLocation target);
+
+    /**
+     * Tries to find a Path from {@param start} to {@param target} with the set {@link xyz.ollieee.api.pathing.strategy.PathfinderStrategy}
+     * @return {@link PathfinderResult} the result
+     */
+    PathfinderResult findPath(PathLocation start, PathLocation target, @NonNull PathfinderStrategy strategy);
     
     /**
      * @see #findPath(PathLocation, PathLocation) findPath but async
@@ -22,9 +28,9 @@ public interface Pathfinder {
     CompletableFuture<PathfinderResult> findPathAsync(PathLocation start, PathLocation target);
 
     /**
-     * Sets the strategy to be used
-     * @return {@link Pathfinder}
+     * @see #findPath(PathLocation, PathLocation, PathfinderStrategy) - findPath but async
+     * @return {@link CompletableFuture<PathfinderResult>} the future of the result
      */
-    Pathfinder setStrategy(@NonNull PathfinderStrategy strategy);
+    CompletableFuture<PathfinderResult> findPathAsync(PathLocation start, PathLocation target, @NonNull PathfinderStrategy strategy);
 
 }

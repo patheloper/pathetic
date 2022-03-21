@@ -38,24 +38,26 @@ public class PathfinderImpl implements Pathfinder {
             new PathVector(0, -1, 0),
     };
     
-    private PathfinderStrategy strategy = DEFAULT_STRATEGY;
-    
     @Override
     public PathfinderResult findPath(PathLocation start, PathLocation target) {
+        return findPath(start, target, DEFAULT_STRATEGY);
+    }
+
+    @Override
+    public PathfinderResult findPath(PathLocation start, PathLocation target, @NonNull PathfinderStrategy strategy) {
         return seekPath(start, target, strategy);
     }
-    
+
     @Override
     public CompletableFuture<PathfinderResult> findPathAsync(PathLocation start, PathLocation target) {
+        return findPathAsync(start, target, DEFAULT_STRATEGY);
+    }
+
+    @Override
+    public CompletableFuture<PathfinderResult> findPathAsync(PathLocation start, PathLocation target, @NonNull PathfinderStrategy strategy) {
         return CompletableFuture.supplyAsync(() -> seekPath(start, target, strategy), FORK_JOIN_POOL);
     }
-    
-    @Override
-    public Pathfinder setStrategy(@NonNull PathfinderStrategy strategy) {
-        this.strategy = strategy;
-        return this;
-    }
-    
+
     private @NonNull PathfinderResult seekPath(PathLocation start, PathLocation target, PathfinderStrategy strategy) {
         
         PathingStartFindEvent pathingStartFindEvent = callStart(start, target, strategy);
@@ -76,11 +78,11 @@ public class PathfinderImpl implements Pathfinder {
         PriorityQueue<Node> queue = new PriorityQueue<>();
         queue.add(startNode);
         
-        Optional<Path> pathOptional = processNodeQueue(queue, startNode, start, targetNode, target);
+        Optional<Path> pathOptional = processNodeQueue(queue, startNode, start, targetNode, target, strategy);
         return pathOptional.map(path -> callFinish(PathfinderSuccess.FOUND, path)).orElseGet(() -> callFinish(PathfinderSuccess.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
     }
     
-    private Optional<Path> processNodeQueue(Queue<Node> queue, Node startNode, PathLocation start, Node targetNode, PathLocation target) {
+    private Optional<Path> processNodeQueue(Queue<Node> queue, Node startNode, PathLocation start, Node targetNode, PathLocation target, PathfinderStrategy strategy) {
     
         Set<PathLocation> processed = new HashSet<>();
     
@@ -99,7 +101,7 @@ public class PathfinderImpl implements Pathfinder {
             if (node.equals(targetNode))
                 return Optional.of(retracePath(node, startNode, start, target));
 
-            Optional<Path> pathOptional = processNeighbourNodes(queue, node, startNode, start, targetNode, target, processed);
+            Optional<Path> pathOptional = processNeighbourNodes(queue, node, startNode, start, targetNode, target, processed, strategy);
             if(pathOptional.isPresent())
                 return pathOptional;
         }
@@ -107,21 +109,21 @@ public class PathfinderImpl implements Pathfinder {
         return Optional.empty();
     }
     
-    private Optional<Path> processNeighbourNodes(Queue<Node> queue, Node node, Node startNode, PathLocation start, Node targetNode, PathLocation target, Set<PathLocation> processed) {
+    private Optional<Path> processNeighbourNodes(Queue<Node> queue, Node node, Node startNode, PathLocation start, Node targetNode, PathLocation target, Set<PathLocation> processed, PathfinderStrategy strategy) {
     
         for (Node neighbourNode : getNeighbours(node, start, target)) {
         
             if (neighbourNode.equals(targetNode))
                 return Optional.of(retracePath(neighbourNode, startNode, start, target));
         
-            if(validateNode(queue, neighbourNode, processed))
+            if(validateNode(queue, neighbourNode, processed, strategy))
                 queue.add(neighbourNode);
         }
         
         return Optional.empty();
     }
     
-    private boolean validateNode(Queue<Node> queue, Node node, Set<PathLocation> processed) {
+    private boolean validateNode(Queue<Node> queue, Node node, Set<PathLocation> processed, PathfinderStrategy strategy) {
     
         boolean validateNode = queue.contains(node)
                 && queue.removeIf(node1 -> node1.getLocation().equals(node.getLocation())
