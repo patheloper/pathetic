@@ -15,7 +15,7 @@ class StrategyRegistry {
     public PathfinderStrategy registerStrategy(Class<? extends PathfinderStrategy> strategyType) {
         
         if (strategyCache.containsKey(strategyType))
-            return getStrategyByType(strategyType).orElseThrow(() -> new IllegalStateException("Whatever happened here?"));
+            return strategyCache.get(strategyType);
         
         PathfinderStrategy pathfinderStrategy = null;
         try {
@@ -28,6 +28,7 @@ class StrategyRegistry {
         return pathfinderStrategy;
     }
     
+    @Deprecated
     public Optional<PathfinderStrategy> getStrategyByType(Class<? extends PathfinderStrategy> strategyType) {
         
         if(!strategyCache.containsKey(strategyType))
