@@ -26,8 +26,10 @@ public class PathfinderImpl implements Pathfinder {
     private static final int MAX_CHECKS = 30000;
     private static final ForkJoinPool FORK_JOIN_POOL = new ForkJoinPool(Runtime.getRuntime().availableProcessors(), ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, true);
    
+    private static final StrategyRegistry STRATEGY_REGISTRY = new StrategyRegistry();
+    
     private static final LinkedHashSet<PathLocation> EMPTY_LINKED_HASHSET = new LinkedHashSet<>();
-    private static final PathfinderStrategy DEFAULT_STRATEGY = new DirectPathfinderStrategy();
+    private static final Class<? extends PathfinderStrategy> DEFAULT_STRATEGY_TYPE = DirectPathfinderStrategy.class;
     
     private static final PathVector[] OFFSETS = {
             new PathVector(1, 0, 0),
@@ -40,30 +42,32 @@ public class PathfinderImpl implements Pathfinder {
     
     @Override
     public PathfinderResult findPath(PathLocation start, PathLocation target) {
-        return findPath(start, target, DEFAULT_STRATEGY);
+        return findPath(start, target, DEFAULT_STRATEGY_TYPE);
     }
 
     @Override
-    public PathfinderResult findPath(PathLocation start, PathLocation target, @NonNull PathfinderStrategy strategy) {
-        return seekPath(start, target, strategy);
+    public PathfinderResult findPath(PathLocation start, PathLocation target, @NonNull Class<? extends PathfinderStrategy> strategyType) {
+        return seekPath(start, target, strategyType);
     }
 
     @Override
     public CompletableFuture<PathfinderResult> findPathAsync(PathLocation start, PathLocation target) {
-        return findPathAsync(start, target, DEFAULT_STRATEGY);
+        return findPathAsync(start, target, DEFAULT_STRATEGY_TYPE);
     }
 
     @Override
-    public CompletableFuture<PathfinderResult> findPathAsync(PathLocation start, PathLocation target, @NonNull PathfinderStrategy strategy) {
-        return CompletableFuture.supplyAsync(() -> seekPath(start, target, strategy), FORK_JOIN_POOL);
+    public CompletableFuture<PathfinderResult> findPathAsync(PathLocation start, PathLocation target, @NonNull Class<? extends PathfinderStrategy> strategyType) {
+        return CompletableFuture.supplyAsync(() -> seekPath(start, target, strategyType), FORK_JOIN_POOL);
     }
 
-    private @NonNull PathfinderResult seekPath(PathLocation start, PathLocation target, PathfinderStrategy strategy) {
+    private @NonNull PathfinderResult seekPath(PathLocation start, PathLocation target, Class<? extends PathfinderStrategy> strategyType) {
         
-        PathingStartFindEvent pathingStartFindEvent = callStart(start, target, strategy);
+        PathingStartFindEvent pathingStartFindEvent = callStart(start, target, strategyType);
         if(pathingStartFindEvent.isCancelled())
             return callFinish(PathfinderSuccess.CANCELLED, new PathImpl(start, target, EMPTY_LINKED_HASHSET));
     
+        PathfinderStrategy strategy = STRATEGY_REGISTRY.registerStrategy(strategyType);
+        
         if (!start.getPathWorld().equals(target.getPathWorld())
                 || !strategy.isValid(start.getBlock(), null, null)
                 || !strategy.isValid(target.getBlock(), null, null))
@@ -82,7 +86,8 @@ public class PathfinderImpl implements Pathfinder {
         return pathOptional.map(path -> callFinish(PathfinderSuccess.FOUND, path)).orElseGet(() -> callFinish(PathfinderSuccess.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
     }
     
-    private Optional<Path> processNodeQueue(Queue<Node> queue, Node startNode, PathLocation start, Node targetNode, PathLocation target, PathfinderStrategy strategy) {
+    private Optional<Path> processNodeQueue(Queue<Node> queue, Node startNode, PathLocation start, Node targetNode,
+                                            PathLocation target, PathfinderStrategy strategy) {
     
         Set<PathLocation> processed = new HashSet<>();
     
@@ -109,7 +114,9 @@ public class PathfinderImpl implements Pathfinder {
         return Optional.empty();
     }
     
-    private Optional<Path> processNeighbourNodes(Queue<Node> queue, Node node, Node startNode, PathLocation start, Node targetNode, PathLocation target, Set<PathLocation> processed, PathfinderStrategy strategy) {
+    private Optional<Path> processNeighbourNodes(Queue<Node> queue, Node node, Node startNode, PathLocation start,
+                                                 Node targetNode, PathLocation target, Set<PathLocation> processed,
+                                                 PathfinderStrategy strategy) {
     
         for (Node neighbourNode : getNeighbours(node, start, target)) {
         
@@ -136,9 +143,9 @@ public class PathfinderImpl implements Pathfinder {
         return validateNode || verifyLocation;
     }
     
-    private PathingStartFindEvent callStart(PathLocation start, PathLocation target, PathfinderStrategy strategy) {
+    private PathingStartFindEvent callStart(PathLocation start, PathLocation target, Class<? extends PathfinderStrategy> strategyType) {
         
-        PathingStartFindEvent pathingStartFindEvent = new PathingStartFindEvent(start, target, strategy);
+        PathingStartFindEvent pathingStartFindEvent = new PathingStartFindEvent(start, target, strategyType);
         EventUtil.callEvent(pathingStartFindEvent);
     
         BStatsHandler.increasePathCount();

@@ -19,7 +19,7 @@ public interface Pathfinder {
      * Tries to find a Path from {@param start} to {@param target} with the set {@link xyz.ollieee.api.pathing.strategy.PathfinderStrategy}
      * @return {@link PathfinderResult} the result
      */
-    PathfinderResult findPath(PathLocation start, PathLocation target, @NonNull PathfinderStrategy strategy);
+    PathfinderResult findPath(PathLocation start, PathLocation target, @NonNull Class<? extends PathfinderStrategy> strategyType);
     
     /**
      * @see #findPath(PathLocation, PathLocation) findPath but async
@@ -28,9 +28,9 @@ public interface Pathfinder {
     CompletableFuture<PathfinderResult> findPathAsync(PathLocation start, PathLocation target);
 
     /**
-     * @see #findPath(PathLocation, PathLocation, PathfinderStrategy) - findPath but async
+     * @see #findPath(PathLocation, PathLocation, Class)  - findPath but async
      * @return {@link CompletableFuture<PathfinderResult>} the future of the result
      */
-    CompletableFuture<PathfinderResult> findPathAsync(PathLocation start, PathLocation target, @NonNull PathfinderStrategy strategy);
+    CompletableFuture<PathfinderResult> findPathAsync(PathLocation start, PathLocation target, @NonNull Class<? extends PathfinderStrategy> strategyType);
 
 }

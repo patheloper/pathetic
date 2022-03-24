@@ -14,12 +14,12 @@ public class PathingStartFindEvent extends PathingEvent implements Cancellable {
     private boolean cancelled = false;
     private final PathLocation start;
     private final PathLocation target;
-    private final PathfinderStrategy strategy;
+    private final Class<? extends PathfinderStrategy> strategyType;
 
-    public PathingStartFindEvent(PathLocation start, PathLocation target, PathfinderStrategy strategy) {
+    public PathingStartFindEvent(PathLocation start, PathLocation target, Class<? extends PathfinderStrategy> strategyType) {
         this.start = start;
         this.target = target;
-        this.strategy = strategy;
+        this.strategyType = strategyType;
     }
 
     public boolean isCancelled() {
@@ -41,13 +41,13 @@ public class PathingStartFindEvent extends PathingEvent implements Cancellable {
     public PathLocation getTarget() {
         return this.target;
     }
-
+    
     /**
-     * Gets the pathfinder strategy
+     * Gets the pathfinder strategy type
      * @return {@link PathfinderStrategy} the strategy
      */
-    public PathfinderStrategy getStrategy() {
-        return this.strategy;
+    public Class<? extends PathfinderStrategy> getStrategyType() {
+        return strategyType;
     }
 
     public void setCancelled(boolean cancelled) {
