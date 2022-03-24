@@ -3,6 +3,9 @@ package xyz.ollieee.api.pathing.strategy;
 import lombok.NonNull;
 import xyz.ollieee.api.wrapper.PathBlock;
 
+/**
+ * A functional interface to modify the internal behaviour and choosing of the {@link xyz.ollieee.api.pathing.Pathfinder}
+ */
 public interface PathfinderStrategy {
     
     /**

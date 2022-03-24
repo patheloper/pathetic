@@ -66,7 +66,7 @@ public class PathfinderImpl implements Pathfinder {
         if(pathingStartFindEvent.isCancelled())
             return callFinish(PathfinderSuccess.CANCELLED, new PathImpl(start, target, EMPTY_LINKED_HASHSET));
     
-        PathfinderStrategy strategy = STRATEGY_REGISTRY.registerStrategy(strategyType);
+        PathfinderStrategy strategy = STRATEGY_REGISTRY.attemptRegister(strategyType);
         
         if (!start.getPathWorld().equals(target.getPathWorld())
                 || !strategy.isValid(start.getBlock(), null, null)
