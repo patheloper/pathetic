@@ -80,8 +80,10 @@ public class BukkitConverter {
             return PathBlockType.AIR;
 
         switch (material) {
-            case WATER, LAVA: return PathBlockType.LIQUID;
-            case GRASS, TALL_GRASS: return PathBlockType.OTHER;
+            case WATER:
+            case LAVA: return PathBlockType.LIQUID;
+            case GRASS:
+            case TALL_GRASS: return PathBlockType.OTHER;
             default: return PathBlockType.SOLID;
         }
     }

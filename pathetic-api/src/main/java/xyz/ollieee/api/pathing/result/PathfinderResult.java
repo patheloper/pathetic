@@ -1,10 +1,13 @@
 package xyz.ollieee.api.pathing.result;
 
+import lombok.NonNull;
+
 public interface PathfinderResult {
     
     /**
      * @return The {@link Path} if found
      */
+    @NonNull
     Path getPath();
     
     /**
@@ -15,5 +18,6 @@ public interface PathfinderResult {
     /**
      * @return The success as a {@link PathfinderSuccess}
      */
+    @NonNull
     PathfinderSuccess getPathfinderSuccess();
 }

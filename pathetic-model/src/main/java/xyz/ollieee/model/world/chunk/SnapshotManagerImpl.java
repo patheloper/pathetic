@@ -22,6 +22,7 @@ public class SnapshotManagerImpl implements SnapshotManager {
 
     private final Map<UUID, WorldDomain> snapshots = new HashMap<>();
 
+    @NonNull
     @Override
     public PathBlock getBlock(@NonNull PathLocation location) {
         
