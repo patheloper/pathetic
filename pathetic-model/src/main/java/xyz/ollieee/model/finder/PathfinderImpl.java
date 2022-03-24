@@ -118,13 +118,19 @@ public class PathfinderImpl implements Pathfinder {
                                                  Node targetNode, PathLocation target, Set<PathLocation> processed,
                                                  PathfinderStrategy strategy) {
     
-        for (Node neighbourNode : getNeighbours(node, start, target)) {
+        //experimental
+        List<Node> nodes = new ArrayList<>(getNeighbours(node, start, target));
+        nodes.sort(Comparator.comparingDouble(o -> o.getLocation().distance(target)));
+        
+        for (Node neighbourNode : nodes) {
         
             if (neighbourNode.equals(targetNode))
                 return Optional.of(retracePath(neighbourNode, startNode, start, target));
         
-            if(validateNode(queue, neighbourNode, processed, strategy))
+            if(validateNode(queue, neighbourNode, processed, strategy)) {
                 queue.add(neighbourNode);
+                break;
+            }
         }
         
         return Optional.empty();
