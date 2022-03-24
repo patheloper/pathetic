@@ -1,6 +1,7 @@
 package xyz.ollieee.api.wrapper;
 
 import lombok.Getter;
+import lombok.NonNull;
 
 @Getter
 public class PathVector implements Cloneable {
@@ -35,6 +36,7 @@ public class PathVector implements Cloneable {
      * @param x The value to set it to
      * @return The same {@link PathVector}
      */
+    @NonNull
     public PathVector setX(double x) {
         this.x = x;
         return this;
@@ -45,6 +47,7 @@ public class PathVector implements Cloneable {
      * @param y The value to set it to
      * @return The same {@link PathVector}
      */
+    @NonNull
     public PathVector setY(double y) {
         this.y = y;
         return this;
@@ -55,6 +58,7 @@ public class PathVector implements Cloneable {
      * @param z The value to set it to
      * @return The same {@link PathVector}
      */
+    @NonNull
     public PathVector setZ(double z) {
         this.z = z;
         return this;
@@ -65,6 +69,7 @@ public class PathVector implements Cloneable {
      * @param otherVector {@link PathVector} to vector to subtract from the current Vector
      * @return The same {@link PathVector}
      */
+    @NonNull
     public PathVector subtract(PathVector otherVector) {
         this.x -= otherVector.x;
         this.y -= otherVector.y;
@@ -77,6 +82,7 @@ public class PathVector implements Cloneable {
      * @param value The constant to multiply by
      * @return The same {@link PathVector}
      */
+    @NonNull
     public PathVector multiply(double value) {
         this.x *= value;
         this.y *= value;
@@ -88,15 +94,25 @@ public class PathVector implements Cloneable {
      * Clones the {@link PathVector}
      * @return A new {@link PathVector} with the same values
      */
-    @Override
     public PathVector clone() {
-        return new PathVector(this.x, this.y, this.z);
+        final PathVector clone;
+        try {
+            clone = (PathVector) super.clone();
+        }
+        catch (CloneNotSupportedException ex) {
+            throw new RuntimeException("Superclass messed up", ex);
+        }
+        clone.x = this.x;
+        clone.y = this.y;
+        clone.z = this.z;
+        return clone;
     }
 
     /**
      * Normalises the {@link PathVector} (Divides the components by its magnitude)
      * @return The same {@link PathVector}
      */
+    @NonNull
     public PathVector normalize() {
         double length = this.length();
         this.x /= length;

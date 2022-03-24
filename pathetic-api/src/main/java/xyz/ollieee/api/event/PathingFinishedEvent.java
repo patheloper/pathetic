@@ -1,5 +1,6 @@
 package xyz.ollieee.api.event;
 
+import lombok.NonNull;
 import xyz.ollieee.api.pathing.result.PathfinderResult;
 
 /**
@@ -10,7 +11,7 @@ public class PathingFinishedEvent extends PathingEvent {
 
     PathfinderResult pathfinderResult;
 
-    public PathingFinishedEvent(PathfinderResult result) {
+    public PathingFinishedEvent(@NonNull PathfinderResult result) {
         this.pathfinderResult = result;
     }
 
@@ -18,6 +19,7 @@ public class PathingFinishedEvent extends PathingEvent {
      * Gets the pathfinder result
      * @return {@link PathfinderResult} the pathfinder result
      */
+    @NonNull
     public PathfinderResult getPathfinderResult() {
         return this.pathfinderResult;
     }

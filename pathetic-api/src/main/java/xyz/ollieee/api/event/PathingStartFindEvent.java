@@ -1,5 +1,6 @@
 package xyz.ollieee.api.event;
 
+import lombok.NonNull;
 import org.bukkit.event.Cancellable;
 
 import xyz.ollieee.api.pathing.strategy.PathfinderStrategy;
@@ -16,7 +17,7 @@ public class PathingStartFindEvent extends PathingEvent implements Cancellable {
     private final PathLocation target;
     private final Class<? extends PathfinderStrategy> strategyType;
 
-    public PathingStartFindEvent(PathLocation start, PathLocation target, Class<? extends PathfinderStrategy> strategyType) {
+    public PathingStartFindEvent(@NonNull PathLocation start, @NonNull PathLocation target, @NonNull Class<? extends PathfinderStrategy> strategyType) {
         this.start = start;
         this.target = target;
         this.strategyType = strategyType;
@@ -30,6 +31,7 @@ public class PathingStartFindEvent extends PathingEvent implements Cancellable {
      * Gets the start location
      * @return {@link PathLocation} the start location
      */
+    @NonNull
     public PathLocation getStart() {
         return this.start;
     }
@@ -38,6 +40,7 @@ public class PathingStartFindEvent extends PathingEvent implements Cancellable {
      * Gets the target location
      * @return {@link PathLocation} the target location
      */
+    @NonNull
     public PathLocation getTarget() {
         return this.target;
     }
@@ -46,6 +49,7 @@ public class PathingStartFindEvent extends PathingEvent implements Cancellable {
      * Gets the pathfinder strategy type
      * @return {@link PathfinderStrategy} the strategy
      */
+    @NonNull
     public Class<? extends PathfinderStrategy> getStrategyType() {
         return strategyType;
     }

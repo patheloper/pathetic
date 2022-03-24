@@ -39,24 +39,28 @@ public class PathfinderImpl implements Pathfinder {
             new PathVector(0, 1, 0),
             new PathVector(0, -1, 0),
     };
-    
+
+    @NonNull
     @Override
-    public PathfinderResult findPath(PathLocation start, PathLocation target) {
+    public PathfinderResult findPath(@NonNull PathLocation start, @NonNull PathLocation target) {
         return findPath(start, target, DEFAULT_STRATEGY_TYPE);
     }
 
+    @NonNull
     @Override
-    public PathfinderResult findPath(PathLocation start, PathLocation target, @NonNull Class<? extends PathfinderStrategy> strategyType) {
+    public PathfinderResult findPath(@NonNull PathLocation start, @NonNull PathLocation target, @NonNull Class<? extends PathfinderStrategy> strategyType) {
         return seekPath(start, target, strategyType);
     }
 
+    @NonNull
     @Override
-    public CompletableFuture<PathfinderResult> findPathAsync(PathLocation start, PathLocation target) {
+    public CompletableFuture<PathfinderResult> findPathAsync(@NonNull PathLocation start, @NonNull PathLocation target) {
         return findPathAsync(start, target, DEFAULT_STRATEGY_TYPE);
     }
 
+    @NonNull
     @Override
-    public CompletableFuture<PathfinderResult> findPathAsync(PathLocation start, PathLocation target, @NonNull Class<? extends PathfinderStrategy> strategyType) {
+    public CompletableFuture<PathfinderResult> findPathAsync(@NonNull PathLocation start, @NonNull PathLocation target, @NonNull Class<? extends PathfinderStrategy> strategyType) {
         return CompletableFuture.supplyAsync(() -> seekPath(start, target, strategyType), FORK_JOIN_POOL);
     }
 

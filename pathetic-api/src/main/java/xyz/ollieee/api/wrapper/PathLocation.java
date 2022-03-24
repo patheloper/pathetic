@@ -10,7 +10,7 @@ import xyz.ollieee.api.PatheticAPI;
 @EqualsAndHashCode
 public class PathLocation implements Cloneable {
 
-    private final PathWorld pathWorld;
+    private PathWorld pathWorld;
     private double x, y, z;
     
     public PathLocation(@NonNull PathWorld pathWorld, double x, double y, double z) {
@@ -25,8 +25,16 @@ public class PathLocation implements Cloneable {
      * Gets the world that this location resides in
      * @return {@link PathWorld} that contains this location
      */
+    @NonNull
     public PathWorld getPathWorld() {
         return this.pathWorld;
+    }
+
+    /**
+     * Sets the world that this location resides in
+     */
+    public void setPathWorld(PathWorld world) {
+        this.pathWorld = world;
     }
 
     /**
@@ -82,9 +90,21 @@ public class PathLocation implements Cloneable {
      * Clones the {@link PathLocation}
      * @return A new {@link PathLocation} with the same values
      */
+    @NonNull
     @Override
     public PathLocation clone() {
-        return new PathLocation(this.pathWorld, this.x, this.y, this.z);
+        final PathLocation clone;
+        try {
+            clone = (PathLocation) super.clone();
+        }
+        catch (CloneNotSupportedException ex) {
+            throw new RuntimeException("Superclass messed up", ex);
+        }
+        clone.pathWorld = this.pathWorld;
+        clone.x = this.x;
+        clone.y = this.y;
+        clone.z = this.z;
+        return clone;
     }
 
     private double sqrt(double input) {
@@ -112,6 +132,7 @@ public class PathLocation implements Cloneable {
      * @param z The value to add to the z
      * @return The same mutated {@link PathLocation}
      */
+    @NonNull
     public PathLocation add(final double x, final double y, final double z) {
         
         this.x += x;
@@ -125,6 +146,7 @@ public class PathLocation implements Cloneable {
      * @param vector The {@link PathVector} who's values will be added
      * @return The same mutated {@link PathLocation}
      */
+    @NonNull
     public PathLocation add(final PathVector vector) {
         add(vector.getX(), vector.getY(), vector.getZ());
         return this;
@@ -137,6 +159,7 @@ public class PathLocation implements Cloneable {
      * @param z The value to subtract from the z
      * @return The same mutated {@link PathLocation}
      */
+    @NonNull
     public PathLocation subtract(final double x, final double y, final double z) {
         
         this.x -= x;
@@ -150,6 +173,7 @@ public class PathLocation implements Cloneable {
      * @param vector The {@link PathVector} who's values will be subtracted
      * @return The same mutated {@link PathLocation}
      */
+    @NonNull
     public PathLocation subtract(final PathVector vector) {
         subtract(vector.getX(), vector.getY(), vector.getZ());
         return this;
@@ -159,6 +183,7 @@ public class PathLocation implements Cloneable {
      * Converts the locations x,y,z to a {@link PathVector}
      * @return A {@link PathVector} of the x,y,z
      */
+    @NonNull
     public PathVector toVector() {
         return new PathVector(this.x, this.y, this.z);
     }
@@ -167,6 +192,7 @@ public class PathLocation implements Cloneable {
      * Gets the {@link PathBlock} of the current location
      * @return The {@link PathBlock} at this location
      */
+    @NonNull
     public PathBlock getBlock() {
         return PatheticAPI.getSnapshotManager().getBlock(this);
     }
