@@ -10,6 +10,7 @@ import xyz.ollieee.api.pathing.result.PathfinderResult;
 import xyz.ollieee.api.pathing.result.PathfinderSuccess;
 import xyz.ollieee.api.pathing.strategy.PathfinderStrategy;
 import xyz.ollieee.api.pathing.strategy.strategies.DirectPathfinderStrategy;
+import xyz.ollieee.api.wrapper.PathBlock;
 import xyz.ollieee.api.wrapper.PathVector;
 import xyz.ollieee.model.PathImpl;
 import xyz.ollieee.bstats.BStatsHandler;
@@ -131,10 +132,8 @@ public class PathfinderImpl implements Pathfinder {
             if (neighbourNode.equals(targetNode))
                 return Optional.of(retracePath(neighbourNode, startNode, start, target));
         
-            if(validateNode(queue, neighbourNode, processed, strategy)) {
+            if(validateNode(queue, neighbourNode, processed, strategy))
                 queue.add(neighbourNode);
-                break;
-            }
         }
         
         return Optional.empty();
@@ -146,8 +145,10 @@ public class PathfinderImpl implements Pathfinder {
                 && queue.removeIf(node1 -> node1.getLocation().equals(node.getLocation())
                 && node1.getDepth() > node.getDepth());
     
+        PathBlock previous = node.getParent() == null ? null : node.getParent().getLocation().getBlock();
+        PathBlock previouser = (node.getParent() == null) ? null : (node.getParent().getParent() == null ? null : node.getParent().getParent().getLocation().getBlock());
         boolean verifyLocation = this.verifyLocation(node.getLocation())
-                || strategy.isValid(node.getLocation().getBlock(), node.getLocation().getBlock(), node.getParent() == null ? node.getLocation().getBlock() : node.getParent().getLocation().getBlock())
+                || strategy.isValid(node.getLocation().getBlock(), previous, previouser)
                 || processed.add(node.getLocation());
         
         return validateNode || verifyLocation;
