@@ -45,7 +45,7 @@ public class SnapshotManagerImpl implements SnapshotManager {
     private PathBlock fetchAndGetBlock(@NonNull PathLocation location, int chunkX, int chunkZ, long key) {
         
         try {
-            
+            // TODO: 27/04/2022 Make this thread safe
             ChunkSnapshot chunkSnapshot = BukkitConverter.toWorld(location.getPathWorld()).getChunkAt(chunkX, chunkZ).getChunkSnapshot();
             addSnapshot(location, key, chunkSnapshot);
             

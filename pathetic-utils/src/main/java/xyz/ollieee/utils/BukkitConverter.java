@@ -14,6 +14,8 @@ import xyz.ollieee.api.PatheticAPI;
 import xyz.ollieee.api.material.MaterialParser;
 import xyz.ollieee.api.wrapper.*;
 
+import java.util.Arrays;
+
 @UtilityClass
 public class BukkitConverter {
 
@@ -56,7 +58,10 @@ public class BukkitConverter {
 
     @NonNull
     public PathWorld toPathWorld(@NonNull World world) {
-        return new PathWorld(world.getUID(), world.getName(), world.getMinHeight(), world.getMaxHeight());
+
+        final int minHeight = hasMethod(world.getClass(), "getMinHeight") ? world.getMinHeight() : 0;
+        final int maxHeight = hasMethod(world.getClass(), "getMaxHeight") ? world.getMaxHeight() : 256;
+        return new PathWorld(world.getUID(), world.getName(), minHeight, maxHeight);
     }
 
     @NonNull
@@ -86,5 +91,9 @@ public class BukkitConverter {
             case TALL_GRASS: return PathBlockType.OTHER;
             default: return PathBlockType.SOLID;
         }
+    }
+
+    private boolean hasMethod(Class<? extends World> worldClass, final String name) {
+        return Arrays.stream(worldClass.getMethods()).anyMatch(method -> method.getName().equalsIgnoreCase(name));
     }
 }

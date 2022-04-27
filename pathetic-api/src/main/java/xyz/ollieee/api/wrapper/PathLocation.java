@@ -205,12 +205,25 @@ public class PathLocation implements Cloneable {
         return PatheticAPI.getSnapshotManager().getBlock(this);
     }
 
+    /**
+     * Rounds the x,y,z values to the floor of the values
+     * @return The mutated {@link PathLocation}
+     */
     public PathLocation toIntegers() {
         this.x = this.getBlockX();
         this.y = this.getBlockY();
         this.z = this.getBlockZ();
 
         return this;
+    }
+
+    /**
+     * Gets the manhattan distance between the current and another location
+     * @param otherLocation the other {@link PathLocation} to get the distance to
+     * @return the distance
+     */
+    public int manhattanDistance(PathLocation otherLocation) {
+        return Math.abs(this.getBlockX() - otherLocation.getBlockX()) + Math.abs(this.getBlockY() - otherLocation.getBlockY()) + Math.abs(this.getBlockZ() - otherLocation.getBlockZ());
     }
 
 }
