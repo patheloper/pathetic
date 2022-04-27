@@ -4,13 +4,11 @@ import xyz.ollieee.api.wrapper.PathLocation;
 
 import java.util.Objects;
 
-public class Node implements Comparable<Node> {
-
+public class Node implements Comparable<Node>{
     private final Integer depth;
     private final PathLocation location;
     private final PathLocation target;
     private final PathLocation start;
-    private final Double length;
     
     private Node parent;
 
@@ -20,8 +18,6 @@ public class Node implements Comparable<Node> {
         this.target = target;
         this.start = start;
         this.depth = depth;
-        
-        this.length = this.start.distance(this.target);
     }
 
     public void setParent(Node parent) {
@@ -36,14 +32,22 @@ public class Node implements Comparable<Node> {
         return this.depth;
     }
 
+    public PathLocation getStart() {
+        return this.start;
+    }
+
+    public PathLocation getTarget() {
+        return this.target;
+    }
+
     public PathLocation getLocation() {
         return this.location.clone();
     }
-    
-    public double getPriorityKey() {
-        return (this.target.distance(this.location) + this.start.distance(this.location)) * (Math.pow(10, (this.target.distance(this.location)/ this.length) - 1) + 0.9);
+
+    public boolean hasReachedEnd() {
+        return this.location.getBlockX() == target.getBlockX() && this.location.getBlockY() == target.getBlockY() && this.location.getBlockZ() == target.getBlockZ();
     }
-    
+
     @Override
     public boolean equals(Object o) {
 
@@ -59,7 +63,7 @@ public class Node implements Comparable<Node> {
     }
 
     @Override
-    public int compareTo(Node otherNode) {
-        return (int) Math.signum(this.getPriorityKey() - otherNode.getPriorityKey());
+    public int compareTo(Node o) {
+        return (int) Math.signum(this.location.distanceSquared(target)- o.getLocation().distanceSquared(target));
     }
 }

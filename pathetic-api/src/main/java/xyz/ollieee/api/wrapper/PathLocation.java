@@ -118,11 +118,19 @@ public class PathLocation implements Cloneable {
     }
 
     /**
+     * Gets the distance squared between the current and another location
+     * @return The distance squared
+     */
+    public double distanceSquared(PathLocation otherLocation) {
+        return this.square(this.x - otherLocation.x) + this.square(this.y - otherLocation.y) + this.square(this.z - otherLocation.z);
+    }
+
+    /**
      * Gets the distance between the current and another location
      * @return The distance
      */
     public double distance(PathLocation otherLocation) {
-        return sqrt(this.square(this.x - otherLocation.x) + this.square(this.y - otherLocation.y) + this.square(this.z - otherLocation.z));
+        return sqrt(this.distanceSquared(otherLocation));
     }
 
     /**
@@ -195,6 +203,14 @@ public class PathLocation implements Cloneable {
     @NonNull
     public PathBlock getBlock() {
         return PatheticAPI.getSnapshotManager().getBlock(this);
+    }
+
+    public PathLocation toIntegers() {
+        this.x = this.getBlockX();
+        this.y = this.getBlockY();
+        this.z = this.getBlockZ();
+
+        return this;
     }
 
 }
