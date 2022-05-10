@@ -2,6 +2,7 @@ package xyz.ollieee.api.wrapper;
 
 import lombok.Getter;
 import lombok.NonNull;
+import org.bukkit.util.Vector;
 
 @Getter
 public class PathVector implements Cloneable {
@@ -188,6 +189,18 @@ public class PathVector implements Cloneable {
         double t = v.dot(d);
         PathVector P = B.add(d.multiply(t));
         return P.distance(A);
+    }
+
+    /**
+     * Calculates the cross product of two vectors
+     * @param o The other vector
+     * @return The cross product vector
+     */
+    public PathVector getCrossProduct(PathVector o) {
+        double x = this.y * o.getZ() - o.getY() * this.z;
+        double y = this.z * o.getX() - o.getZ() * this.x;
+        double z = this.x * o.getY() - o.getX() * this.y;
+        return new PathVector(x, y, z);
     }
 
 }

@@ -1,6 +1,9 @@
 package xyz.ollieee.model.finder;
 
+import org.bukkit.util.Vector;
 import xyz.ollieee.api.wrapper.PathLocation;
+import xyz.ollieee.api.wrapper.PathVector;
+import xyz.ollieee.utils.BukkitConverter;
 
 import java.util.Objects;
 
@@ -51,16 +54,12 @@ public class Node implements Comparable<Node>{
 
     double getDistanceKey() {
 
-        double heuristic = this.location.octileDistance(target);
+        PathVector b = this.start.toVector();
+        PathVector c = this.target.toVector();
+        PathVector a = this.location.toVector();
+        double v = a.subtract(b).getCrossProduct(c.subtract(b)).length() / c.subtract(b).length();
 
-        double dx1 = this.location.getX() - this.target.getX();
-        double dy1 = this.location.getY() - this.target.getY();
-        double dx2 = this.start.getX() - this.target.getX();
-        double dy2 = this.start.getY() - this.target.getY();
-        double cross = Math.abs(dx1*dy2 - dx2*dy1);
-        heuristic += cross*0.0005;
-
-        return heuristic;
+        return this.location.octileDistance(target) * (v*0.00002) + (0.001*this.target.distance(this.location));
     }
 
     @Override

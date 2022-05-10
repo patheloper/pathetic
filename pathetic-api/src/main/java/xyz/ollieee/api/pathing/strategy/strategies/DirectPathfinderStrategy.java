@@ -11,7 +11,7 @@ public class DirectPathfinderStrategy implements PathfinderStrategy {
 
     @Override
     public boolean isValid(@NonNull PathBlock current, PathBlock previous, PathBlock previouser) {
-        return current.isEmpty();
+        return current.isPassable();
     }
 
 }
