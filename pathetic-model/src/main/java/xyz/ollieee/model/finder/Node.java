@@ -5,6 +5,7 @@ import xyz.ollieee.api.wrapper.PathLocation;
 import java.util.Objects;
 
 public class Node implements Comparable<Node>{
+
     private final Integer depth;
     private final PathLocation location;
     private final PathLocation target;
@@ -50,7 +51,7 @@ public class Node implements Comparable<Node>{
 
     double getDistanceKey() {
 
-        double heuristic = this.location.manhattanDistance(target);
+        double heuristic = this.location.octileDistance(target);
 
         double dx1 = this.location.getX() - this.target.getX();
         double dy1 = this.location.getY() - this.target.getY();

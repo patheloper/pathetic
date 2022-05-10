@@ -93,6 +93,7 @@ public class PathLocation implements Cloneable {
     @NonNull
     @Override
     public PathLocation clone() {
+
         final PathLocation clone;
         try {
             clone = (PathLocation) super.clone();
@@ -100,21 +101,13 @@ public class PathLocation implements Cloneable {
         catch (CloneNotSupportedException ex) {
             throw new RuntimeException("Superclass messed up", ex);
         }
+
         clone.pathWorld = this.pathWorld;
         clone.x = this.x;
         clone.y = this.y;
         clone.z = this.z;
+
         return clone;
-    }
-
-    private double sqrt(double input) {
-        double sqrt = Double.longBitsToDouble(((Double.doubleToLongBits(input)-(1L<<52))>>1) + (1L <<61));
-        double better = (sqrt + input/sqrt)/2.0;
-        return (better + input/better)/2.0;
-    }
-
-    private double square(double value){
-        return value * value;
     }
 
     /**
@@ -142,7 +135,7 @@ public class PathLocation implements Cloneable {
      */
     @NonNull
     public PathLocation add(final double x, final double y, final double z) {
-        
+
         this.x += x;
         this.y += y;
         this.z += z;
@@ -169,7 +162,7 @@ public class PathLocation implements Cloneable {
      */
     @NonNull
     public PathLocation subtract(final double x, final double y, final double z) {
-        
+
         this.x -= x;
         this.y -= y;
         this.z -= z;
@@ -210,6 +203,7 @@ public class PathLocation implements Cloneable {
      * @return The mutated {@link PathLocation}
      */
     public PathLocation toIntegers() {
+
         this.x = this.getBlockX();
         this.y = this.getBlockY();
         this.z = this.getBlockZ();
@@ -224,6 +218,38 @@ public class PathLocation implements Cloneable {
      */
     public int manhattanDistance(PathLocation otherLocation) {
         return Math.abs(this.getBlockX() - otherLocation.getBlockX()) + Math.abs(this.getBlockY() - otherLocation.getBlockY()) + Math.abs(this.getBlockZ() - otherLocation.getBlockZ());
+    }
+
+    /**
+     * Gets the octile distance between the current and another location
+     * @param otherLocation the other {@link PathLocation} to get the distance to
+     * @return the distance
+     */
+    public double octileDistance(PathLocation otherLocation) {
+
+        double dx = Math.abs(this.x - otherLocation.x);
+        double dy = Math.abs(this.y - otherLocation.y);
+        double dz = Math.abs(this.z - otherLocation.z);
+
+        double smallest = Math.min(Math.min(dx, dz), dy);
+        double highest = Math.max(Math.max(dx, dz), dy);
+        double mid = Math.max(Math.min(dx,dz), Math.min(Math.max(dx,dz), dy));
+
+        double D1 = 1;
+        double D2 = 1.4142135623730951;
+        double D3 = 1.7320508075688772;
+
+        return (D3 - D2) * smallest + (D2 - D1) * mid + D1 * highest;
+    }
+
+    private double sqrt(double input) {
+        double sqrt = Double.longBitsToDouble(((Double.doubleToLongBits(input)-(1L<<52))>>1) + (1L <<61));
+        double better = (sqrt + input/sqrt)/2.0;
+        return (better + input/better)/2.0;
+    }
+
+    private double square(double value){
+        return value * value;
     }
 
 }
