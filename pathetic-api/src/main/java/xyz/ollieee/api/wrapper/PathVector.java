@@ -132,4 +132,62 @@ public class PathVector implements Cloneable {
     public double length() {
         return Math.sqrt(this.square(this.x) + this.square(this.y) + this.square(this.z));
     }
+
+    /**
+     * Gets the distance between this vector and another vector
+     * @param otherVector The other vector
+     * @return The distance
+     */
+    public double distance(PathVector otherVector) {
+        return Math.sqrt(this.square(this.x - otherVector.x) + this.square(this.y - otherVector.y) + this.square(this.z - otherVector.z));
+    }
+
+    /**
+     * Divide the vector by a scalar constant
+     * @param value The constant to divide by
+     * @return The same {@link PathVector}
+     */
+    public PathVector divide(double value) {
+        this.x /= value;
+        this.y /= value;
+        this.z /= value;
+        return this;
+    }
+
+    /**
+     * Calculates the dot product of two vectors
+     * @param otherVector The other vector
+     * @return The dot product
+     */
+    public double dot(PathVector otherVector) {
+        return this.x * otherVector.x + this.y * otherVector.y + this.z * otherVector.z;
+    }
+
+    /**
+     * Adds two vectors together
+     * @param otherVector The other vector
+     * @return The same {@link PathVector}
+     */
+    public PathVector add(PathVector otherVector) {
+        this.x += otherVector.x;
+        this.y += otherVector.y;
+        this.z += otherVector.z;
+        return this;
+    }
+
+    /**
+     * Finds the distance between the line BC and the point A
+     * @param A The point
+     * @param B The first point of the line
+     * @param C The second point of the line
+     * @return The distance
+     */
+    public static double computeDistance(PathVector A, PathVector B, PathVector C) {
+        PathVector d = (C.subtract(B)).divide(C.distance(B));
+        PathVector v = A.subtract(B);
+        double t = v.dot(d);
+        PathVector P = B.add(d.multiply(t));
+        return P.distance(A);
+    }
+
 }
