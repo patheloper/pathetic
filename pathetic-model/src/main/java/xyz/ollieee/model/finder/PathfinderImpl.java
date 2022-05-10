@@ -13,16 +13,19 @@ import xyz.ollieee.api.wrapper.PathLocation;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
 
 public class PathfinderImpl implements Pathfinder {
     
     private static final int MAX_CHECKS = 30000;
-    private static final ForkJoinPool FORK_JOIN_POOL = new ForkJoinPool(Runtime.getRuntime().availableProcessors(), ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, true);
+    private static final Class<? extends PathfinderStrategy> DEFAULT_STRATEGY_TYPE = DirectPathfinderStrategy.class;
+
     private static final StrategyRegistry STRATEGY_REGISTRY = new StrategyRegistry();
     private static final LinkedHashSet<PathLocation> EMPTY_LINKED_HASHSET = new LinkedHashSet<>();
-    private static final Class<? extends PathfinderStrategy> DEFAULT_STRATEGY_TYPE = DirectPathfinderStrategy.class;
-    
+
+    private static final Executor FORK_JOIN_POOL = new ForkJoinPool(Runtime.getRuntime().availableProcessors(), ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, true);
+
     private static final PathVector[] OFFSETS = {
             new PathVector(1, 0, 0),
             new PathVector(-1, 0, 0),
@@ -32,66 +35,37 @@ public class PathfinderImpl implements Pathfinder {
             new PathVector(0, -1, 0),
     };
 
-    @NonNull
-    @Override
-    public PathfinderResult findPath(@NonNull PathLocation start, @NonNull PathLocation target) {
-        return findPath(start, target, DEFAULT_STRATEGY_TYPE);
-    }
-
-    @NonNull
-    @Override
-    public PathfinderResult findPath(@NonNull PathLocation start, @NonNull PathLocation target, @NonNull Class<? extends PathfinderStrategy> strategyType) {
-        return seekPath(start, target, strategyType);
-    }
-
-    @NonNull
-    @Override
-    public CompletableFuture<PathfinderResult> findPathAsync(@NonNull PathLocation start, @NonNull PathLocation target) {
-        return findPathAsync(start, target, DEFAULT_STRATEGY_TYPE);
-    }
-
-    @NonNull
-    @Override
-    public CompletableFuture<PathfinderResult> findPathAsync(@NonNull PathLocation start, @NonNull PathLocation target, @NonNull Class<? extends PathfinderStrategy> strategyType) {
-        return CompletableFuture.supplyAsync(() -> seekPath(start, target, strategyType), FORK_JOIN_POOL);
-    }
-
-    private @NonNull PathfinderResult seekPath(PathLocation start, PathLocation target, Class<? extends PathfinderStrategy> strategyType) {
+    private static @NonNull PathfinderResult seekPath(PathLocation start, PathLocation target, Class<? extends PathfinderStrategy> strategyType) {
 
         // TODO: 27/04/2022 Re-add all the event calling, Bstats, and verification that they are in the same world etc etc
 
         int depth = 1;
         Node startNode = new Node(start.toIntegers(), start.toIntegers(), target.toIntegers(), 0);
 
-        final PriorityQueue<Node> nodeQueue = new PriorityQueue<>(Collections.singleton(startNode));
+        PriorityQueue<Node> nodeQueue = new PriorityQueue<>(Collections.singleton(startNode));
+        Set<PathLocation> examinedLocations = new HashSet<>();
 
-        final Set<PathLocation> examinedLocations = new HashSet<>();
-
-        final PathfinderStrategy strategy = STRATEGY_REGISTRY.attemptRegister(strategyType);
+        PathfinderStrategy strategy = STRATEGY_REGISTRY.attemptRegister(strategyType);
 
         while (!nodeQueue.isEmpty() && depth <= MAX_CHECKS) {
 
             Node currentNode = nodeQueue.poll();
 
-            if (currentNode.hasReachedEnd()) {
+            if (currentNode.hasReachedEnd())
                 return new PathfinderResultImpl(PathfinderSuccess.FOUND, retracePath(currentNode));
-            }
 
             evaluateNewNodes(nodeQueue, examinedLocations, strategy, currentNode);
-
             depth++;
-
         }
 
         return new PathfinderResultImpl(PathfinderSuccess.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET));
-
     }
 
-    private Path retracePath(@NonNull Node node) {
+    private static Path retracePath(@NonNull Node node) {
 
         LinkedHashSet<PathLocation> path = new LinkedHashSet<>();
-        Node currentNode = node;
 
+        Node currentNode = node;
         while(currentNode != null) {
             path.add(currentNode.getLocation());
             currentNode = currentNode.getParent();
@@ -105,16 +79,16 @@ public class PathfinderImpl implements Pathfinder {
         return new PathImpl(node.getStart(), node.getTarget(), new LinkedHashSet<>(pathReversed));
     }
 
-    private void evaluateNewNodes(PriorityQueue<Node> nodeQueue, Set<PathLocation> examinedLocations, PathfinderStrategy strategy, Node currentNode) {
+    private static void evaluateNewNodes(PriorityQueue<Node> nodeQueue, Set<PathLocation> examinedLocations, PathfinderStrategy strategy, Node currentNode) {
 
-        for (Node neighbourNode : this.getNeighbours(currentNode)) {
-            if (this.nodeIsValid(neighbourNode, currentNode, nodeQueue, examinedLocations, strategy)) {
+        for (Node neighbourNode : getNeighbours(currentNode)) {
+            if (nodeIsValid(neighbourNode, currentNode, nodeQueue, examinedLocations, strategy)) {
                 nodeQueue.add(neighbourNode);
             }
         }
     }
 
-    private Collection<Node> getNeighbours(Node currentNode) {
+    private static Collection<Node> getNeighbours(Node currentNode) {
 
         final Set<Node> newNodes = new HashSet<>(OFFSETS.length);
 
@@ -128,7 +102,7 @@ public class PathfinderImpl implements Pathfinder {
         return newNodes;
     }
 
-    private boolean nodeIsValid(Node node, Node parentNode, PriorityQueue<Node> nodeQueue, Set<PathLocation> examinedLocations, PathfinderStrategy strategy) {
+    private static boolean nodeIsValid(Node node, Node parentNode, PriorityQueue<Node> nodeQueue, Set<PathLocation> examinedLocations, PathfinderStrategy strategy) {
 
         if (examinedLocations.contains(node.getLocation())) {
             return false;
@@ -149,8 +123,32 @@ public class PathfinderImpl implements Pathfinder {
         return examinedLocations.add(node.getLocation());
 
     }
-    
-    private boolean isWithinWorldBounds(PathLocation location) {
+
+    private static boolean isWithinWorldBounds(PathLocation location) {
         return location.getPathWorld().getMinHeight() < location.getBlockY() && location.getBlockY() < location.getPathWorld().getMaxHeight();
+    }
+
+    @NonNull
+    @Override
+    public PathfinderResult findPath(@NonNull PathLocation start, @NonNull PathLocation target) {
+        return findPath(start, target, DEFAULT_STRATEGY_TYPE);
+    }
+
+    @NonNull
+    @Override
+    public PathfinderResult findPath(@NonNull PathLocation start, @NonNull PathLocation target, @NonNull Class<? extends PathfinderStrategy> strategyType) {
+        return seekPath(start, target, strategyType);
+    }
+
+    @NonNull
+    @Override
+    public CompletableFuture<PathfinderResult> findPathAsync(@NonNull PathLocation start, @NonNull PathLocation target) {
+        return findPathAsync(start, target, DEFAULT_STRATEGY_TYPE);
+    }
+    
+    @NonNull
+    @Override
+    public CompletableFuture<PathfinderResult> findPathAsync(@NonNull PathLocation start, @NonNull PathLocation target, @NonNull Class<? extends PathfinderStrategy> strategyType) {
+        return CompletableFuture.supplyAsync(() -> seekPath(start, target, strategyType), FORK_JOIN_POOL);
     }
 }
