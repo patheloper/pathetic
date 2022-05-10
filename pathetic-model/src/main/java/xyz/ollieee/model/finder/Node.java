@@ -1,9 +1,7 @@
 package xyz.ollieee.model.finder;
 
-import org.bukkit.util.Vector;
 import xyz.ollieee.api.wrapper.PathLocation;
 import xyz.ollieee.api.wrapper.PathVector;
-import xyz.ollieee.utils.BukkitConverter;
 
 import java.util.Objects;
 

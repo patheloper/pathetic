@@ -1,8 +1,6 @@
 package xyz.ollieee.model.finder;
 
 import lombok.NonNull;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import xyz.ollieee.api.pathing.Pathfinder;
 import xyz.ollieee.api.pathing.result.Path;
 import xyz.ollieee.api.pathing.result.PathfinderResult;
@@ -12,7 +10,6 @@ import xyz.ollieee.api.pathing.strategy.strategies.DirectPathfinderStrategy;
 import xyz.ollieee.api.wrapper.PathVector;
 import xyz.ollieee.model.PathImpl;
 import xyz.ollieee.api.wrapper.PathLocation;
-import xyz.ollieee.utils.BukkitConverter;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
