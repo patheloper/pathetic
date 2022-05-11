@@ -5,7 +5,7 @@ import xyz.ollieee.api.wrapper.PathVector;
 
 import java.util.Objects;
 
-public class Node implements Comparable<Node>{
+public class Node implements Comparable<Node> {
 
     private final Integer depth;
     private final PathLocation location;
@@ -57,7 +57,7 @@ public class Node implements Comparable<Node>{
         PathVector a = this.location.toVector();
         double v = a.subtract(b).getCrossProduct(c.subtract(b)).length() / c.subtract(b).length();
 
-        return this.location.octileDistance(target) * (v*0.00002) + (0.001*this.target.distance(this.location));
+        return this.location.octileDistance(target) * (v*0.00002) + (0.01*this.target.distance(this.location));
     }
 
     @Override

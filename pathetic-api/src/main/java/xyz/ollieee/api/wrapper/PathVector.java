@@ -2,7 +2,6 @@ package xyz.ollieee.api.wrapper;
 
 import lombok.Getter;
 import lombok.NonNull;
-import org.bukkit.util.Vector;
 
 @Getter
 public class PathVector implements Cloneable {

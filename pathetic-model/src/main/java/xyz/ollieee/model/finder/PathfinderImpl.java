@@ -17,8 +17,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
 
 public class PathfinderImpl implements Pathfinder {
-    
-    private static final int MAX_CHECKS = 30000;
+
     private static final Class<? extends PathfinderStrategy> DEFAULT_STRATEGY_TYPE = DirectPathfinderStrategy.class;
 
     private static final StrategyRegistry STRATEGY_REGISTRY = new StrategyRegistry();
@@ -47,7 +46,9 @@ public class PathfinderImpl implements Pathfinder {
 
         PathfinderStrategy strategy = STRATEGY_REGISTRY.attemptRegister(strategyType);
 
-        while (!nodeQueue.isEmpty() && depth <= MAX_CHECKS) {
+        int max_checks = (int) (100 * start.distance(target));
+
+        while (!nodeQueue.isEmpty() && depth <= max_checks) {
 
             Node currentNode = nodeQueue.poll();
 
