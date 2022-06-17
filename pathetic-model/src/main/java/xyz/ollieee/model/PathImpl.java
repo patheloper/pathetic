@@ -1,5 +1,7 @@
 package xyz.ollieee.model;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import xyz.ollieee.api.pathing.result.Path;
@@ -10,13 +12,18 @@ import java.util.LinkedHashSet;
 @AllArgsConstructor
 public class PathImpl implements Path {
 
-    PathLocation start;
-    PathLocation end;
-    LinkedHashSet<PathLocation> locations;
-
+    private final PathLocation start;
+    private final PathLocation end;
+    private final Iterable<PathLocation> locations;
+    
+    @Override
+    public Path join(Path path) {
+        return new PathImpl(start, path.getTarget(), Iterables.concat(locations, path.getLocations()));
+    }
+    
     @NonNull
     @Override
-    public LinkedHashSet<PathLocation> getLocations() {
+    public Iterable<PathLocation> getLocations() {
         return this.locations;
     }
 
@@ -31,4 +38,5 @@ public class PathImpl implements Path {
     public PathLocation getTarget() {
         return this.end;
     }
+    
 }

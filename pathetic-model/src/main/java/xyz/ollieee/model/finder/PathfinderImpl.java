@@ -47,7 +47,6 @@ public class PathfinderImpl implements Pathfinder {
         PathfinderStrategy strategy = STRATEGY_REGISTRY.attemptRegister(strategyType);
 
         int max_checks = (int) (100 * start.distance(target));
-
         while (!nodeQueue.isEmpty() && depth <= max_checks) {
 
             Node currentNode = nodeQueue.poll();
@@ -64,7 +63,7 @@ public class PathfinderImpl implements Pathfinder {
 
     private static Path retracePath(@NonNull Node node) {
 
-        LinkedHashSet<PathLocation> path = new LinkedHashSet<>();
+        List<PathLocation> path = new ArrayList<>();
 
         Node currentNode = node;
         while(currentNode != null) {
@@ -72,12 +71,10 @@ public class PathfinderImpl implements Pathfinder {
             currentNode = currentNode.getParent();
         }
 
-        List<PathLocation> pathReversed = new ArrayList<>(path);
+        path.add(node.getStart());
+        Collections.reverse(path);
 
-        pathReversed.add(node.getStart());
-        Collections.reverse(pathReversed);
-
-        return new PathImpl(node.getStart(), node.getTarget(), new LinkedHashSet<>(pathReversed));
+        return new PathImpl(node.getStart(), node.getTarget(), path);
     }
 
     private static void evaluateNewNodes(PriorityQueue<Node> nodeQueue, Set<PathLocation> examinedLocations, PathfinderStrategy strategy, Node currentNode) {
