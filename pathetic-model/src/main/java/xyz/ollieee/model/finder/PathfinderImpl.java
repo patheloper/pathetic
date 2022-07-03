@@ -21,7 +21,7 @@ public class PathfinderImpl implements Pathfinder {
     private static final Class<? extends PathfinderStrategy> DEFAULT_STRATEGY_TYPE = DirectPathfinderStrategy.class;
 
     private static final StrategyRegistry STRATEGY_REGISTRY = new StrategyRegistry();
-    private static final LinkedHashSet<PathLocation> EMPTY_LINKED_HASHSET = (LinkedHashSet<PathLocation>) Collections.unmodifiableSet(new LinkedHashSet<PathLocation>());;
+    private static final LinkedHashSet<PathLocation> EMPTY_LINKED_HASHSET = (LinkedHashSet<PathLocation>) Collections.unmodifiableSet(new LinkedHashSet<PathLocation>());
 
     private static final Executor FORK_JOIN_POOL = new ForkJoinPool(Runtime.getRuntime().availableProcessors(), ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, true);
 
