@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.generator.WorldInfo;
 import org.bukkit.util.Vector;
 
 import xyz.ollieee.api.material.MaterialParser;
@@ -26,9 +27,10 @@ public class BukkitMapper {
 
     @NonNull
     public PathLocation toPathLocation(@NonNull Location location) {
-        if (location.getWorld() == null) {
-            throw new NullPointerException("World is null");
-        }
+
+        if (location.getWorld() == null)
+            throw new IllegalStateException("World is null");
+
         return new PathLocation(toPathWorld(location.getWorld()), location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 
@@ -57,23 +59,13 @@ public class BukkitMapper {
     }
 
     @NonNull
-    public PathWorld toPathWorld(@NonNull World world) {
-
-        final int minHeight = hasMethod(world.getClass(), "getMinHeight") ? world.getMinHeight() : 0;
-        final int maxHeight = hasMethod(world.getClass(), "getMaxHeight") ? world.getMaxHeight() : 256;
-        return new PathWorld(world.getUID(), world.getName(), minHeight, maxHeight);
+    public PathWorld toPathWorld(@NonNull WorldInfo world) {
+        return new PathWorld(world.getUID(), world.getName(), getMinHeight(world), getMaxHeight(world));
     }
 
     @NonNull
     public PathBlockType toPathBlockType(@NonNull Block block) {
-
-        MaterialParser parser = PatheticMapper.getMaterialParser();
-
-        if (parser.isLiquid(block)) return PathBlockType.LIQUID;
-        else if (parser.isAir(block)) return PathBlockType.AIR;
-        else if (parser.isPassable(block)) return PathBlockType.OTHER;
-        else if (parser.isSolid(block)) return PathBlockType.SOLID;
-        else return PathBlockType.SOLID;
+        return toPathBlockType(block.getType());
     }
 
     @NonNull
@@ -93,7 +85,20 @@ public class BukkitMapper {
         }
     }
 
-    private boolean hasMethod(Class<? extends World> worldClass, final String name) {
-        return Arrays.stream(worldClass.getMethods()).anyMatch(method -> method.getName().equalsIgnoreCase(name));
+    private Boolean isNewerWorld;
+    private boolean isNewerWorldInstance() {
+
+        if(isNewerWorld)
+            isNewerWorld = Arrays.stream(World.class.getMethods()).anyMatch(method -> method.getName().equalsIgnoreCase("getMinHeight"));
+
+        return isNewerWorld;
+    }
+
+    private int getMinHeight(WorldInfo world) {
+        return isNewerWorld ? world.getMinHeight() : 0;
+    }
+
+    private int getMaxHeight(WorldInfo world) {
+        return isNewerWorld ? world.getMaxHeight() : 256;
     }
 }
