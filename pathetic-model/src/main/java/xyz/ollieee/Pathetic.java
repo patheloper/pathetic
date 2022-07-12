@@ -6,11 +6,9 @@ import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import xyz.ollieee.api.material.MaterialParser;
-import xyz.ollieee.api.pathing.factory.PathfinderFactory;
 import xyz.ollieee.api.pathing.world.chunk.SnapshotManager;
 import xyz.ollieee.bstats.BStatsHandler;
 import xyz.ollieee.legacy.material.LegacyMaterialParser;
-import xyz.ollieee.model.finder.factory.PathfinderFactoryImpl;
 import xyz.ollieee.model.world.chunk.SnapshotManagerImpl;
 import xyz.ollieee.model.world.material.ModernMaterialParser;
 import xyz.ollieee.util.BukkitVersionUtil;
@@ -22,7 +20,11 @@ public class Pathetic {
 
     private static JavaPlugin instance;
     private static Logger logger;
-    
+
+    // We maybe dont want them here.
+    private static MaterialParser materialParser;
+    private static SnapshotManager snapshotManager;
+
     /**
      * @throws IllegalStateException If an attempt is made to initialize more than 1 time
      */
@@ -34,13 +36,10 @@ public class Pathetic {
         instance = javaPlugin;
         logger = javaPlugin.getLogger();
 
-        MaterialParser parser;
-        if (BukkitVersionUtil.isUnder(13)) parser = new LegacyMaterialParser();
-        else parser = new ModernMaterialParser();
+        if (BukkitVersionUtil.isUnder(13)) materialParser = new LegacyMaterialParser();
+        else materialParser = new ModernMaterialParser();
 
-        Bukkit.getServicesManager().register(PathfinderFactory.class, new PathfinderFactoryImpl(), javaPlugin, ServicePriority.Highest);
-        Bukkit.getServicesManager().register(MaterialParser.class, parser, javaPlugin, ServicePriority.Highest);
-        Bukkit.getServicesManager().register(SnapshotManager.class, new SnapshotManagerImpl(), javaPlugin, ServicePriority.Highest);
+        snapshotManager = new SnapshotManagerImpl();
 
         BStatsHandler.init(javaPlugin);
         logger.info("PatheticAPI successfully initialized");
@@ -52,5 +51,15 @@ public class Pathetic {
 
     public static Logger getPluginLogger() {
         return logger;
+    }
+
+    @Deprecated // for removal
+    public static MaterialParser getMaterialParser() {
+        return materialParser;
+    }
+
+    @Deprecated // for removal
+    public static SnapshotManager getSnapshotManager() {
+        return snapshotManager;
     }
 }

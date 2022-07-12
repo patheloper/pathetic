@@ -4,8 +4,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
 
-import xyz.ollieee.api.PatheticAPI;
-
 @ToString
 @EqualsAndHashCode
 public class PathLocation implements Cloneable {
@@ -187,15 +185,6 @@ public class PathLocation implements Cloneable {
     @NonNull
     public PathVector toVector() {
         return new PathVector(this.x, this.y, this.z);
-    }
-
-    /**
-     * Gets the {@link PathBlock} of the current location
-     * @return The {@link PathBlock} at this location
-     */
-    @NonNull
-    public PathBlock getBlock() {
-        return PatheticAPI.getSnapshotManager().getBlock(this);
     }
 
     /**

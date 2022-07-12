@@ -3,8 +3,7 @@ package xyz.ollieee.util;
 import lombok.experimental.UtilityClass;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
-
-import xyz.ollieee.api.PatheticAPI;
+import xyz.ollieee.Pathetic;
 
 @UtilityClass
 public class ChunkUtils {
@@ -14,7 +13,7 @@ public class ChunkUtils {
     }
 
     public Material getMaterial(ChunkSnapshot chunkSnapshot, int x, int y, int z) {
-        return PatheticAPI.getParser().getMaterial(chunkSnapshot, x, y, z);
+        return Pathetic.getMaterialParser().getMaterial(chunkSnapshot, x, y, z);
     }
 
     private long getaLong(final int x, final int z) {

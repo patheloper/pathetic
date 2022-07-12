@@ -1,8 +1,0 @@
-name: PatheticAPI
-version: 1.0.1
-authors:
-  - Olijeffers0n
-  - Luziferium
-main: xyz.ollieee.pathing.PatheticPlugin
-api-version: 1.18
-load: STARTUP
