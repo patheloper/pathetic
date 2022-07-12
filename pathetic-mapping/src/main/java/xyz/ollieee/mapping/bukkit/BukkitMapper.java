@@ -88,17 +88,17 @@ public class BukkitMapper {
     private Boolean isNewerWorld;
     private boolean isNewerWorldInstance() {
 
-        if(isNewerWorld)
+        if(isNewerWorld == null)
             isNewerWorld = Arrays.stream(World.class.getMethods()).anyMatch(method -> method.getName().equalsIgnoreCase("getMinHeight"));
 
         return isNewerWorld;
     }
 
     private int getMinHeight(WorldInfo world) {
-        return isNewerWorld ? world.getMinHeight() : 0;
+        return isNewerWorldInstance() ? world.getMinHeight() : 0;
     }
 
     private int getMaxHeight(WorldInfo world) {
-        return isNewerWorld ? world.getMaxHeight() : 256;
+        return isNewerWorldInstance() ? world.getMaxHeight() : 256;
     }
 }
