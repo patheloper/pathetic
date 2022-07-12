@@ -17,7 +17,6 @@
     <modules>
         <module>pathetic-legacy</module>
         <module>pathetic-api</module>
-        <module>pathetic-utils</module>
         <module>pathetic-model</module>
         <module>pathetic-mapping</module>
     </modules>

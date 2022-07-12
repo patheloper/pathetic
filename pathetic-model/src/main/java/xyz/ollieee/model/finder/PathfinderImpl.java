@@ -1,12 +1,14 @@
 package xyz.ollieee.model.finder;
 
 import lombok.NonNull;
+import xyz.ollieee.Pathetic;
 import xyz.ollieee.api.pathing.Pathfinder;
 import xyz.ollieee.api.pathing.result.Path;
 import xyz.ollieee.api.pathing.result.PathfinderResult;
 import xyz.ollieee.api.pathing.result.PathfinderSuccess;
 import xyz.ollieee.api.pathing.strategy.PathfinderStrategy;
 import xyz.ollieee.api.pathing.strategy.strategies.DirectPathfinderStrategy;
+import xyz.ollieee.api.pathing.world.chunk.SnapshotManager;
 import xyz.ollieee.api.wrapper.PathVector;
 import xyz.ollieee.model.PathImpl;
 import xyz.ollieee.api.wrapper.PathLocation;
@@ -114,7 +116,10 @@ public class PathfinderImpl implements Pathfinder {
             return false;
         }
 
-        if (!strategy.isValid(node.getLocation().getBlock(), parentNode.getLocation().getBlock(), node.getParent() == null ? node.getLocation().getBlock() : node.getParent().getLocation().getBlock())) {
+        SnapshotManager snapshotManager = Pathetic.getSnapshotManager();
+        if (!strategy.isValid(snapshotManager.getBlock(node.getLocation()),
+                snapshotManager.getBlock(parentNode.getLocation()),
+                snapshotManager.getBlock((node.getParent() == null ? node : node.getParent()).getLocation()))) {
             return false;
         }
 

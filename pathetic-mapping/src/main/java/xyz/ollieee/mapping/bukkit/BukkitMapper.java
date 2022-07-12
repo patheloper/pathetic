@@ -1,4 +1,4 @@
-package xyz.ollieee.utils;
+package xyz.ollieee.mapping.bukkit;
 
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
@@ -10,14 +10,14 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
 
-import xyz.ollieee.api.PatheticAPI;
 import xyz.ollieee.api.material.MaterialParser;
 import xyz.ollieee.api.wrapper.*;
+import xyz.ollieee.mapping.PatheticMapper;
 
 import java.util.Arrays;
 
 @UtilityClass
-public class BukkitConverter {
+public class BukkitMapper {
 
     @NonNull
     public Location toLocation(@NonNull PathLocation pathLocation) {
@@ -67,7 +67,7 @@ public class BukkitConverter {
     @NonNull
     public PathBlockType toPathBlockType(@NonNull Block block) {
 
-        MaterialParser parser = PatheticAPI.getParser();
+        MaterialParser parser = PatheticMapper.getMaterialParser();
 
         if (parser.isLiquid(block)) return PathBlockType.LIQUID;
         else if (parser.isAir(block)) return PathBlockType.AIR;
@@ -79,7 +79,7 @@ public class BukkitConverter {
     @NonNull
     public PathBlockType toPathBlockType(@NonNull Material material) {
 
-        MaterialParser parser = PatheticAPI.getParser();
+        MaterialParser parser = PatheticMapper.getMaterialParser();
 
         if (parser.isAir(material))
             return PathBlockType.AIR;

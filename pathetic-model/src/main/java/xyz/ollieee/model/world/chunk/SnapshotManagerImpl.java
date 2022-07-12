@@ -4,19 +4,19 @@ import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.ChunkSnapshot;
 
+import org.bukkit.Material;
+import org.bukkit.World;
 import xyz.ollieee.Pathetic;
+import xyz.ollieee.api.material.MaterialParser;
+import xyz.ollieee.api.wrapper.PathWorld;
 import xyz.ollieee.model.world.WorldDomain;
 import xyz.ollieee.api.pathing.world.chunk.SnapshotManager;
 import xyz.ollieee.util.ChunkUtils;
-import xyz.ollieee.utils.BukkitConverter;
 import xyz.ollieee.api.wrapper.PathBlock;
 import xyz.ollieee.api.wrapper.PathBlockType;
 import xyz.ollieee.api.wrapper.PathLocation;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class SnapshotManagerImpl implements SnapshotManager {
 
@@ -36,7 +36,7 @@ public class SnapshotManagerImpl implements SnapshotManager {
             Optional<ChunkSnapshot> snapshot = worldDomain.getSnapshot(key);
             
             if (snapshot.isPresent())
-                return new PathBlock(location, BukkitConverter.toPathBlockType(ChunkUtils.getMaterial(snapshot.get(), location.getBlockX() - chunkX * 16, location.getBlockY(), location.getBlockZ() - chunkZ * 16)));
+                return new PathBlock(location, toPathBlockType(ChunkUtils.getMaterial(snapshot.get(), location.getBlockX() - chunkX * 16, location.getBlockY(), location.getBlockZ() - chunkZ * 16)));
         }
         
         return fetchAndGetBlock(location, chunkX, chunkZ, key);
@@ -46,10 +46,10 @@ public class SnapshotManagerImpl implements SnapshotManager {
         
         try {
             // TODO: 27/04/2022 Make this thread safe
-            ChunkSnapshot chunkSnapshot = BukkitConverter.toWorld(location.getPathWorld()).getChunkAt(chunkX, chunkZ).getChunkSnapshot();
+            ChunkSnapshot chunkSnapshot = Bukkit.getWorld(location.getPathWorld().getUuid()).getChunkAt(chunkX, chunkZ).getChunkSnapshot();
             addSnapshot(location, key, chunkSnapshot);
             
-            PathBlockType pathBlockType = BukkitConverter.toPathBlockType(ChunkUtils.getMaterial(chunkSnapshot, location.getBlockX() - chunkX * 16, location.getBlockY(), location.getBlockZ() - chunkZ * 16));
+            PathBlockType pathBlockType = toPathBlockType(ChunkUtils.getMaterial(chunkSnapshot, location.getBlockX() - chunkX * 16, location.getBlockY(), location.getBlockZ() - chunkZ * 16));
             return new PathBlock(location, pathBlockType);
             
         } catch (Exception e) {
@@ -67,5 +67,33 @@ public class SnapshotManagerImpl implements SnapshotManager {
         worldDomain.addSnapshot(key, snapshot);
     
         Bukkit.getScheduler().runTaskLater(Pathetic.getPluginInstance(), () -> worldDomain.removeSnapshot(key), 1200L);
+    }
+
+    // Awful
+    private PathBlockType toPathBlockType(@NonNull Material material) {
+
+        MaterialParser parser = Pathetic.getMaterialParser();
+
+        if (parser.isAir(material))
+            return PathBlockType.AIR;
+
+        switch (material) {
+            case WATER:
+            case LAVA: return PathBlockType.LIQUID;
+            case GRASS:
+            case TALL_GRASS: return PathBlockType.OTHER;
+            default: return PathBlockType.SOLID;
+        }
+    }
+
+    private PathWorld toPathWorld(@NonNull World world) {
+
+        final int minHeight = hasMethod(world.getClass(), "getMinHeight") ? world.getMinHeight() : 0;
+        final int maxHeight = hasMethod(world.getClass(), "getMaxHeight") ? world.getMaxHeight() : 256;
+        return new PathWorld(world.getUID(), world.getName(), minHeight, maxHeight);
+    }
+
+    private boolean hasMethod(Class<? extends World> worldClass, final String name) {
+        return Arrays.stream(worldClass.getMethods()).anyMatch(method -> method.getName().equalsIgnoreCase(name));
     }
 }
