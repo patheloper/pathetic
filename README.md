@@ -1,6 +1,6 @@
 # Path-eticAPI
 
-A Simple and intuitive pathfinding API for Spigot & Paper plugins
+A Simple and intuitive 1.8-1.19 pathfinding API for Spigot & Paper plugins
 
 ### Shade it in
 #### Maven
