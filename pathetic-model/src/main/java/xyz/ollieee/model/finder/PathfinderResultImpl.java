@@ -9,8 +9,8 @@ import xyz.ollieee.api.pathing.result.PathfinderSuccess;
 @AllArgsConstructor
 public class PathfinderResultImpl implements PathfinderResult {
     
-    PathfinderSuccess pathfinderSuccess;
-    Path path;
+    private final PathfinderSuccess pathfinderSuccess;
+    private final Path path;
 
     @Override
     public boolean successful() {

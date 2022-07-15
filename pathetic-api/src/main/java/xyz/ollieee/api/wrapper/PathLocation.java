@@ -9,7 +9,10 @@ import lombok.ToString;
 public class PathLocation implements Cloneable {
 
     private PathWorld pathWorld;
-    private double x, y, z;
+    
+    private double x;
+    private double y;
+    private double z;
     
     public PathLocation(@NonNull PathWorld pathWorld, double x, double y, double z) {
         

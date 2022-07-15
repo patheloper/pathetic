@@ -50,7 +50,7 @@ public class Node implements Comparable<Node> {
         return this.location.getBlockX() == target.getBlockX() && this.location.getBlockY() == target.getBlockY() && this.location.getBlockZ() == target.getBlockZ();
     }
 
-    double getDistanceKey() {
+    private double getDistanceKey() {
 
         PathVector b = this.start.toVector();
         PathVector c = this.target.toVector();

@@ -9,15 +9,11 @@ import xyz.ollieee.Pathetic;
 public class ChunkUtils {
 
     public long getChunkKey(final int x, final int z) {
-        return getaLong(x, z);
+        return x & 0xFFFFFFFFL | (z & 0xFFFFFFFFL) << 32;
     }
 
     public Material getMaterial(ChunkSnapshot chunkSnapshot, int x, int y, int z) {
         return Pathetic.getMaterialParser().getMaterial(chunkSnapshot, x, y, z);
-    }
-
-    private long getaLong(final int x, final int z) {
-        return (long) x & 0xFFFFFFFFL | ((long) z & 0xFFFFFFFFL) << 32;
     }
 
 }

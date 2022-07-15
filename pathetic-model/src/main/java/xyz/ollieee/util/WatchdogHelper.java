@@ -22,7 +22,7 @@ public class WatchdogHelper {
     public void tickWatchdog() {
         if (tickMethod != null && watchdogClazz != null) {
             try {
-                tickMethod.invoke(watchdogClazz, null);
+                tickMethod.invoke(watchdogClazz);
             } catch (IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             }
