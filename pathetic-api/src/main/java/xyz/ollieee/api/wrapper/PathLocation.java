@@ -19,76 +19,39 @@ public class PathLocation implements Cloneable {
         this.z = z;
     }
 
-    /**
-     * Gets the world that this location resides in
-     * @return {@link PathWorld} that contains this location
-     */
     @NonNull
     public PathWorld getPathWorld() {
         return this.pathWorld;
     }
 
-    /**
-     * Sets the world that this location resides in
-     */
     public void setPathWorld(PathWorld world) {
         this.pathWorld = world;
     }
 
-    /**
-     * Gets the x-coordinate of this location
-     * @return The x-coordinate
-     */
     public double getX() {
         return this.x;
     }
 
-    /**
-     * Gets the x-coordinate of the block this location resides in
-     * @return The x-coordinate
-     */
     public int getBlockX() {
         return (int) Math.floor(this.x);
     }
 
-    /**
-     * Gets the y-coordinate of this location
-     * @return The y-coordinate
-     */
     public double getY() {
         return this.y;
     }
 
-    /**
-     * Gets the y-coordinate of the block this location resides in
-     * @return The y-coordinate
-     */
     public int getBlockY() {
         return (int) Math.floor(this.y);
     }
 
-    /**
-     * Gets the z-coordinate of this location
-     * @return The z-coordinate
-     */
     public double getZ() {
         return this.z;
     }
 
-    /**
-     * Gets the z-coordinate of the block this location resides in
-     * @return The z-coordinate
-     */
     public int getBlockZ() {
         return (int) Math.floor(this.z);
     }
 
-
-    /**
-     * Clones the {@link PathLocation}
-     * @return A new {@link PathLocation} with the same values
-     */
-    @NonNull
     @Override
     public PathLocation clone() {
 

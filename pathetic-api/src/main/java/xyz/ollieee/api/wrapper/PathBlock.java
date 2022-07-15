@@ -32,23 +32,14 @@ public class PathBlock {
         return this.pathBlockType == PathBlockType.AIR || this.pathBlockType == PathBlockType.OTHER;
     }
 
-    /**
-     * @return the blocks x coordinate
-     */
     public int getBlockX() {
         return this.pathLocation.getBlockX();
     }
 
-    /**
-     * @return the blocks y coordinate
-     */
     public int getBlockY() {
         return this.pathLocation.getBlockY();
     }
 
-    /**
-     * @return the blocks z coordinate
-     */
     public int getBlockZ() {
         return this.pathLocation.getBlockZ();
     }
