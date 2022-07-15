@@ -24,10 +24,6 @@ public class PathLocation implements Cloneable {
         return this.pathWorld;
     }
 
-    public void setPathWorld(PathWorld world) {
-        this.pathWorld = world;
-    }
-
     public double getX() {
         return this.x;
     }
