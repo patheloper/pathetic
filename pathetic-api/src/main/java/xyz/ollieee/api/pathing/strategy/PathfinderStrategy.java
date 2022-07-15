@@ -6,6 +6,7 @@ import xyz.ollieee.api.wrapper.PathBlock;
 /**
  * A functional interface to modify the internal behaviour and choosing of the {@link xyz.ollieee.api.pathing.Pathfinder}
  */
+@FunctionalInterface
 public interface PathfinderStrategy {
     
     /**
