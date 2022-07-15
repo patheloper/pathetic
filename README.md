@@ -40,7 +40,7 @@ public class PathExample extends JavaPlugin {
     @Override
     public void onEnable() {
     
-    	Pathetic.initialize(this);
+    	PatheticMapper.initialize(this);
 	goFindSomePath();
     }
     
