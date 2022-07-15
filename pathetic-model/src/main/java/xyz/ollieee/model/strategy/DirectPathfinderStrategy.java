@@ -1,4 +1,4 @@
-package xyz.ollieee.api.pathing.strategy.strategies;
+package xyz.ollieee.model.strategy;
 
 import lombok.NonNull;
 import xyz.ollieee.api.pathing.strategy.PathfinderStrategy;

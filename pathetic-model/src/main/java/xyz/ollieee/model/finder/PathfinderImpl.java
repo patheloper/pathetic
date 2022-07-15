@@ -7,7 +7,7 @@ import xyz.ollieee.api.pathing.result.Path;
 import xyz.ollieee.api.pathing.result.PathfinderResult;
 import xyz.ollieee.api.pathing.result.PathfinderSuccess;
 import xyz.ollieee.api.pathing.strategy.PathfinderStrategy;
-import xyz.ollieee.api.pathing.strategy.strategies.DirectPathfinderStrategy;
+import xyz.ollieee.model.strategy.DirectPathfinderStrategy;
 import xyz.ollieee.api.pathing.world.chunk.SnapshotManager;
 import xyz.ollieee.api.wrapper.PathVector;
 import xyz.ollieee.model.PathImpl;

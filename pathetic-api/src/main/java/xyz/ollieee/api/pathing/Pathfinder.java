@@ -10,7 +10,7 @@ import java.util.concurrent.CompletableFuture;
 public interface Pathfinder {
     
     /**
-     * Tries to find a Path from {@param start} to {@param target} with the default {@link xyz.ollieee.api.pathing.strategy.strategies.DirectPathfinderStrategy}
+     * Tries to find a Path from {@param start} to {@param target}
      * @return {@link PathfinderResult} the result
      */
     @NonNull
