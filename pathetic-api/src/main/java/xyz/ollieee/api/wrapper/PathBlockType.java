@@ -4,6 +4,7 @@ package xyz.ollieee.api.wrapper;
  * Enum to represent the block type of wrapped blocks
  */
 public enum PathBlockType {
+    
     /**
      * Represents an air block
      */

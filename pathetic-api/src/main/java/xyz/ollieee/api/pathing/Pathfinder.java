@@ -24,14 +24,14 @@ public interface Pathfinder {
     PathfinderResult findPath(@NonNull PathLocation start, @NonNull PathLocation target, @NonNull Class<? extends PathfinderStrategy> strategyType);
     
     /**
-     * @see #findPath(PathLocation, PathLocation) findPath but async
+     * @see #findPath(PathLocation, PathLocation) - but async
      * @return {@link CompletableFuture<PathfinderResult>} the future of the result
      */
     @NonNull
     CompletableFuture<PathfinderResult> findPathAsync(@NonNull PathLocation start, @NonNull PathLocation target);
 
     /**
-     * @see #findPath(PathLocation, PathLocation, Class)  - findPath but async
+     * @see #findPath(PathLocation, PathLocation, Class)  - but async
      * @return {@link CompletableFuture<PathfinderResult>} the future of the result
      */
     @NonNull

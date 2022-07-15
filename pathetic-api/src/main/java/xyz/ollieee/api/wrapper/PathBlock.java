@@ -19,7 +19,7 @@ public class PathBlock {
     }
 
     /**
-     * @return Whether the block is empty
+     * @return Whether the block is air
      */
     public boolean isEmpty() {
         return this.pathBlockType == PathBlockType.AIR;

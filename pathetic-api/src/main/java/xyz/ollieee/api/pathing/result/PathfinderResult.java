@@ -5,19 +5,16 @@ import lombok.NonNull;
 public interface PathfinderResult {
     
     /**
-     * @return The {@link Path} if found
+     * Returns the found {@link Path} regardless if successful or not.
+     * The path is empty if the pathfinding failed.
+     *
+     * @return The found {@link Path}
      */
     @NonNull
     Path getPath();
     
-    /**
-     * @return whether it was successful
-     */
     boolean successful();
     
-    /**
-     * @return The success as a {@link PathfinderSuccess}
-     */
     @NonNull
     PathfinderSuccess getPathfinderSuccess();
 }

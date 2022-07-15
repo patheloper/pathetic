@@ -5,7 +5,7 @@ import xyz.ollieee.api.pathing.strategy.PathfinderStrategy;
 import xyz.ollieee.api.wrapper.PathBlock;
 
 /**
- * A {@link PathfinderStrategy} for direct travel to a point
+ * A {@link PathfinderStrategy} to find the direct path to a given endpoint
  */
 public class DirectPathfinderStrategy implements PathfinderStrategy {
 
