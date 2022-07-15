@@ -1,11 +1,13 @@
 package xyz.ollieee.api.wrapper;
 
+import lombok.Getter;
 import lombok.Value;
 
 /**
  * A Class to represent a block in the world, except exempt of Bukkit
  */
 @Value
+@Getter
 public class PathBlock {
 
     PathBlockType pathBlockType;

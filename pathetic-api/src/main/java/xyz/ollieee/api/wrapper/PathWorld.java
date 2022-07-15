@@ -3,9 +3,11 @@ package xyz.ollieee.api.wrapper;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+import lombok.Value;
 
 import java.util.UUID;
 
+@Value
 @ToString(onlyExplicitlyIncluded = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class PathWorld {
@@ -13,22 +15,22 @@ public class PathWorld {
     @Getter
     @EqualsAndHashCode.Include
     @ToString.Include
-    private final UUID uuid;
+    UUID uuid;
 
     @Getter
     @EqualsAndHashCode.Include
     @ToString.Include
-    private final Integer minHeight;
+    Integer minHeight;
 
     @Getter
     @EqualsAndHashCode.Include
     @ToString.Include
-    private final Integer maxHeight;
+    Integer maxHeight;
     
     @Getter
     @EqualsAndHashCode.Exclude
     @ToString.Include
-    private final String name;
+    String name;
     
     public PathWorld(UUID uuid, String name, Integer minHeight, Integer maxHeight) {
         
