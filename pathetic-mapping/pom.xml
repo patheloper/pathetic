@@ -38,13 +38,6 @@
     <dependencies>
         <dependency>
             <groupId>xyz.ollieee</groupId>
-            <artifactId>pathetic-api</artifactId>
-            <version>1.0.2</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>xyz.ollieee</groupId>
             <artifactId>pathetic-model</artifactId>
             <version>1.0.2</version>
             <scope>compile</scope>
