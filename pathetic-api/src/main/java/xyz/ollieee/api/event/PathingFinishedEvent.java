@@ -9,7 +9,7 @@ import xyz.ollieee.api.pathing.result.PathfinderResult;
  */
 public class PathingFinishedEvent extends PathingEvent {
 
-    PathfinderResult pathfinderResult;
+    private final PathfinderResult pathfinderResult;
 
     public PathingFinishedEvent(@NonNull PathfinderResult result) {
         this.pathfinderResult = result;
