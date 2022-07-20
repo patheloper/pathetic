@@ -24,18 +24,23 @@ public class PatheticCommand implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
+        // Don't do nothing if the executor isn't a Player
         if(!(sender instanceof Player))
             return false;
 
+        // Check if the command has one and only one argument
         if(args.length != 1)
             return false;
 
+        // Our variables to work with
         Player player = (Player) sender;
         UUID uuid = player.getUniqueId();
 
+        // Check if the player don't have a PlayerSession yet
         if(!sessionMap.containsKey(uuid))
-            sessionMap.put(uuid, new PlayerSession());
+            sessionMap.put(uuid, new PlayerSession()); // Give him one if not
 
+        // Go through the PlayerSession and set the respective positions
         PlayerSession playerSession = sessionMap.get(uuid);
         if(args[0].equals("pos1")) {
             player.sendMessage("Set pos1!");
@@ -45,19 +50,22 @@ public class PatheticCommand implements TabExecutor {
             playerSession.setPos2(player.getLocation());
         } else { // "/pathetic trololol"
 
+            // Check if the PlayerSession has both needed positions assigned
             if(!playerSession.isComplete()) {
                 player.sendMessage("Set pos1 and/or pos2 first!");
                 return false;
             }
 
+            // Use the positions we just checked for to search asynchronous for a Path between them
             player.sendMessage("Looking for a path...");
             pathfinder.findPathAsync(BukkitMapper.toPathLocation(playerSession.getPos1()), BukkitMapper.toPathLocation(playerSession.getPos2()))
-                    .thenAccept(pathfinderResult -> {
+                    .thenAccept(pathfinderResult -> { // Which will always return a PathfinderResult, so we accept on that
 
+                        // Printing out the PathfinderSuccess which can either be FAILED or FOUND
                         player.sendMessage("PathfinderStatus: " + pathfinderResult.getPathfinderSuccess());
-                        if(pathfinderResult.successful())
-                            for(PathLocation pathLocation : pathfinderResult.getPath().getLocations())
-                                player.sendBlockChange(BukkitMapper.toLocation(pathLocation), Material.YELLOW_STAINED_GLASS.createBlockData());
+                        if(pathfinderResult.successful()) // If the pathfinding was successful and has a Path for us
+                            for(PathLocation pathLocation : pathfinderResult.getPath().getLocations()) // Interact on that Path
+                                player.sendBlockChange(BukkitMapper.toLocation(pathLocation), Material.YELLOW_STAINED_GLASS.createBlockData()); // And send weird stuff to the Player
                     });
         }
 
