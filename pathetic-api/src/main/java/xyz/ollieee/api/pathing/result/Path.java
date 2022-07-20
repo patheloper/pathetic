@@ -39,5 +39,5 @@ public interface Path {
      * @return {@link PathLocation} The location of the target
      */
     @NonNull
-    PathLocation getTarget();
+    PathLocation getEnd();
 }
