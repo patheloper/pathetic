@@ -1,0 +1,8 @@
+name: PatheticTest
+version: '${project.version}'
+main: xyz.ollieee.example.PatheticPlugin
+api-version: 1.19
+
+commands:
+  pathetic:
+    description: What a pathetic command
