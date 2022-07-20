@@ -2,7 +2,7 @@
 
 A simple and intuitive 1.8-1.19 A* pathfinding API for Spigot & Paper plugins
 
-### Shade it in
+### How to import
 #### Maven
 ```xml
 	<repositories>
