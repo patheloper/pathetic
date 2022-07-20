@@ -6,7 +6,14 @@ import xyz.ollieee.api.wrapper.PathLocation;
 import java.util.LinkedHashSet;
 
 public interface Path {
-    
+
+    /**
+     * Interpolates the points of this Path using the de Boor's algorithm
+     * @see #getLocations
+     * @return a newly created Path with interpolated points formed to a cubic B-spline
+     */
+    Path interpolate();
+
     /**
      * Joins this Path with the given Path.
      * @param path which will be appended at the end.

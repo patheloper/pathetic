@@ -15,7 +15,12 @@ public class PathImpl implements Path {
     private final PathLocation start;
     private final PathLocation end;
     private final Iterable<PathLocation> locations;
-    
+
+    @Override
+    public Path interpolate() {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
     @Override
     public Path join(Path path) {
         return new PathImpl(start, path.getTarget(), Iterables.concat(locations, path.getLocations()));
