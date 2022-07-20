@@ -33,7 +33,7 @@ A simple and intuitive 1.8-1.19 A* pathfinding API for Spigot & Paper plugins
 	}
 ```
 
-### Example Usage
+### Example API Usage
 ```java
 public class PathExample extends JavaPlugin {
     
