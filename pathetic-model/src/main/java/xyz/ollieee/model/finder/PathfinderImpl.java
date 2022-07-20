@@ -38,9 +38,17 @@ public class PathfinderImpl implements Pathfinder {
 
     private static @NonNull PathfinderResult seekPath(PathLocation start, PathLocation target, Class<? extends PathfinderStrategy> strategyType) {
 
-        // TODO: 27/04/2022 Re-add all the event calling, Bstats, and verification that they are in the same world etc etc
+        /*
+        TODO: 27/04/2022 Re-add all the event calling, Bstats
+            - 20/07/2022 Verification done. Don't implement BStats here, we can listen for our own events.
+         */
 
-        int depth = 1;
+        if(!start.getPathWorld().equals(target.getPathWorld()))
+            return new PathfinderResultImpl(PathfinderSuccess.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET));
+
+        if(start.equals(target)) // could be too accurate
+            return new PathfinderResultImpl(PathfinderSuccess.FOUND, new PathImpl(start, target, Collections.singleton(start)));
+
         Node startNode = new Node(start.toIntegers(), start.toIntegers(), target.toIntegers(), 0);
 
         PriorityQueue<Node> nodeQueue = new PriorityQueue<>(Collections.singleton(startNode));
@@ -48,8 +56,10 @@ public class PathfinderImpl implements Pathfinder {
 
         PathfinderStrategy strategy = STRATEGY_REGISTRY.attemptRegister(strategyType);
 
-        int max_checks = (int) (100 * start.distance(target));
-        while (!nodeQueue.isEmpty() && depth <= max_checks) {
+        int depth = 1;
+        int maxDepth = (int) (100 * start.distance(target));
+
+        while (!nodeQueue.isEmpty() && depth <= maxDepth) {
 
             Node currentNode = nodeQueue.poll();
 
