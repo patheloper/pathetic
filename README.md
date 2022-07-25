@@ -15,7 +15,7 @@ A simple and intuitive 1.8-1.19 A* pathfinding API for Spigot & Paper plugins
  	<dependency>
 	    <groupId>com.github.olijeffers0n.PatheticAPI</groupId>
 	    <artifactId>pathetic-mapping</artifactId>
-	    <version>Tag</version>
+	    <version>1.0.2-PRE</version> <!-- 1.0.2-PRE or higher. Below wont work -->
 	</dependency>
 ```
 
