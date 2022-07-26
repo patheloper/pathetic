@@ -19,6 +19,7 @@
         <module>pathetic-api</module>
         <module>pathetic-model</module>
         <module>pathetic-mapping</module>
+        <module>pathetic-example</module>
     </modules>
 
 </project>
