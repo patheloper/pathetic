@@ -20,7 +20,14 @@ public interface Path {
      * @return {@link Path} the new Path
      */
     Path join(Path path);
-    
+
+    /**
+     * Trims this Path to the given length.
+     * @param length the length to which the Path will be trimmed.
+     * @return {@link Path} the new Path
+     */
+    Path trim(int length);
+
     /**
      * Returns the path from the Pathfinder as a {@link Iterable} full of {@link PathLocation}
      */

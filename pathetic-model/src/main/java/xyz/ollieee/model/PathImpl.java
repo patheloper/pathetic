@@ -22,7 +22,12 @@ public class PathImpl implements Path {
     public Path join(Path path) {
         return new PathImpl(start, path.getEnd(), Iterables.concat(locations, path.getLocations()));
     }
-    
+
+    @Override
+    public Path trim(int length) {
+        return new PathImpl(start, end, Iterables.limit(locations, length));
+    }
+
     @NonNull
     @Override
     public Iterable<PathLocation> getLocations() {
