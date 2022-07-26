@@ -7,6 +7,7 @@ import xyz.ollieee.api.pathing.result.Path;
 import xyz.ollieee.api.pathing.result.PathfinderResult;
 import xyz.ollieee.api.pathing.result.PathfinderSuccess;
 import xyz.ollieee.api.pathing.strategy.PathfinderStrategy;
+import xyz.ollieee.model.finder.handler.PathfinderAsyncExceptionHandler;
 import xyz.ollieee.model.strategy.DirectPathfinderStrategy;
 import xyz.ollieee.api.pathing.world.chunk.SnapshotManager;
 import xyz.ollieee.api.wrapper.PathVector;
@@ -20,12 +21,16 @@ import java.util.concurrent.ForkJoinPool;
 
 public class PathfinderImpl implements Pathfinder {
 
+    private static final Executor FORK_JOIN_POOL =
+            new ForkJoinPool(Runtime.getRuntime().availableProcessors(),
+                    ForkJoinPool.defaultForkJoinWorkerThreadFactory,
+                    new PathfinderAsyncExceptionHandler(),
+                    true);
+
     private static final Class<? extends PathfinderStrategy> DEFAULT_STRATEGY_TYPE = DirectPathfinderStrategy.class;
-
     private static final StrategyRegistry STRATEGY_REGISTRY = new StrategyRegistry();
-    private static final Set<PathLocation> EMPTY_LINKED_HASHSET = Collections.unmodifiableSet(new LinkedHashSet<PathLocation>());
 
-    private static final Executor FORK_JOIN_POOL = new ForkJoinPool(Runtime.getRuntime().availableProcessors(), ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, true);
+    private static final Set<PathLocation> EMPTY_LINKED_HASHSET = Collections.unmodifiableSet(new LinkedHashSet<PathLocation>());
 
     private static final PathVector[] OFFSETS = {
             new PathVector(1, 0, 0),
