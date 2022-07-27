@@ -28,23 +28,25 @@ public interface Path {
      */
     Path trim(int length);
 
-    /**
-     * Returns the path from the Pathfinder as a {@link Iterable} full of {@link PathLocation}
-     */
-    @NonNull
-    Iterable<PathLocation> getLocations();
-    
+    int length();
+
     /**
      * Returns the start location of the path
      * @return {@link PathLocation} The location of the start
      */
     @NonNull
     PathLocation getStart();
-    
+
     /**
      * Returns the target location of the path
      * @return {@link PathLocation} The location of the target
      */
     @NonNull
     PathLocation getEnd();
+
+    /**
+     * Returns the path from the Pathfinder as a {@link Iterable} full of {@link PathLocation}
+     */
+    @NonNull
+    Iterable<PathLocation> getLocations();
 }

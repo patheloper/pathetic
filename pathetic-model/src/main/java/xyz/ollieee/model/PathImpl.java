@@ -3,15 +3,23 @@ package xyz.ollieee.model;
 import com.google.common.collect.Iterables;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import xyz.ollieee.api.pathing.result.Path;
 import xyz.ollieee.api.wrapper.PathLocation;
 
-@AllArgsConstructor
 public class PathImpl implements Path {
 
     private final PathLocation start;
     private final PathLocation end;
     private final Iterable<PathLocation> locations;
+    private final int length;
+
+    public PathImpl(PathLocation start, PathLocation end, Iterable<PathLocation> locations) {
+        this.start = start;
+        this.end = end;
+        this.locations = locations;
+        this.length = Iterables.size(locations);
+    }
 
     @Override
     public Path interpolate() {
@@ -28,10 +36,9 @@ public class PathImpl implements Path {
         return new PathImpl(start, end, Iterables.limit(locations, length));
     }
 
-    @NonNull
     @Override
-    public Iterable<PathLocation> getLocations() {
-        return this.locations;
+    public int length() {
+        return length;
     }
 
     @NonNull
@@ -45,5 +52,11 @@ public class PathImpl implements Path {
     public PathLocation getEnd() {
         return this.end;
     }
-    
+
+    @NonNull
+    @Override
+    public Iterable<PathLocation> getLocations() {
+        return this.locations;
+    }
+
 }
