@@ -6,6 +6,12 @@ public class PathfinderAsyncExceptionHandler implements Thread.UncaughtException
 
     @Override
     public void uncaughtException(Thread t, Throwable e) {
-        Bukkit.getLogger().severe("Exception in PathfinderAsyncHandler: " + e.getMessage());
+
+        StringBuilder visualizeStacktrace = new StringBuilder("Exception caught in PathfinderAsyncHandler:").append("\n");
+        visualizeStacktrace.append(e.toString()).append("\n");
+        for (StackTraceElement stackTraceElement : e.getStackTrace())
+            visualizeStacktrace.append("\tat: ").append(stackTraceElement.toString()).append("\n");
+
+        Bukkit.getLogger().severe(visualizeStacktrace.toString());
     }
 }
