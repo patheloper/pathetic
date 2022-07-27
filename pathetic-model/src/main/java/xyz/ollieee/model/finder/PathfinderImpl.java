@@ -27,8 +27,7 @@ public class PathfinderImpl implements Pathfinder {
                     new PathfinderAsyncExceptionHandler(),
                     true);
 
-    private static final Class<? extends PathfinderStrategy> DEFAULT_STRATEGY_TYPE = DirectPathfinderStrategy.class;
-    private static final StrategyRegistry STRATEGY_REGISTRY = new StrategyRegistry();
+    private static final PathfinderStrategy DEFAULT_STRATEGY = new DirectPathfinderStrategy();
 
     private static final Set<PathLocation> EMPTY_LINKED_HASHSET = Collections.unmodifiableSet(new LinkedHashSet<PathLocation>());
 
@@ -41,7 +40,7 @@ public class PathfinderImpl implements Pathfinder {
             new PathVector(0, -1, 0),
     };
 
-    private static @NonNull PathfinderResult seekPath(PathLocation start, PathLocation target, Class<? extends PathfinderStrategy> strategyType) {
+    private static @NonNull PathfinderResult seekPath(PathLocation start, PathLocation target, PathfinderStrategy pathfinderStrategy) {
 
         /*
         TODO: 27/04/2022 Re-add all the event calling, Bstats
@@ -59,8 +58,6 @@ public class PathfinderImpl implements Pathfinder {
         PriorityQueue<Node> nodeQueue = new PriorityQueue<>(Collections.singleton(startNode));
         Set<PathLocation> examinedLocations = new HashSet<>();
 
-        PathfinderStrategy strategy = STRATEGY_REGISTRY.attemptRegister(strategyType);
-
         int depth = 1;
         int maxDepth = (int) (100 * start.distance(target));
 
@@ -71,7 +68,7 @@ public class PathfinderImpl implements Pathfinder {
             if (currentNode.hasReachedEnd())
                 return new PathfinderResultImpl(PathfinderSuccess.FOUND, retracePath(currentNode));
 
-            evaluateNewNodes(nodeQueue, examinedLocations, strategy, currentNode);
+            evaluateNewNodes(nodeQueue, examinedLocations, pathfinderStrategy, currentNode);
             depth++;
         }
 
@@ -149,24 +146,24 @@ public class PathfinderImpl implements Pathfinder {
     @NonNull
     @Override
     public PathfinderResult findPath(@NonNull PathLocation start, @NonNull PathLocation target) {
-        return findPath(start, target, DEFAULT_STRATEGY_TYPE);
+        return findPath(start, target, DEFAULT_STRATEGY);
     }
 
     @NonNull
     @Override
-    public PathfinderResult findPath(@NonNull PathLocation start, @NonNull PathLocation target, @NonNull Class<? extends PathfinderStrategy> strategyType) {
-        return seekPath(start, target, strategyType);
+    public PathfinderResult findPath(@NonNull PathLocation start, @NonNull PathLocation target, @NonNull PathfinderStrategy pathfinderStrategy) {
+        return seekPath(start, target, pathfinderStrategy);
     }
 
     @NonNull
     @Override
     public CompletableFuture<PathfinderResult> findPathAsync(@NonNull PathLocation start, @NonNull PathLocation target) {
-        return findPathAsync(start, target, DEFAULT_STRATEGY_TYPE);
+        return findPathAsync(start, target, DEFAULT_STRATEGY);
     }
     
     @NonNull
     @Override
-    public CompletableFuture<PathfinderResult> findPathAsync(@NonNull PathLocation start, @NonNull PathLocation target, @NonNull Class<? extends PathfinderStrategy> strategyType) {
-        return CompletableFuture.supplyAsync(() -> seekPath(start, target, strategyType), FORK_JOIN_POOL);
+    public CompletableFuture<PathfinderResult> findPathAsync(@NonNull PathLocation start, @NonNull PathLocation target, @NonNull PathfinderStrategy pathfinderStrategy) {
+        return CompletableFuture.supplyAsync(() -> seekPath(start, target, pathfinderStrategy), FORK_JOIN_POOL);
     }
 }
