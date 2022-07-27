@@ -5,7 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 @UtilityClass
-public class WatchdogHelper {
+public class WatchdogUtil {
 
     private Class<?> watchdogClazz;
     private Method tickMethod;
