@@ -2,13 +2,12 @@ package xyz.ollieee;
 
 import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import xyz.ollieee.api.material.MaterialParser;
 import xyz.ollieee.api.pathing.world.chunk.SnapshotManager;
 import xyz.ollieee.bstats.BStatsHandler;
-import xyz.ollieee.bukkit.listener.PathingEventListener;
+import xyz.ollieee.bukkit.event.PathingEventListener;
 import xyz.ollieee.legacy.material.LegacyMaterialParser;
 import xyz.ollieee.model.world.chunk.SnapshotManagerImpl;
 import xyz.ollieee.model.world.material.ModernMaterialParser;

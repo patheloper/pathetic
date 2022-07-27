@@ -1,4 +1,4 @@
-package xyz.ollieee.bukkit.listener;
+package xyz.ollieee.bukkit.event;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;

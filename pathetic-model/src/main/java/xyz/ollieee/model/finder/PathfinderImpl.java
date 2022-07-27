@@ -2,11 +2,14 @@ package xyz.ollieee.model.finder;
 
 import lombok.NonNull;
 import xyz.ollieee.Pathetic;
+import xyz.ollieee.api.event.PathingFinishedEvent;
+import xyz.ollieee.api.event.PathingStartFindEvent;
 import xyz.ollieee.api.pathing.Pathfinder;
 import xyz.ollieee.api.pathing.result.Path;
 import xyz.ollieee.api.pathing.result.PathfinderResult;
 import xyz.ollieee.api.pathing.result.PathfinderSuccess;
 import xyz.ollieee.api.pathing.strategy.PathfinderStrategy;
+import xyz.ollieee.bukkit.event.EventPublisher;
 import xyz.ollieee.model.finder.handler.PathfinderAsyncExceptionHandler;
 import xyz.ollieee.model.strategy.DirectPathfinderStrategy;
 import xyz.ollieee.api.pathing.world.chunk.SnapshotManager;
@@ -42,16 +45,14 @@ public class PathfinderImpl implements Pathfinder {
 
     private static @NonNull PathfinderResult seekPath(PathLocation start, PathLocation target, PathfinderStrategy pathfinderStrategy) {
 
-        /*
-        TODO: 27/04/2022 Re-add all the event calling, Bstats
-            - 20/07/2022 Verification done. Don't implement BStats here, we can listen for our own events.
-         */
+        EventPublisher.raiseEvent(new PathingStartFindEvent(start, target, pathfinderStrategy));
+        // TODO: 27/07/2022 Make a PathfinderResultBuilder to avoid this boilerplate shit
 
         if(!start.getPathWorld().equals(target.getPathWorld()))
-            return new PathfinderResultImpl(PathfinderSuccess.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET));
+            return finish(new PathfinderResultImpl(PathfinderSuccess.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
 
         if(start.equals(target)) // could be too accurate
-            return new PathfinderResultImpl(PathfinderSuccess.FOUND, new PathImpl(start, target, Collections.singleton(start)));
+            return finish(new PathfinderResultImpl(PathfinderSuccess.FOUND, new PathImpl(start, target, Collections.singleton(start))));
 
         Node startNode = new Node(start.toIntegers(), start.toIntegers(), target.toIntegers(), 0);
 
@@ -66,13 +67,13 @@ public class PathfinderImpl implements Pathfinder {
             Node currentNode = nodeQueue.poll();
 
             if (currentNode.hasReachedEnd())
-                return new PathfinderResultImpl(PathfinderSuccess.FOUND, retracePath(currentNode));
+                return finish(new PathfinderResultImpl(PathfinderSuccess.FOUND, retracePath(currentNode)));
 
             evaluateNewNodes(nodeQueue, examinedLocations, pathfinderStrategy, currentNode);
             depth++;
         }
 
-        return new PathfinderResultImpl(PathfinderSuccess.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET));
+        return finish(new PathfinderResultImpl(PathfinderSuccess.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
     }
 
     private static Path retracePath(@NonNull Node node) {
@@ -143,6 +144,11 @@ public class PathfinderImpl implements Pathfinder {
         return location.getPathWorld().getMinHeight() < location.getBlockY() && location.getBlockY() < location.getPathWorld().getMaxHeight();
     }
 
+    private static PathfinderResult finish(PathfinderResult pathfinderResult) {
+        EventPublisher.raiseEvent(new PathingFinishedEvent(pathfinderResult));
+        return pathfinderResult;
+    }
+
     @NonNull
     @Override
     public PathfinderResult findPath(@NonNull PathLocation start, @NonNull PathLocation target) {
@@ -160,7 +166,7 @@ public class PathfinderImpl implements Pathfinder {
     public CompletableFuture<PathfinderResult> findPathAsync(@NonNull PathLocation start, @NonNull PathLocation target) {
         return findPathAsync(start, target, DEFAULT_STRATEGY);
     }
-    
+
     @NonNull
     @Override
     public CompletableFuture<PathfinderResult> findPathAsync(@NonNull PathLocation start, @NonNull PathLocation target, @NonNull PathfinderStrategy pathfinderStrategy) {
