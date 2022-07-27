@@ -28,6 +28,10 @@ public interface Path {
      */
     Path trim(int length);
 
+    /**
+     * The length of the Path compiled from the number of locations
+     * @return the length of the path
+     */
     int length();
 
     /**
