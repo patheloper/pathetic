@@ -1,4 +1,4 @@
-package xyz.ollieee.model.finder;
+package xyz.ollieee.model.pathing;
 
 import xyz.ollieee.api.wrapper.PathLocation;
 import xyz.ollieee.api.wrapper.PathVector;

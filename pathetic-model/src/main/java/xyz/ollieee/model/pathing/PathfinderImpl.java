@@ -1,4 +1,4 @@
-package xyz.ollieee.model.finder;
+package xyz.ollieee.model.pathing;
 
 import lombok.NonNull;
 import xyz.ollieee.Pathetic;
@@ -10,11 +10,12 @@ import xyz.ollieee.api.pathing.result.PathfinderResult;
 import xyz.ollieee.api.pathing.result.PathfinderSuccess;
 import xyz.ollieee.api.pathing.strategy.PathfinderStrategy;
 import xyz.ollieee.bukkit.event.EventPublisher;
-import xyz.ollieee.model.finder.handler.PathfinderAsyncExceptionHandler;
-import xyz.ollieee.model.strategy.DirectPathfinderStrategy;
-import xyz.ollieee.api.pathing.world.chunk.SnapshotManager;
+import xyz.ollieee.model.pathing.handler.PathfinderAsyncExceptionHandler;
+import xyz.ollieee.model.pathing.result.PathfinderResultImpl;
+import xyz.ollieee.model.pathing.strategy.DirectPathfinderStrategy;
+import xyz.ollieee.api.snapshot.SnapshotManager;
 import xyz.ollieee.api.wrapper.PathVector;
-import xyz.ollieee.model.PathImpl;
+import xyz.ollieee.model.pathing.result.PathImpl;
 import xyz.ollieee.api.wrapper.PathLocation;
 
 import java.util.*;

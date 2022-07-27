@@ -4,13 +4,13 @@ import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import xyz.ollieee.api.material.MaterialParser;
-import xyz.ollieee.api.pathing.world.chunk.SnapshotManager;
+import xyz.ollieee.api.snapshot.MaterialParser;
+import xyz.ollieee.api.snapshot.SnapshotManager;
 import xyz.ollieee.bstats.BStatsHandler;
 import xyz.ollieee.bukkit.event.PathingEventListener;
-import xyz.ollieee.legacy.material.LegacyMaterialParser;
-import xyz.ollieee.model.world.chunk.SnapshotManagerImpl;
-import xyz.ollieee.model.world.material.ModernMaterialParser;
+import xyz.ollieee.legacy.snapshot.LegacyMaterialParser;
+import xyz.ollieee.model.snapshot.SnapshotManagerImpl;
+import xyz.ollieee.model.snapshot.ModernMaterialParser;
 import xyz.ollieee.util.BukkitVersionUtil;
 
 import java.util.logging.Logger;

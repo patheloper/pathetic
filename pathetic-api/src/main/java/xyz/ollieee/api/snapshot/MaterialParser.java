@@ -1,4 +1,4 @@
-package xyz.ollieee.api.material;
+package xyz.ollieee.api.snapshot;
 
 import lombok.NonNull;
 import org.bukkit.ChunkSnapshot;

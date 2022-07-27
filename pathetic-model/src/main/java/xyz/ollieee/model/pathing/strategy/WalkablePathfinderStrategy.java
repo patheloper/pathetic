@@ -1,9 +1,9 @@
-package xyz.ollieee.model.strategy;
+package xyz.ollieee.model.pathing.strategy;
 
 import lombok.NonNull;
 import xyz.ollieee.Pathetic;
 import xyz.ollieee.api.pathing.strategy.PathfinderStrategy;
-import xyz.ollieee.api.pathing.world.chunk.SnapshotManager;
+import xyz.ollieee.api.snapshot.SnapshotManager;
 import xyz.ollieee.api.wrapper.PathBlock;
 import xyz.ollieee.api.wrapper.PathBlockType;
 import xyz.ollieee.api.wrapper.PathLocation;

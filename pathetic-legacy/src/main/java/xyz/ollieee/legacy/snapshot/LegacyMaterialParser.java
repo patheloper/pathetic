@@ -1,28 +1,22 @@
-package xyz.ollieee.model.world.material;
+package xyz.ollieee.legacy.snapshot;
 
 import lombok.NonNull;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
-import xyz.ollieee.Pathetic;
-import xyz.ollieee.api.material.MaterialParser;
+import xyz.ollieee.api.snapshot.MaterialParser;
 
-public class ModernMaterialParser implements MaterialParser {
+public class LegacyMaterialParser implements MaterialParser {
 
     @Override
     public @NonNull Material getMaterial(@NonNull ChunkSnapshot snapshot, int x, int y, int z) {
-        try {
-            return snapshot.getBlockType(x, y, z);
-        }catch (Exception ignored) {
-            Pathetic.getPluginLogger().warning("Error Fetching block: (X: " + x + ",Y: " + y + ",Z: " + z + ")");
-            return Material.STONE;
-        }
+        return Material.getMaterial(snapshot.getBlockTypeId(x,y,z));
     }
 
     @Override
     public boolean isAir(@NonNull Block block) {
-        return block.getType().isAir();
+        return block.isEmpty();
     }
 
     @Override
@@ -32,7 +26,7 @@ public class ModernMaterialParser implements MaterialParser {
 
     @Override
     public boolean isPassable(@NonNull Block block) {
-        return block.isPassable();
+        return !block.getType().isBlock();
     }
 
     @Override
@@ -47,6 +41,7 @@ public class ModernMaterialParser implements MaterialParser {
 
     @Override
     public boolean isAir(@NonNull Material material) {
-        return material.isAir();
+        return material == Material.AIR;
     }
+
 }

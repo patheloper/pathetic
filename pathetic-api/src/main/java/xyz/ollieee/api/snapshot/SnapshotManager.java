@@ -1,4 +1,4 @@
-package xyz.ollieee.api.pathing.world.chunk;
+package xyz.ollieee.api.snapshot;
 
 import lombok.NonNull;
 import xyz.ollieee.api.wrapper.PathBlock;

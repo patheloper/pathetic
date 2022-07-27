@@ -1,4 +1,4 @@
-package xyz.ollieee.model.finder;
+package xyz.ollieee.model.pathing.result;
 
 import lombok.AllArgsConstructor;
 import lombok.NonNull;

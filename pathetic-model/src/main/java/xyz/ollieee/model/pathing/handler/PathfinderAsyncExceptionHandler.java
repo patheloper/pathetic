@@ -1,4 +1,4 @@
-package xyz.ollieee.model.finder.handler;
+package xyz.ollieee.model.pathing.handler;
 
 import org.bukkit.Bukkit;
 

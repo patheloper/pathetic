@@ -1,9 +1,7 @@
-package xyz.ollieee.model;
+package xyz.ollieee.model.pathing.result;
 
 import com.google.common.collect.Iterables;
-import lombok.AllArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import xyz.ollieee.api.pathing.result.Path;
 import xyz.ollieee.api.wrapper.PathLocation;
 

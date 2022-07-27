@@ -11,7 +11,7 @@ import org.bukkit.block.Block;
 import org.bukkit.generator.WorldInfo;
 import org.bukkit.util.Vector;
 
-import xyz.ollieee.api.material.MaterialParser;
+import xyz.ollieee.api.snapshot.MaterialParser;
 import xyz.ollieee.api.wrapper.*;
 import xyz.ollieee.mapping.PatheticMapper;
 

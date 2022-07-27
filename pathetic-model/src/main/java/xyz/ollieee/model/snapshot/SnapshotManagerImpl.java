@@ -1,4 +1,4 @@
-package xyz.ollieee.model.world.chunk;
+package xyz.ollieee.model.snapshot;
 
 import lombok.NonNull;
 import org.bukkit.Bukkit;
@@ -7,10 +7,10 @@ import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
 import org.bukkit.World;
 import xyz.ollieee.Pathetic;
-import xyz.ollieee.api.material.MaterialParser;
+import xyz.ollieee.api.snapshot.MaterialParser;
 import xyz.ollieee.api.wrapper.PathWorld;
 import xyz.ollieee.model.world.WorldDomain;
-import xyz.ollieee.api.pathing.world.chunk.SnapshotManager;
+import xyz.ollieee.api.snapshot.SnapshotManager;
 import xyz.ollieee.util.ChunkUtils;
 import xyz.ollieee.api.wrapper.PathBlock;
 import xyz.ollieee.api.wrapper.PathBlockType;
