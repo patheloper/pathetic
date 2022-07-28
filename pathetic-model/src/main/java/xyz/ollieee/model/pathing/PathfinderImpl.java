@@ -9,6 +9,7 @@ import xyz.ollieee.api.pathing.result.Path;
 import xyz.ollieee.api.pathing.result.PathfinderResult;
 import xyz.ollieee.api.pathing.result.PathfinderSuccess;
 import xyz.ollieee.api.pathing.strategy.PathfinderStrategy;
+import xyz.ollieee.api.pathing.strategy.StrategyEssentialsDao;
 import xyz.ollieee.bukkit.event.EventPublisher;
 import xyz.ollieee.model.pathing.handler.PathfinderAsyncExceptionHandler;
 import xyz.ollieee.model.pathing.result.PathfinderResultImpl;
@@ -100,7 +101,7 @@ public class PathfinderImpl implements Pathfinder {
     private static void evaluateNewNodes(PriorityQueue<Node> nodeQueue, Set<PathLocation> examinedLocations, PathfinderStrategy strategy, Node currentNode) {
 
         for (Node neighbourNode : getNeighbours(currentNode)) {
-            if (nodeIsValid(neighbourNode, currentNode, nodeQueue, examinedLocations, strategy)) {
+            if (nodeIsValid(neighbourNode, nodeQueue, examinedLocations, strategy)) {
                 nodeQueue.add(neighbourNode);
             }
         }
@@ -120,7 +121,7 @@ public class PathfinderImpl implements Pathfinder {
         return newNodes;
     }
 
-    private static boolean nodeIsValid(Node node, Node parentNode, PriorityQueue<Node> nodeQueue, Set<PathLocation> examinedLocations, PathfinderStrategy strategy) {
+    private static boolean nodeIsValid(Node node, PriorityQueue<Node> nodeQueue, Set<PathLocation> examinedLocations, PathfinderStrategy strategy) {
 
         if (examinedLocations.contains(node.getLocation())) {
             return false;
@@ -135,9 +136,7 @@ public class PathfinderImpl implements Pathfinder {
         }
 
         SnapshotManager snapshotManager = Pathetic.getSnapshotManager();
-        if (!strategy.isValid(snapshotManager.getBlock(node.getLocation()),
-                snapshotManager.getBlock(parentNode.getLocation()),
-                snapshotManager.getBlock((node.getParent() == null ? node : node.getParent()).getLocation()))) {
+        if (!strategy.isValid(new StrategyEssentialsDao(snapshotManager, node.getLocation()))) {
             return false;
         }
 
