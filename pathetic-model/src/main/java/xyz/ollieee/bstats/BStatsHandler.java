@@ -24,7 +24,7 @@ public class BStatsHandler {
             failedPaths = 0;
             return failed;
         }));
-        metrics.addCustomChart(new Metrics.SingleLineChart("length_of_pathfinding_-_blocks", () -> {
+        metrics.addCustomChart(new Metrics.SingleLineChart("length_of_pathfinding_in_blocks", () -> {
             int length = lengthOfPaths;
             lengthOfPaths = 0;
             return length;
