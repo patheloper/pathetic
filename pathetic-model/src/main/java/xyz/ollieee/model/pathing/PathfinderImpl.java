@@ -13,7 +13,7 @@ import xyz.ollieee.api.pathing.strategy.StrategyEssentialsDao;
 import xyz.ollieee.bukkit.event.EventPublisher;
 import xyz.ollieee.model.pathing.handler.PathfinderAsyncExceptionHandler;
 import xyz.ollieee.model.pathing.result.PathfinderResultImpl;
-import xyz.ollieee.model.pathing.strategy.DirectPathfinderStrategy;
+import xyz.ollieee.api.pathing.strategy.strategies.DirectPathfinderStrategy;
 import xyz.ollieee.api.snapshot.SnapshotManager;
 import xyz.ollieee.api.wrapper.PathVector;
 import xyz.ollieee.model.pathing.result.PathImpl;
