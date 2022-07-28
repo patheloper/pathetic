@@ -46,7 +46,11 @@ public class PathfinderImpl implements Pathfinder {
 
     private static @NonNull PathfinderResult seekPath(PathLocation start, PathLocation target, PathfinderStrategy pathfinderStrategy) {
 
-        EventPublisher.raiseEvent(new PathingStartFindEvent(start, target, pathfinderStrategy));
+        PathingStartFindEvent startEvent = new PathingStartFindEvent(start, target, pathfinderStrategy);
+        EventPublisher.raiseEvent(startEvent);
+
+        if(startEvent.isCancelled())
+            return finish(new PathfinderResultImpl(PathfinderSuccess.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
         // TODO: 27/07/2022 Make a PathfinderResultBuilder to avoid this boilerplate shit
 
         if(!start.getPathWorld().equals(target.getPathWorld()))
