@@ -52,7 +52,6 @@ public class PathfinderImpl implements Pathfinder {
 
         if(startEvent.isCancelled())
             return finish(new PathfinderResultImpl(PathfinderSuccess.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
-        // TODO: 27/07/2022 Make a PathfinderResultBuilder to avoid this boilerplate shit
 
         if(!start.getPathWorld().equals(target.getPathWorld()))
             return finish(new PathfinderResultImpl(PathfinderSuccess.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
