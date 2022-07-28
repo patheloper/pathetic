@@ -59,7 +59,7 @@ public class PathfinderImpl implements Pathfinder {
         if(start.equals(target)) // could be too accurate
             return finish(new PathfinderResultImpl(PathfinderSuccess.FOUND, new PathImpl(start, target, Collections.singleton(start))));
 
-        Node startNode = new Node(start.toIntegers(), start.toIntegers(), target.toIntegers(), 0);
+        Node startNode = new Node(start.floor(), start.floor(), target.floor(), 0);
 
         PriorityQueue<Node> nodeQueue = new PriorityQueue<>(Collections.singleton(startNode));
         Set<PathLocation> examinedLocations = new HashSet<>();

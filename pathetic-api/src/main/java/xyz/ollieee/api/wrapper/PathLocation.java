@@ -153,7 +153,7 @@ public class PathLocation implements Cloneable {
      * Rounds the x,y,z values to the floor of the values
      * @return The mutated {@link PathLocation}
      */
-    public PathLocation toIntegers() {
+    public PathLocation floor() {
 
         this.x = this.getBlockX();
         this.y = this.getBlockY();
