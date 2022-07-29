@@ -15,11 +15,11 @@
     </properties>
 
     <modules>
-        <module>pathetic-legacy</module>
         <module>pathetic-api</module>
-        <module>pathetic-model</module>
-        <module>pathetic-mapping</module>
         <module>pathetic-example</module>
+        <module>pathetic-legacy</module>
+        <module>pathetic-mapping</module>
+        <module>pathetic-model</module>
     </modules>
 
 </project>
