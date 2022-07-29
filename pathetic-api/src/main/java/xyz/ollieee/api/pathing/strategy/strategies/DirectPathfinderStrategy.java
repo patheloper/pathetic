@@ -10,8 +10,8 @@ import xyz.ollieee.api.pathing.strategy.PathfinderStrategyEssentials;
 public class DirectPathfinderStrategy implements PathfinderStrategy {
 
     @Override
-    public boolean isValid(@NonNull PathfinderStrategyEssentials pathfinderStrategyEssentials) {
-        return pathfinderStrategyEssentials.getSnapshotManager().getBlock(pathfinderStrategyEssentials.getPathLocation()).isPassable();
+    public boolean isValid(@NonNull PathfinderStrategyEssentials essentials) {
+        return essentials.getSnapshotManager().getBlock(essentials.getPathLocation()).isPassable();
     }
 
 }

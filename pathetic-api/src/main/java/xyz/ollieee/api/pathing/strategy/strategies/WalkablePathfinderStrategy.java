@@ -11,10 +11,10 @@ import xyz.ollieee.api.wrapper.PathLocation;
 public class WalkablePathfinderStrategy implements PathfinderStrategy {
     
     @Override
-    public boolean isValid(@NonNull PathfinderStrategyEssentials pathfinderStrategyEssentials) {
+    public boolean isValid(@NonNull PathfinderStrategyEssentials essentials) {
 
-        SnapshotManager snapshotManager = pathfinderStrategyEssentials.getSnapshotManager();
-        PathBlock pathBlock = snapshotManager.getBlock(pathfinderStrategyEssentials.getPathLocation());
+        SnapshotManager snapshotManager = essentials.getSnapshotManager();
+        PathBlock pathBlock = snapshotManager.getBlock(essentials.getPathLocation());
 
         PathLocation below = pathBlock.getPathLocation().clone().subtract(0, 1, 0);
         PathLocation above = pathBlock.getPathLocation().clone().add(0, 1, 0);

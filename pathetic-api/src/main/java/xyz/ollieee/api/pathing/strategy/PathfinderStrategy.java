@@ -11,8 +11,8 @@ public interface PathfinderStrategy {
     /**
      * Implement the logic to see if a given location is valid for a strategy
      *
-     * @param pathfinderStrategyEssentials The {@link PathfinderStrategyEssentials} to access the needed essentials for a strategy
+     * @param essentials The {@link PathfinderStrategyEssentials} to access the needed essentials for a strategy
      */
-    boolean isValid(@NonNull PathfinderStrategyEssentials pathfinderStrategyEssentials);
+    boolean isValid(@NonNull PathfinderStrategyEssentials essentials);
 
 }
