@@ -161,6 +161,19 @@ public class PathLocation implements Cloneable {
 
         return this;
     }
+    
+    /**
+     * Sets the coordinates to the middle of the block
+     * @apiNote The y value is not affected
+     * @return The mutated {@link PathLocation}
+     */
+    public PathLocation mid() {
+    
+        this.x = this.getBlockX() + 0.5;
+        this.z = this.getBlockZ() + 0.5;
+    
+        return this;
+    }
 
     /**
      * Gets the manhattan distance between the current and another location
