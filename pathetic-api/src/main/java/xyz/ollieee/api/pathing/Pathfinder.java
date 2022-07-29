@@ -31,7 +31,7 @@ public interface Pathfinder {
     CompletableFuture<PathfinderResult> findPathAsync(@NonNull PathLocation start, @NonNull PathLocation target);
 
     /**
-     * @see #findPath(PathLocation, PathLocation, Class)  - but async
+     * @see #findPath(PathLocation, PathLocation, PathfinderStrategy)  - but async
      * @return {@link CompletableFuture<PathfinderResult>} the future of the result
      */
     @NonNull
