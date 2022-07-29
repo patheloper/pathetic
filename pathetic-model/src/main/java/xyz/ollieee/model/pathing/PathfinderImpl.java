@@ -9,7 +9,7 @@ import xyz.ollieee.api.pathing.result.Path;
 import xyz.ollieee.api.pathing.result.PathfinderResult;
 import xyz.ollieee.api.pathing.result.PathfinderSuccess;
 import xyz.ollieee.api.pathing.strategy.PathfinderStrategy;
-import xyz.ollieee.api.pathing.strategy.StrategyEssentialsDao;
+import xyz.ollieee.api.pathing.strategy.PathfinderStrategyEssentials;
 import xyz.ollieee.bukkit.event.EventPublisher;
 import xyz.ollieee.model.pathing.handler.PathfinderAsyncExceptionHandler;
 import xyz.ollieee.model.pathing.result.PathfinderResultImpl;
@@ -135,7 +135,7 @@ public class PathfinderImpl implements Pathfinder {
         }
 
         SnapshotManager snapshotManager = Pathetic.getSnapshotManager();
-        if (!strategy.isValid(new StrategyEssentialsDao(snapshotManager, node.getLocation()))) {
+        if (!strategy.isValid(new PathfinderStrategyEssentials(snapshotManager, node.getLocation()))) {
             return false;
         }
 
