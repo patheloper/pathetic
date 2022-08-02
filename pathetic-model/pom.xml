@@ -71,6 +71,13 @@
             <version>1.0.2</version>
             <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>xyz.ollieee</groupId>
+            <artifactId>pathetic-nms</artifactId>
+            <version>1.0.2</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
 </project>

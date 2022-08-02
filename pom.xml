@@ -19,6 +19,12 @@
         <module>pathetic-example</module>
         <module>pathetic-legacy</module>
         <module>pathetic-mapping</module>
+        <module>pathetic-nms</module>
+        <module>pathetic-nms/v1_19</module>
+        <module>pathetic-nms/v1_18</module>
+        <module>pathetic-nms/v1_17</module>
+        <module>pathetic-nms/v1_16</module>
+        <module>pathetic-nms/v1_15</module>
         <module>pathetic-model</module>
     </modules>
 
