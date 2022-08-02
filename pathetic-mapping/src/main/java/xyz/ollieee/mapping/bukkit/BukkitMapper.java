@@ -2,17 +2,13 @@ package xyz.ollieee.mapping.bukkit;
 
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.generator.WorldInfo;
 import org.bukkit.util.Vector;
-
 import xyz.ollieee.api.wrapper.*;
-import xyz.ollieee.model.snapshot.SnapshotManagerImpl;
 
 import java.util.Arrays;
 
@@ -50,7 +46,7 @@ public class BukkitMapper {
 
     @NonNull
     public PathBlock toPathBlock(@NonNull Block block) {
-        return new PathBlock(new PathLocation(toPathWorld(block.getWorld()), block.getX(), block.getY(), block.getZ()), toPathBlockType(block));
+        return new PathBlock(new PathLocation(toPathWorld(block.getWorld()), block.getX(), block.getY(), block.getZ()), PathBlockType.getBlockType(block.getType()));
     }
 
     public World toWorld(@NonNull PathWorld pathWorld) {
@@ -60,16 +56,6 @@ public class BukkitMapper {
     @NonNull
     public PathWorld toPathWorld(@NonNull WorldInfo world) {
         return new PathWorld(world.getUID(), world.getName(), getMinHeight(world), getMaxHeight(world));
-    }
-
-    @NonNull
-    public PathBlockType toPathBlockType(@NonNull Block block) {
-        return toPathBlockType(block.getType());
-    }
-
-    @NonNull
-    public PathBlockType toPathBlockType(@NonNull Material material) {
-        return SnapshotManagerImpl.toPathBlockType(material);
     }
 
     private final boolean IS_NEWER_WORLD;

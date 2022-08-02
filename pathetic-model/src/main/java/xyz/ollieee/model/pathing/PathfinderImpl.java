@@ -8,16 +8,19 @@ import xyz.ollieee.api.pathing.Pathfinder;
 import xyz.ollieee.api.pathing.result.Path;
 import xyz.ollieee.api.pathing.result.PathfinderResult;
 import xyz.ollieee.api.pathing.result.PathfinderState;
+import xyz.ollieee.api.pathing.result.progress.ProgressBar;
+import xyz.ollieee.api.pathing.result.task.PathingTask;
+import xyz.ollieee.api.pathing.rules.PathingRuleSetBuilder;
 import xyz.ollieee.api.pathing.strategy.PathfinderStrategy;
 import xyz.ollieee.api.pathing.strategy.StrategyData;
-import xyz.ollieee.bukkit.event.EventPublisher;
-import xyz.ollieee.model.pathing.handler.PathfinderAsyncExceptionHandler;
-import xyz.ollieee.model.pathing.result.PathfinderResultImpl;
 import xyz.ollieee.api.pathing.strategy.strategies.DirectPathfinderStrategy;
 import xyz.ollieee.api.snapshot.SnapshotManager;
-import xyz.ollieee.api.wrapper.PathVector;
-import xyz.ollieee.model.pathing.result.PathImpl;
 import xyz.ollieee.api.wrapper.PathLocation;
+import xyz.ollieee.api.wrapper.PathVector;
+import xyz.ollieee.bukkit.event.EventPublisher;
+import xyz.ollieee.model.pathing.handler.PathfinderAsyncExceptionHandler;
+import xyz.ollieee.model.pathing.result.PathImpl;
+import xyz.ollieee.model.pathing.result.PathfinderResultImpl;
 import xyz.ollieee.util.WatchdogUtil;
 
 import java.util.*;
@@ -33,7 +36,7 @@ public class PathfinderImpl implements Pathfinder {
                     new PathfinderAsyncExceptionHandler(),
                     true);
 
-    private static final PathfinderStrategy DEFAULT_STRATEGY = new DirectPathfinderStrategy();
+    public static final PathfinderStrategy DEFAULT_STRATEGY = new DirectPathfinderStrategy();
 
     private static final Set<PathLocation> EMPTY_LINKED_HASHSET = Collections.unmodifiableSet(new LinkedHashSet<>());
 
@@ -46,15 +49,15 @@ public class PathfinderImpl implements Pathfinder {
             new PathVector(0, -1, 0),
     };
 
-    private static @NonNull PathfinderResult seekPath(PathLocation start, PathLocation target, PathfinderStrategy pathfinderStrategy) {
+    private static @NonNull PathfinderResult seekPath(PathLocation start, PathLocation target, PathfinderStrategy pathfinderStrategy, ProgressBar progressBar) {
 
         PathingStartFindEvent startEvent = new PathingStartFindEvent(start, target, pathfinderStrategy);
         EventPublisher.raiseEvent(startEvent);
 
-        if(startEvent.isCancelled())
+        if (startEvent.isCancelled())
             return finish(new PathfinderResultImpl(PathfinderState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
 
-        if(!start.getPathWorld().equals(target.getPathWorld()))
+        if (!start.getPathWorld().equals(target.getPathWorld()))
             return finish(new PathfinderResultImpl(PathfinderState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
 
         if(start.equals(target)) // could be too accurate
@@ -75,6 +78,8 @@ public class PathfinderImpl implements Pathfinder {
             Node currentNode = nodeQueue.poll();
 
             assert currentNode != null;
+
+            progressBar.update(currentNode.getLocation());
             if (currentNode.hasReachedEnd())
                 return finish(new PathfinderResultImpl(PathfinderState.FOUND, retracePath(currentNode)));
 
@@ -158,25 +163,32 @@ public class PathfinderImpl implements Pathfinder {
 
     @NonNull
     @Override
-    public PathfinderResult findPath(@NonNull PathLocation start, @NonNull PathLocation target) {
-        return findPath(start, target, DEFAULT_STRATEGY);
+    public PathingTask<PathfinderResult> findPath(@NonNull PathingRuleSetBuilder.PathingRuleSet rules) {
+        PathingTask<PathfinderResult> pathingTask = new PathingTask<>(rules);
+        setAndStart(pathingTask, false);
+        return pathingTask;
     }
 
     @NonNull
     @Override
-    public PathfinderResult findPath(@NonNull PathLocation start, @NonNull PathLocation target, @NonNull PathfinderStrategy pathfinderStrategy) {
-        return seekPath(start, target, pathfinderStrategy);
+    public PathingTask<PathfinderResult> findPathAsync(@NonNull PathingRuleSetBuilder.PathingRuleSet rules) {
+        PathingTask<PathfinderResult> pathingTask = new PathingTask<>(rules);
+        setAndStart(pathingTask, true);
+        return pathingTask;
     }
 
-    @NonNull
-    @Override
-    public CompletableFuture<PathfinderResult> findPathAsync(@NonNull PathLocation start, @NonNull PathLocation target) {
-        return findPathAsync(start, target, DEFAULT_STRATEGY);
-    }
+    private void setAndStart(PathingTask<PathfinderResult> pathingTask, boolean async) {
+        PathfinderStrategy strategy = pathingTask.getRuleSet().getStrategy() == null ? DEFAULT_STRATEGY : pathingTask.getRuleSet().getStrategy();
+        ProgressBar progressBar = pathingTask.getProgressBar();
 
-    @NonNull
-    @Override
-    public CompletableFuture<PathfinderResult> findPathAsync(@NonNull PathLocation start, @NonNull PathLocation target, @NonNull PathfinderStrategy pathfinderStrategy) {
-        return CompletableFuture.supplyAsync(() -> seekPath(start, target, pathfinderStrategy), FORK_JOIN_POOL);
+        if (async) {
+            pathingTask.setResult(CompletableFuture.supplyAsync(() ->
+                    seekPath(pathingTask.getRuleSet().getStart(), pathingTask.getRuleSet().getTarget(),
+                            strategy, progressBar), FORK_JOIN_POOL));
+        } else {
+            pathingTask.setResult(CompletableFuture.completedFuture(
+                    seekPath(pathingTask.getRuleSet().getStart(), pathingTask.getRuleSet().getTarget(),
+                            strategy, progressBar)));
+        }
     }
 }

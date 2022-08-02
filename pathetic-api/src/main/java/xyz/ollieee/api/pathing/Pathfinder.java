@@ -2,39 +2,24 @@ package xyz.ollieee.api.pathing;
 
 import lombok.NonNull;
 import xyz.ollieee.api.pathing.result.PathfinderResult;
-import xyz.ollieee.api.pathing.strategy.PathfinderStrategy;
-import xyz.ollieee.api.wrapper.PathLocation;
-
-import java.util.concurrent.CompletableFuture;
+import xyz.ollieee.api.pathing.result.task.PathingTask;
+import xyz.ollieee.api.pathing.rules.PathingRuleSetBuilder;
 
 public interface Pathfinder {
-    
-    /**
-     * Tries to find a Path from {@param start} to {@param target}
-     * @return {@link PathfinderResult} the result
-     */
-    @NonNull
-    PathfinderResult findPath(@NonNull PathLocation start, @NonNull PathLocation target);
 
     /**
-     * Tries to find a Path from {@param start} to {@param target} with the set {@link xyz.ollieee.api.pathing.strategy.PathfinderStrategy}
-     * @return {@link PathfinderResult} the result
+     * Tries to find a Path using the {@link PathingRuleSetBuilder.PathingRuleSet} provided.
+     *
+     * @return {@link PathingTask<PathfinderResult>} the the task object
      */
     @NonNull
-    PathfinderResult findPath(@NonNull PathLocation start, @NonNull PathLocation target, @NonNull PathfinderStrategy pathfinderStrategy);
-    
-    /**
-     * @see #findPath(PathLocation, PathLocation) - but async
-     * @return {@link CompletableFuture<PathfinderResult>} the future of the result
-     */
-    @NonNull
-    CompletableFuture<PathfinderResult> findPathAsync(@NonNull PathLocation start, @NonNull PathLocation target);
+    PathingTask<PathfinderResult> findPath(@NonNull PathingRuleSetBuilder.PathingRuleSet ruleSet);
 
     /**
-     * @see #findPath(PathLocation, PathLocation, PathfinderStrategy)  - but async
-     * @return {@link CompletableFuture<PathfinderResult>} the future of the result
+     * @return {@link PathingTask<PathfinderResult>} the task object
+     * @see #findPath(PathingRuleSetBuilder.PathingRuleSet)  - but async
      */
     @NonNull
-    CompletableFuture<PathfinderResult> findPathAsync(@NonNull PathLocation start, @NonNull PathLocation target, @NonNull PathfinderStrategy pathfinderStrategy);
+    PathingTask<PathfinderResult> findPathAsync(@NonNull PathingRuleSetBuilder.PathingRuleSet ruleSet);
 
 }
