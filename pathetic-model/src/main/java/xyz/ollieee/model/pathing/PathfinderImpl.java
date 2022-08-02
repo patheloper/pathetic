@@ -7,9 +7,9 @@ import xyz.ollieee.api.event.PathingStartFindEvent;
 import xyz.ollieee.api.pathing.Pathfinder;
 import xyz.ollieee.api.pathing.result.Path;
 import xyz.ollieee.api.pathing.result.PathfinderResult;
-import xyz.ollieee.api.pathing.result.PathfinderSuccess;
+import xyz.ollieee.api.pathing.result.PathfinderState;
 import xyz.ollieee.api.pathing.strategy.PathfinderStrategy;
-import xyz.ollieee.api.pathing.strategy.PathfinderStrategyEssentials;
+import xyz.ollieee.api.pathing.strategy.StrategyData;
 import xyz.ollieee.bukkit.event.EventPublisher;
 import xyz.ollieee.model.pathing.handler.PathfinderAsyncExceptionHandler;
 import xyz.ollieee.model.pathing.result.PathfinderResultImpl;
@@ -18,6 +18,7 @@ import xyz.ollieee.api.snapshot.SnapshotManager;
 import xyz.ollieee.api.wrapper.PathVector;
 import xyz.ollieee.model.pathing.result.PathImpl;
 import xyz.ollieee.api.wrapper.PathLocation;
+import xyz.ollieee.util.WatchdogUtil;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -34,7 +35,7 @@ public class PathfinderImpl implements Pathfinder {
 
     private static final PathfinderStrategy DEFAULT_STRATEGY = new DirectPathfinderStrategy();
 
-    private static final Set<PathLocation> EMPTY_LINKED_HASHSET = Collections.unmodifiableSet(new LinkedHashSet<PathLocation>());
+    private static final Set<PathLocation> EMPTY_LINKED_HASHSET = Collections.unmodifiableSet(new LinkedHashSet<>());
 
     private static final PathVector[] OFFSETS = {
             new PathVector(1, 0, 0),
@@ -51,13 +52,13 @@ public class PathfinderImpl implements Pathfinder {
         EventPublisher.raiseEvent(startEvent);
 
         if(startEvent.isCancelled())
-            return finish(new PathfinderResultImpl(PathfinderSuccess.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
+            return finish(new PathfinderResultImpl(PathfinderState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
 
         if(!start.getPathWorld().equals(target.getPathWorld()))
-            return finish(new PathfinderResultImpl(PathfinderSuccess.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
+            return finish(new PathfinderResultImpl(PathfinderState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
 
         if(start.equals(target)) // could be too accurate
-            return finish(new PathfinderResultImpl(PathfinderSuccess.FOUND, new PathImpl(start, target, Collections.singleton(start))));
+            return finish(new PathfinderResultImpl(PathfinderState.FOUND, new PathImpl(start, target, Collections.singleton(start))));
 
         Node startNode = new Node(start.floor(), start.floor(), target.floor(), 0);
 
@@ -69,16 +70,19 @@ public class PathfinderImpl implements Pathfinder {
 
         while (!nodeQueue.isEmpty() && depth <= maxDepth) {
 
+            if (depth % 500 == 0) WatchdogUtil.tickWatchdog();
+
             Node currentNode = nodeQueue.poll();
 
+            assert currentNode != null;
             if (currentNode.hasReachedEnd())
-                return finish(new PathfinderResultImpl(PathfinderSuccess.FOUND, retracePath(currentNode)));
+                return finish(new PathfinderResultImpl(PathfinderState.FOUND, retracePath(currentNode)));
 
             evaluateNewNodes(nodeQueue, examinedLocations, pathfinderStrategy, currentNode);
             depth++;
         }
 
-        return finish(new PathfinderResultImpl(PathfinderSuccess.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
+        return finish(new PathfinderResultImpl(PathfinderState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
     }
 
     private static Path retracePath(@NonNull Node node) {
@@ -135,7 +139,7 @@ public class PathfinderImpl implements Pathfinder {
         }
 
         SnapshotManager snapshotManager = Pathetic.getSnapshotManager();
-        if (!strategy.isValid(new PathfinderStrategyEssentials(snapshotManager, node.getLocation()))) {
+        if (!strategy.isValid(new StrategyData(snapshotManager, node.getLocation()))) {
             return false;
         }
 

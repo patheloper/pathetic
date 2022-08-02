@@ -6,11 +6,11 @@ import xyz.ollieee.api.snapshot.SnapshotManager;
 import xyz.ollieee.api.wrapper.PathLocation;
 
 /**
- * An essentials bundle for {@link PathfinderStrategy}s.
+ * An essentials bundle for {@link PathfinderStrategy}'s.
  */
 @Value
 @Getter
-public class PathfinderStrategyEssentials {
+public class StrategyData {
 
     SnapshotManager snapshotManager;
     PathLocation pathLocation;

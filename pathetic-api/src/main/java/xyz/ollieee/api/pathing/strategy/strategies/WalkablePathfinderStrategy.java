@@ -2,7 +2,7 @@ package xyz.ollieee.api.pathing.strategy.strategies;
 
 import lombok.NonNull;
 import xyz.ollieee.api.pathing.strategy.PathfinderStrategy;
-import xyz.ollieee.api.pathing.strategy.PathfinderStrategyEssentials;
+import xyz.ollieee.api.pathing.strategy.StrategyData;
 import xyz.ollieee.api.snapshot.SnapshotManager;
 import xyz.ollieee.api.wrapper.PathBlock;
 import xyz.ollieee.api.wrapper.PathBlockType;
@@ -11,7 +11,7 @@ import xyz.ollieee.api.wrapper.PathLocation;
 public class WalkablePathfinderStrategy implements PathfinderStrategy {
     
     @Override
-    public boolean isValid(@NonNull PathfinderStrategyEssentials essentials) {
+    public boolean isValid(@NonNull StrategyData essentials) {
 
         SnapshotManager snapshotManager = essentials.getSnapshotManager();
         PathBlock pathBlock = snapshotManager.getBlock(essentials.getPathLocation());

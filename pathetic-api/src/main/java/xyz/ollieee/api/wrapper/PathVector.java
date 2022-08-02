@@ -2,10 +2,15 @@ package xyz.ollieee.api.wrapper;
 
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 @Getter
+@Setter
+@Accessors(chain = true)
 public class PathVector implements Cloneable {
-    
+
+
     private double x;
     private double y;
     private double z;
@@ -20,24 +25,6 @@ public class PathVector implements Cloneable {
         this.x = x;
         this.y = y;
         this.z = z;
-    }
-
-    @NonNull
-    public PathVector setX(double x) {
-        this.x = x;
-        return this;
-    }
-
-    @NonNull
-    public PathVector setY(double y) {
-        this.y = y;
-        return this;
-    }
-
-    @NonNull
-    public PathVector setZ(double z) {
-        this.z = z;
-        return this;
     }
 
     /**

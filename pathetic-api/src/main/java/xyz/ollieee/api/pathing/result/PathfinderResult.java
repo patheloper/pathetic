@@ -16,5 +16,5 @@ public interface PathfinderResult {
     boolean successful();
     
     @NonNull
-    PathfinderSuccess getPathfinderSuccess();
+    PathfinderState getPathfinderState();
 }

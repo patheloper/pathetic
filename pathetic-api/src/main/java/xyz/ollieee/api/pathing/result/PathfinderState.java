@@ -1,6 +1,6 @@
 package xyz.ollieee.api.pathing.result;
 
-public enum PathfinderSuccess {
+public enum PathfinderState {
     
     /**
      * The Path was successfully found for a given strategy

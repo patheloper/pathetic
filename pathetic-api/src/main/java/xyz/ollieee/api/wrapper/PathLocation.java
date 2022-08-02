@@ -1,17 +1,24 @@
 package xyz.ollieee.api.wrapper;
 
-import lombok.EqualsAndHashCode;
-import lombok.NonNull;
-import lombok.ToString;
+import lombok.*;
+import lombok.experimental.Accessors;
 
+@Getter
 @ToString
 @EqualsAndHashCode
+@Accessors(chain = true)
 public class PathLocation implements Cloneable {
 
+    @NonNull
     private PathWorld pathWorld;
-    
+
+    @Setter
     private double x;
+
+    @Setter
     private double y;
+
+    @Setter
     private double z;
     
     public PathLocation(@NonNull PathWorld pathWorld, double x, double y, double z) {
@@ -22,29 +29,12 @@ public class PathLocation implements Cloneable {
         this.z = z;
     }
 
-    @NonNull
-    public PathWorld getPathWorld() {
-        return this.pathWorld;
-    }
-
-    public double getX() {
-        return this.x;
-    }
-
     public int getBlockX() {
         return (int) Math.floor(this.x);
     }
 
-    public double getY() {
-        return this.y;
-    }
-
     public int getBlockY() {
         return (int) Math.floor(this.y);
-    }
-
-    public double getZ() {
-        return this.z;
     }
 
     public int getBlockZ() {
