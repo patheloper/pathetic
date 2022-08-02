@@ -5,11 +5,11 @@ import lombok.Getter;
 import lombok.Setter;
 import xyz.ollieee.api.wrapper.PathLocation;
 
-public class ProgressBar {
+public class ProgressMonitor {
 
     private final ProgressLocations progressLocations;
 
-    public ProgressBar(PathLocation start, PathLocation target) {
+    public ProgressMonitor(PathLocation start, PathLocation target) {
         this.progressLocations = new ProgressLocations(start, target, start);
     }
 

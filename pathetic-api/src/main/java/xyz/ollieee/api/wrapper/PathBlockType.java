@@ -27,7 +27,7 @@ public enum PathBlockType {
     /**
      * @return {@link PathBlockType} the block type of the given block
      */
-    public static PathBlockType getBlockType(Material material) {
+    public static PathBlockType fromMaterial(Material material) {
 
         if (material.isAir())
             return PathBlockType.AIR;

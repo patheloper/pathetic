@@ -46,7 +46,7 @@ public class BukkitMapper {
 
     @NonNull
     public PathBlock toPathBlock(@NonNull Block block) {
-        return new PathBlock(new PathLocation(toPathWorld(block.getWorld()), block.getX(), block.getY(), block.getZ()), PathBlockType.getBlockType(block.getType()));
+        return new PathBlock(new PathLocation(toPathWorld(block.getWorld()), block.getX(), block.getY(), block.getZ()), PathBlockType.fromMaterial(block.getType()));
     }
 
     public World toWorld(@NonNull PathWorld pathWorld) {

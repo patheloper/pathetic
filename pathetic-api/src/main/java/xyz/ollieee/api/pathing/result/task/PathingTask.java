@@ -1,37 +1,49 @@
 package xyz.ollieee.api.pathing.result.task;
 
 import lombok.Getter;
-import lombok.Setter;
-import lombok.SneakyThrows;
-import xyz.ollieee.api.pathing.result.progress.ProgressBar;
-import xyz.ollieee.api.pathing.rules.PathingRuleSetBuilder;
+import xyz.ollieee.api.pathing.result.progress.ProgressMonitor;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
+/**
+ * Represents a pathfinding request to the API
+ */
 public class PathingTask<V> {
 
-    @Setter
-    private CompletableFuture<V> result;
     @Getter
-    private final PathingRuleSetBuilder.PathingRuleSet ruleSet;
-    @Getter
-    private final ProgressBar progressBar;
+    private final ProgressMonitor progressMonitor;
+    private final CompletableFuture<V> result;
 
-    public PathingTask(PathingRuleSetBuilder.PathingRuleSet ruleSet) {
-        this.ruleSet = ruleSet;
-        this.progressBar = new ProgressBar(ruleSet.getStart(), ruleSet.getTarget());
+    public PathingTask(CompletableFuture<V> result, ProgressMonitor progressMonitor) {
+        this.progressMonitor = progressMonitor;
+        this.result = result;
     }
 
+    /**
+     * Whether the task is completed
+     *
+     * @return true if the task is completed
+     */
     public boolean isFinished() {
         return this.result.isDone();
     }
 
-    @SneakyThrows
+    /**
+     * Gets the result of the task
+     * This is a blocking call
+     *
+     * @return the result of the task
+     */
     public V getResult() {
         return this.result.join();
     }
 
+    /**
+     * Adds a callback to be called when the task is completed
+     *
+     * @param callback the callback to be called
+     */
     public void accept(Consumer<V> callback) {
         this.result.thenAccept(callback);
     }

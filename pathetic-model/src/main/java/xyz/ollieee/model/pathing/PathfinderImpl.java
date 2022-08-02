@@ -8,9 +8,9 @@ import xyz.ollieee.api.pathing.Pathfinder;
 import xyz.ollieee.api.pathing.result.Path;
 import xyz.ollieee.api.pathing.result.PathfinderResult;
 import xyz.ollieee.api.pathing.result.PathfinderState;
-import xyz.ollieee.api.pathing.result.progress.ProgressBar;
+import xyz.ollieee.api.pathing.result.progress.ProgressMonitor;
 import xyz.ollieee.api.pathing.result.task.PathingTask;
-import xyz.ollieee.api.pathing.rules.PathingRuleSetBuilder;
+import xyz.ollieee.api.pathing.rules.PathingRuleSet;
 import xyz.ollieee.api.pathing.strategy.PathfinderStrategy;
 import xyz.ollieee.api.pathing.strategy.StrategyData;
 import xyz.ollieee.api.pathing.strategy.strategies.DirectPathfinderStrategy;
@@ -27,6 +27,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
+import java.util.stream.Stream;
 
 public class PathfinderImpl implements Pathfinder {
 
@@ -36,7 +37,7 @@ public class PathfinderImpl implements Pathfinder {
                     new PathfinderAsyncExceptionHandler(),
                     true);
 
-    public static final PathfinderStrategy DEFAULT_STRATEGY = new DirectPathfinderStrategy();
+    private static final PathfinderStrategy DEFAULT_STRATEGY = new DirectPathfinderStrategy();
 
     private static final Set<PathLocation> EMPTY_LINKED_HASHSET = Collections.unmodifiableSet(new LinkedHashSet<>());
 
@@ -49,7 +50,15 @@ public class PathfinderImpl implements Pathfinder {
             new PathVector(0, -1, 0),
     };
 
-    private static @NonNull PathfinderResult seekPath(PathLocation start, PathLocation target, PathfinderStrategy pathfinderStrategy, ProgressBar progressBar) {
+    private static final PathVector[] CORNER_OFFSETS = {
+            new PathVector(1, 0, 1), new PathVector(-1, 0, -1), new PathVector(-1, 0, 1), new PathVector(1, 0, -1),
+            new PathVector(0, 1, 1), new PathVector(1, 1, 1), new PathVector(1, 1, 0), new PathVector(1, 1, -1),
+            new PathVector(0, 1, -1), new PathVector(-1, 1, -1), new PathVector(-1, 1, 0), new PathVector(-1, 1, 1),
+            new PathVector(0, -1, 1), new PathVector(1, -1, 1), new PathVector(1, -1, 0), new PathVector(1, -1, -1),
+            new PathVector(0, -1, -1), new PathVector(-1, -1, -1), new PathVector(-1, -1, 0), new PathVector(-1, -1, 1),
+    };
+
+    private static @NonNull PathfinderResult seekPath(PathLocation start, PathLocation target, PathfinderStrategy pathfinderStrategy, PathVector[] offsets, ProgressMonitor progressMonitor, Integer maxIterations, Integer maxPathLength) {
 
         PathingStartFindEvent startEvent = new PathingStartFindEvent(start, target, pathfinderStrategy);
         EventPublisher.raiseEvent(startEvent);
@@ -69,9 +78,8 @@ public class PathfinderImpl implements Pathfinder {
         Set<PathLocation> examinedLocations = new HashSet<>();
 
         int depth = 1;
-        int maxDepth = (int) (100 * start.distance(target));
 
-        while (!nodeQueue.isEmpty() && depth <= maxDepth) {
+        while (!nodeQueue.isEmpty() && depth <= maxIterations) {
 
             if (depth % 500 == 0) WatchdogUtil.tickWatchdog();
 
@@ -79,11 +87,16 @@ public class PathfinderImpl implements Pathfinder {
 
             assert currentNode != null;
 
-            progressBar.update(currentNode.getLocation());
-            if (currentNode.hasReachedEnd())
-                return finish(new PathfinderResultImpl(PathfinderState.FOUND, retracePath(currentNode)));
+            progressMonitor.update(currentNode.getLocation());
+            if (currentNode.hasReachedEnd()) {
 
-            evaluateNewNodes(nodeQueue, examinedLocations, pathfinderStrategy, currentNode);
+                Path path = retracePath(currentNode);
+                if (path.length() > maxPathLength)
+                    return finish(new PathfinderResultImpl(PathfinderState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
+                return finish(new PathfinderResultImpl(PathfinderState.FOUND, path));
+            }
+
+            evaluateNewNodes(nodeQueue, examinedLocations, pathfinderStrategy, currentNode, offsets);
             depth++;
         }
 
@@ -106,20 +119,20 @@ public class PathfinderImpl implements Pathfinder {
         return new PathImpl(node.getStart(), node.getTarget(), path);
     }
 
-    private static void evaluateNewNodes(PriorityQueue<Node> nodeQueue, Set<PathLocation> examinedLocations, PathfinderStrategy strategy, Node currentNode) {
+    private static void evaluateNewNodes(PriorityQueue<Node> nodeQueue, Set<PathLocation> examinedLocations, PathfinderStrategy strategy, Node currentNode, PathVector[] offsets) {
 
-        for (Node neighbourNode : getNeighbours(currentNode)) {
+        for (Node neighbourNode : getNeighbours(currentNode, offsets)) {
             if (nodeIsValid(neighbourNode, nodeQueue, examinedLocations, strategy)) {
                 nodeQueue.add(neighbourNode);
             }
         }
     }
 
-    private static Collection<Node> getNeighbours(Node currentNode) {
+    private static Collection<Node> getNeighbours(Node currentNode, PathVector[] offsets) {
 
-        final Set<Node> newNodes = new HashSet<>(OFFSETS.length);
+        final Set<Node> newNodes = new HashSet<>(offsets.length);
 
-        for (PathVector offset : OFFSETS) {
+        for (PathVector offset : offsets) {
 
             Node newNode = new Node(currentNode.getLocation().add(offset), currentNode.getStart(), currentNode.getTarget(), currentNode.getDepth() + 1);
             newNode.setParent(currentNode);
@@ -163,32 +176,39 @@ public class PathfinderImpl implements Pathfinder {
 
     @NonNull
     @Override
-    public PathingTask<PathfinderResult> findPath(@NonNull PathingRuleSetBuilder.PathingRuleSet rules) {
-        PathingTask<PathfinderResult> pathingTask = new PathingTask<>(rules);
-        setAndStart(pathingTask, false);
-        return pathingTask;
+    public PathingTask<PathfinderResult> findPath(@NonNull PathLocation start, @NonNull PathLocation target) {
+        return findPath(start, target, null);
     }
 
     @NonNull
     @Override
-    public PathingTask<PathfinderResult> findPathAsync(@NonNull PathingRuleSetBuilder.PathingRuleSet rules) {
-        PathingTask<PathfinderResult> pathingTask = new PathingTask<>(rules);
-        setAndStart(pathingTask, true);
-        return pathingTask;
+    public PathingTask<PathfinderResult> findPath(@NonNull PathLocation start, @NonNull PathLocation target, PathingRuleSet rules) {
+        return setAndStart(start, target, rules);
     }
 
-    private void setAndStart(PathingTask<PathfinderResult> pathingTask, boolean async) {
-        PathfinderStrategy strategy = pathingTask.getRuleSet().getStrategy() == null ? DEFAULT_STRATEGY : pathingTask.getRuleSet().getStrategy();
-        ProgressBar progressBar = pathingTask.getProgressBar();
+    private PathingTask<PathfinderResult> setAndStart(PathLocation start, PathLocation target, PathingRuleSet rules) {
 
-        if (async) {
-            pathingTask.setResult(CompletableFuture.supplyAsync(() ->
-                    seekPath(pathingTask.getRuleSet().getStart(), pathingTask.getRuleSet().getTarget(),
-                            strategy, progressBar), FORK_JOIN_POOL));
-        } else {
-            pathingTask.setResult(CompletableFuture.completedFuture(
-                    seekPath(pathingTask.getRuleSet().getStart(), pathingTask.getRuleSet().getTarget(),
-                            strategy, progressBar)));
+        if (rules == null) {
+            rules = PathingRuleSet.builder().build();
         }
+
+        CompletableFuture<PathfinderResult> future;
+        PathingRuleSet finalRules = rules;
+
+        int maxIterations = finalRules.getMaxIterations() == 0 ? Integer.MAX_VALUE : finalRules.getMaxIterations();
+        int maxPathLength = finalRules.getMaxPathLength() == 0 ? Integer.MAX_VALUE : finalRules.getMaxPathLength();
+        PathfinderStrategy strategy = finalRules.getStrategy() == null ? DEFAULT_STRATEGY : finalRules.getStrategy();
+        PathVector[] offsets = rules.isAllowDiagonal() ? Stream.of(OFFSETS, CORNER_OFFSETS).flatMap(Stream::of).toArray(PathVector[]::new) : OFFSETS;
+        ProgressMonitor progressMonitor = new ProgressMonitor(start, target);
+
+        if (rules.isAsync()) {
+            future = CompletableFuture.supplyAsync(() ->
+                    seekPath(start, target, strategy, offsets, progressMonitor, maxIterations, maxPathLength), FORK_JOIN_POOL);
+        } else {
+            future = CompletableFuture.completedFuture(
+                    seekPath(start, target, strategy, offsets, progressMonitor, maxIterations, maxPathLength));
+        }
+
+        return new PathingTask<>(future, progressMonitor);
     }
 }

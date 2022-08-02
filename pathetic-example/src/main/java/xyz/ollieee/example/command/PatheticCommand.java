@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import xyz.ollieee.api.pathing.Pathfinder;
-import xyz.ollieee.api.pathing.rules.PathingRuleSetBuilder;
+import xyz.ollieee.api.pathing.rules.PathingRuleSet;
 import xyz.ollieee.api.wrapper.PathLocation;
 import xyz.ollieee.mapping.bukkit.BukkitMapper;
 
@@ -59,8 +59,7 @@ public class PatheticCommand implements TabExecutor {
 
             // Use the positions we just checked for to search asynchronous for a Path between them
             player.sendMessage("Looking for a path...");
-            PathingRuleSetBuilder.PathingRuleSet build = new PathingRuleSetBuilder().setStart(BukkitMapper.toPathLocation(playerSession.getPos1())).setTarget(BukkitMapper.toPathLocation(playerSession.getPos2())).build();
-            pathfinder.findPathAsync(build)
+            pathfinder.findPath(BukkitMapper.toPathLocation(playerSession.getPos1()), BukkitMapper.toPathLocation(playerSession.getPos1()), PathingRuleSet.builder().async(true).build())
                     .accept(pathfinderResult -> { // Which will always return a PathfinderResult, so we accept on that
 
                         // Printing out the PathfinderSuccess which can either be FAILED or FOUND

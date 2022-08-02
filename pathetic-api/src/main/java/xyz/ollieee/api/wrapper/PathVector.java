@@ -158,4 +158,17 @@ public class PathVector implements Cloneable {
         return new PathVector(x, y, z);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (!(obj instanceof PathVector)) {
+            return false;
+        }
+
+        final PathVector other = (PathVector) obj;
+        return this.x == other.x && this.y == other.y && this.z == other.z;
+    }
 }
