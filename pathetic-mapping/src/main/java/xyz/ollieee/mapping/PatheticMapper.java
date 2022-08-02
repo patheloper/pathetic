@@ -1,6 +1,7 @@
 package xyz.ollieee.mapping;
 
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import org.bukkit.plugin.java.JavaPlugin;
 import xyz.ollieee.Pathetic;
@@ -18,6 +19,7 @@ public class PatheticMapper {
      * @throws IllegalStateException If an attempt is made to initialize more than 1 time
      * @param javaPlugin the JavaPlugin which initializes the lib
      */
+    @SneakyThrows
     public void initialize(JavaPlugin javaPlugin) {
         Pathetic.initialize(javaPlugin);
     }

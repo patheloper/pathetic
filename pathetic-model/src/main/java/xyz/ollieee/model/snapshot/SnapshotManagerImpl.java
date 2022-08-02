@@ -69,8 +69,7 @@ public class SnapshotManagerImpl implements SnapshotManager {
         Bukkit.getScheduler().runTaskLater(Pathetic.getPluginInstance(), () -> worldDomain.removeSnapshot(key), 1200L);
     }
 
-    // Awful
-    private PathBlockType toPathBlockType(@NonNull Material material) {
+    public static PathBlockType toPathBlockType(@NonNull Material material) {
 
         MaterialParser parser = Pathetic.getMaterialParser();
 

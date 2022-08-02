@@ -11,9 +11,8 @@ import org.bukkit.block.Block;
 import org.bukkit.generator.WorldInfo;
 import org.bukkit.util.Vector;
 
-import xyz.ollieee.api.snapshot.MaterialParser;
 import xyz.ollieee.api.wrapper.*;
-import xyz.ollieee.mapping.PatheticMapper;
+import xyz.ollieee.model.snapshot.SnapshotManagerImpl;
 
 import java.util.Arrays;
 
@@ -70,19 +69,7 @@ public class BukkitMapper {
 
     @NonNull
     public PathBlockType toPathBlockType(@NonNull Material material) {
-
-        MaterialParser parser = PatheticMapper.getMaterialParser();
-
-        if (parser.isAir(material))
-            return PathBlockType.AIR;
-
-        switch (material) {
-            case WATER:
-            case LAVA: return PathBlockType.LIQUID;
-            case GRASS:
-            case TALL_GRASS: return PathBlockType.OTHER;
-            default: return PathBlockType.SOLID;
-        }
+        return SnapshotManagerImpl.toPathBlockType(material);
     }
 
     private final boolean IS_NEWER_WORLD;
