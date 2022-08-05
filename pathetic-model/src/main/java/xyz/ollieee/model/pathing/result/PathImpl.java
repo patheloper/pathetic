@@ -31,7 +31,8 @@ public class PathImpl implements Path {
 
     @Override
     public Path trim(int length) {
-        return new PathImpl(start, end, Iterables.limit(locations, length));
+        Iterable<PathLocation> limitedLocations = Iterables.limit(locations, length);
+        return new PathImpl(start, Iterables.getLast(limitedLocations), limitedLocations);
     }
 
     @Override
