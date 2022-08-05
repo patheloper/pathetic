@@ -3,16 +3,19 @@ package xyz.ollieee.api.pathing.result;
 import lombok.NonNull;
 import xyz.ollieee.api.wrapper.PathLocation;
 
-import java.util.LinkedHashSet;
-
 public interface Path {
 
     /**
-     * Interpolates the points of this Path using the de Boor's algorithm
+     * Interpolates the points of this Path using a spline algorithm
+     *
+     * @param nthBlock   Will use every nth block of the path as a control point
+     * @param resolution The resolution of the interpolation (in blocks). The higher the resolution, the more points will be interpolated
+     * @return a newly created Path with interpolated points
      * @see #getLocations
-     * @return a newly created Path with interpolated points formed to a cubic B-spline
+     * @deprecated Experimental
      */
-    Path interpolate();
+    @Deprecated
+    Path interpolate(int nthBlock, double resolution);
 
     /**
      * Joins this Path with the given Path.

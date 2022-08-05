@@ -132,6 +132,7 @@ public class PathLocation implements Cloneable {
 
     /**
      * Converts the locations x,y,z to a {@link PathVector}
+     *
      * @return A {@link PathVector} of the x,y,z
      */
     @NonNull
@@ -140,7 +141,18 @@ public class PathLocation implements Cloneable {
     }
 
     /**
+     * Checks to see if the two locations are in the same block
+     *
+     * @param otherLocation The other location to check against
+     * @return True if the locations are in the same block
+     */
+    public boolean isInSameBlock(PathLocation otherLocation) {
+        return this.getBlockX() == otherLocation.getBlockX() && this.getBlockY() == otherLocation.getBlockY() && this.getBlockZ() == otherLocation.getBlockZ();
+    }
+
+    /**
      * Rounds the x,y,z values to the floor of the values
+     *
      * @return The mutated {@link PathLocation}
      */
     public PathLocation floor() {

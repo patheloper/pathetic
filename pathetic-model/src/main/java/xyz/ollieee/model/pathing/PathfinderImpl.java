@@ -69,7 +69,7 @@ public class PathfinderImpl implements Pathfinder {
         if (!start.getPathWorld().equals(target.getPathWorld()))
             return finish(new PathfinderResultImpl(PathfinderState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
 
-        if(start.equals(target)) // could be too accurate
+        if (start.isInSameBlock(target))
             return finish(new PathfinderResultImpl(PathfinderState.FOUND, new PathImpl(start, target, Collections.singleton(start))));
 
         Node startNode = new Node(start.floor(), start.floor(), target.floor(), 0);
