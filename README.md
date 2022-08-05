@@ -40,20 +40,15 @@ public class PathExample extends JavaPlugin {
     @Override
     public void onEnable() {
     
-    	PatheticMapper.initialize(this);
-	goFindSomePath();
-    }
-    
-    @Override
-    public void onDisable() {
-    
+        PatheticMapper.initialize(this);
+        goFindSomePath();
     }
     
     private void goFindSomePath() {
-    
-    	Pathfinder pathfinder = PatheticMapper.newPathfinder();
-        pathfinder.findPathAsync(startLocation, endLocation).thenAccept(pathfinderResult -> 
-                pathfinderResult.getPath().getLocations().forEach(location -> 
+
+        Pathfinder pathfinder = PatheticMapper.newPathfinder();
+        pathfinder.findPath(startLocation, endLocation).accept(pathfinderResult ->
+                pathfinderResult.getPath().getLocations().forEach(location ->
                         player.sendBlockChange(location, Material.YELLOW_STAINED_GLASS.createBlockData())));
     }
 }
