@@ -1,6 +1,7 @@
 package xyz.ollieee.api.pathing.result.task;
 
 import lombok.Getter;
+import xyz.ollieee.api.pathing.result.PathfinderResult;
 import xyz.ollieee.api.pathing.result.progress.ProgressMonitor;
 
 import java.util.concurrent.CompletableFuture;
@@ -9,13 +10,13 @@ import java.util.function.Consumer;
 /**
  * Represents a pathfinding request to the API
  */
-public class PathingTask<V> {
+public class PathingTask {
 
     @Getter
     private final ProgressMonitor progressMonitor;
-    private final CompletableFuture<V> result;
+    private final CompletableFuture<PathfinderResult> result;
 
-    public PathingTask(CompletableFuture<V> result, ProgressMonitor progressMonitor) {
+    public PathingTask(CompletableFuture<PathfinderResult> result, ProgressMonitor progressMonitor) {
         this.progressMonitor = progressMonitor;
         this.result = result;
     }
@@ -35,7 +36,7 @@ public class PathingTask<V> {
      *
      * @return the result of the task
      */
-    public V getResult() {
+    public PathfinderResult getResult() {
         return this.result.join();
     }
 
@@ -44,7 +45,7 @@ public class PathingTask<V> {
      *
      * @param callback the callback to be called
      */
-    public void accept(Consumer<V> callback) {
+    public void accept(Consumer<PathfinderResult> callback) {
         this.result.thenAccept(callback);
     }
 

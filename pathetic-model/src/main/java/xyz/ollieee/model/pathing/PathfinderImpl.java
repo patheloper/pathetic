@@ -176,17 +176,17 @@ public class PathfinderImpl implements Pathfinder {
 
     @NonNull
     @Override
-    public PathingTask<PathfinderResult> findPath(@NonNull PathLocation start, @NonNull PathLocation target) {
+    public PathingTask findPath(@NonNull PathLocation start, @NonNull PathLocation target) {
         return findPath(start, target, null);
     }
 
     @NonNull
     @Override
-    public PathingTask<PathfinderResult> findPath(@NonNull PathLocation start, @NonNull PathLocation target, PathingRuleSet rules) {
+    public PathingTask findPath(@NonNull PathLocation start, @NonNull PathLocation target, PathingRuleSet rules) {
         return setAndStart(start, target, rules);
     }
 
-    private PathingTask<PathfinderResult> setAndStart(PathLocation start, PathLocation target, PathingRuleSet rules) {
+    private PathingTask setAndStart(PathLocation start, PathLocation target, PathingRuleSet rules) {
 
         if (rules == null) {
             rules = PathingRuleSet.builder().build();
@@ -209,6 +209,6 @@ public class PathfinderImpl implements Pathfinder {
                     seekPath(start, target, strategy, offsets, progressMonitor, maxIterations, maxPathLength));
         }
 
-        return new PathingTask<>(future, progressMonitor);
+        return new PathingTask(future, progressMonitor);
     }
 }
