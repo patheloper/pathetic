@@ -25,4 +25,8 @@ public class WorldDomain {
     public void removeSnapshot(final long key) {
         this.snapshotMap.remove(key);
     }
+
+    public boolean containsSnapshot(final long key) {
+        return this.snapshotMap.containsKey(key);
+    }
 }

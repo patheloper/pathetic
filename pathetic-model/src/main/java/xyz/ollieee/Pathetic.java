@@ -7,6 +7,7 @@ import xyz.ollieee.api.snapshot.MaterialParser;
 import xyz.ollieee.api.snapshot.SnapshotManager;
 import xyz.ollieee.bstats.BStatsHandler;
 import xyz.ollieee.bukkit.event.PathingEventListener;
+import xyz.ollieee.bukkit.listeners.ChunkInvalidateListener;
 import xyz.ollieee.legacy.snapshot.LegacyMaterialParser;
 import xyz.ollieee.model.snapshot.ModernMaterialParser;
 import xyz.ollieee.model.snapshot.SnapshotManagerImpl;
@@ -42,6 +43,7 @@ public class Pathetic {
 
         BStatsHandler.init(javaPlugin);
         Bukkit.getPluginManager().registerEvents(new PathingEventListener(), javaPlugin);
+        Bukkit.getPluginManager().registerEvents(new ChunkInvalidateListener(snapshotManager), javaPlugin);
         logger.info("PatheticAPI successfully initialized");
     }
 

@@ -29,19 +29,32 @@ public class SnapshotManagerImpl implements SnapshotManager {
         long key = ChunkUtils.getChunkKey(chunkX, chunkZ);
 
         if (snapshots.containsKey(location.getPathWorld().getUuid())) {
-            
+
             WorldDomain worldDomain = snapshots.get(location.getPathWorld().getUuid());
             Optional<ChunkSnapshot> snapshot = worldDomain.getSnapshot(key);
-            
+
             if (snapshot.isPresent())
                 return new PathBlock(location, PathBlockType.fromMaterial(ChunkUtils.getMaterial(snapshot.get(), location.getBlockX() - chunkX * 16, location.getBlockY(), location.getBlockZ() - chunkZ * 16)));
         }
-        
+
         return fetchAndGetBlock(location, chunkX, chunkZ, key);
     }
 
+    @Override
+    public boolean InvalidateChunk(UUID worldUUID, int chunkX, int chunkZ) {
+        if (this.snapshots.containsKey(worldUUID)) {
+            WorldDomain worldDomain = this.snapshots.get(worldUUID);
+            long chunkKey = ChunkUtils.getChunkKey(chunkX, chunkZ);
+            if (worldDomain.containsSnapshot(chunkKey)) {
+                worldDomain.removeSnapshot(chunkKey);
+                return true;
+            }
+        }
+        return false;
+    }
+
     private PathBlock fetchAndGetBlock(@NonNull PathLocation location, int chunkX, int chunkZ, long key) {
-        
+
         try {
             // TODO: 27/04/2022 Make this thread safe
             ChunkSnapshot chunkSnapshot = Bukkit.getWorld(location.getPathWorld().getUuid()).getChunkAt(chunkX, chunkZ).getChunkSnapshot();
@@ -66,4 +79,6 @@ public class SnapshotManagerImpl implements SnapshotManager {
     
         Bukkit.getScheduler().runTaskLater(Pathetic.getPluginInstance(), () -> worldDomain.removeSnapshot(key), 1200L);
     }
+
+
 }
