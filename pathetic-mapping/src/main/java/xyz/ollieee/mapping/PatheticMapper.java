@@ -14,26 +14,34 @@ import xyz.ollieee.model.pathing.PathfinderImpl;
 public class PatheticMapper {
 
     /**
-     * Initializes the Lib. If the lib is not initialized yet but is used anyways, this will lead to many boooooms.
+     * initializes the Lib. If the lib is not initialized yet but is used anyways, this will cause many things to break.
      *
-     * @throws IllegalStateException If an attempt is made to initialize more than 1 time
      * @param javaPlugin the JavaPlugin which initializes the lib
+     * @throws IllegalStateException If an attempt is made to initialize more than 1 time
      */
     @SneakyThrows
     public void initialize(JavaPlugin javaPlugin) {
         Pathetic.initialize(javaPlugin);
     }
 
-    public @NonNull SnapshotManager getSnapshotManager() {
+    public SnapshotManager getSnapshotManager() {
         return Pathetic.getSnapshotManager();
     }
 
-    public @NonNull MaterialParser getMaterialParser() {
+    public MaterialParser getMaterialParser() {
         return Pathetic.getMaterialParser();
     }
 
+    /**
+     * Instantiates a new pathfinder object.
+     *
+     * @return The {@link Pathfinder} object
+     * @throws IllegalStateException If the lib is not initialized yet
+     */
+    @SneakyThrows
     public @NonNull Pathfinder newPathfinder() {
-        return new PathfinderImpl();
+        if (Pathetic.isInitialized()) return new PathfinderImpl();
+        throw new IllegalStateException("Pathetic is not initialized");
     }
 
 }

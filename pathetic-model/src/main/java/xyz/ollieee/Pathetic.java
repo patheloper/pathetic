@@ -3,14 +3,13 @@ package xyz.ollieee;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-
 import xyz.ollieee.api.snapshot.MaterialParser;
 import xyz.ollieee.api.snapshot.SnapshotManager;
 import xyz.ollieee.bstats.BStatsHandler;
 import xyz.ollieee.bukkit.event.PathingEventListener;
 import xyz.ollieee.legacy.snapshot.LegacyMaterialParser;
-import xyz.ollieee.model.snapshot.SnapshotManagerImpl;
 import xyz.ollieee.model.snapshot.ModernMaterialParser;
+import xyz.ollieee.model.snapshot.SnapshotManagerImpl;
 import xyz.ollieee.util.BukkitVersionUtil;
 
 import java.util.logging.Logger;
@@ -45,7 +44,11 @@ public class Pathetic {
         Bukkit.getPluginManager().registerEvents(new PathingEventListener(), javaPlugin);
         logger.info("PatheticAPI successfully initialized");
     }
-    
+
+    public static boolean isInitialized() {
+        return instance != null;
+    }
+
     public static JavaPlugin getPluginInstance() {
         return instance;
     }
