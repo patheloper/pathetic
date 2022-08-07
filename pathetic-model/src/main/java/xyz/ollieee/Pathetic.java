@@ -21,7 +21,7 @@ public class Pathetic {
     private static JavaPlugin instance;
     private static Logger logger;
 
-    // We maybe dont want them here.
+    // We maybe don't want them here.
     private static MaterialParser materialParser;
     private static SnapshotManager snapshotManager;
 
