@@ -14,7 +14,6 @@ import xyz.ollieee.api.pathing.rules.PathingRuleSet;
 import xyz.ollieee.api.pathing.strategy.PathfinderStrategy;
 import xyz.ollieee.api.pathing.strategy.StrategyData;
 import xyz.ollieee.api.pathing.strategy.strategies.DirectPathfinderStrategy;
-import xyz.ollieee.api.snapshot.SnapshotManager;
 import xyz.ollieee.api.wrapper.PathLocation;
 import xyz.ollieee.api.wrapper.PathVector;
 import xyz.ollieee.bukkit.event.EventPublisher;
@@ -156,8 +155,7 @@ public class PathfinderImpl implements Pathfinder {
             return false;
         }
 
-        SnapshotManager snapshotManager = Pathetic.getSnapshotManager();
-        if (!strategy.isValid(new StrategyData(snapshotManager, node.getLocation()))) {
+        if (!strategy.isValid(new StrategyData(Pathetic.getSnapshotManager(), node.getLocation()))) {
             return false;
         }
 
