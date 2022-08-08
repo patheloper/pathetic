@@ -8,8 +8,9 @@ import xyz.ollieee.api.wrapper.PathBlock;
 import xyz.ollieee.api.wrapper.PathBlockType;
 import xyz.ollieee.api.wrapper.PathLocation;
 
+@Deprecated
 public class WalkablePathfinderStrategy implements PathfinderStrategy {
-    
+
     @Override
     public boolean isValid(@NonNull StrategyData essentials) {
 

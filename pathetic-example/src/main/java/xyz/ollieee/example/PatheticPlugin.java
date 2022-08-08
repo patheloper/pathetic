@@ -10,13 +10,9 @@ public final class PatheticPlugin extends JavaPlugin {
     private Pathfinder reusablePathfinder;
 
     @Override
-    public void onLoad() {
+    public void onEnable() {
         PatheticMapper.initialize(this);
         reusablePathfinder = PatheticMapper.newPathfinder();
-    }
-
-    @Override
-    public void onEnable() {
         getCommand("pathetic").setExecutor(new PatheticCommand(reusablePathfinder));
     }
 

@@ -4,6 +4,7 @@ import lombok.NonNull;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import xyz.ollieee.api.wrapper.PathBlockType;
 
 public interface MaterialParser {
 
@@ -55,8 +56,17 @@ public interface MaterialParser {
 
     /**
      * Returns whether a material is air
+     *
      * @param material The {@link Material} to check
      * @return True = Air, False = Not Air
      */
     boolean isAir(@NonNull Material material);
+
+    /**
+     * Returns the {@link PathBlockType} of a material
+     *
+     * @param material The {@link Material} to check
+     * @return The {@link PathBlockType} of the material
+     */
+    PathBlockType getPathBlockType(@NonNull Material material);
 }
