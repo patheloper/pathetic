@@ -25,6 +25,8 @@
         <module>pathetic-nms/v1_17</module>
         <module>pathetic-nms/v1_16</module>
         <module>pathetic-nms/v1_15</module>
+        <module>pathetic-nms/v1_12</module>
+        <module>pathetic-nms/v1_8</module>
         <module>pathetic-model</module>
     </modules>
 

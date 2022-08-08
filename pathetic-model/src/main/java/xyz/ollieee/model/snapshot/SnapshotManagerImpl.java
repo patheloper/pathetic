@@ -42,7 +42,7 @@ public class SnapshotManagerImpl implements SnapshotManager {
             Optional<ChunkSnapshot> snapshot = worldDomain.getSnapshot(key);
 
             if (snapshot.isPresent())
-                return new PathBlock(location, PathBlockType.fromMaterial(ChunkUtils.getMaterial(snapshot.get(), location.getBlockX() - chunkX * 16, location.getBlockY(), location.getBlockZ() - chunkZ * 16)));
+                return new PathBlock(location, Pathetic.getMaterialParser().getPathBlockType(ChunkUtils.getMaterial(snapshot.get(), location.getBlockX() - chunkX * 16, location.getBlockY(), location.getBlockZ() - chunkZ * 16)));
         }
 
         return fetchAndGetBlock(location, chunkX, chunkZ, key);
@@ -92,6 +92,4 @@ public class SnapshotManagerImpl implements SnapshotManager {
     private ChunkSnapshot retrieveChunkSnapshot(World world, int chunkX, int chunkZ) {
         return this.chunkSnapshotGrabber.getSnapshot(world, chunkX, chunkZ);
     }
-
-
 }
