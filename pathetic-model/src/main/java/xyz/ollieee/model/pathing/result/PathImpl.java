@@ -7,6 +7,7 @@ import xyz.ollieee.api.pathing.result.Path;
 import xyz.ollieee.api.wrapper.PathLocation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -79,6 +80,10 @@ public class PathImpl implements Path {
                         .filter(n -> n % nthBlock == 0)
                         .mapToObj(pointsList::get)
                         .collect(Collectors.toList());
+
+                this.points.addAll(Collections.nCopies(3, Iterables.getLast(points)));
+                this.points.addAll(0, Collections.nCopies(3, Iterables.getFirst(points, null)));
+
             }
         }
 

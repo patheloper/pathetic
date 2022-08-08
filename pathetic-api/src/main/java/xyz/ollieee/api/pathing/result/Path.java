@@ -12,9 +12,7 @@ public interface Path {
      * @param resolution The resolution of the interpolation (in blocks). The higher the resolution, the more points will be interpolated
      * @return a newly created Path with interpolated points
      * @see #getLocations
-     * @deprecated Experimental
      */
-    @Deprecated
     Path interpolate(int nthBlock, double resolution);
 
     /**
