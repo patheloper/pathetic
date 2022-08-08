@@ -30,17 +30,17 @@ import java.util.stream.Stream;
 
 public class PathfinderImpl implements Pathfinder {
 
-    private static final Executor FORK_JOIN_POOL =
+    private final Executor FORK_JOIN_POOL =
             new ForkJoinPool(Runtime.getRuntime().availableProcessors(),
                     ForkJoinPool.defaultForkJoinWorkerThreadFactory,
                     new PathfinderAsyncExceptionHandler(),
                     true);
 
-    private static final PathfinderStrategy DEFAULT_STRATEGY = new DirectPathfinderStrategy();
+    private final PathfinderStrategy DEFAULT_STRATEGY = new DirectPathfinderStrategy();
 
-    private static final Set<PathLocation> EMPTY_LINKED_HASHSET = Collections.unmodifiableSet(new LinkedHashSet<>());
+    private final Set<PathLocation> EMPTY_LINKED_HASHSET = Collections.unmodifiableSet(new LinkedHashSet<>());
 
-    private static final PathVector[] OFFSETS = {
+    private final PathVector[] OFFSETS = {
             new PathVector(1, 0, 0),
             new PathVector(-1, 0, 0),
             new PathVector(0, 0, 1),
@@ -49,7 +49,7 @@ public class PathfinderImpl implements Pathfinder {
             new PathVector(0, -1, 0),
     };
 
-    private static final PathVector[] CORNER_OFFSETS = {
+    private final PathVector[] CORNER_OFFSETS = {
             new PathVector(1, 0, 1), new PathVector(-1, 0, -1), new PathVector(-1, 0, 1), new PathVector(1, 0, -1),
             new PathVector(0, 1, 1), new PathVector(1, 1, 1), new PathVector(1, 1, 0), new PathVector(1, 1, -1),
             new PathVector(0, 1, -1), new PathVector(-1, 1, -1), new PathVector(-1, 1, 0), new PathVector(-1, 1, 1),
@@ -57,7 +57,7 @@ public class PathfinderImpl implements Pathfinder {
             new PathVector(0, -1, -1), new PathVector(-1, -1, -1), new PathVector(-1, -1, 0), new PathVector(-1, -1, 1),
     };
 
-    private static @NonNull PathfinderResult seekPath(PathLocation start, PathLocation target, PathfinderStrategy pathfinderStrategy, PathVector[] offsets, ProgressMonitor progressMonitor, Integer maxIterations, Integer maxPathLength) {
+    private @NonNull PathfinderResult seekPath(PathLocation start, PathLocation target, PathfinderStrategy pathfinderStrategy, PathVector[] offsets, ProgressMonitor progressMonitor, Integer maxIterations, Integer maxPathLength) {
 
         PathingStartFindEvent startEvent = new PathingStartFindEvent(start, target, pathfinderStrategy);
         EventPublisher.raiseEvent(startEvent);
@@ -102,12 +102,12 @@ public class PathfinderImpl implements Pathfinder {
         return finish(new PathfinderResultImpl(PathfinderState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
     }
 
-    private static Path retracePath(@NonNull Node node) {
+    private Path retracePath(@NonNull Node node) {
 
         List<PathLocation> path = new ArrayList<>();
 
         Node currentNode = node;
-        while(currentNode != null) {
+        while (currentNode != null) {
             path.add(currentNode.getLocation());
             currentNode = currentNode.getParent();
         }
@@ -118,7 +118,7 @@ public class PathfinderImpl implements Pathfinder {
         return new PathImpl(node.getStart(), node.getTarget(), path);
     }
 
-    private static void evaluateNewNodes(PriorityQueue<Node> nodeQueue, Set<PathLocation> examinedLocations, PathfinderStrategy strategy, Node currentNode, PathVector[] offsets) {
+    private void evaluateNewNodes(PriorityQueue<Node> nodeQueue, Set<PathLocation> examinedLocations, PathfinderStrategy strategy, Node currentNode, PathVector[] offsets) {
 
         for (Node neighbourNode : getNeighbours(currentNode, offsets)) {
             if (nodeIsValid(neighbourNode, nodeQueue, examinedLocations, strategy)) {
@@ -127,7 +127,7 @@ public class PathfinderImpl implements Pathfinder {
         }
     }
 
-    private static Collection<Node> getNeighbours(Node currentNode, PathVector[] offsets) {
+    private Collection<Node> getNeighbours(Node currentNode, PathVector[] offsets) {
 
         final Set<Node> newNodes = new HashSet<>(offsets.length);
 
@@ -141,7 +141,7 @@ public class PathfinderImpl implements Pathfinder {
         return newNodes;
     }
 
-    private static boolean nodeIsValid(Node node, PriorityQueue<Node> nodeQueue, Set<PathLocation> examinedLocations, PathfinderStrategy strategy) {
+    private boolean nodeIsValid(Node node, PriorityQueue<Node> nodeQueue, Set<PathLocation> examinedLocations, PathfinderStrategy strategy) {
 
         if (examinedLocations.contains(node.getLocation())) {
             return false;
@@ -163,11 +163,11 @@ public class PathfinderImpl implements Pathfinder {
 
     }
 
-    private static boolean isWithinWorldBounds(PathLocation location) {
+    private boolean isWithinWorldBounds(PathLocation location) {
         return location.getPathWorld().getMinHeight() < location.getBlockY() && location.getBlockY() < location.getPathWorld().getMaxHeight();
     }
 
-    private static PathfinderResult finish(PathfinderResult pathfinderResult) {
+    private PathfinderResult finish(PathfinderResult pathfinderResult) {
         EventPublisher.raiseEvent(new PathingFinishedEvent(pathfinderResult));
         return pathfinderResult;
     }
