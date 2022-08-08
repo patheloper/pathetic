@@ -6,8 +6,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import xyz.ollieee.api.snapshot.SnapshotManager;
 
-import java.util.Arrays;
-
 public class ChunkInvalidateListener implements Listener {
 
     private final SnapshotManager snapshotManager;
@@ -18,49 +16,52 @@ public class ChunkInvalidateListener implements Listener {
 
     @EventHandler
     public void onBurn(BlockBurnEvent event) {
-        handleEvent(event, null);
+        handleEvent(event.getBlock());
     }
 
     @EventHandler
     public void onExplode(BlockExplodeEvent event) {
-        handleEvent(event, null);
+        handleEvent(event.getBlock());
     }
 
     @EventHandler
     public void onFade(BlockFadeEvent event) {
-        handleEvent(event, null);
+        handleEvent(event.getBlock());
     }
 
     @EventHandler
     public void onFromTo(BlockFromToEvent event) {
-        handleEvent(event, event.getToBlock());
+        handleEvent(event.getBlock(), event.getToBlock());
     }
 
     @EventHandler
     public void onGrow(BlockGrowEvent event) {
-        handleEvent(event, null);
+        handleEvent(event.getBlock());
     }
 
     @EventHandler
-    public void onPistonChange(BlockPistonEvent event) {
-        handleEvent(event, null);
+    public void onPistonChange(BlockPistonRetractEvent event) {
+        handleEvent(event.getBlock());
+    }
+
+    @EventHandler
+    public void onPistonChange(BlockPistonExtendEvent event) {
+        handleEvent(event.getBlock());
     }
 
     @EventHandler
     public void onPlace(BlockPlaceEvent event) {
-        handleEvent(event, null);
+        handleEvent(event.getBlock());
     }
 
     @EventHandler
     public void onDecay(LeavesDecayEvent event) {
-        handleEvent(event, null);
+        handleEvent(event.getBlock());
     }
 
-    private void handleEvent(BlockEvent event, Block toBlock) {
-        Arrays.asList(toBlock, event.getBlock()).forEach(block -> {
-            if (block != null) {
-                snapshotManager.InvalidateChunk(block.getWorld().getUID(), block.getChunk().getX(), block.getChunk().getZ());
-            }
-        });
+    private void handleEvent(Block... blocks) {
+        for (Block block : blocks) {
+            snapshotManager.InvalidateChunk(block.getWorld().getUID(), block.getChunk().getX(), block.getChunk().getZ());
+        }
     }
 }
