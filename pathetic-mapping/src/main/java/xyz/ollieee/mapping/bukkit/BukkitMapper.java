@@ -2,17 +2,14 @@ package xyz.ollieee.mapping.bukkit;
 
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.generator.WorldInfo;
 import org.bukkit.util.Vector;
-
+import xyz.ollieee.Pathetic;
 import xyz.ollieee.api.wrapper.*;
-import xyz.ollieee.model.snapshot.SnapshotManagerImpl;
 
 import java.util.Arrays;
 
@@ -58,7 +55,7 @@ public class BukkitMapper {
     }
 
     @NonNull
-    public PathWorld toPathWorld(@NonNull WorldInfo world) {
+    public PathWorld toPathWorld(@NonNull World world) {
         return new PathWorld(world.getUID(), world.getName(), getMinHeight(world), getMaxHeight(world));
     }
 
@@ -69,7 +66,7 @@ public class BukkitMapper {
 
     @NonNull
     public PathBlockType toPathBlockType(@NonNull Material material) {
-        return SnapshotManagerImpl.toPathBlockType(material);
+        return Pathetic.getMaterialParser().getPathBlockType(material);
     }
 
     private final boolean IS_NEWER_WORLD;
@@ -77,11 +74,11 @@ public class BukkitMapper {
         IS_NEWER_WORLD = Arrays.stream(World.class.getMethods()).anyMatch(method -> "getMinHeight".equalsIgnoreCase(method.getName()));
     }
 
-    private int getMinHeight(WorldInfo world) {
+    private int getMinHeight(World world) {
         return IS_NEWER_WORLD ? world.getMinHeight() : 0;
     }
 
-    private int getMaxHeight(WorldInfo world) {
+    private int getMaxHeight(World world) {
         return IS_NEWER_WORLD ? world.getMaxHeight() : 256;
     }
 }

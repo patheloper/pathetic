@@ -4,9 +4,9 @@ import lombok.NonNull;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-
 import xyz.ollieee.Pathetic;
 import xyz.ollieee.api.snapshot.MaterialParser;
+import xyz.ollieee.api.wrapper.PathBlockType;
 
 public class ModernMaterialParser implements MaterialParser {
 
@@ -48,5 +48,23 @@ public class ModernMaterialParser implements MaterialParser {
     @Override
     public boolean isAir(@NonNull Material material) {
         return material.isAir();
+    }
+
+    @Override
+    public PathBlockType getPathBlockType(@NonNull Material material) {
+
+        if (isAir(material))
+            return PathBlockType.AIR;
+
+        switch (material) {
+            case WATER:
+            case LAVA:
+                return PathBlockType.LIQUID;
+            case GRASS:
+            case TALL_GRASS:
+                return PathBlockType.OTHER;
+            default:
+                return PathBlockType.SOLID;
+        }
     }
 }

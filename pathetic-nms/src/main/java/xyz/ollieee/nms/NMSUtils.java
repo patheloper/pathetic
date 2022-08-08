@@ -1,12 +1,13 @@
 package xyz.ollieee.nms;
 
 import xyz.ollieee.api.snapshot.ChunkSnapshotGrabber;
-
+import xyz.ollieee.nms.v1_12.OneTwelveSnapshotGrabber;
 import xyz.ollieee.nms.v1_15.OneFifteenSnapshotGrabber;
 import xyz.ollieee.nms.v1_16.OneSixteenSnapshotGrabber;
 import xyz.ollieee.nms.v1_17.OneSeventeenSnapshotGrabber;
 import xyz.ollieee.nms.v1_18.OneEighteenSnapshotGrabber;
 import xyz.ollieee.nms.v1_19.OneNineteenSnapshotGrabber;
+import xyz.ollieee.nms.v1_8.OneEightSnapshotGrabber;
 
 public class NMSUtils {
 
@@ -28,6 +29,12 @@ public class NMSUtils {
                 break;
             case "15":
                 chunkSnapshotGrabber = new OneFifteenSnapshotGrabber();
+                break;
+            case "12":
+                chunkSnapshotGrabber = new OneTwelveSnapshotGrabber();
+                break;
+            case "8":
+                chunkSnapshotGrabber = new OneEightSnapshotGrabber();
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported version: " + version);

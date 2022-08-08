@@ -4,8 +4,8 @@ import lombok.NonNull;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-
 import xyz.ollieee.api.snapshot.MaterialParser;
+import xyz.ollieee.api.wrapper.PathBlockType;
 
 public class LegacyMaterialParser implements MaterialParser {
 
@@ -26,7 +26,7 @@ public class LegacyMaterialParser implements MaterialParser {
 
     @Override
     public boolean isPassable(@NonNull Block block) {
-        return !block.getType().isBlock();
+        return !block.getType().isSolid();
     }
 
     @Override
@@ -42,6 +42,25 @@ public class LegacyMaterialParser implements MaterialParser {
     @Override
     public boolean isAir(@NonNull Material material) {
         return material == Material.AIR;
+    }
+
+    @Override
+    public PathBlockType getPathBlockType(@NonNull Material material) {
+
+        if (isAir(material)) {
+            return PathBlockType.AIR;
+        }
+
+        switch (material) {
+            case LAVA:
+            case WATER:
+                return PathBlockType.LIQUID;
+            case LONG_GRASS:
+            case DOUBLE_PLANT:
+                return PathBlockType.OTHER;
+            default:
+                return PathBlockType.SOLID;
+        }
     }
 
 }
