@@ -30,17 +30,17 @@ import java.util.stream.Stream;
 
 public class PathfinderImpl implements Pathfinder {
 
-    private final Executor FORK_JOIN_POOL =
+    private static final Executor FORK_JOIN_POOL =
             new ForkJoinPool(Runtime.getRuntime().availableProcessors(),
                     ForkJoinPool.defaultForkJoinWorkerThreadFactory,
                     new PathfinderAsyncExceptionHandler(),
                     true);
 
-    private final PathfinderStrategy DEFAULT_STRATEGY = new DirectPathfinderStrategy();
+    private static final PathfinderStrategy DEFAULT_STRATEGY = new DirectPathfinderStrategy();
 
-    private final Set<PathLocation> EMPTY_LINKED_HASHSET = Collections.unmodifiableSet(new LinkedHashSet<>());
+    private static final Set<PathLocation> EMPTY_LINKED_HASHSET = Collections.unmodifiableSet(new LinkedHashSet<>());
 
-    private final PathVector[] OFFSETS = {
+    private static final PathVector[] OFFSETS = {
             new PathVector(1, 0, 0),
             new PathVector(-1, 0, 0),
             new PathVector(0, 0, 1),
@@ -49,7 +49,7 @@ public class PathfinderImpl implements Pathfinder {
             new PathVector(0, -1, 0),
     };
 
-    private final PathVector[] CORNER_OFFSETS = {
+    private static final PathVector[] CORNER_OFFSETS = {
             new PathVector(1, 0, 1), new PathVector(-1, 0, -1), new PathVector(-1, 0, 1), new PathVector(1, 0, -1),
             new PathVector(0, 1, 1), new PathVector(1, 1, 1), new PathVector(1, 1, 0), new PathVector(1, 1, -1),
             new PathVector(0, 1, -1), new PathVector(-1, 1, -1), new PathVector(-1, 1, 0), new PathVector(-1, 1, 1),
