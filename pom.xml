@@ -30,4 +30,18 @@
         <module>pathetic-model</module>
     </modules>
 
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.4.0</version>
+                <configuration>
+                    <reportOutputDirectory>${project.reporting.outputDirectory}/myoutput</reportOutputDirectory>
+                    <destDir>myapidocs</destDir>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
+
 </project>

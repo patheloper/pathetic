@@ -166,7 +166,6 @@ public class PathLocation implements Cloneable {
     
     /**
      * Sets the coordinates to the middle of the block
-     * @apiNote The y value is not affected
      * @return The mutated {@link PathLocation}
      */
     public PathLocation mid() {
