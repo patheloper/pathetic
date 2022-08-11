@@ -1,18 +1,15 @@
 package xyz.ollieee.api.wrapper;
 
-import lombok.Getter;
-import lombok.Value;
+import java.util.Objects;
 
 /**
  * A Class to represent a block in the world, except exempt of Bukkit
  */
-@Value
-@Getter
-public class PathBlock {
+public final class PathBlock {
 
-    PathBlockType pathBlockType;
-    PathLocation pathLocation;
-    
+    private final PathBlockType pathBlockType;
+    private final PathLocation pathLocation;
+
     public PathBlock(PathLocation pathLocation, PathBlockType pathBlockType) {
         this.pathLocation = pathLocation;
         this.pathBlockType = pathBlockType;
@@ -42,5 +39,30 @@ public class PathBlock {
 
     public int getBlockZ() {
         return this.pathLocation.getBlockZ();
+    }
+
+    public PathBlockType getPathBlockType() {
+        return this.pathBlockType;
+    }
+
+    public PathLocation getPathLocation() {
+        return this.pathLocation;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PathBlock pathBlock = (PathBlock) o;
+        return pathBlockType == pathBlock.pathBlockType && Objects.equals(pathLocation, pathBlock.pathLocation);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pathBlockType, pathLocation);
+    }
+
+    public String toString() {
+        return "PathBlock(pathBlockType=" + this.getPathBlockType() + ", pathLocation=" + this.getPathLocation() + ")";
     }
 }

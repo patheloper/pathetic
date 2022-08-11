@@ -1,24 +1,18 @@
 package xyz.ollieee.api.wrapper;
 
-import lombok.*;
-import lombok.experimental.Accessors;
+import lombok.NonNull;
 
-@Getter
-@ToString
-@EqualsAndHashCode
-@Accessors(chain = true)
+import java.util.Objects;
+
 public class PathLocation implements Cloneable {
 
     @NonNull
     private PathWorld pathWorld;
 
-    @Setter
     private double x;
 
-    @Setter
     private double y;
 
-    @Setter
     private double z;
     
     public PathLocation(@NonNull PathWorld pathWorld, double x, double y, double z) {
@@ -208,13 +202,64 @@ public class PathLocation implements Cloneable {
     }
 
     private double sqrt(double input) {
-        double sqrt = Double.longBitsToDouble(((Double.doubleToLongBits(input)-(1L<<52))>>1) + (1L <<61));
-        double better = (sqrt + input/sqrt)/2.0;
-        return (better + input/better)/2.0;
+        double sqrt = Double.longBitsToDouble(((Double.doubleToLongBits(input) - (1L << 52)) >> 1) + (1L << 61));
+        double better = (sqrt + input / sqrt) / 2.0;
+        return (better + input / better) / 2.0;
     }
 
-    private double square(double value){
+    private double square(double value) {
         return value * value;
     }
 
+    public @NonNull PathWorld getPathWorld() {
+        return this.pathWorld;
+    }
+
+    public double getX() {
+        return this.x;
+    }
+
+    public double getY() {
+        return this.y;
+    }
+
+    public double getZ() {
+        return this.z;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PathLocation that = (PathLocation) o;
+        return Double.compare(that.x, x) == 0 && Double.compare(that.y, y) == 0 && Double.compare(that.z, z) == 0 && pathWorld.equals(that.pathWorld);
+    }
+
+    protected boolean canEqual(final Object other) {
+        return other instanceof PathLocation;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pathWorld, x, y, z);
+    }
+
+    public String toString() {
+        return "PathLocation(pathWorld=" + this.getPathWorld() + ", x=" + this.getX() + ", y=" + this.getY() + ", z=" + this.getZ() + ")";
+    }
+
+    public PathLocation setX(double x) {
+        this.x = x;
+        return this;
+    }
+
+    public PathLocation setY(double y) {
+        this.y = y;
+        return this;
+    }
+
+    public PathLocation setZ(double z) {
+        this.z = z;
+        return this;
+    }
 }

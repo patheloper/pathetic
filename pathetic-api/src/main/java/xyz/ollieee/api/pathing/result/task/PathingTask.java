@@ -1,6 +1,5 @@
 package xyz.ollieee.api.pathing.result.task;
 
-import lombok.Getter;
 import xyz.ollieee.api.pathing.result.PathfinderResult;
 import xyz.ollieee.api.pathing.result.progress.ProgressMonitor;
 
@@ -12,7 +11,6 @@ import java.util.function.Consumer;
  */
 public class PathingTask {
 
-    @Getter
     private final ProgressMonitor progressMonitor;
     private final CompletableFuture<PathfinderResult> result;
 
@@ -49,4 +47,7 @@ public class PathingTask {
         this.result.thenAccept(callback);
     }
 
+    public ProgressMonitor getProgressMonitor() {
+        return this.progressMonitor;
+    }
 }

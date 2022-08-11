@@ -1,8 +1,5 @@
 package xyz.ollieee.api.pathing.result.progress;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 import xyz.ollieee.api.wrapper.PathLocation;
 
 public class ProgressMonitor {
@@ -23,13 +20,40 @@ public class ProgressMonitor {
         return (current / length) * 100;
     }
 
-    @Getter
-    @Setter
-    @AllArgsConstructor
     static class ProgressLocations {
         private PathLocation start;
         private PathLocation target;
         private PathLocation current;
+
+        public ProgressLocations(PathLocation start, PathLocation target, PathLocation current) {
+            this.start = start;
+            this.target = target;
+            this.current = current;
+        }
+
+        public PathLocation getStart() {
+            return this.start;
+        }
+
+        public PathLocation getTarget() {
+            return this.target;
+        }
+
+        public PathLocation getCurrent() {
+            return this.current;
+        }
+
+        public void setStart(PathLocation start) {
+            this.start = start;
+        }
+
+        public void setTarget(PathLocation target) {
+            this.target = target;
+        }
+
+        public void setCurrent(PathLocation current) {
+            this.current = current;
+        }
     }
 }
 
