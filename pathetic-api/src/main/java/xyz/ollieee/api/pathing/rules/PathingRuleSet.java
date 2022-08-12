@@ -4,11 +4,11 @@ import xyz.ollieee.api.pathing.strategy.PathfinderStrategy;
 
 public class PathingRuleSet {
 
-    private PathfinderStrategy strategy;
-    private int maxIterations;
-    private int maxPathLength;
-    private boolean async;
-    private boolean allowDiagonal;
+    private final PathfinderStrategy strategy;
+    private final int maxIterations;
+    private final int maxPathLength;
+    private final boolean async;
+    private final boolean allowDiagonal;
 
     PathingRuleSet(PathfinderStrategy strategy, int maxIterations, int maxPathLength, boolean async, boolean allowDiagonal) {
         this.strategy = strategy;
@@ -18,26 +18,56 @@ public class PathingRuleSet {
         this.allowDiagonal = allowDiagonal;
     }
 
+    /**
+     * Gets a builder for this rule set
+     *
+     * @return The {@link PathingRuleSetBuilder}
+     */
     public static PathingRuleSetBuilder builder() {
         return new PathingRuleSetBuilder();
     }
 
+    /**
+     * Returns the {@link PathfinderStrategy} for this rule set
+     *
+     * @return The {@link PathfinderStrategy}
+     */
     public PathfinderStrategy getStrategy() {
         return this.strategy;
     }
 
+    /**
+     * Returns the maximum number of iterations for this rule set
+     *
+     * @return The maximum number of iterations
+     */
     public int getMaxIterations() {
         return this.maxIterations;
     }
 
+    /**
+     * Returns the maximum path length for this rule set
+     *
+     * @return The maximum path length
+     */
     public int getMaxPathLength() {
         return this.maxPathLength;
     }
 
+    /**
+     * Returns whether this rule set is asynchronous
+     *
+     * @return true if asynchronous
+     */
     public boolean isAsync() {
         return this.async;
     }
 
+    /**
+     * Returns whether this rule set allows diagonal movement
+     *
+     * @return true if diagonal movement is allowed
+     */
     public boolean isAllowDiagonal() {
         return this.allowDiagonal;
     }

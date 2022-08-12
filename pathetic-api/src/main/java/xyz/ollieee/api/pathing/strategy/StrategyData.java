@@ -18,10 +18,20 @@ public final class StrategyData {
         this.pathLocation = pathLocation;
     }
 
+    /**
+     * Gets the {@link SnapshotManager} for this strategy data
+     *
+     * @return The {@link SnapshotManager}
+     */
     public SnapshotManager getSnapshotManager() {
         return this.snapshotManager;
     }
 
+    /**
+     * Gets the {@link PathLocation} for this strategy data
+     *
+     * @return The {@link PathLocation}
+     */
     public PathLocation getPathLocation() {
         return this.pathLocation;
     }

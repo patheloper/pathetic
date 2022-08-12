@@ -17,18 +17,38 @@ public final class PathWorld {
         this.maxHeight = maxHeight;
     }
 
+    /**
+     * Gets the UUID of the world
+     *
+     * @return The UUID of the world
+     */
     public UUID getUuid() {
         return this.uuid;
     }
 
+    /**
+     * Gets the name of the world
+     *
+     * @return The name of the world
+     */
     public String getName() {
         return this.name;
     }
 
+    /**
+     * Gets the minimum height of the world
+     *
+     * @return The minimum height of the world
+     */
     public Integer getMinHeight() {
         return this.minHeight;
     }
 
+    /**
+     * Gets the maximum height of the world
+     *
+     * @return The maximum height of the world
+     */
     public Integer getMaxHeight() {
         return this.maxHeight;
     }

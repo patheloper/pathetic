@@ -75,16 +75,22 @@ public class PathVector implements Cloneable {
         return this;
     }
 
-    private double square(double value){
+    private double square(double value) {
         return value * value;
     }
 
+    /**
+     * Gets the length of the {@link PathVector}
+     *
+     * @return The length
+     */
     public double length() {
         return Math.sqrt(this.square(this.x) + this.square(this.y) + this.square(this.z));
     }
 
     /**
      * Gets the distance between this vector and another vector
+     *
      * @param otherVector The other vector
      * @return The distance
      */
@@ -166,28 +172,61 @@ public class PathVector implements Cloneable {
         return this.x == other.x && this.y == other.y && this.z == other.z;
     }
 
+    /**
+     * Gets the x component of the vector
+     *
+     * @return The x component
+     */
     public double getX() {
         return this.x;
     }
 
+    /**
+     * Gets the y component of the vector
+     *
+     * @return The y component
+     */
     public double getY() {
         return this.y;
     }
 
+    /**
+     * Gets the z component of the vector
+     *
+     * @return The z component
+     */
     public double getZ() {
         return this.z;
     }
 
+    /**
+     * Sets the x component of the vector
+     *
+     * @param x The x component
+     * @return The same {@link PathVector}, mutated
+     */
     public PathVector setX(double x) {
         this.x = x;
         return this;
     }
 
+    /**
+     * Sets the y component of the vector
+     *
+     * @param y The y component
+     * @return The same {@link PathVector}, mutated
+     */
     public PathVector setY(double y) {
         this.y = y;
         return this;
     }
 
+    /**
+     * Sets the z component of the vector
+     *
+     * @param z The z component
+     * @return The same {@link PathVector}, mutated
+     */
     public PathVector setZ(double z) {
         this.z = z;
         return this;

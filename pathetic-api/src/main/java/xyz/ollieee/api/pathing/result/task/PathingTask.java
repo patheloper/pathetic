@@ -47,6 +47,11 @@ public class PathingTask {
         this.result.thenAccept(callback);
     }
 
+    /**
+     * Returns the progress monitor for this task
+     *
+     * @return The {@link ProgressMonitor} for this task
+     */
     public ProgressMonitor getProgressMonitor() {
         return this.progressMonitor;
     }

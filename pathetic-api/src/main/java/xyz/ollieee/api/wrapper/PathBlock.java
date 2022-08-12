@@ -29,22 +29,47 @@ public final class PathBlock {
         return this.pathBlockType == PathBlockType.AIR || this.pathBlockType == PathBlockType.OTHER;
     }
 
+    /**
+     * Gets the X coordinate of the block
+     *
+     * @return The X coordinate of the block
+     */
     public int getBlockX() {
         return this.pathLocation.getBlockX();
     }
 
+    /**
+     * Gets the Y coordinate of the block
+     *
+     * @return The Y coordinate of the block
+     */
     public int getBlockY() {
         return this.pathLocation.getBlockY();
     }
 
+    /**
+     * Gets the Z coordinate of the block
+     *
+     * @return The Z coordinate of the block
+     */
     public int getBlockZ() {
         return this.pathLocation.getBlockZ();
     }
 
+    /**
+     * Gets the {@link PathBlockType} of the block
+     *
+     * @return The {@link PathBlockType} of the block
+     */
     public PathBlockType getPathBlockType() {
         return this.pathBlockType;
     }
 
+    /**
+     * Gets the {@link PathLocation} of the block
+     *
+     * @return The {@link PathLocation} of the block
+     */
     public PathLocation getPathLocation() {
         return this.pathLocation;
     }

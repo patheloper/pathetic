@@ -8,29 +8,41 @@ public class PathLocation implements Cloneable {
 
     @NonNull
     private PathWorld pathWorld;
-
     private double x;
-
     private double y;
-
     private double z;
-    
+
     public PathLocation(@NonNull PathWorld pathWorld, double x, double y, double z) {
-        
+
         this.pathWorld = pathWorld;
         this.x = x;
         this.y = y;
         this.z = z;
     }
 
+    /**
+     * Gets the X coordinate of the block the location is in
+     *
+     * @return The X coordinate of the block
+     */
     public int getBlockX() {
         return (int) Math.floor(this.x);
     }
 
+    /**
+     * Gets the Y coordinate of the block the location is in
+     *
+     * @return The Y coordinate of the block
+     */
     public int getBlockY() {
         return (int) Math.floor(this.y);
     }
 
+    /**
+     * Gets the Z coordinate of the block the location is in
+     *
+     * @return The Z coordinate of the block
+     */
     public int getBlockZ() {
         return (int) Math.floor(this.z);
     }
@@ -211,18 +223,38 @@ public class PathLocation implements Cloneable {
         return value * value;
     }
 
+    /**
+     * Gets the {@link PathWorld} the location is in
+     *
+     * @return The {@link PathWorld} the location is in
+     */
     public @NonNull PathWorld getPathWorld() {
         return this.pathWorld;
     }
 
+    /**
+     * Gets the x value of the location
+     *
+     * @return The x value of the location
+     */
     public double getX() {
         return this.x;
     }
 
+    /**
+     * Gets the y value of the location
+     *
+     * @return The y value of the location
+     */
     public double getY() {
         return this.y;
     }
 
+    /**
+     * Gets the z value of the location
+     *
+     * @return The z value of the location
+     */
     public double getZ() {
         return this.z;
     }
@@ -248,16 +280,34 @@ public class PathLocation implements Cloneable {
         return "PathLocation(pathWorld=" + this.getPathWorld() + ", x=" + this.getX() + ", y=" + this.getY() + ", z=" + this.getZ() + ")";
     }
 
+    /**
+     * Sets the X coordinate of the {@link PathLocation}
+     *
+     * @param x The new X coordinate
+     * @return The same {@link PathLocation}, mutated
+     */
     public PathLocation setX(double x) {
         this.x = x;
         return this;
     }
 
+    /**
+     * Sets the Y coordinate of the {@link PathLocation}
+     *
+     * @param y The new Y coordinate
+     * @return The same {@link PathLocation}, mutated
+     */
     public PathLocation setY(double y) {
         this.y = y;
         return this;
     }
 
+    /**
+     * Sets the Z coordinate of the {@link PathLocation}
+     *
+     * @param z The new Z coordinate
+     * @return The same {@link PathLocation}, mutated
+     */
     public PathLocation setZ(double z) {
         this.z = z;
         return this;

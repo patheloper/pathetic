@@ -4,6 +4,9 @@ import lombok.NonNull;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+/**
+ * Represents an all pathing events
+ */
 public class PathingEvent extends Event {
 
     private static final HandlerList HANDLERS_LIST = new HandlerList();
