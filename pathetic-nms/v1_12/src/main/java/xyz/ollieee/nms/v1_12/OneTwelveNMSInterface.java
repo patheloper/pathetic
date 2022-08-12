@@ -5,9 +5,9 @@ import net.minecraft.server.v1_12_R1.WorldServer;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
-import xyz.ollieee.api.snapshot.ChunkSnapshotGrabber;
+import xyz.ollieee.api.snapshot.NMSInterface;
 
-public class OneTwelveSnapshotGrabber implements ChunkSnapshotGrabber {
+public class OneTwelveNMSInterface implements NMSInterface {
 
     @Override
     public ChunkSnapshot getSnapshot(World world, int chunkX, int chunkZ) {

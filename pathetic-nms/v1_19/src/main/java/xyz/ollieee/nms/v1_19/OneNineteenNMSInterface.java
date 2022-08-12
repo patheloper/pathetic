@@ -8,11 +8,11 @@ import org.bukkit.ChunkSnapshot;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_19_R1.CraftChunk;
 import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
-import xyz.ollieee.api.snapshot.ChunkSnapshotGrabber;
+import xyz.ollieee.api.snapshot.NMSInterface;
 
 import java.lang.reflect.Field;
 
-public class OneNineteenSnapshotGrabber implements ChunkSnapshotGrabber {
+public class OneNineteenNMSInterface implements NMSInterface {
 
     private static final Field blockIDField;
 

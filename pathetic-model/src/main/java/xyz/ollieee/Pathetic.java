@@ -11,6 +11,7 @@ import xyz.ollieee.bukkit.listeners.ChunkInvalidateListener;
 import xyz.ollieee.legacy.snapshot.LegacyMaterialParser;
 import xyz.ollieee.model.snapshot.ModernMaterialParser;
 import xyz.ollieee.model.snapshot.SnapshotManagerImpl;
+import xyz.ollieee.nms.NMSUtils;
 import xyz.ollieee.util.BukkitVersionUtil;
 
 import java.util.logging.Logger;
@@ -21,7 +22,7 @@ public class Pathetic {
     private static JavaPlugin instance;
     private static Logger logger;
 
-    // We maybe don't want them here.
+    private static NMSUtils nmsUtils;
     private static MaterialParser materialParser;
     private static SnapshotManager snapshotManager;
 
@@ -39,6 +40,7 @@ public class Pathetic {
         if (BukkitVersionUtil.isUnder(13)) materialParser = new LegacyMaterialParser();
         else materialParser = new ModernMaterialParser();
 
+        nmsUtils = new NMSUtils((int) BukkitVersionUtil.get());
         snapshotManager = new SnapshotManagerImpl();
 
         BStatsHandler.init(javaPlugin);
@@ -59,13 +61,15 @@ public class Pathetic {
         return logger;
     }
 
-    @Deprecated // for removal
     public static MaterialParser getMaterialParser() {
         return materialParser;
     }
 
-    @Deprecated // for removal
     public static SnapshotManager getSnapshotManager() {
         return snapshotManager;
+    }
+
+    public static NMSUtils getNMSUtils() {
+        return nmsUtils;
     }
 }

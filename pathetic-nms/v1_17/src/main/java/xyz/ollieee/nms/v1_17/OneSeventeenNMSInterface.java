@@ -6,9 +6,9 @@ import org.bukkit.ChunkSnapshot;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_17_R1.CraftChunk;
 import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
-import xyz.ollieee.api.snapshot.ChunkSnapshotGrabber;
+import xyz.ollieee.api.snapshot.NMSInterface;
 
-public class OneSeventeenSnapshotGrabber implements ChunkSnapshotGrabber {
+public class OneSeventeenNMSInterface implements NMSInterface {
 
 
     @Override

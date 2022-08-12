@@ -5,13 +5,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.World;
 import xyz.ollieee.Pathetic;
-import xyz.ollieee.api.snapshot.ChunkSnapshotGrabber;
+import xyz.ollieee.api.snapshot.NMSInterface;
 import xyz.ollieee.api.snapshot.SnapshotManager;
 import xyz.ollieee.api.wrapper.PathBlock;
 import xyz.ollieee.api.wrapper.PathBlockType;
 import xyz.ollieee.api.wrapper.PathLocation;
 import xyz.ollieee.model.world.WorldDomain;
-import xyz.ollieee.nms.NMSUtils;
 import xyz.ollieee.util.ChunkUtils;
 
 import java.util.HashMap;
@@ -22,10 +21,10 @@ import java.util.UUID;
 public class SnapshotManagerImpl implements SnapshotManager {
 
     private final Map<UUID, WorldDomain> snapshots = new HashMap<>();
-    private final ChunkSnapshotGrabber chunkSnapshotGrabber;
+    private final NMSInterface nmsInterface;
 
     public SnapshotManagerImpl() {
-        this.chunkSnapshotGrabber = new NMSUtils(Bukkit.getBukkitVersion().split("\\-")[0].split("\\.")[1]).getChunkSnapshotGrabber();
+        this.nmsInterface = Pathetic.getNMSUtils().getNmsInterface();
     }
 
     @NonNull
@@ -90,6 +89,6 @@ public class SnapshotManagerImpl implements SnapshotManager {
 
 
     private ChunkSnapshot retrieveChunkSnapshot(World world, int chunkX, int chunkZ) {
-        return this.chunkSnapshotGrabber.getSnapshot(world, chunkX, chunkZ);
+        return this.nmsInterface.getSnapshot(world, chunkX, chunkZ);
     }
 }
