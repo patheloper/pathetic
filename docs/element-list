@@ -8,4 +8,5 @@ xyz.ollieee.api.pathing.rules
 xyz.ollieee.api.pathing.strategy
 xyz.ollieee.api.pathing.strategy.strategies
 xyz.ollieee.api.snapshot
+xyz.ollieee.api.util
 xyz.ollieee.api.wrapper
