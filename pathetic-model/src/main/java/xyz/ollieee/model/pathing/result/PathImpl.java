@@ -4,12 +4,10 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import lombok.NonNull;
 import xyz.ollieee.api.pathing.result.Path;
+import xyz.ollieee.api.util.ParameterizedSupplier;
 import xyz.ollieee.api.wrapper.PathLocation;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -67,6 +65,15 @@ public class PathImpl implements Path {
         return this.locations;
     }
 
+    @NonNull
+    @Override
+    public Path mutateLocations(ParameterizedSupplier<PathLocation> mutator) {
+        List<PathLocation> locationList = new LinkedList<>();
+        for (PathLocation location : this.locations)
+            locationList.add(mutator.accept(location));
+        return new PathImpl(locationList.get(0), locationList.get(locationList.size() - 1), locationList);
+    }
+
     private static class SplineHelper {
 
         static class Spline {
@@ -92,8 +99,8 @@ public class PathImpl implements Path {
 
             p1 = ((int) t) + 1;
             p2 = p1 + 1;
-            p3 = p2 + 1;
-            p0 = p1 - 1;
+            p3 = p1 + 2;
+            p0 = (int) t;
             t = t - ((int) t);
 
             double tt = t * t;

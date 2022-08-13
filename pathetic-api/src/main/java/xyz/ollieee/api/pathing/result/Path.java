@@ -1,6 +1,7 @@
 package xyz.ollieee.api.pathing.result;
 
 import lombok.NonNull;
+import xyz.ollieee.api.util.ParameterizedSupplier;
 import xyz.ollieee.api.wrapper.PathLocation;
 
 public interface Path {
@@ -54,4 +55,13 @@ public interface Path {
      */
     @NonNull
     Iterable<PathLocation> getLocations();
+
+    /**
+     * Mutates each of the locations in the path with the given consumer
+     *
+     * @param mutator the {@link ParameterizedSupplier} to mutate the locations with
+     * @return {@link Path} the new Path
+     */
+    @NonNull
+    Path mutateLocations(ParameterizedSupplier<PathLocation> mutator);
 }
