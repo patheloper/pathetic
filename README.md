@@ -40,6 +40,8 @@ public class PathExample extends JavaPlugin {
     
     @Override
     public void onEnable() {
+    
+        PatheticMapper.initialize(this);
         goFindSomePath();
     }
     
