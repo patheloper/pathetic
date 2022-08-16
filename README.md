@@ -52,3 +52,6 @@ public class PathExample extends JavaPlugin {
     }
 }
 ```
+
+### Javadocs:
+Access the Javadocs [here](http://patheticdocs.ollieee.xyz/)
