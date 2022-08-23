@@ -11,6 +11,7 @@ public final class PatheticPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        PatheticMapper.initialize(this);
         reusablePathfinder = PatheticMapper.newPathfinder();
         getCommand("pathetic").setExecutor(new PatheticCommand(reusablePathfinder));
     }
