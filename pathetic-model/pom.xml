@@ -7,11 +7,11 @@
     <parent>
         <artifactId>pathetic-main</artifactId>
         <groupId>xyz.ollieee</groupId>
-        <version>1.0.2</version>
+        <version>1.0.3</version>
     </parent>
 
     <artifactId>pathetic-model</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -61,21 +61,21 @@
         <dependency>
             <groupId>xyz.ollieee</groupId>
             <artifactId>pathetic-api</artifactId>
-            <version>1.0.2</version>
+            <version>1.0.3</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>xyz.ollieee</groupId>
             <artifactId>pathetic-legacy</artifactId>
-            <version>1.0.2</version>
+            <version>1.0.3</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>xyz.ollieee</groupId>
             <artifactId>pathetic-nms</artifactId>
-            <version>1.0.2</version>
+            <version>1.0.3</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
