@@ -5,7 +5,7 @@
     <parent>
         <artifactId>pathetic-main</artifactId>
         <groupId>xyz.ollieee</groupId>
-        <version>1.0.3</version>
+        <version>1.0.4</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -18,6 +18,13 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>codemc-repo</id>
+            <url>https://repo.codemc.org/repository/nms/</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
@@ -29,7 +36,7 @@
         <dependency>
             <groupId>xyz.ollieee</groupId>
             <artifactId>pathetic-api</artifactId>
-            <version>1.0.3</version>
+            <version>1.0.4</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

@@ -6,12 +6,12 @@
     <parent>
         <artifactId>pathetic-main</artifactId>
         <groupId>xyz.ollieee</groupId>
-        <version>1.0.3</version>
+        <version>1.0.4</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>pathetic-nms</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -23,56 +23,56 @@
         <dependency>
             <groupId>xyz.ollieee</groupId>
             <artifactId>pathetic-api</artifactId>
-            <version>1.0.3</version>
+            <version>1.0.4</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>xyz.ollieee</groupId>
             <artifactId>v1_19</artifactId>
-            <version>1.0.3</version>
+            <version>1.0.4</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>xyz.ollieee</groupId>
             <artifactId>v1_18</artifactId>
-            <version>1.0.3</version>
+            <version>1.0.4</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>xyz.ollieee</groupId>
             <artifactId>v1_17</artifactId>
-            <version>1.0.3</version>
+            <version>1.0.4</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>xyz.ollieee</groupId>
             <artifactId>v1_16</artifactId>
-            <version>1.0.3</version>
+            <version>1.0.4</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>xyz.ollieee</groupId>
             <artifactId>v1_15</artifactId>
-            <version>1.0.3</version>
+            <version>1.0.4</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>xyz.ollieee</groupId>
             <artifactId>v1_12</artifactId>
-            <version>1.0.3</version>
+            <version>1.0.4</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>xyz.ollieee</groupId>
             <artifactId>v1_8</artifactId>
-            <version>1.0.3</version>
+            <version>1.0.4</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

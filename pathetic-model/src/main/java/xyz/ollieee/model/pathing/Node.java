@@ -52,9 +52,9 @@ public class Node implements Comparable<Node> {
 
     private double getDistanceKey() {
 
+        PathVector a = this.location.toVector();
         PathVector b = this.start.toVector();
         PathVector c = this.target.toVector();
-        PathVector a = this.location.toVector();
         double v = a.subtract(b).getCrossProduct(c.subtract(b)).length() / c.subtract(b).length();
 
         return this.location.octileDistance(target) * (v*0.00002) + (0.01*this.target.distance(this.location));
