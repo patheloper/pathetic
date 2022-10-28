@@ -13,7 +13,7 @@ public final class PatheticPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         PatheticMapper.initialize(this);
-        reusablePathfinder = PatheticMapper.newPathfinder(PathingRuleSet.builder().allowFallback(true).async(true).maxPathLength(50).maxIterations(2000).build());
+        reusablePathfinder = PatheticMapper.newPathfinder(PathingRuleSet.builder().allowFallback(true).async(true).maxPathLength(50).maxIterations(2000).allowAlternateTarget(true).build());
         getCommand("pathetic").setExecutor(new PatheticCommand(reusablePathfinder));
     }
 

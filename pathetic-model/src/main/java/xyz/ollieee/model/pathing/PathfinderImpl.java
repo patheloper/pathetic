@@ -93,12 +93,11 @@ public class PathfinderImpl implements Pathfinder {
         if (start.isInSameBlock(target))
             return finish(new PathfinderResultImpl(PathfinderState.FOUND, new PathImpl(start, target, Collections.singleton(start))));
 
-        if(alternateTarget) {
-            // TODO: Implement
-        }
-
         if(failFast && !isTargetReachable(target, offsets))
             return finish(new PathfinderResultImpl(PathfinderState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
+
+        if(alternateTarget && !isTargetReachable(target, offsets))
+            target = bubbleSearch(target, offsets).getPathLocation();
 
         Node startNode = new Node(start.floor(), start.floor(), target.floor(), 0);
 
@@ -226,6 +225,46 @@ public class PathfinderImpl implements Pathfinder {
         }
 
         return false;
+    }
+
+    /*
+     * Bloating up like a bubble until a reachable block is found
+     * The block itself might not be passable, but at least reachable from the outside
+     *
+     * NOTE: The reachable block is not guaranteed to be the closest reachable block
+     */
+    private PathBlock bubbleSearch(PathLocation target, PathVector[] offsets) {
+
+        Set<PathLocation> examinedLocations = new HashSet<>();
+        Set<PathLocation> newLocations = new HashSet<>();
+
+        newLocations.add(target);
+
+        while(!newLocations.isEmpty()) {
+
+            Set<PathLocation> nextLocations = new HashSet<>();
+
+            for(PathLocation location : newLocations) {
+
+                for(PathVector offset : offsets) {
+
+                    PathLocation offsetLocation = location.clone().add(offset);
+                    PathBlock pathBlock = Pathetic.getSnapshotManager().getBlock(offsetLocation);
+
+                    if(pathBlock.isPassable() && !pathBlock.getPathLocation().isInSameBlock(target))
+                        return pathBlock;
+
+                    if(!examinedLocations.contains(offsetLocation))
+                        nextLocations.add(offsetLocation);
+                }
+
+                examinedLocations.add(location);
+            }
+
+            newLocations = nextLocations;
+        }
+
+        return Pathetic.getSnapshotManager().getBlock(target);
     }
 
     private PathingTask setAndStart(PathLocation start, PathLocation target) {
