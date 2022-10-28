@@ -1,31 +1,20 @@
 package xyz.ollieee.api.pathing.rules;
 
+import lombok.Builder;
+import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import xyz.ollieee.api.pathing.strategy.PathfinderStrategy;
 
+@Builder
+@Value
+@RequiredArgsConstructor
 public class PathingRuleSet {
 
-    private final PathfinderStrategy strategy;
-    private final int maxIterations;
-    private final int maxPathLength;
-    private final boolean async;
-    private final boolean allowDiagonal;
-
-    PathingRuleSet(PathfinderStrategy strategy, int maxIterations, int maxPathLength, boolean async, boolean allowDiagonal) {
-        this.strategy = strategy;
-        this.maxIterations = maxIterations;
-        this.maxPathLength = maxPathLength;
-        this.async = async;
-        this.allowDiagonal = allowDiagonal;
-    }
-
-    /**
-     * Gets a builder for this rule set
-     *
-     * @return The {@link PathingRuleSetBuilder}
-     */
-    public static PathingRuleSetBuilder builder() {
-        return new PathingRuleSetBuilder();
-    }
+    PathfinderStrategy strategy;
+    int maxIterations;
+    int maxPathLength;
+    boolean async;
+    boolean allowDiagonal;
 
     /**
      * Returns the {@link PathfinderStrategy} for this rule set
@@ -70,50 +59,6 @@ public class PathingRuleSet {
      */
     public boolean isAllowDiagonal() {
         return this.allowDiagonal;
-    }
-
-    public static class PathingRuleSetBuilder {
-        private PathfinderStrategy strategy;
-        private int maxIterations;
-        private int maxPathLength;
-        private boolean async;
-        private boolean allowDiagonal;
-
-        PathingRuleSetBuilder() {
-        }
-
-        public PathingRuleSetBuilder strategy(PathfinderStrategy strategy) {
-            this.strategy = strategy;
-            return this;
-        }
-
-        public PathingRuleSetBuilder maxIterations(int maxIterations) {
-            this.maxIterations = maxIterations;
-            return this;
-        }
-
-        public PathingRuleSetBuilder maxPathLength(int maxPathLength) {
-            this.maxPathLength = maxPathLength;
-            return this;
-        }
-
-        public PathingRuleSetBuilder async(boolean async) {
-            this.async = async;
-            return this;
-        }
-
-        public PathingRuleSetBuilder allowDiagonal(boolean allowDiagonal) {
-            this.allowDiagonal = allowDiagonal;
-            return this;
-        }
-
-        public PathingRuleSet build() {
-            return new PathingRuleSet(strategy, maxIterations, maxPathLength, async, allowDiagonal);
-        }
-
-        public String toString() {
-            return "PathingRuleSet.PathingRuleSetBuilder(strategy=" + this.strategy + ", maxIterations=" + this.maxIterations + ", maxPathLength=" + this.maxPathLength + ", async=" + this.async + ", allowDiagonal=" + this.allowDiagonal + ")";
-        }
     }
 }
 

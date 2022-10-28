@@ -57,6 +57,18 @@ public class PathfinderImpl implements Pathfinder {
             new PathVector(0, -1, -1), new PathVector(-1, -1, -1), new PathVector(-1, -1, 0), new PathVector(-1, -1, 1),
     };
 
+    @NonNull
+    @Override
+    public PathingTask findPath(@NonNull PathLocation start, @NonNull PathLocation target) {
+        return findPath(start, target, null);
+    }
+
+    @NonNull
+    @Override
+    public PathingTask findPath(@NonNull PathLocation start, @NonNull PathLocation target, PathingRuleSet rules) {
+        return setAndStart(start, target, rules);
+    }
+
     private @NonNull PathfinderResult seekPath(PathLocation start, PathLocation target, PathfinderStrategy pathfinderStrategy, PathVector[] offsets, ProgressMonitor progressMonitor, Integer maxIterations, Integer maxPathLength) {
 
         PathingStartFindEvent startEvent = new PathingStartFindEvent(start, target, pathfinderStrategy);
@@ -170,18 +182,6 @@ public class PathfinderImpl implements Pathfinder {
     private PathfinderResult finish(PathfinderResult pathfinderResult) {
         EventPublisher.raiseEvent(new PathingFinishedEvent(pathfinderResult));
         return pathfinderResult;
-    }
-
-    @NonNull
-    @Override
-    public PathingTask findPath(@NonNull PathLocation start, @NonNull PathLocation target) {
-        return findPath(start, target, null);
-    }
-
-    @NonNull
-    @Override
-    public PathingTask findPath(@NonNull PathLocation start, @NonNull PathLocation target, PathingRuleSet rules) {
-        return setAndStart(start, target, rules);
     }
 
     private PathingTask setAndStart(PathLocation start, PathLocation target, PathingRuleSet rules) {
