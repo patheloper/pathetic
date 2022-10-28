@@ -24,6 +24,8 @@ import xyz.ollieee.api.pathing.strategy.PathfinderStrategy;
  */
 public class PathingRuleSet {
 
+    public static final PathingRuleSet DEFAULT_RULE_SET = PathingRuleSet.builder().build();
+
     PathfinderStrategy strategy;
     int maxIterations;
     int maxPathLength;
