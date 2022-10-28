@@ -15,12 +15,4 @@ public interface Pathfinder {
     @NonNull
     PathingTask findPath(@NonNull PathLocation start, @NonNull PathLocation target);
 
-    /**
-     * Tries to find a Path between the two {@link PathLocation}'s using the {@link PathingRuleSet} provided.
-     *
-     * @return {@link PathingTask} the the task object
-     */
-    @NonNull
-    PathingTask findPath(@NonNull PathLocation start, @NonNull PathLocation target, PathingRuleSet ruleSet);
-
 }
