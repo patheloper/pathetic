@@ -1,13 +1,27 @@
 package xyz.ollieee.api.pathing.rules;
 
 import lombok.Builder;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import xyz.ollieee.api.pathing.strategy.PathfinderStrategy;
 
 @Builder
 @Value
+@Getter
 @RequiredArgsConstructor
+/**
+ * A set of rules that are used while pathfinding.
+ *
+ * strategy - The strategy to use while pathfinding.
+ * maxIterations - The maximum amount of iterations to do while pathfinding.
+ * maxPathLength - The maximum length of the path to find.
+ * async - Whether to run the pathfinding async or not.
+ * allowDiagonal - Whether to allow diagonal movement or not.
+ * alternateTarget - Whether to allow the pathfinder to end at a different block than the target if the target is unreachable.
+ * failFast - Whether to fail fast or not, if the target is unreachable by the beginning.
+ * fallback - If pathfinding fails, it will fallback to the already found path.
+ */
 public class PathingRuleSet {
 
     PathfinderStrategy strategy;
@@ -15,51 +29,9 @@ public class PathingRuleSet {
     int maxPathLength;
     boolean async;
     boolean allowDiagonal;
-
-    /**
-     * Returns the {@link PathfinderStrategy} for this rule set
-     *
-     * @return The {@link PathfinderStrategy}
-     */
-    public PathfinderStrategy getStrategy() {
-        return this.strategy;
-    }
-
-    /**
-     * Returns the maximum number of iterations for this rule set
-     *
-     * @return The maximum number of iterations
-     */
-    public int getMaxIterations() {
-        return this.maxIterations;
-    }
-
-    /**
-     * Returns the maximum path length for this rule set
-     *
-     * @return The maximum path length
-     */
-    public int getMaxPathLength() {
-        return this.maxPathLength;
-    }
-
-    /**
-     * Returns whether this rule set is asynchronous
-     *
-     * @return true if asynchronous
-     */
-    public boolean isAsync() {
-        return this.async;
-    }
-
-    /**
-     * Returns whether this rule set allows diagonal movement
-     *
-     * @return true if diagonal movement is allowed
-     */
-    public boolean isAllowDiagonal() {
-        return this.allowDiagonal;
-    }
+    boolean allowAlternateTarget;
+    boolean allowFailFast;
+    boolean allowFallback;
 }
 
 

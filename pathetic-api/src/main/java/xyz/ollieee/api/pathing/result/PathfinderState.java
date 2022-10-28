@@ -11,4 +11,9 @@ public enum PathfinderState {
      */
     FAILED,
 
+    /**
+     * The pathfinder fallbacked while finding on a different path
+     */
+    FALLBACK;
+
 }

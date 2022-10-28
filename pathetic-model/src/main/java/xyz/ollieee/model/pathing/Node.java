@@ -34,6 +34,10 @@ public class Node implements Comparable<Node> {
         return this.depth;
     }
 
+    public double getCost() {
+        return this.location.distance(this.target);
+    }
+
     public PathLocation getStart() {
         return this.start;
     }

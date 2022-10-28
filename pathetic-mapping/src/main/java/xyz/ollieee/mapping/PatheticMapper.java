@@ -6,6 +6,7 @@ import lombok.experimental.UtilityClass;
 import org.bukkit.plugin.java.JavaPlugin;
 import xyz.ollieee.Pathetic;
 import xyz.ollieee.api.pathing.Pathfinder;
+import xyz.ollieee.api.pathing.rules.PathingRuleSet;
 import xyz.ollieee.api.snapshot.MaterialParser;
 import xyz.ollieee.api.snapshot.SnapshotManager;
 import xyz.ollieee.model.pathing.PathfinderImpl;
@@ -39,8 +40,11 @@ public class PatheticMapper {
      * @throws IllegalStateException If the lib is not initialized yet
      */
     @SneakyThrows
-    public @NonNull Pathfinder newPathfinder() {
-        if (Pathetic.isInitialized()) return new PathfinderImpl();
+    public @NonNull Pathfinder newPathfinder(PathingRuleSet pathingRuleSet) {
+
+        if (Pathetic.isInitialized())
+            return new PathfinderImpl(pathingRuleSet);
+
         throw new IllegalStateException("Pathetic is not initialized");
     }
 

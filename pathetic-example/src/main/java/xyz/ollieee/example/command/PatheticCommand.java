@@ -64,9 +64,9 @@ public class PatheticCommand implements TabExecutor {
 
                         // Printing out the PathfinderSuccess which can either be FAILED or FOUND
                         player.sendMessage("PathfinderStatus: " + pathfinderResult.getPathfinderState());
-                        if (pathfinderResult.successful()) // If the pathfinding was successful and has a Path for us
-                            for (PathLocation pathLocation : pathfinderResult.getPath().getLocations()) // Interact on that Path
-                                player.sendBlockChange(BukkitMapper.toLocation(pathLocation), Material.YELLOW_STAINED_GLASS.createBlockData()); // And send weird stuff to the Player
+                        player.sendMessage("Pathlength: " + pathfinderResult.getPath().length());
+                        for (PathLocation pathLocation : pathfinderResult.getPath().getLocations()) // Interact on that Path
+                            player.sendBlockChange(BukkitMapper.toLocation(pathLocation), Material.YELLOW_STAINED_GLASS.createBlockData()); // And send weird stuff to the Player
                     });
         }
 
