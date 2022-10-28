@@ -59,7 +59,7 @@ public class PatheticCommand implements TabExecutor {
 
             // Use the positions we just checked for to search asynchronous for a Path between them
             player.sendMessage("Looking for a path...");
-            pathfinder.findPath(BukkitMapper.toPathLocation(playerSession.getPos1()), BukkitMapper.toPathLocation(playerSession.getPos1()), PathingRuleSet.builder().async(true).build())
+            pathfinder.findPath(BukkitMapper.toPathLocation(playerSession.getPos1()), BukkitMapper.toPathLocation(playerSession.getPos2()))
                     .accept(pathfinderResult -> { // Which will always return a PathfinderResult, so we accept on that
 
                         // Printing out the PathfinderSuccess which can either be FAILED or FOUND
