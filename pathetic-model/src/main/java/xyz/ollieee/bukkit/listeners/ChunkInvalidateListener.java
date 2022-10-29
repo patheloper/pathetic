@@ -69,8 +69,9 @@ public class ChunkInvalidateListener implements Listener {
     }
 
     private void handleEvent(Block... blocks) {
-        for (Block block : blocks)
-            // TODO
+        /*
+        for (Block block : blocks) {}
             snapshotManager.invalidateChunk(block.getWorld().getUID(), block.getChunk().getX(), block.getChunk().getZ());
+         */
     }
 }

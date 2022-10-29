@@ -11,7 +11,7 @@ public class DirectPathfinderStrategy implements PathfinderStrategy {
 
     @Override
     public boolean isValid(@NonNull StrategyData strategyData) {
-        return strategyData.getBlock(strategyData.getPathLocation()).isPassable();
+        return strategyData.getSnapshotManager().getBlock(strategyData.getPathLocation()).isPassable();
     }
 
 }
