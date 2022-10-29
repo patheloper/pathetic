@@ -130,7 +130,7 @@ public class PathfinderImpl implements Pathfinder {
                 Path path = retracePath(currentNode);
                 if (path.length() > maxPathLength) {
                     if(fallback) {
-                        Path fallbackPath = new PathImpl(start, target, Iterables.partition(path.getLocations(), maxPathLength).iterator().next()); // waste of mem
+                        Path fallbackPath = path.trim(maxPathLength); // waste of mem
                         return finish(new PathfinderResultImpl(PathfinderState.FALLBACK, fallbackPath));
                     } else {
                         return finish(new PathfinderResultImpl(PathfinderState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
