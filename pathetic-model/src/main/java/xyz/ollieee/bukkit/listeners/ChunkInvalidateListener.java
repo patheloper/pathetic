@@ -3,7 +3,15 @@ package xyz.ollieee.bukkit.listeners;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.*;
+import org.bukkit.event.block.BlockBurnEvent;
+import org.bukkit.event.block.BlockExplodeEvent;
+import org.bukkit.event.block.BlockFadeEvent;
+import org.bukkit.event.block.BlockFromToEvent;
+import org.bukkit.event.block.BlockGrowEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.LeavesDecayEvent;
 import xyz.ollieee.api.snapshot.SnapshotManager;
 
 public class ChunkInvalidateListener implements Listener {
@@ -61,7 +69,7 @@ public class ChunkInvalidateListener implements Listener {
 
     private void handleEvent(Block... blocks) {
         for (Block block : blocks) {
-            snapshotManager.InvalidateChunk(block.getWorld().getUID(), block.getChunk().getX(), block.getChunk().getZ());
+            snapshotManager.invalidateChunk(block.getWorld().getUID(), block.getChunk().getX(), block.getChunk().getZ());
         }
     }
 }
