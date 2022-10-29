@@ -14,7 +14,7 @@ public class PathfinderResultImpl implements PathfinderResult {
 
     @Override
     public boolean successful() {
-        return pathfinderState == PathfinderState.FOUND;
+        return pathfinderState != PathfinderState.FAILED;
     }
 
     @NonNull
