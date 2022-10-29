@@ -1,4 +1,4 @@
-package xyz.ollieee.model.world;
+package xyz.ollieee.model.snapshot.world;
 
 import org.bukkit.ChunkSnapshot;
 

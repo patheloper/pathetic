@@ -2,7 +2,6 @@ package xyz.ollieee.model.pathing;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import xyz.ollieee.Pathetic;
 import xyz.ollieee.api.event.PathingFinishedEvent;
 import xyz.ollieee.api.event.PathingStartFindEvent;
 import xyz.ollieee.api.pathing.Pathfinder;
@@ -15,6 +14,7 @@ import xyz.ollieee.api.pathing.rules.PathingRuleSet;
 import xyz.ollieee.api.pathing.strategy.PathfinderStrategy;
 import xyz.ollieee.api.pathing.strategy.StrategyData;
 import xyz.ollieee.api.pathing.strategy.strategies.DirectPathfinderStrategy;
+import xyz.ollieee.api.snapshot.SnapshotManager;
 import xyz.ollieee.api.wrapper.PathBlock;
 import xyz.ollieee.api.wrapper.PathLocation;
 import xyz.ollieee.api.wrapper.PathVector;
@@ -22,6 +22,9 @@ import xyz.ollieee.bukkit.event.EventPublisher;
 import xyz.ollieee.model.pathing.handler.PathfinderAsyncExceptionHandler;
 import xyz.ollieee.model.pathing.result.PathImpl;
 import xyz.ollieee.model.pathing.result.PathfinderResultImpl;
+import xyz.ollieee.model.snapshot.LoadingSnapshotManager;
+import xyz.ollieee.model.snapshot.SimpleSnapshotManager;
+import xyz.ollieee.model.snapshot.SnapshotHolder;
 import xyz.ollieee.util.WatchdogUtil;
 
 import java.util.ArrayList;
@@ -67,6 +70,15 @@ public class PathfinderImpl implements Pathfinder {
             new PathVector(0, -1, -1), new PathVector(-1, -1, -1), new PathVector(-1, -1, 0), new PathVector(-1, -1, 1),
     };
 
+    private static final SnapshotManager SIMPLE_SNAPSHOT_MANAGER;
+    private static final SnapshotManager LOADING_SNAPSHOT_MANAGER;
+
+    static {
+        SnapshotHolder snapshotHolder = new SnapshotHolder();
+        SIMPLE_SNAPSHOT_MANAGER = new SimpleSnapshotManager(snapshotHolder);
+        LOADING_SNAPSHOT_MANAGER = new LoadingSnapshotManager(snapshotHolder);
+    }
+
     private final PathingRuleSet ruleSet;
 
     @NonNull
@@ -75,20 +87,9 @@ public class PathfinderImpl implements Pathfinder {
         return setAndStart(start, target);
     }
 
-    private @NonNull PathfinderResult seekPath(
-            PathLocation start,
-            PathLocation target,
-            PathfinderStrategy pathfinderStrategy,
-            PathVector[] offsets,
-            ProgressMonitor progressMonitor,
-            Integer maxIterations,
-            Integer maxPathLength,
-            boolean failFast,
-            boolean alternateTarget,
-            boolean fallback,
-            boolean loadChunks) {
+    private @NonNull PathfinderResult seekPath(PathLocation start, PathLocation target, PathVector[] offsets, PathfinderStrategy strategy, ProgressMonitor progressMonitor) {
 
-        PathingStartFindEvent startEvent = new PathingStartFindEvent(start, target, pathfinderStrategy);
+        PathingStartFindEvent startEvent = new PathingStartFindEvent(start, target, ruleSet.getStrategy());
         EventPublisher.raiseEvent(startEvent);
 
         if (startEvent.isCancelled())
@@ -100,10 +101,10 @@ public class PathfinderImpl implements Pathfinder {
         if (start.isInSameBlock(target))
             return finish(new PathfinderResultImpl(PathfinderState.FOUND, new PathImpl(start, target, Collections.singleton(start))));
 
-        if(failFast && !isTargetReachable(target, offsets))
+        if (ruleSet.isAllowFailFast() && !isTargetReachable(target, offsets))
             return finish(new PathfinderResultImpl(PathfinderState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
 
-        if(alternateTarget && !isTargetReachable(target, offsets))
+        if (ruleSet.isAllowAlternateTarget() && !isTargetReachable(target, offsets))
             target = bubbleSearch(target, offsets).getPathLocation();
 
         Node startNode = new Node(start.floor(), start.floor(), target.floor(), 0);
@@ -114,22 +115,22 @@ public class PathfinderImpl implements Pathfinder {
         int depth = 1;
         Node lastEverFound = null;
 
-        while (!nodeQueue.isEmpty() && depth <= maxIterations) {
+        while (!nodeQueue.isEmpty() && depth <= ruleSet.getMaxIterations()) {
 
             if (depth % 500 == 0) WatchdogUtil.tickWatchdog();
 
             Node currentNode = nodeQueue.poll();
 
-            if(currentNode == null)
+            if (currentNode == null)
                 throw new IllegalStateException("Something just exploded");
 
             progressMonitor.update(currentNode.getLocation());
             if (currentNode.hasReachedEnd()) {
 
                 Path path = retracePath(currentNode);
-                if (path.length() > maxPathLength) {
-                    if(fallback) {
-                        Path fallbackPath = path.trim(maxPathLength); // waste of mem
+                if (path.length() > ruleSet.getMaxPathLength()) {
+                    if (ruleSet.isAllowFallback()) {
+                        Path fallbackPath = path.trim(ruleSet.getMaxPathLength()); // waste of mem
                         return finish(new PathfinderResultImpl(PathfinderState.FALLBACK, fallbackPath));
                     } else {
                         return finish(new PathfinderResultImpl(PathfinderState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
@@ -142,11 +143,11 @@ public class PathfinderImpl implements Pathfinder {
             if(lastEverFound == null || currentNode.getCost() < lastEverFound.getCost())
                 lastEverFound = currentNode;
 
-            evaluateNewNodes(nodeQueue, examinedLocations, pathfinderStrategy, currentNode, offsets, loadChunks);
+            evaluateNewNodes(nodeQueue, examinedLocations, currentNode, offsets, strategy);
             depth++;
         }
 
-        if(fallback)
+        if (ruleSet.isAllowFallback())
             return finish(new PathfinderResultImpl(PathfinderState.FALLBACK, retracePath(lastEverFound)));
 
         return finish(new PathfinderResultImpl(PathfinderState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
@@ -168,9 +169,9 @@ public class PathfinderImpl implements Pathfinder {
         return new PathImpl(node.getStart(), node.getTarget(), path);
     }
 
-    private void evaluateNewNodes(PriorityQueue<Node> nodeQueue, Set<PathLocation> examinedLocations, PathfinderStrategy strategy, Node currentNode, PathVector[] offsets, Boolean loadChunks) {
+    private void evaluateNewNodes(PriorityQueue<Node> nodeQueue, Set<PathLocation> examinedLocations, Node currentNode, PathVector[] offsets, PathfinderStrategy strategy) {
         for (Node neighbourNode : getNeighbours(currentNode, offsets))
-            if (nodeIsValid(neighbourNode, nodeQueue, examinedLocations, strategy, loadChunks))
+            if (nodeIsValid(neighbourNode, nodeQueue, examinedLocations, strategy))
                 nodeQueue.add(neighbourNode);
     }
 
@@ -188,7 +189,7 @@ public class PathfinderImpl implements Pathfinder {
         return newNodes;
     }
 
-    private boolean nodeIsValid(Node node, PriorityQueue<Node> nodeQueue, Set<PathLocation> examinedLocations, PathfinderStrategy strategy, Boolean loadChunks) {
+    private boolean nodeIsValid(Node node, PriorityQueue<Node> nodeQueue, Set<PathLocation> examinedLocations, PathfinderStrategy strategy) {
 
         if (examinedLocations.contains(node.getLocation())) {
             return false;
@@ -202,8 +203,7 @@ public class PathfinderImpl implements Pathfinder {
             return false;
         }
 
-        // TODO: Change the snapshot manager to one based on the loadChunks parameter
-        if (!strategy.isValid(new StrategyData(Pathetic.getSnapshotManager(), node.getLocation()))) {
+        if (!strategy.isValid(new StrategyData(this.getSnapshotManager(), node.getLocation()))) {
             return false;
         }
 
@@ -225,7 +225,7 @@ public class PathfinderImpl implements Pathfinder {
         for(PathVector offset : offsets) {
 
             PathLocation offsetLocation = target.clone().add(offset);
-            PathBlock pathBlock = Pathetic.getSnapshotManager().getBlock(offsetLocation);
+            PathBlock pathBlock = this.getSnapshotManager().getBlock(offsetLocation);
 
             if(pathBlock.isPassable())
                 return true;
@@ -256,7 +256,7 @@ public class PathfinderImpl implements Pathfinder {
                 for(PathVector offset : offsets) {
 
                     PathLocation offsetLocation = location.clone().add(offset);
-                    PathBlock pathBlock = Pathetic.getSnapshotManager().getBlock(offsetLocation);
+                    PathBlock pathBlock = this.getSnapshotManager().getBlock(offsetLocation);
 
                     if(pathBlock.isPassable() && !pathBlock.getPathLocation().isInSameBlock(target))
                         return pathBlock;
@@ -271,26 +271,26 @@ public class PathfinderImpl implements Pathfinder {
             newLocations = nextLocations;
         }
 
-        return Pathetic.getSnapshotManager().getBlock(target);
+        return this.getSnapshotManager().getBlock(target);
+    }
+
+    private SnapshotManager getSnapshotManager() {
+        return this.ruleSet.isLoadChunks() ? LOADING_SNAPSHOT_MANAGER : SIMPLE_SNAPSHOT_MANAGER;
     }
 
     private PathingTask setAndStart(PathLocation start, PathLocation target) {
 
-        int maxIterations = ruleSet.getMaxIterations() == 0 ? Integer.MAX_VALUE : ruleSet.getMaxIterations();
-        int maxPathLength = ruleSet.getMaxPathLength() == 0 ? Integer.MAX_VALUE : ruleSet.getMaxPathLength();
-        PathfinderStrategy strategy = ruleSet.getStrategy() == null ? DEFAULT_STRATEGY : ruleSet.getStrategy();
+        PathfinderStrategy strategy = this.ruleSet.getStrategy() == null ? DEFAULT_STRATEGY : this.ruleSet.getStrategy();
         PathVector[] offsets = ruleSet.isAllowDiagonal() ? Stream.of(OFFSETS, CORNER_OFFSETS).flatMap(Stream::of).toArray(PathVector[]::new) : OFFSETS;
-        boolean loadChunks = ruleSet.isLoadChunks();
-
         ProgressMonitor progressMonitor = new ProgressMonitor(start, target);
         CompletableFuture<PathfinderResult> future;
 
-        if (ruleSet.isAsync()) {
+        if (this.ruleSet.isAsync()) {
             future = CompletableFuture.supplyAsync(() ->
-                    seekPath(start, target, strategy, offsets, progressMonitor, maxIterations, maxPathLength, ruleSet.isAllowFailFast(), ruleSet.isAllowAlternateTarget(), ruleSet.isAllowFallback(), loadChunks), FORK_JOIN_POOL);
+                    seekPath(start, target, offsets, strategy, progressMonitor), FORK_JOIN_POOL);
         } else {
             future = CompletableFuture.completedFuture(
-                    seekPath(start, target, strategy, offsets, progressMonitor, maxIterations, maxPathLength, ruleSet.isAllowFailFast(), ruleSet.isAllowAlternateTarget(), ruleSet.isAllowFallback(), loadChunks));
+                    seekPath(start, target, offsets, strategy, progressMonitor));
         }
 
         return new PathingTask(future, progressMonitor);

@@ -4,13 +4,10 @@ import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import xyz.ollieee.api.snapshot.MaterialParser;
-import xyz.ollieee.api.snapshot.SnapshotManager;
 import xyz.ollieee.bstats.BStatsHandler;
 import xyz.ollieee.bukkit.event.PathingEventListener;
-import xyz.ollieee.bukkit.listeners.ChunkInvalidateListener;
 import xyz.ollieee.legacy.snapshot.LegacyMaterialParser;
-import xyz.ollieee.model.snapshot.ModernMaterialParser;
-import xyz.ollieee.model.snapshot.SnapshotManagerImpl;
+import xyz.ollieee.model.snapshot.world.ModernMaterialParser;
 import xyz.ollieee.nms.NMSUtils;
 import xyz.ollieee.util.BukkitVersionUtil;
 
@@ -24,7 +21,6 @@ public class Pathetic {
 
     private static NMSUtils nmsUtils;
     private static MaterialParser materialParser;
-    private static SnapshotManager snapshotManager;
 
     /**
      * @throws IllegalStateException If an attempt is made to initialize more than 1 time
@@ -41,11 +37,11 @@ public class Pathetic {
         else materialParser = new ModernMaterialParser();
 
         nmsUtils = new NMSUtils((int) BukkitVersionUtil.get());
-        snapshotManager = new SnapshotManagerImpl();
 
         BStatsHandler.init(javaPlugin);
         Bukkit.getPluginManager().registerEvents(new PathingEventListener(), javaPlugin);
-        Bukkit.getPluginManager().registerEvents(new ChunkInvalidateListener(snapshotManager), javaPlugin);
+        // TODO
+        //Bukkit.getPluginManager().registerEvents(new ChunkInvalidateListener(snapshotManager), javaPlugin);
         logger.info("PatheticAPI successfully initialized");
     }
 
@@ -63,10 +59,6 @@ public class Pathetic {
 
     public static MaterialParser getMaterialParser() {
         return materialParser;
-    }
-
-    public static SnapshotManager getSnapshotManager() {
-        return snapshotManager;
     }
 
     public static NMSUtils getNMSUtils() {

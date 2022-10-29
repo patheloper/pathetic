@@ -16,6 +16,7 @@ import xyz.ollieee.api.snapshot.SnapshotManager;
 
 public class ChunkInvalidateListener implements Listener {
 
+    // TODO
     private final SnapshotManager snapshotManager;
 
     public ChunkInvalidateListener(SnapshotManager snapshotManager) {
@@ -68,8 +69,8 @@ public class ChunkInvalidateListener implements Listener {
     }
 
     private void handleEvent(Block... blocks) {
-        for (Block block : blocks) {
+        for (Block block : blocks)
+            // TODO
             snapshotManager.invalidateChunk(block.getWorld().getUID(), block.getChunk().getX(), block.getChunk().getZ());
-        }
     }
 }
