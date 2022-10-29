@@ -1,6 +1,5 @@
 package xyz.ollieee.model.pathing;
 
-import com.google.common.collect.Iterables;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import xyz.ollieee.Pathetic;
@@ -203,7 +202,8 @@ public class PathfinderImpl implements Pathfinder {
             return false;
         }
 
-        if (!strategy.isValid(new StrategyData(Pathetic.getSnapshotManager(), node.getLocation(), loadChunks))) {
+        // TODO: Change the snapshot manager to one based on the loadChunks parameter
+        if (!strategy.isValid(new StrategyData(Pathetic.getSnapshotManager(), node.getLocation()))) {
             return false;
         }
 
