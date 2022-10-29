@@ -8,12 +8,20 @@ import xyz.ollieee.mapping.PatheticMapper;
 
 public final class PatheticPlugin extends JavaPlugin {
 
-    private Pathfinder reusablePathfinder;
-
     @Override
     public void onEnable() {
+
         PatheticMapper.initialize(this);
-        reusablePathfinder = PatheticMapper.newPathfinder(PathingRuleSet.builder().allowFallback(true).async(true).maxPathLength(50).maxIterations(2000).allowAlternateTarget(true).loadChunks(true).build());
+
+        Pathfinder reusablePathfinder = PatheticMapper.newPathfinder(PathingRuleSet.builder()
+                .allowFallback(true)
+                .async(true)
+                .maxPathLength(50)
+                .maxIterations(2000)
+                .allowAlternateTarget(true)
+                .loadChunks(true)
+                .build());
+
         getCommand("pathetic").setExecutor(new PatheticCommand(reusablePathfinder));
     }
 

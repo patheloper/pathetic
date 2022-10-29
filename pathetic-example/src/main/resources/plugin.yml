@@ -9,3 +9,6 @@ authors:
 commands:
   pathetic:
     description: What a pathetic command
+    aliases:
+      - path
+      - pathfinder
