@@ -60,8 +60,8 @@ public final class StrategyData implements SnapshotManager {
     }
 
     @Override
-    public boolean InvalidateChunk(UUID worldUUID, int chunkX, int chunkZ) {
-        return this.snapshotManager.InvalidateChunk(worldUUID, chunkX, chunkZ);
+    public boolean invalidateChunk(UUID worldUUID, int chunkX, int chunkZ) {
+        return this.snapshotManager.invalidateChunk(worldUUID, chunkX, chunkZ);
     }
 
     @Override

@@ -32,5 +32,5 @@ public interface SnapshotManager {
      * @param chunkZ    The chunks Z's coordinate
      * @return true If a snapshot was deleted, false if it wasn't
      */
-    boolean InvalidateChunk(UUID worldUUID, int chunkX, int chunkZ);
+    boolean invalidateChunk(UUID worldUUID, int chunkX, int chunkZ);
 }

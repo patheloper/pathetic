@@ -51,7 +51,7 @@ public class SnapshotManagerImpl implements SnapshotManager {
     }
 
     @Override
-    public boolean InvalidateChunk(UUID worldUUID, int chunkX, int chunkZ) {
+    public boolean invalidateChunk(UUID worldUUID, int chunkX, int chunkZ) {
         if (this.snapshots.containsKey(worldUUID)) {
             WorldDomain worldDomain = this.snapshots.get(worldUUID);
             long chunkKey = ChunkUtils.getChunkKey(chunkX, chunkZ);
