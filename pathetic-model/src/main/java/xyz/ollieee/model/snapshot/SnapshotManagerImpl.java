@@ -47,7 +47,7 @@ public class SnapshotManagerImpl implements SnapshotManager {
                 return new PathBlock(location, Pathetic.getMaterialParser().getPathBlockType(ChunkUtils.getMaterial(snapshot.get(), location.getBlockX() - chunkX * 16, location.getBlockY(), location.getBlockZ() - chunkZ * 16)));
         }
 
-        return fetchAndGetBlock(location, chunkX, chunkZ, key);
+        return loadChunks ? fetchAndGetBlock(location, chunkX, chunkZ, key) : null;
     }
 
     @Override

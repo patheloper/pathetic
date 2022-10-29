@@ -12,7 +12,7 @@ public enum PathfinderState {
     FAILED,
 
     /**
-     * The pathfinder fallbacked while finding on a different path
+     * Signifies that the pathfinder fell back during the pathfinding strategy
      */
     FALLBACK;
 
