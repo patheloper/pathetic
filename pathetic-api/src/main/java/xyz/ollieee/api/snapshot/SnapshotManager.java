@@ -16,15 +16,6 @@ public interface SnapshotManager {
     PathBlock getBlock(PathLocation location);
 
     /**
-     * Gets the block at a location
-     *
-     * @param location   the location to check
-     * @param loadChunks if chunks should be loaded
-     * @return {@link PathBlock} the block. Null if it cannot be loaded
-     */
-    PathBlock getBlock(PathLocation location, Boolean loadChunks);
-
-    /**
      * Deletes a snapshot from the cache
      *
      * @param worldUUID The world UUID
