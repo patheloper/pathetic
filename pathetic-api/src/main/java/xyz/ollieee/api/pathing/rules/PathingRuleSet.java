@@ -31,6 +31,8 @@ import xyz.ollieee.api.pathing.strategy.PathfinderStrategy;
  * failFast - Whether to fail fast or not, if the target is unreachable by the beginning.
  *
  * fallback - If pathfinding fails, it will fallback to the already found path.
+ *
+ * loadChunks - Whether to load / generate chunks
  */
 public class PathingRuleSet {
 
@@ -44,6 +46,7 @@ public class PathingRuleSet {
     boolean allowAlternateTarget;
     boolean allowFailFast;
     boolean allowFallback;
+    boolean loadChunks;
 }
 
 

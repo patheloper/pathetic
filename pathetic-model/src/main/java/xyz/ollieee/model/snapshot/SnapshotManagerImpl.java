@@ -27,10 +27,13 @@ public class SnapshotManagerImpl implements SnapshotManager {
         this.nmsInterface = Pathetic.getNMSUtils().getNmsInterface();
     }
 
-    @NonNull
     @Override
     public PathBlock getBlock(@NonNull PathLocation location) {
-        
+        return getBlock(location, true);
+    }
+
+    @Override
+    public PathBlock getBlock(PathLocation location, Boolean loadChunks) {
         int chunkX = location.getBlockX() >> 4;
         int chunkZ = location.getBlockZ() >> 4;
         long key = ChunkUtils.getChunkKey(chunkX, chunkZ);
@@ -64,6 +67,7 @@ public class SnapshotManagerImpl implements SnapshotManager {
 
         try {
             ChunkSnapshot chunkSnapshot = this.retrieveChunkSnapshot(Bukkit.getWorld(location.getPathWorld().getUuid()), chunkX, chunkZ);
+            if (chunkSnapshot == null) return null;
             addSnapshot(location, key, chunkSnapshot);
 
             PathBlockType pathBlockType = PathBlockType.fromMaterial(ChunkUtils.getMaterial(chunkSnapshot, location.getBlockX() - chunkX * 16, location.getBlockY(), location.getBlockZ() - chunkZ * 16));
