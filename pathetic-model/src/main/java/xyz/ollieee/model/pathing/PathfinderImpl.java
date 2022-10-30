@@ -22,9 +22,7 @@ import xyz.ollieee.bukkit.event.EventPublisher;
 import xyz.ollieee.model.pathing.handler.PathfinderAsyncExceptionHandler;
 import xyz.ollieee.model.pathing.result.PathImpl;
 import xyz.ollieee.model.pathing.result.PathfinderResultImpl;
-import xyz.ollieee.model.snapshot.LoadingSnapshotManager;
-import xyz.ollieee.model.snapshot.SimpleSnapshotManager;
-import xyz.ollieee.model.snapshot.SnapshotHolder;
+import xyz.ollieee.model.snapshot.FailingSnapshotManager;
 import xyz.ollieee.util.WatchdogUtil;
 
 import java.util.ArrayList;
@@ -70,14 +68,8 @@ public class PathfinderImpl implements Pathfinder {
             new PathVector(0, -1, -1), new PathVector(-1, -1, -1), new PathVector(-1, -1, 0), new PathVector(-1, -1, 1),
     };
 
-    private static final SnapshotManager SIMPLE_SNAPSHOT_MANAGER;
-    private static final SnapshotManager LOADING_SNAPSHOT_MANAGER;
-
-    static {
-        SnapshotHolder snapshotHolder = new SnapshotHolder();
-        SIMPLE_SNAPSHOT_MANAGER = new SimpleSnapshotManager(snapshotHolder);
-        LOADING_SNAPSHOT_MANAGER = new LoadingSnapshotManager(snapshotHolder);
-    }
+    private static final SnapshotManager SIMPLE_SNAPSHOT_MANAGER = new FailingSnapshotManager();
+    private static final SnapshotManager LOADING_SNAPSHOT_MANAGER = new FailingSnapshotManager.NeverLoseSnapshotManager();
 
     private final PathingRuleSet ruleSet;
 

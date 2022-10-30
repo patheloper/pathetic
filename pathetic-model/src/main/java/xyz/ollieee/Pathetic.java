@@ -16,11 +16,21 @@ import java.util.logging.Logger;
 @UtilityClass
 public class Pathetic {
 
+    private static final NMSUtils nmsUtils;
+    private static final MaterialParser materialParser;
+
     private static JavaPlugin instance;
     private static Logger logger;
 
-    private static NMSUtils nmsUtils;
-    private static MaterialParser materialParser;
+    static {
+
+        nmsUtils = new NMSUtils((int) BukkitVersionUtil.get());
+
+        if (BukkitVersionUtil.isUnder(13))
+            materialParser = new LegacyMaterialParser();
+        else
+            materialParser = new ModernMaterialParser();
+    }
 
     /**
      * @throws IllegalStateException If an attempt is made to initialize more than 1 time
@@ -32,11 +42,6 @@ public class Pathetic {
 
         instance = javaPlugin;
         logger = javaPlugin.getLogger();
-
-        if (BukkitVersionUtil.isUnder(13)) materialParser = new LegacyMaterialParser();
-        else materialParser = new ModernMaterialParser();
-
-        nmsUtils = new NMSUtils((int) BukkitVersionUtil.get());
 
         BStatsHandler.init(javaPlugin);
         Bukkit.getPluginManager().registerEvents(new PathingEventListener(), javaPlugin);
