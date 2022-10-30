@@ -110,8 +110,8 @@ public class FailingSnapshotManager implements SnapshotManager {
 
         @Override
         public PathBlock getBlock(@NonNull PathLocation location) {
-            Optional<PathBlock> block = FailingSnapshotManager.fetchBlock(location);
-            return block.orElseGet(() -> FailingSnapshotManager.neverLose(location));
+            PathBlock block = super.getBlock(location);
+            return block == null ? neverLose(location) : block;
         }
     }
 
