@@ -1,4 +1,4 @@
-# Path-eticAPI
+# Pathetic
 
 A simple and intuitive 1.8-1.19 A* pathfinding API for Spigot & Paper plugins 
 
@@ -47,7 +47,7 @@ public class PathExample extends JavaPlugin {
     
     private void goFindSomePath() {
 
-        Pathfinder pathfinder = PatheticMapper.newPathfinder();
+        Pathfinder pathfinder = PatheticMapper.newPathfinder(PathingRuleSet.builder().build());
         pathfinder.findPath(startLocation, endLocation).accept(pathfinderResult ->
                 pathfinderResult.getPath().getLocations().forEach(location ->
                         player.sendBlockChange(location, Material.YELLOW_STAINED_GLASS.createBlockData())));
