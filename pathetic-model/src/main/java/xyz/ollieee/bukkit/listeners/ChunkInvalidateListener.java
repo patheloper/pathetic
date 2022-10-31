@@ -3,6 +3,7 @@ package xyz.ollieee.bukkit.listeners;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockFadeEvent;
@@ -60,6 +61,11 @@ public class ChunkInvalidateListener implements Listener {
 
     @EventHandler
     public void onPlace(BlockPlaceEvent event) {
+        handleEvent(event.getBlock());
+    }
+
+    @EventHandler
+    public void onBreak(BlockBreakEvent event) {
         handleEvent(event.getBlock());
     }
 
