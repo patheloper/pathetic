@@ -22,6 +22,21 @@ public class FailingSnapshotManager implements SnapshotManager {
 
     private static final Map<UUID, WorldDomain> snapshots = new HashMap<>();
 
+    public static boolean invalidateChunk(UUID worldUUID, int chunkX, int chunkZ) {
+
+        if (snapshots.containsKey(worldUUID)) {
+
+            WorldDomain worldDomain = snapshots.get(worldUUID);
+            long chunkKey = ChunkUtils.getChunkKey(chunkX, chunkZ);
+
+            if (worldDomain.containsSnapshot(chunkKey)) {
+                worldDomain.removeSnapshot(chunkKey);
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static synchronized Optional<PathBlock> fetchBlock(PathLocation location) {
 
         int chunkX = location.getBlockX() >> 4;

@@ -13,16 +13,9 @@ import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
-import xyz.ollieee.api.snapshot.SnapshotManager;
+import xyz.ollieee.model.snapshot.FailingSnapshotManager;
 
 public class ChunkInvalidateListener implements Listener {
-
-    // TODO
-    private final SnapshotManager snapshotManager;
-
-    public ChunkInvalidateListener(SnapshotManager snapshotManager) {
-        this.snapshotManager = snapshotManager;
-    }
 
     @EventHandler
     public void onBurn(BlockBurnEvent event) {
@@ -75,9 +68,7 @@ public class ChunkInvalidateListener implements Listener {
     }
 
     private void handleEvent(Block... blocks) {
-        /*
-        for (Block block : blocks) {}
-            snapshotManager.invalidateChunk(block.getWorld().getUID(), block.getChunk().getX(), block.getChunk().getZ());
-         */
+        for (Block block : blocks)
+            FailingSnapshotManager.invalidateChunk(block.getWorld().getUID(), block.getChunk().getX(), block.getChunk().getZ());
     }
 }

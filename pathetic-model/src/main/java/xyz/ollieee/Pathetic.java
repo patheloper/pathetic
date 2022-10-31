@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import xyz.ollieee.bstats.BStatsHandler;
 import xyz.ollieee.bukkit.event.PathingEventListener;
+import xyz.ollieee.bukkit.listeners.ChunkInvalidateListener;
 import xyz.ollieee.nms.NMSUtils;
 import xyz.ollieee.util.BukkitVersionUtil;
 
@@ -34,9 +35,10 @@ public class Pathetic {
         logger = javaPlugin.getLogger();
 
         BStatsHandler.init(javaPlugin);
+
         Bukkit.getPluginManager().registerEvents(new PathingEventListener(), javaPlugin);
-        // TODO
-        //Bukkit.getPluginManager().registerEvents(new ChunkInvalidateListener(snapshotManager), javaPlugin);
+        Bukkit.getPluginManager().registerEvents(new ChunkInvalidateListener(), javaPlugin);
+
         logger.info("PatheticAPI successfully initialized");
     }
 
