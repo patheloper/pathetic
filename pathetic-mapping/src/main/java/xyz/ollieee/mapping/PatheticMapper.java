@@ -7,7 +7,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import xyz.ollieee.Pathetic;
 import xyz.ollieee.api.pathing.Pathfinder;
 import xyz.ollieee.api.pathing.rules.PathingRuleSet;
-import xyz.ollieee.api.snapshot.MaterialParser;
 import xyz.ollieee.model.pathing.PathfinderImpl;
 
 @UtilityClass
@@ -22,10 +21,6 @@ public class PatheticMapper {
     @SneakyThrows
     public void initialize(JavaPlugin javaPlugin) {
         Pathetic.initialize(javaPlugin);
-    }
-
-    public MaterialParser getMaterialParser() {
-        return Pathetic.getMaterialParser();
     }
 
     /**

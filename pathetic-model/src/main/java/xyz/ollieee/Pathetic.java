@@ -3,11 +3,8 @@ package xyz.ollieee;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-import xyz.ollieee.api.snapshot.MaterialParser;
 import xyz.ollieee.bstats.BStatsHandler;
 import xyz.ollieee.bukkit.event.PathingEventListener;
-import xyz.ollieee.legacy.snapshot.LegacyMaterialParser;
-import xyz.ollieee.model.snapshot.world.ModernMaterialParser;
 import xyz.ollieee.nms.NMSUtils;
 import xyz.ollieee.util.BukkitVersionUtil;
 
@@ -17,19 +14,12 @@ import java.util.logging.Logger;
 public class Pathetic {
 
     private static final NMSUtils nmsUtils;
-    private static final MaterialParser materialParser;
 
     private static JavaPlugin instance;
     private static Logger logger;
 
     static {
-
         nmsUtils = new NMSUtils((int) BukkitVersionUtil.get());
-
-        if (BukkitVersionUtil.isUnder(13))
-            materialParser = new LegacyMaterialParser();
-        else
-            materialParser = new ModernMaterialParser();
     }
 
     /**
@@ -60,10 +50,6 @@ public class Pathetic {
 
     public static Logger getPluginLogger() {
         return logger;
-    }
-
-    public static MaterialParser getMaterialParser() {
-        return materialParser;
     }
 
     public static NMSUtils getNMSUtils() {
