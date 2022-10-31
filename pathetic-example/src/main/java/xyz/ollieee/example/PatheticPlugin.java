@@ -16,7 +16,6 @@ public final class PatheticPlugin extends JavaPlugin {
         Pathfinder reusablePathfinder = PatheticMapper.newPathfinder(PathingRuleSet.builder()
                 .allowFallback(true)
                 .async(true)
-                .maxPathLength(50)
                 .maxIterations(2000)
                 .allowAlternateTarget(true)
                 .loadChunks(true)

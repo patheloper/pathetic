@@ -1,10 +1,13 @@
 package xyz.ollieee.api.pathing.rules;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import xyz.ollieee.api.pathing.strategy.PathfinderStrategy;
+import xyz.ollieee.api.pathing.strategy.strategies.DirectPathfinderStrategy;
 
 /**
  * A set of rules that are used while pathfinding.
@@ -33,14 +36,17 @@ import xyz.ollieee.api.pathing.strategy.PathfinderStrategy;
 @Builder
 @Value
 @Getter
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class PathingRuleSet {
 
     public static final PathingRuleSet DEFAULT_RULE_SET = PathingRuleSet.builder().build();
 
-    PathfinderStrategy strategy;
+    private static final PathfinderStrategy DEFAULT_STRATEGY = new DirectPathfinderStrategy();
+
+    @Builder.Default @NonNull
+    PathfinderStrategy strategy = DEFAULT_STRATEGY;
     @Builder.Default
-    int maxIterations = Integer.MAX_VALUE;
+    int maxIterations = 5000;
     boolean async;
     boolean allowDiagonal;
     boolean allowAlternateTarget;

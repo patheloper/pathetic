@@ -48,8 +48,6 @@ public class PathfinderImpl implements Pathfinder {
                     new PathfinderAsyncExceptionHandler(),
                     true);
 
-    private static final PathfinderStrategy DEFAULT_STRATEGY = new DirectPathfinderStrategy();
-
     private static final Set<PathLocation> EMPTY_LINKED_HASHSET = Collections.unmodifiableSet(new LinkedHashSet<>());
 
     private static final PathVector[] OFFSETS = {
@@ -80,9 +78,9 @@ public class PathfinderImpl implements Pathfinder {
         return setAndStart(start, target);
     }
 
-    private @NonNull PathfinderResult seekPath(PathLocation start, PathLocation target, PathVector[] offsets, PathfinderStrategy strategy, ProgressMonitor progressMonitor) {
+    private @NonNull PathfinderResult seekPath(PathLocation start, PathLocation target, PathVector[] offsets, ProgressMonitor progressMonitor) {
 
-        PathingStartFindEvent startEvent = new PathingStartFindEvent(start, target, strategy);
+        PathingStartFindEvent startEvent = new PathingStartFindEvent(start, target, ruleSet.getStrategy());
         EventPublisher.raiseEvent(startEvent);
 
         if (startEvent.isCancelled())
@@ -129,7 +127,7 @@ public class PathfinderImpl implements Pathfinder {
             if(currentNode.getCost() < lastEverFound.getCost())
                 lastEverFound = currentNode;
 
-            evaluateNewNodes(nodeQueue, examinedLocations, currentNode, offsets, strategy);
+            evaluateNewNodes(nodeQueue, examinedLocations, currentNode, offsets, ruleSet.getStrategy());
             depth++;
         }
 
@@ -266,17 +264,16 @@ public class PathfinderImpl implements Pathfinder {
 
     private PathingTask setAndStart(PathLocation start, PathLocation target) {
 
-        PathfinderStrategy strategy = this.ruleSet.getStrategy() == null ? DEFAULT_STRATEGY : this.ruleSet.getStrategy();
         PathVector[] offsets = ruleSet.isAllowDiagonal() ? Stream.of(OFFSETS, CORNER_OFFSETS).flatMap(Stream::of).toArray(PathVector[]::new) : OFFSETS;
         ProgressMonitor progressMonitor = new ProgressMonitor(start, target);
         CompletableFuture<PathfinderResult> future;
 
         if (this.ruleSet.isAsync()) {
             future = CompletableFuture.supplyAsync(() ->
-                    seekPath(start, target, offsets, strategy, progressMonitor), FORK_JOIN_POOL);
+                    seekPath(start, target, offsets, progressMonitor), FORK_JOIN_POOL);
         } else {
             future = CompletableFuture.completedFuture(
-                    seekPath(start, target, offsets, strategy, progressMonitor));
+                    seekPath(start, target, offsets, progressMonitor));
         }
 
         return new PathingTask(future, progressMonitor);
