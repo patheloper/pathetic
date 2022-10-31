@@ -41,8 +41,6 @@ public class PathingRuleSet {
     PathfinderStrategy strategy;
     @Builder.Default
     int maxIterations = Integer.MAX_VALUE;
-    @Builder.Default
-    int maxPathLength = Integer.MAX_VALUE;
     boolean async;
     boolean allowDiagonal;
     boolean allowAlternateTarget;

@@ -2,6 +2,7 @@ package xyz.ollieee.model.pathing;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import xyz.ollieee.Pathetic;
 import xyz.ollieee.api.event.PathingFinishedEvent;
 import xyz.ollieee.api.event.PathingStartFindEvent;
 import xyz.ollieee.api.pathing.Pathfinder;
@@ -81,7 +82,7 @@ public class PathfinderImpl implements Pathfinder {
 
     private @NonNull PathfinderResult seekPath(PathLocation start, PathLocation target, PathVector[] offsets, PathfinderStrategy strategy, ProgressMonitor progressMonitor) {
 
-        PathingStartFindEvent startEvent = new PathingStartFindEvent(start, target, ruleSet.getStrategy());
+        PathingStartFindEvent startEvent = new PathingStartFindEvent(start, target, strategy);
         EventPublisher.raiseEvent(startEvent);
 
         if (startEvent.isCancelled())
@@ -112,34 +113,27 @@ public class PathfinderImpl implements Pathfinder {
             if (depth % 500 == 0) WatchdogUtil.tickWatchdog();
 
             Node currentNode = nodeQueue.poll();
+            if(lastEverFound == null)
+                lastEverFound = currentNode;
 
             if (currentNode == null)
                 throw new IllegalStateException("Something just exploded");
 
             progressMonitor.update(currentNode.getLocation());
+
             if (currentNode.hasReachedEnd()) {
-
                 Path path = retracePath(currentNode);
-                if (path.length() > ruleSet.getMaxPathLength()) {
-                    if (ruleSet.isAllowFallback()) {
-                        Path fallbackPath = path.trim(ruleSet.getMaxPathLength()); // waste of mem
-                        return finish(new PathfinderResultImpl(PathfinderState.FALLBACK, fallbackPath));
-                    } else {
-                        return finish(new PathfinderResultImpl(PathfinderState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
-                    }
-                }
-
                 return finish(new PathfinderResultImpl(PathfinderState.FOUND, path));
             }
 
-            if(lastEverFound == null || currentNode.getCost() < lastEverFound.getCost())
+            if(currentNode.getCost() < lastEverFound.getCost())
                 lastEverFound = currentNode;
 
             evaluateNewNodes(nodeQueue, examinedLocations, currentNode, offsets, strategy);
             depth++;
         }
 
-        if (ruleSet.isAllowFallback())
+        if (ruleSet.isAllowFallback() && lastEverFound != null)
             return finish(new PathfinderResultImpl(PathfinderState.FALLBACK, retracePath(lastEverFound)));
 
         return finish(new PathfinderResultImpl(PathfinderState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
