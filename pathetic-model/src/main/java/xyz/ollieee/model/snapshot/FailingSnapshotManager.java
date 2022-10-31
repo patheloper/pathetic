@@ -59,7 +59,7 @@ public class FailingSnapshotManager implements SnapshotManager {
         return Optional.empty();
     }
 
-    private static synchronized PathBlock neverLose(PathLocation pathLocation) {
+    private static synchronized PathBlock ensureBlock(PathLocation pathLocation) {
 
         int chunkX = pathLocation.getBlockX() >> 4;
         int chunkZ = pathLocation.getBlockZ() >> 4;
@@ -72,21 +72,6 @@ public class FailingSnapshotManager implements SnapshotManager {
                         pathLocation.getBlockZ() - chunkZ * 16));
 
         return new PathBlock(pathLocation, pathBlockType);
-    }
-
-    private static synchronized boolean removeSnapshot(UUID world, int chunkX, int chunkZ) {
-
-        if (snapshots.containsKey(world)) {
-
-            WorldDomain worldDomain = snapshots.get(world);
-            long chunkKey = ChunkUtils.getChunkKey(chunkX, chunkZ);
-
-            if (worldDomain.containsSnapshot(chunkKey)) {
-                worldDomain.removeSnapshot(chunkKey);
-                return true;
-            }
-        }
-        return false;
     }
 
     private static ChunkSnapshot retrieveSnapshot(PathLocation location) {
@@ -126,7 +111,7 @@ public class FailingSnapshotManager implements SnapshotManager {
         @Override
         public PathBlock getBlock(@NonNull PathLocation location) {
             PathBlock block = super.getBlock(location);
-            return block == null ? neverLose(location) : block;
+            return block == null ? ensureBlock(location) : block;
         }
     }
 
