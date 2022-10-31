@@ -59,7 +59,9 @@ public class PatheticCommand implements TabExecutor {
                 PathLocation start = BukkitMapper.toPathLocation(playerSession.getPos1());
                 PathLocation target = BukkitMapper.toPathLocation(playerSession.getPos2());
 
+                player.sendMessage("Starting pathfinding...");
                 PathingTask pathingTask = pathfinder.findPath(start, target);
+
                 pathingTask.accept(result -> {
 
                     player.sendMessage("State: " + result.getPathfinderState().name());
@@ -83,7 +85,7 @@ public class PatheticCommand implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        return Arrays.asList("pos1", "pos2", "search");
+        return Arrays.asList("pos1", "pos2", "start");
     }
 
     private static class PlayerSession {
