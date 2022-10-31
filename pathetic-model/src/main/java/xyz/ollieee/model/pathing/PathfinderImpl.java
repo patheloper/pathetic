@@ -2,7 +2,6 @@ package xyz.ollieee.model.pathing;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import xyz.ollieee.Pathetic;
 import xyz.ollieee.api.event.PathingFinishedEvent;
 import xyz.ollieee.api.event.PathingStartFindEvent;
 import xyz.ollieee.api.pathing.Pathfinder;
@@ -14,7 +13,6 @@ import xyz.ollieee.api.pathing.result.task.PathingTask;
 import xyz.ollieee.api.pathing.rules.PathingRuleSet;
 import xyz.ollieee.api.pathing.strategy.PathfinderStrategy;
 import xyz.ollieee.api.pathing.strategy.StrategyData;
-import xyz.ollieee.api.pathing.strategy.strategies.DirectPathfinderStrategy;
 import xyz.ollieee.api.snapshot.SnapshotManager;
 import xyz.ollieee.api.wrapper.PathBlock;
 import xyz.ollieee.api.wrapper.PathLocation;
@@ -68,7 +66,7 @@ public class PathfinderImpl implements Pathfinder {
     };
 
     private static final SnapshotManager SIMPLE_SNAPSHOT_MANAGER = new FailingSnapshotManager();
-    private static final SnapshotManager LOADING_SNAPSHOT_MANAGER = new FailingSnapshotManager.NeverLoseSnapshotManager();
+    private static final SnapshotManager LOADING_SNAPSHOT_MANAGER = new FailingSnapshotManager.RequestingSnapshotManager();
 
     private final PathingRuleSet ruleSet;
 

@@ -106,7 +106,7 @@ public class FailingSnapshotManager implements SnapshotManager {
         return block.orElse(null);
     }
 
-    public static class NeverLoseSnapshotManager extends FailingSnapshotManager {
+    public static class RequestingSnapshotManager extends FailingSnapshotManager {
 
         @Override
         public PathBlock getBlock(@NonNull PathLocation location) {
