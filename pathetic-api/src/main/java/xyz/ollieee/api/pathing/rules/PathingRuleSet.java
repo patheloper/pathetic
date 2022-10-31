@@ -3,7 +3,6 @@ package xyz.ollieee.api.pathing.rules;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import xyz.ollieee.api.pathing.strategy.PathfinderStrategy;
@@ -43,7 +42,7 @@ public class PathingRuleSet {
 
     private static final PathfinderStrategy DEFAULT_STRATEGY = new DirectPathfinderStrategy();
 
-    @Builder.Default @NonNull
+    @Builder.Default
     PathfinderStrategy strategy = DEFAULT_STRATEGY;
     @Builder.Default
     int maxIterations = 5000;

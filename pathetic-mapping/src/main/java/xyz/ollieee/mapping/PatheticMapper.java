@@ -26,6 +26,7 @@ public class PatheticMapper {
     /**
      * Instantiates a new pathfinder object.
      *
+     * @param pathingRuleSet - The {@link PathingRuleSet}
      * @return The {@link Pathfinder} object
      * @throws IllegalStateException If the lib is not initialized yet
      */
@@ -36,6 +37,17 @@ public class PatheticMapper {
             return new PathfinderImpl(pathingRuleSet);
 
         throw new IllegalStateException("Pathetic is not initialized");
+    }
+
+    /**
+     * Instantiates a new pathfinder object.
+     *
+     * @return The {@link Pathfinder} object
+     * @throws IllegalStateException If the lib is not initialized yet
+     */
+    @SneakyThrows
+    public @NonNull Pathfinder newPathfinder() {
+        return newPathfinder(PathingRuleSet.DEFAULT_RULE_SET);
     }
 
 }
