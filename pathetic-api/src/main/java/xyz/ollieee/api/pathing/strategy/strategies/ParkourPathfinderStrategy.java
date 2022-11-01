@@ -13,8 +13,9 @@ public class ParkourPathfinderStrategy implements PathfinderStrategy {
 
         PathBlock pathBlock = snapshotManager.getBlock(pathLocation);
 
-        return pathBlock.isPassable()
+        return snapshotManager.getBlock(pathLocation.add(0, -1, 0)).isSolid() &&
+                pathBlock.isPassable()
                 && snapshotManager.getBlock(pathLocation.clone().add(0, 1, 0)).isPassable()
-                && snapshotManager.getBlock(pathLocation.clone().add(0, 2, 0)).isPassable();
+                && snapshotManager.getBlock(pathLocation.clone().add(0, 2, 0)).isPassable(); // More or less optional, but for parkour definitely needed
     }
 }
