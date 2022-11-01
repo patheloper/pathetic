@@ -5,7 +5,6 @@ import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import xyz.ollieee.api.snapshot.MaterialParser;
-import xyz.ollieee.api.wrapper.PathBlockType;
 
 public class LegacyMaterialParser implements MaterialParser {
 
