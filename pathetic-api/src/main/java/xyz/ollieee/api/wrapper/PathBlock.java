@@ -29,6 +29,10 @@ public final class PathBlock {
         return this.pathBlockType == PathBlockType.AIR || this.pathBlockType == PathBlockType.OTHER;
     }
 
+    public boolean isSolid() {
+        return this.pathBlockType == PathBlockType.SOLID;
+    }
+
     /**
      * Gets the X coordinate of the block
      *
