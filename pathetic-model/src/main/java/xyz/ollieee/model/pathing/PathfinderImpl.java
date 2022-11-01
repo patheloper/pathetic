@@ -197,6 +197,9 @@ public class PathfinderImpl implements Pathfinder {
     }
 
     private PathfinderResult finish(PathfinderResult pathfinderResult) {
+
+        ruleSet.getStrategy().cleanup();
+
         EventPublisher.raiseEvent(new PathingFinishedEvent(pathfinderResult));
         return pathfinderResult;
     }

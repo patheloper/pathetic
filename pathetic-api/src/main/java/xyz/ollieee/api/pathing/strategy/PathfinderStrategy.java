@@ -18,4 +18,5 @@ public interface PathfinderStrategy {
      */
     boolean isValid(@NonNull PathLocation location, @NonNull SnapshotManager snapshotManager);
 
+    default void cleanup() {}
 }
