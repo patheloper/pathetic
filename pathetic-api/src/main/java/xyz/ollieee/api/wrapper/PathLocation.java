@@ -87,26 +87,21 @@ public class PathLocation implements Cloneable {
      * @param x The value to add to the x
      * @param y The value to add to the y
      * @param z The value to add to the z
-     * @return The same mutated {@link PathLocation}
+     * @return A new {@link PathLocation}
      */
     @NonNull
     public PathLocation add(final double x, final double y, final double z) {
-
-        this.x += x;
-        this.y += y;
-        this.z += z;
-        return this;
+        return new PathLocation(this.pathWorld, this.x + x, this.y + y, this.z + z);
     }
 
     /**
      * Adds the values of a vector to the location
      * @param vector The {@link PathVector} who's values will be added
-     * @return The same mutated {@link PathLocation}
+     * @return A new {@link PathLocation}
      */
     @NonNull
     public PathLocation add(final PathVector vector) {
-        add(vector.getX(), vector.getY(), vector.getZ());
-        return this;
+        return add(vector.getX(), vector.getY(), vector.getZ());
     }
 
     /**
@@ -114,26 +109,21 @@ public class PathLocation implements Cloneable {
      * @param x The value to subtract from the x
      * @param y The value to subtract from the y
      * @param z The value to subtract from the z
-     * @return The same mutated {@link PathLocation}
+     * @return A new {@link PathLocation}
      */
     @NonNull
     public PathLocation subtract(final double x, final double y, final double z) {
-
-        this.x -= x;
-        this.y -= y;
-        this.z -= z;
-        return this;
+        return new PathLocation(this.pathWorld, this.x - x, this.y - y, this.z - z);
     }
 
     /**
      * Subtracts the values of a vector from the location
      * @param vector The {@link PathVector} who's values will be subtracted
-     * @return The same mutated {@link PathLocation}
+     * @return A new {@link PathLocation}
      */
     @NonNull
     public PathLocation subtract(final PathVector vector) {
-        subtract(vector.getX(), vector.getY(), vector.getZ());
-        return this;
+        return subtract(vector.getX(), vector.getY(), vector.getZ());
     }
 
     /**
@@ -159,27 +149,18 @@ public class PathLocation implements Cloneable {
     /**
      * Rounds the x,y,z values to the floor of the values
      *
-     * @return The mutated {@link PathLocation}
+     * @return A new {@link PathLocation}
      */
     public PathLocation floor() {
-
-        this.x = this.getBlockX();
-        this.y = this.getBlockY();
-        this.z = this.getBlockZ();
-
-        return this;
+        return new PathLocation(this.pathWorld, this.getBlockX(), this.getBlockY(), this.getBlockZ());
     }
     
     /**
      * Sets the coordinates to the middle of the block
-     * @return The mutated {@link PathLocation}
+     * @return A new {@link PathLocation}
      */
     public PathLocation mid() {
-    
-        this.x = this.getBlockX() + 0.5;
-        this.z = this.getBlockZ() + 0.5;
-    
-        return this;
+        return new PathLocation(this.pathWorld, this.getBlockX() + 0.5, this.getBlockY() + 0.5, this.getBlockZ() + 0.5);
     }
 
     /**
@@ -284,32 +265,29 @@ public class PathLocation implements Cloneable {
      * Sets the X coordinate of the {@link PathLocation}
      *
      * @param x The new X coordinate
-     * @return The same {@link PathLocation}, mutated
+     * @return A new {@link PathLocation}
      */
     public PathLocation setX(double x) {
-        this.x = x;
-        return this;
+        return new PathLocation(this.pathWorld, x, this.y, this.z);
     }
 
     /**
      * Sets the Y coordinate of the {@link PathLocation}
      *
      * @param y The new Y coordinate
-     * @return The same {@link PathLocation}, mutated
+     * @return A new {@link PathLocation}
      */
     public PathLocation setY(double y) {
-        this.y = y;
-        return this;
+        return new PathLocation(this.pathWorld, this.x, y, this.z);
     }
 
     /**
      * Sets the Z coordinate of the {@link PathLocation}
      *
      * @param z The new Z coordinate
-     * @return The same {@link PathLocation}, mutated
+     * @return A new {@link PathLocation}
      */
     public PathLocation setZ(double z) {
-        this.z = z;
-        return this;
+        return new PathLocation(this.pathWorld, this.x, this.y, z);
     }
 }
