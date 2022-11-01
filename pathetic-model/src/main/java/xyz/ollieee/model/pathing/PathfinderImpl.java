@@ -117,13 +117,13 @@ public class PathfinderImpl implements Pathfinder {
 
             progressMonitor.update(currentNode.getLocation());
 
+            if(currentNode.heuristic() < lastEverFound.heuristic())
+                lastEverFound = currentNode;
+
             if (currentNode.hasReachedEnd()) {
-                Path path = retracePath(currentNode);
+                Path path = retracePath(lastEverFound);
                 return finish(new PathfinderResultImpl(PathfinderState.FOUND, path));
             }
-
-            if(currentNode.getCost() < lastEverFound.getCost())
-                lastEverFound = currentNode;
 
             evaluateNewNodes(nodeQueue, examinedLocations, currentNode, offsets, ruleSet.getStrategy());
             depth++;

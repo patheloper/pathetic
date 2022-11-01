@@ -34,10 +34,6 @@ public class Node implements Comparable<Node> {
         return this.depth;
     }
 
-    public double getCost() {
-        return this.location.distance(this.target);
-    }
-
     public PathLocation getStart() {
         return this.start;
     }
@@ -54,7 +50,7 @@ public class Node implements Comparable<Node> {
         return this.location.getBlockX() == target.getBlockX() && this.location.getBlockY() == target.getBlockY() && this.location.getBlockZ() == target.getBlockZ();
     }
 
-    private double getDistanceKey() {
+    public double heuristic() {
 
         PathVector a = this.location.toVector();
         PathVector b = this.start.toVector();
@@ -80,6 +76,6 @@ public class Node implements Comparable<Node> {
 
     @Override
     public int compareTo(Node o) {
-        return (int) Math.signum(this.getDistanceKey() - o.getDistanceKey());
+        return (int) Math.signum(this.heuristic() - o.heuristic());
     }
 }
