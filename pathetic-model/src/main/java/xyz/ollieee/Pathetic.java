@@ -6,22 +6,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 import xyz.ollieee.bstats.BStatsHandler;
 import xyz.ollieee.bukkit.event.PathingEventListener;
 import xyz.ollieee.bukkit.listeners.ChunkInvalidateListener;
-import xyz.ollieee.nms.NMSUtils;
-import xyz.ollieee.util.BukkitVersionUtil;
 
 import java.util.logging.Logger;
 
 @UtilityClass
 public class Pathetic {
 
-    private static final NMSUtils nmsUtils;
-
     private static JavaPlugin instance;
     private static Logger logger;
-
-    static {
-        nmsUtils = new NMSUtils((int) BukkitVersionUtil.get());
-    }
 
     /**
      * @throws IllegalStateException If an attempt is made to initialize more than 1 time
@@ -52,9 +44,5 @@ public class Pathetic {
 
     public static Logger getPluginLogger() {
         return logger;
-    }
-
-    public static NMSUtils getNMSUtils() {
-        return nmsUtils;
     }
 }
