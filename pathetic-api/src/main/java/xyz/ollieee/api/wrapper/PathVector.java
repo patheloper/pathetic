@@ -10,9 +10,7 @@ public class PathVector implements Cloneable {
     private double z;
 
     public PathVector() {
-        this.x = 0;
-        this.y = 0;
-        this.z = 0;
+        this(0, 0, 0);
     }
 
     public PathVector(double x, double y, double z) {
@@ -24,27 +22,21 @@ public class PathVector implements Cloneable {
     /**
      * Subtracts one vector from another
      * @param otherVector {@link PathVector} to vector to subtract from the current Vector
-     * @return The same {@link PathVector}
+     * @return A new {@link PathVector}
      */
     @NonNull
     public PathVector subtract(PathVector otherVector) {
-        this.x -= otherVector.x;
-        this.y -= otherVector.y;
-        this.z -= otherVector.z;
-        return this;
+        return new PathVector(this.x - otherVector.x, this.y - otherVector.y, this.z - otherVector.z);
     }
 
     /**
      * Multiplies itself by a scalar constant
      * @param value The constant to multiply by
-     * @return The same {@link PathVector}
+     * @return A new {@link PathVector}
      */
     @NonNull
     public PathVector multiply(double value) {
-        this.x *= value;
-        this.y *= value;
-        this.z *= value;
-        return this;
+        return new PathVector(this.x * value, this.y * value, this.z * value);
     }
 
     @Override
@@ -64,15 +56,12 @@ public class PathVector implements Cloneable {
 
     /**
      * Normalises the {@link PathVector} (Divides the components by its magnitude)
-     * @return The same {@link PathVector}
+     * @return A new {@link PathVector}
      */
     @NonNull
     public PathVector normalize() {
-        double length = this.length();
-        this.x /= length;
-        this.y /= length;
-        this.z /= length;
-        return this;
+        double magnitude = this.length();
+        return new PathVector(this.x / magnitude, this.y / magnitude, this.z / magnitude);
     }
 
     private double square(double value) {
@@ -101,13 +90,10 @@ public class PathVector implements Cloneable {
     /**
      * Divide the vector by a scalar constant
      * @param value The constant to divide by
-     * @return The same {@link PathVector}
+     * @return A new {@link PathVector}
      */
     public PathVector divide(double value) {
-        this.x /= value;
-        this.y /= value;
-        this.z /= value;
-        return this;
+        return new PathVector(this.x / value, this.y / value, this.z / value);
     }
 
     /**
@@ -122,13 +108,10 @@ public class PathVector implements Cloneable {
     /**
      * Adds two vectors together
      * @param otherVector The other vector
-     * @return The same {@link PathVector}
+     * @return A new {@link PathVector}
      */
     public PathVector add(PathVector otherVector) {
-        this.x += otherVector.x;
-        this.y += otherVector.y;
-        this.z += otherVector.z;
-        return this;
+        return new PathVector(this.x + otherVector.x, this.y + otherVector.y, this.z + otherVector.z);
     }
 
     /**
@@ -203,32 +186,29 @@ public class PathVector implements Cloneable {
      * Sets the x component of the vector
      *
      * @param x The x component
-     * @return The same {@link PathVector}, mutated
+     * @return A new {@link PathVector}
      */
     public PathVector setX(double x) {
-        this.x = x;
-        return this;
+        return new PathVector(x, this.y, this.z);
     }
 
     /**
      * Sets the y component of the vector
      *
      * @param y The y component
-     * @return The same {@link PathVector}, mutated
+     * @return A new {@link PathVector}
      */
     public PathVector setY(double y) {
-        this.y = y;
-        return this;
+        return new PathVector(this.x, y, this.z);
     }
 
     /**
      * Sets the z component of the vector
      *
      * @param z The z component
-     * @return The same {@link PathVector}, mutated
+     * @return A new {@link PathVector}
      */
     public PathVector setZ(double z) {
-        this.z = z;
-        return this;
+        return new PathVector(this.x, this.y, z);
     }
 }
