@@ -50,21 +50,4 @@ public class ModernMaterialParser implements MaterialParser {
         return material.isAir();
     }
 
-    @Override
-    public PathBlockType getPathBlockType(@NonNull Material material) {
-
-        if (isAir(material))
-            return PathBlockType.AIR;
-
-        switch (material) {
-            case WATER:
-            case LAVA:
-                return PathBlockType.LIQUID;
-            case GRASS:
-            case TALL_GRASS:
-                return PathBlockType.OTHER;
-            default:
-                return PathBlockType.SOLID;
-        }
-    }
 }

@@ -61,12 +61,4 @@ public interface MaterialParser {
      * @return True = Air, False = Not Air
      */
     boolean isAir(@NonNull Material material);
-
-    /**
-     * Returns the {@link PathBlockType} of a material
-     *
-     * @param material The {@link Material} to check
-     * @return The {@link PathBlockType} of the material
-     */
-    PathBlockType getPathBlockType(@NonNull Material material);
 }

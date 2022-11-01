@@ -44,23 +44,4 @@ public class LegacyMaterialParser implements MaterialParser {
         return material == Material.AIR;
     }
 
-    @Override
-    public PathBlockType getPathBlockType(@NonNull Material material) {
-
-        if (isAir(material)) {
-            return PathBlockType.AIR;
-        }
-
-        switch (material) {
-            case LAVA:
-            case WATER:
-                return PathBlockType.LIQUID;
-            case LONG_GRASS:
-            case DOUBLE_PLANT:
-                return PathBlockType.OTHER;
-            default:
-                return PathBlockType.SOLID;
-        }
-    }
-
 }
