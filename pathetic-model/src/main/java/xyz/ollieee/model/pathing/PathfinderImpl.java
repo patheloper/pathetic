@@ -12,7 +12,6 @@ import xyz.ollieee.api.pathing.result.progress.ProgressMonitor;
 import xyz.ollieee.api.pathing.result.task.PathingTask;
 import xyz.ollieee.api.pathing.rules.PathingRuleSet;
 import xyz.ollieee.api.pathing.strategy.PathfinderStrategy;
-import xyz.ollieee.api.pathing.strategy.StrategyData;
 import xyz.ollieee.api.snapshot.SnapshotManager;
 import xyz.ollieee.api.wrapper.PathBlock;
 import xyz.ollieee.api.wrapper.PathLocation;
@@ -185,7 +184,7 @@ public class PathfinderImpl implements Pathfinder {
             return false;
         }
 
-        if (!strategy.isValid(new StrategyData(this.getSnapshotManager(), node.getLocation()))) {
+        if (!strategy.isValid(this.getSnapshotManager(), node.getLocation())) {
             return false;
         }
 

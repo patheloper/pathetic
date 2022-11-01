@@ -1,6 +1,8 @@
 package xyz.ollieee.api.pathing.strategy;
 
 import lombok.NonNull;
+import xyz.ollieee.api.snapshot.SnapshotManager;
+import xyz.ollieee.api.wrapper.PathLocation;
 
 /**
  * A functional interface to modify the internal behaviour and choosing of the {@link xyz.ollieee.api.pathing.Pathfinder}
@@ -11,8 +13,8 @@ public interface PathfinderStrategy {
     /**
      * Implement the logic to see if a given location is valid for a strategy
      *
-     * @param essentials The {@link StrategyData} to access the needed essentials for a strategy
+     * @param location The {@link PathLocation} to check
      */
-    boolean isValid(@NonNull StrategyData essentials);
+    boolean isValid(@NonNull SnapshotManager snapshotManager, @NonNull PathLocation pathLocation);
 
 }
