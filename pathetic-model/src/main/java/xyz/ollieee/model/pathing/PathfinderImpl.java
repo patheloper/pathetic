@@ -184,7 +184,7 @@ public class PathfinderImpl implements Pathfinder {
             return false;
         }
 
-        if (!strategy.isValid(this.getSnapshotManager(), node.getLocation())) {
+        if (!strategy.isValid(node.getLocation(), this.getSnapshotManager())) {
             return false;
         }
 

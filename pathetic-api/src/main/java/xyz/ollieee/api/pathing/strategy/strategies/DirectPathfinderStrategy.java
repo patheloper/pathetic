@@ -11,8 +11,8 @@ import xyz.ollieee.api.wrapper.PathLocation;
 public class DirectPathfinderStrategy implements PathfinderStrategy {
 
     @Override
-    public boolean isValid(@NonNull SnapshotManager snapshotManager, @NonNull PathLocation pathLocation) {
-        return snapshotManager.getBlock(pathLocation).isPassable();
+    public boolean isValid(@NonNull PathLocation location, @NonNull SnapshotManager snapshotManager) {
+        return snapshotManager.getBlock(location).isPassable();
     }
 
 }

@@ -14,7 +14,8 @@ public interface PathfinderStrategy {
      * Implement the logic to see if a given location is valid for a strategy
      *
      * @param location The {@link PathLocation} to check
+     * @param snapshotManager The current {@link SnapshotManager} for getting blocks
      */
-    boolean isValid(@NonNull SnapshotManager snapshotManager, @NonNull PathLocation pathLocation);
+    boolean isValid(@NonNull PathLocation location, @NonNull SnapshotManager snapshotManager);
 
 }
