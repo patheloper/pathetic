@@ -231,21 +231,21 @@ public class PathfinderImpl implements Pathfinder {
 
         newLocations.add(target);
 
-        while(!newLocations.isEmpty()) {
+        while (!newLocations.isEmpty()) {
 
             Set<PathLocation> nextLocations = new HashSet<>();
 
-            for(PathLocation location : newLocations) {
+            for (PathLocation location : newLocations) {
 
-                for(PathVector offset : offsets) {
+                for (PathVector offset : offsets) {
 
                     PathLocation offsetLocation = location.clone().add(offset);
                     PathBlock pathBlock = this.getSnapshotManager().getBlock(offsetLocation);
 
-                    if(pathBlock.isPassable() && !pathBlock.getPathLocation().isInSameBlock(target))
+                    if (pathBlock.isPassable() && !pathBlock.getPathLocation().isInSameBlock(target))
                         return pathBlock;
 
-                    if(!examinedLocations.contains(offsetLocation))
+                    if (!examinedLocations.contains(offsetLocation))
                         nextLocations.add(offsetLocation);
                 }
 

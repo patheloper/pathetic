@@ -47,7 +47,7 @@ public class PathExample extends JavaPlugin {
     
     private void goFindSomePath() {
 
-        Pathfinder pathfinder = PatheticMapper.newPathfinder(PathingRuleSet.builder().build());
+        Pathfinder pathfinder = PatheticMapper.newPathfinder();
         pathfinder.findPath(startLocation, endLocation).accept(pathfinderResult ->
                 pathfinderResult.getPath().getLocations().forEach(location ->
                         player.sendBlockChange(location, Material.YELLOW_STAINED_GLASS.createBlockData())));
