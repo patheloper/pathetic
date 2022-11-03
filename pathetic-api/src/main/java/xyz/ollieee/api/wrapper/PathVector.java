@@ -1,6 +1,7 @@
 package xyz.ollieee.api.wrapper;
 
 import lombok.NonNull;
+import xyz.ollieee.api.util.NumberUtils;
 
 public class PathVector implements Cloneable {
 
@@ -64,17 +65,13 @@ public class PathVector implements Cloneable {
         return new PathVector(this.x / magnitude, this.y / magnitude, this.z / magnitude);
     }
 
-    private double square(double value) {
-        return value * value;
-    }
-
     /**
      * Gets the length of the {@link PathVector}
      *
      * @return The length
      */
     public double length() {
-        return Math.sqrt(this.square(this.x) + this.square(this.y) + this.square(this.z));
+        return Math.sqrt(NumberUtils.square(this.x) + NumberUtils.square(this.y) + NumberUtils.square(this.z));
     }
 
     /**
@@ -84,7 +81,7 @@ public class PathVector implements Cloneable {
      * @return The distance
      */
     public double distance(PathVector otherVector) {
-        return Math.sqrt(this.square(this.x - otherVector.x) + this.square(this.y - otherVector.y) + this.square(this.z - otherVector.z));
+        return Math.sqrt(NumberUtils.square(this.x - otherVector.x) + NumberUtils.square(this.y - otherVector.y) + NumberUtils.square(this.z - otherVector.z));
     }
 
     /**

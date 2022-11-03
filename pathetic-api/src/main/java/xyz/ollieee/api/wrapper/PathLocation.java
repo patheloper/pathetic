@@ -1,6 +1,7 @@
 package xyz.ollieee.api.wrapper;
 
 import lombok.NonNull;
+import xyz.ollieee.api.util.NumberUtils;
 
 import java.util.Objects;
 
@@ -71,7 +72,7 @@ public class PathLocation implements Cloneable {
      * @return The distance squared
      */
     public double distanceSquared(PathLocation otherLocation) {
-        return this.square(this.x - otherLocation.x) + this.square(this.y - otherLocation.y) + this.square(this.z - otherLocation.z);
+        return NumberUtils.square(this.x - otherLocation.x) + NumberUtils.square(this.y - otherLocation.y) + NumberUtils.square(this.z - otherLocation.z);
     }
 
     /**
@@ -198,10 +199,6 @@ public class PathLocation implements Cloneable {
         double sqrt = Double.longBitsToDouble(((Double.doubleToLongBits(input) - (1L << 52)) >> 1) + (1L << 61));
         double better = (sqrt + input / sqrt) / 2.0;
         return (better + input / better) / 2.0;
-    }
-
-    private double square(double value) {
-        return value * value;
     }
 
     /**
