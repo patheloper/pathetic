@@ -11,9 +11,10 @@ public class WalkablePathfinderStrategy implements PathfinderStrategy {
     public boolean isValid(PathLocation location, SnapshotManager snapshotManager) {
 
         PathBlock block = snapshotManager.getBlock(location);
-        boolean canStand = snapshotManager.getBlock(location.add(0, -1, 0)).isSolid();
+        PathBlock blockAbove = snapshotManager.getBlock(location.add(0, 1, 0));
+        PathBlock blockBelow = snapshotManager.getBlock(location.add(0, -1, 0));
 
-        return block.isPassable() && snapshotManager.getBlock(location.add(0, 1, 0)).isPassable() && canStand;
+        return block.isPassable() && blockAbove.isPassable() && blockBelow.isSolid();
     }
 
 }

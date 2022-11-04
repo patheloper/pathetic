@@ -7,6 +7,12 @@ import xyz.ollieee.api.wrapper.PathLocation;
 public interface Path {
 
     /**
+     * The length of the Path compiled from the number of locations
+     * @return the length of the path
+     */
+    int length();
+
+    /**
      * Interpolates the points of this Path using a spline algorithm
      *
      * @param nthBlock   Will use every nth block of the path as a control point
@@ -31,10 +37,13 @@ public interface Path {
     Path trim(int length);
 
     /**
-     * The length of the Path compiled from the number of locations
-     * @return the length of the path
+     * Mutates each of the locations in the path with the given consumer
+     *
+     * @param mutator the {@link ParameterizedSupplier} to mutate the locations with
+     * @return {@link Path} the new Path
      */
-    int length();
+    @NonNull
+    Path mutateLocations(ParameterizedSupplier<PathLocation> mutator);
 
     /**
      * Returns the start location of the path
@@ -55,13 +64,4 @@ public interface Path {
      */
     @NonNull
     Iterable<PathLocation> getLocations();
-
-    /**
-     * Mutates each of the locations in the path with the given consumer
-     *
-     * @param mutator the {@link ParameterizedSupplier} to mutate the locations with
-     * @return {@link Path} the new Path
-     */
-    @NonNull
-    Path mutateLocations(ParameterizedSupplier<PathLocation> mutator);
 }

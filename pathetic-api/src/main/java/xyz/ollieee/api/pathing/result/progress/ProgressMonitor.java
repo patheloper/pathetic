@@ -3,23 +3,23 @@ package xyz.ollieee.api.pathing.result.progress;
 import xyz.ollieee.api.wrapper.PathLocation;
 
 /**
- * A Class used to estimate how long a pathing task will take to complete.
+ * A Class used to estimate how long a pathing task will take to complete and how far it is.
  */
 public class ProgressMonitor {
 
-    private final ProgressLocations progressLocations;
+    private final Progress progress;
 
     public ProgressMonitor(PathLocation start, PathLocation target) {
-        this.progressLocations = new ProgressLocations(start, target, start);
+        this.progress = new Progress(start, target, start);
     }
 
     /**
      * Sets the current block the pathing task is at.
      *
-     * @param location The current {@link PathLocation} the pathing task is at.
+     * @param current The current {@link PathLocation} the pathing task is at.
      */
-    public void update(PathLocation location) {
-        progressLocations.setCurrent(location);
+    public void update(PathLocation current) {
+        progress.update(current);
     }
 
     /**
@@ -28,17 +28,21 @@ public class ProgressMonitor {
      * @return The estimated percentage of completion
      */
     public double estimateProgress() {
-        double length = this.progressLocations.getStart().distance(this.progressLocations.getTarget());
-        double current = this.progressLocations.getCurrent().distance(this.progressLocations.getTarget());
-        return (current / length) * 100;
+
+        double length = this.progress.getStart().distance(this.progress.getTarget());
+        double current = this.progress.getCurrent().distance(this.progress.getTarget());
+
+        return current / length * 100;
     }
 
-    static class ProgressLocations {
-        private PathLocation start;
-        private PathLocation target;
+    static class Progress {
+
+        private final PathLocation start;
+        private final PathLocation target;
         private PathLocation current;
 
-        public ProgressLocations(PathLocation start, PathLocation target, PathLocation current) {
+        public Progress(PathLocation start, PathLocation target, PathLocation current) {
+
             this.start = start;
             this.target = target;
             this.current = current;
@@ -56,15 +60,7 @@ public class ProgressMonitor {
             return this.current;
         }
 
-        public void setStart(PathLocation start) {
-            this.start = start;
-        }
-
-        public void setTarget(PathLocation target) {
-            this.target = target;
-        }
-
-        public void setCurrent(PathLocation current) {
+        public void update(PathLocation current) {
             this.current = current;
         }
     }

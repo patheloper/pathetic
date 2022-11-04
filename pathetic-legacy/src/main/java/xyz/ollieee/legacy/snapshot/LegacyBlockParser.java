@@ -4,14 +4,9 @@ import lombok.NonNull;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import xyz.ollieee.api.snapshot.MaterialParser;
+import xyz.ollieee.api.snapshot.BlockParser;
 
-public class LegacyMaterialParser implements MaterialParser {
-
-    @Override
-    public @NonNull Material getMaterial(@NonNull ChunkSnapshot snapshot, int x, int y, int z) {
-        return Material.getMaterial(snapshot.getBlockTypeId(x,y,z));
-    }
+public class LegacyBlockParser implements BlockParser {
 
     @Override
     public boolean isAir(@NonNull Block block) {
@@ -34,13 +29,8 @@ public class LegacyMaterialParser implements MaterialParser {
     }
 
     @Override
-    public boolean isSolid(@NonNull Material material) {
-        return material.isSolid();
-    }
-
-    @Override
-    public boolean isAir(@NonNull Material material) {
-        return material == Material.AIR;
+    public @NonNull Material getBlockMaterialAt(@NonNull ChunkSnapshot snapshot, int x, int y, int z) {
+        return Material.getMaterial(snapshot.getBlockTypeId(x,y,z));
     }
 
 }

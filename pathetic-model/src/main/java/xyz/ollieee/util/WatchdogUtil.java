@@ -7,8 +7,8 @@ import java.lang.reflect.Method;
 @UtilityClass
 public class WatchdogUtil {
 
-    private Class<?> watchdogClazz;
-    private Method tickMethod;
+    private Class<?> watchdogClazz = null;
+    private Method tickMethod = null;
 
     static {
         try {

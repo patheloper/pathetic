@@ -25,7 +25,21 @@ public class Node implements Comparable<Node> {
     public void setParent(Node parent) {
         this.parent = parent;
     }
-    
+
+    public boolean hasReachedEnd() {
+        return this.location.getBlockX() == target.getBlockX() && this.location.getBlockY() == target.getBlockY() && this.location.getBlockZ() == target.getBlockZ();
+    }
+
+    public double heuristic() {
+
+        PathVector a = this.location.toVector();
+        PathVector b = this.start.toVector();
+        PathVector c = this.target.toVector();
+        double v = a.subtract(b).getCrossProduct(c.subtract(b)).length() / c.subtract(b).length();
+
+        return this.location.octileDistance(target) * (v*0.00002) + 0.01*this.target.distance(this.location);
+    }
+
     public Node getParent() {
         return this.parent;
     }
@@ -44,20 +58,6 @@ public class Node implements Comparable<Node> {
 
     public PathLocation getLocation() {
         return this.location;
-    }
-
-    public boolean hasReachedEnd() {
-        return this.location.getBlockX() == target.getBlockX() && this.location.getBlockY() == target.getBlockY() && this.location.getBlockZ() == target.getBlockZ();
-    }
-
-    public double heuristic() {
-
-        PathVector a = this.location.toVector();
-        PathVector b = this.start.toVector();
-        PathVector c = this.target.toVector();
-        double v = a.subtract(b).getCrossProduct(c.subtract(b)).length() / c.subtract(b).length();
-
-        return this.location.octileDistance(target) * (v*0.00002) + 0.01*this.target.distance(this.location);
     }
 
     @Override

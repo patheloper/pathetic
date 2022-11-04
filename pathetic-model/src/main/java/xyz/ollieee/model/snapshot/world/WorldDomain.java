@@ -8,13 +8,9 @@ import java.util.Optional;
 
 public class WorldDomain {
 
-    private final Map<Long, ChunkSnapshot> snapshotMap;
+    private final Map<Long, ChunkSnapshot> snapshotMap = new HashMap<>();
 
-    public WorldDomain() {
-        this.snapshotMap = new HashMap<>();
-    }
-
-    public Optional<ChunkSnapshot> getSnapshot(final long key) {
+    public Optional<ChunkSnapshot> getSnapshot(long key) {
         return Optional.ofNullable(this.snapshotMap.getOrDefault(key, null));
     }
 

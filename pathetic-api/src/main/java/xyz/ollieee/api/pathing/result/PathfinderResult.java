@@ -5,15 +5,6 @@ import lombok.NonNull;
 public interface PathfinderResult {
 
     /**
-     * Returns the found {@link Path} regardless if successful or not.
-     * The path is empty if the pathfinding failed.
-     *
-     * @return The found {@link Path}
-     */
-    @NonNull
-    Path getPath();
-
-    /**
      * Returns whether the pathfinding was successful.
      *
      * @return true if the pathfinding was successful
@@ -23,8 +14,17 @@ public interface PathfinderResult {
     /**
      * Returns the state of the pathfinding.
      *
-     * @return The {@link PathfinderState}
+     * @return The {@link PathState}
      */
     @NonNull
-    PathfinderState getPathfinderState();
+    PathState getPathState();
+
+    /**
+     * Returns the found {@link Path} regardless if successful or not.
+     * The path is empty if the pathfinding failed.
+     *
+     * @return The found {@link Path}
+     */
+    @NonNull
+    Path getPath();
 }

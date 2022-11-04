@@ -3,28 +3,31 @@ package xyz.ollieee.util;
 import lombok.experimental.UtilityClass;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
-import xyz.ollieee.api.snapshot.MaterialParser;
-import xyz.ollieee.legacy.snapshot.LegacyMaterialParser;
-import xyz.ollieee.model.snapshot.world.ModernMaterialParser;
+import xyz.ollieee.api.snapshot.BlockParser;
+import xyz.ollieee.legacy.snapshot.LegacyBlockParser;
+import xyz.ollieee.model.snapshot.world.ModernBlockParser;
 
 @UtilityClass
 public class ChunkUtils {
 
-    private final MaterialParser materialParser;
+    private final BlockParser BLOCK_PARSER;
 
     static {
         if (BukkitVersionUtil.isUnder(13))
-            materialParser = new LegacyMaterialParser();
+            BLOCK_PARSER = new LegacyBlockParser();
         else
-            materialParser = new ModernMaterialParser();
+            BLOCK_PARSER = new ModernBlockParser();
     }
 
     public long getChunkKey(final int x, final int z) {
         return x & 0xFFFFFFFFL | (z & 0xFFFFFFFFL) << 32;
     }
 
-    public Material getMaterial(ChunkSnapshot chunkSnapshot, int x, int y, int z) {
-        return materialParser.getMaterial(chunkSnapshot, x, y, z);
+    /**
+     * Get the block type from a chunk snapshot at the given coordinates
+     */
+    public Material getMaterial(ChunkSnapshot snapshot, int x, int y, int z) {
+        return BLOCK_PARSER.getBlockMaterialAt(snapshot, x, y, z);
     }
 
 }

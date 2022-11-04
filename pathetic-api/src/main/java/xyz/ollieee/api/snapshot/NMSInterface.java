@@ -3,6 +3,9 @@ package xyz.ollieee.api.snapshot;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.World;
 
+/**
+ * This is for internal purpose only and is used to receive a ChunkSnapshot version-independent.
+ */
 public interface NMSInterface {
 
     /**

@@ -10,24 +10,24 @@ import xyz.ollieee.api.pathing.strategy.strategies.DirectPathfinderStrategy;
 
 /**
  * A set of rules that are used while pathfinding.
- * <p>
+ *
  * strategy - The strategy to use while pathfinding.
- * <p>
+ *
  * maxIterations - The maximum amount of iterations to do while pathfinding.
- * <p>
+ *
  * async - Whether to run the pathfinding async or not.
- * <p>
+ *
  * allowDiagonal - Whether to allow diagonal movement or not.
- * <p>
+ *
  * alternateTarget - Whether to allow the pathfinder to end at a different block than the target if the target is unreachable.
  * NOTE: In most cases fallback is the better option since this can be in the worst case a very expensive radical operation
  * in addition to the regular pathfinding with only the goal to find an alternate target
  * no matter where or in what relation to anything.
- * <p>
+ *
  * failFast - Whether to fail fast or not, if the target is unreachable by the beginning.
- * <p>
+ *
  * fallback - If pathfinding fails, it will fallback to the already found path.
- * <p>
+ *
  * loadChunks - Whether to load / generate chunks
  */
 @Builder
@@ -36,14 +36,14 @@ import xyz.ollieee.api.pathing.strategy.strategies.DirectPathfinderStrategy;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class PathingRuleSet {
 
-    public static final PathingRuleSet DEFAULT_RULE_SET = PathingRuleSet.builder().build();
+    public static final PathingRuleSet DEFAULT_RULE_SET = builder().build();
 
     private static final PathfinderStrategy DEFAULT_STRATEGY = new DirectPathfinderStrategy();
 
     @Builder.Default
     PathfinderStrategy strategy = DEFAULT_STRATEGY;
     @Builder.Default
-    int maxIterations = 5000;
+    int maxIterations = 5000; // to avoid freewheeling
     boolean async;
     boolean allowDiagonal;
     boolean allowAlternateTarget;

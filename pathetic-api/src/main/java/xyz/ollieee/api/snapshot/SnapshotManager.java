@@ -6,10 +6,10 @@ import xyz.ollieee.api.wrapper.PathLocation;
 public interface SnapshotManager {
 
     /**
-     * Gets the block at a location
+     * Gets the block at the given location
      *
-     * @param location the location to check
-     * @return {@link PathBlock} the block. Null if it cannot be loaded
+     * @param location the location to get as block-form
+     * @return {@link PathBlock} the block.
      */
     PathBlock getBlock(PathLocation location);
 }

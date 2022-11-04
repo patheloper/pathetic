@@ -11,12 +11,21 @@ import java.util.function.Consumer;
  */
 public class PathingTask {
 
-    private final ProgressMonitor progressMonitor;
     private final CompletableFuture<PathfinderResult> result;
+    private final ProgressMonitor progressMonitor;
 
     public PathingTask(CompletableFuture<PathfinderResult> result, ProgressMonitor progressMonitor) {
-        this.progressMonitor = progressMonitor;
         this.result = result;
+        this.progressMonitor = progressMonitor;
+    }
+
+    /**
+     * Adds a callback to be called when the task is completed
+     *
+     * @param callback the callback to be called
+     */
+    public void accept(Consumer<PathfinderResult> callback) {
+        this.result.thenAccept(callback);
     }
 
     /**
@@ -36,15 +45,6 @@ public class PathingTask {
      */
     public PathfinderResult getResult() {
         return this.result.join();
-    }
-
-    /**
-     * Adds a callback to be called when the task is completed
-     *
-     * @param callback the callback to be called
-     */
-    public void accept(Consumer<PathfinderResult> callback) {
-        this.result.thenAccept(callback);
     }
 
     /**

@@ -18,5 +18,11 @@ public interface PathfinderStrategy {
      */
     boolean isValid(@NonNull PathLocation location, @NonNull SnapshotManager snapshotManager);
 
+    /**
+     * Called when the {@link xyz.ollieee.api.pathing.Pathfinder} is done with pathfinding.
+     *
+     * This is useful for resetting variables that are used in the {@link #isValid(PathLocation, SnapshotManager)} method
+     * since the {@link xyz.ollieee.api.pathing.Pathfinder} will reuse the same instance of the strategy.
+     */
     default void cleanup() {}
 }

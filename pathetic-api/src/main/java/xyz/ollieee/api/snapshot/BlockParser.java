@@ -4,20 +4,8 @@ import lombok.NonNull;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import xyz.ollieee.api.wrapper.PathBlockType;
 
-public interface MaterialParser {
-
-    /**
-     * Gets the material at a block in a snapshot
-     * @param snapshot The {@link ChunkSnapshot} go get a value from
-     * @param x The x to check
-     * @param y The y to check
-     * @param z The z to check
-     * @return The {@link Material} at that position
-     */
-    @NonNull
-    Material getMaterial(@NonNull ChunkSnapshot snapshot, int x, int y, int z);
+public interface BlockParser {
 
     /**
      * Checks the block for being air
@@ -48,17 +36,13 @@ public interface MaterialParser {
     boolean isSolid(@NonNull Block block);
 
     /**
-     * Returns whether a material is solid
-     * @param material The {@link Material} to check
-     * @return True = solid, False = Not solid
+     * Gets the material from a block in the given snapshot
+     * @param snapshot The {@link ChunkSnapshot} go get the block from
+     * @param x The x to check
+     * @param y The y to check
+     * @param z The z to check
+     * @return The blocks {@link Material} at that position
      */
-    boolean isSolid(@NonNull Material material);
-
-    /**
-     * Returns whether a material is air
-     *
-     * @param material The {@link Material} to check
-     * @return True = Air, False = Not Air
-     */
-    boolean isAir(@NonNull Material material);
+    @NonNull
+    Material getBlockMaterialAt(@NonNull ChunkSnapshot snapshot, int x, int y, int z);
 }

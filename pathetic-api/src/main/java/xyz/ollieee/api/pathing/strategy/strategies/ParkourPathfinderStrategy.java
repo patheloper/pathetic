@@ -14,26 +14,15 @@ public class ParkourPathfinderStrategy implements PathfinderStrategy {
     public boolean isValid(@NonNull PathLocation location, @NonNull SnapshotManager snapshotManager) {
 
         PathBlock block = snapshotManager.getBlock(location);
-        boolean canStand = snapshotManager.getBlock(location.add(0, -1, 0)).isSolid();
 
-        if (block.isPassable()
-                && snapshotManager.getBlock(location.add(0, 1, 0)).isPassable()
-                && canStand) {
-            lastStandable = location;
+        if(canTwoBlockHighEntityStandOnIt(block, snapshotManager)) {
+            this.lastStandable = location;
             return true;
         }
 
-        if (lastStandable != null && lastStandable.distance(location) <= 3) {
-
-            PathLocation jumpLocation = location.add(0, 1, 0);
-
-            if(jumpLocation.getY() - lastStandable.getY() > 2)
-                return false;
-
-            PathBlock jumpBlock = snapshotManager.getBlock(jumpLocation);
-            PathBlock jumpBlockAbove = snapshotManager.getBlock(jumpLocation.add(0, 1, 0));
-
-            return jumpBlock.isPassable() && jumpBlockAbove.isPassable();
+        if (identifiesAsJump(block)) {
+            PathBlock blockAbove = snapshotManager.getBlock(location.add(0, 1, 0));
+            return block.isPassable() && blockAbove.isPassable();
         }
 
         return false;
@@ -42,5 +31,20 @@ public class ParkourPathfinderStrategy implements PathfinderStrategy {
     @Override
     public void cleanup() {
         lastStandable = null;
+    }
+
+    private boolean canTwoBlockHighEntityStandOnIt(PathBlock block, SnapshotManager snapshotManager) {
+
+        PathLocation location = block.getPathLocation();
+
+        PathBlock blockAbove = snapshotManager.getBlock(location.add(0, 1, 0));
+        PathBlock blockBelow = snapshotManager.getBlock(location.add(0, -1, 0));
+
+        return block.isPassable() && blockAbove.isPassable() && blockBelow.isSolid();
+    }
+
+    private boolean identifiesAsJump(PathBlock block) {
+        PathLocation location = block.getPathLocation();
+        return lastStandable != null && lastStandable.distance(location) <= 3 && location.getY() - lastStandable.getY() > 2;
     }
 }

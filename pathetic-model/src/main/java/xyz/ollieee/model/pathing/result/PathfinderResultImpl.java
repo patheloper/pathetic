@@ -4,23 +4,23 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import xyz.ollieee.api.pathing.result.Path;
 import xyz.ollieee.api.pathing.result.PathfinderResult;
-import xyz.ollieee.api.pathing.result.PathfinderState;
+import xyz.ollieee.api.pathing.result.PathState;
 
 @AllArgsConstructor
 public class PathfinderResultImpl implements PathfinderResult {
     
-    private final PathfinderState pathfinderState;
+    private final PathState pathState;
     private final Path path;
 
     @Override
     public boolean successful() {
-        return pathfinderState != PathfinderState.FAILED;
+        return pathState != PathState.FAILED;
     }
 
     @Override
     @NonNull
-    public PathfinderState getPathfinderState() {
-        return this.pathfinderState;
+    public PathState getPathState() {
+        return this.pathState;
     }
 
     @NonNull

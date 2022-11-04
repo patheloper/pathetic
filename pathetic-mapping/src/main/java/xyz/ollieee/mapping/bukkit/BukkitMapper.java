@@ -7,7 +7,11 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
-import xyz.ollieee.api.wrapper.*;
+import xyz.ollieee.api.wrapper.PathBlock;
+import xyz.ollieee.api.wrapper.PathBlockType;
+import xyz.ollieee.api.wrapper.PathLocation;
+import xyz.ollieee.api.wrapper.PathVector;
+import xyz.ollieee.api.wrapper.PathWorld;
 
 import java.util.Arrays;
 

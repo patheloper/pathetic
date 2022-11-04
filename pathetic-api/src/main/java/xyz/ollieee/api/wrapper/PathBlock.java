@@ -18,7 +18,7 @@ public final class PathBlock {
     /**
      * @return Whether the block is air
      */
-    public boolean isEmpty() {
+    public boolean isAir() {
         return this.pathBlockType == PathBlockType.AIR;
     }
 
@@ -26,7 +26,7 @@ public final class PathBlock {
      * @return Whether the block is possible to walk through
      */
     public boolean isPassable() {
-        return this.pathBlockType == PathBlockType.AIR || this.pathBlockType == PathBlockType.OTHER;
+        return isAir() || this.pathBlockType == PathBlockType.OTHER;
     }
 
     public boolean isSolid() {

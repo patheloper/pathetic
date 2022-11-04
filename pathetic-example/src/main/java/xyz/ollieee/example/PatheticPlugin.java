@@ -25,9 +25,4 @@ public final class PatheticPlugin extends JavaPlugin {
 
         getCommand("pathetic").setExecutor(new PatheticCommand(reusablePathfinder));
     }
-
-    @Override
-    public void onDisable() {
-
-    }
 }

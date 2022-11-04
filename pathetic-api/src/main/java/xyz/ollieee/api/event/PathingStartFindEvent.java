@@ -7,22 +7,24 @@ import xyz.ollieee.api.wrapper.PathLocation;
 
 /**
  * An event called when a Pathfinder starts pathing.
- * Set it as cancelled to stop the pathfinding attempt
  */
 public class PathingStartFindEvent extends PathingEvent implements Cancellable {
 
-    private boolean cancelled = false;
-    private final PathLocation start;
-    private final PathLocation target;
     @NonNull
     private final PathfinderStrategy pathfinderStrategy;
+    private final PathLocation start;
+    private final PathLocation target;
+
+    private boolean cancelled = false;
 
     public PathingStartFindEvent(PathLocation start, PathLocation target, @NonNull PathfinderStrategy pathfinderStrategy) {
+
         this.start = start;
         this.target = target;
         this.pathfinderStrategy = pathfinderStrategy;
     }
 
+    @Override
     public boolean isCancelled() {
         return this.cancelled;
     }
@@ -39,6 +41,7 @@ public class PathingStartFindEvent extends PathingEvent implements Cancellable {
         return this.pathfinderStrategy;
     }
 
+    @Override
     public void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
     }

@@ -6,27 +6,27 @@ import org.bukkit.Bukkit;
 @UtilityClass
 public class BukkitVersionUtil {
 
-    private final double current;
+    private final double CURRENT_VERSION;
 
     static {
         String version = Bukkit.getBukkitVersion().split("-")[0];
-        current = Double.parseDouble(version.split("\\.")[1]);
+        CURRENT_VERSION = Double.parseDouble(version.split("\\.")[1]);
     }
     
     public double get() {
-        return current;
+        return CURRENT_VERSION;
     }
 
     public boolean isUnder(double version) {
-        return current < version;
+        return CURRENT_VERSION < version;
     }
 
     public boolean isOver(double version) {
-        return current > version;
+        return CURRENT_VERSION > version;
     }
 
     public boolean isEquals(double version) {
-        return current == version;
+        return CURRENT_VERSION == version;
     }
 
 }

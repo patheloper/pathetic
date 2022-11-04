@@ -19,7 +19,7 @@ import java.util.Arrays;
 
 public class PatheticCommand implements TabExecutor {
 
-    private static final Map<UUID, PlayerSession> sessionMap = new HashMap<>();
+    private static final Map<UUID, PlayerSession> SESSION_MAP = new HashMap<>();
 
     private final Pathfinder pathfinder;
 
@@ -37,7 +37,7 @@ public class PatheticCommand implements TabExecutor {
             return false;
 
         Player player = (Player) sender;
-        PlayerSession playerSession = sessionMap.computeIfAbsent(player.getUniqueId(),
+        PlayerSession playerSession = SESSION_MAP.computeIfAbsent(player.getUniqueId(),
                 k -> new PlayerSession());
 
         switch (args[0]) {
@@ -68,7 +68,7 @@ public class PatheticCommand implements TabExecutor {
 
                 pathingTask.accept(result -> {
 
-                    player.sendMessage("State: " + result.getPathfinderState().name());
+                    player.sendMessage("State: " + result.getPathState().name());
                     player.sendMessage("Path length: " + result.getPath().length());
 
                     if(result.successful()) {
