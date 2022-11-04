@@ -14,10 +14,10 @@ public class ParkourPathfinderStrategy implements PathfinderStrategy {
     public boolean isValid(@NonNull PathLocation location, @NonNull SnapshotManager snapshotManager) {
 
         PathBlock block = snapshotManager.getBlock(location);
-        boolean canStand = snapshotManager.getBlock(location.clone().add(0, -1, 0)).isSolid();
+        boolean canStand = snapshotManager.getBlock(location.add(0, -1, 0)).isSolid();
 
         if (block.isPassable()
-                && snapshotManager.getBlock(location.clone().add(0, 1, 0)).isPassable()
+                && snapshotManager.getBlock(location.add(0, 1, 0)).isPassable()
                 && canStand) {
             lastStandable = location;
             return true;
@@ -25,7 +25,7 @@ public class ParkourPathfinderStrategy implements PathfinderStrategy {
 
         if (lastStandable != null && lastStandable.distance(location) <= 3) {
 
-            PathLocation jumpLocation = location.clone().add(0, 1, 0);
+            PathLocation jumpLocation = location.add(0, 1, 0);
 
             if(jumpLocation.getY() - lastStandable.getY() > 2)
                 return false;

@@ -43,7 +43,7 @@ public class Node implements Comparable<Node> {
     }
 
     public PathLocation getLocation() {
-        return this.location.clone();
+        return this.location;
     }
 
     public boolean hasReachedEnd() {
@@ -57,12 +57,11 @@ public class Node implements Comparable<Node> {
         PathVector c = this.target.toVector();
         double v = a.subtract(b).getCrossProduct(c.subtract(b)).length() / c.subtract(b).length();
 
-        return this.location.octileDistance(target) * (v*0.00002) + (0.01*this.target.distance(this.location));
+        return this.location.octileDistance(target) * (v*0.00002) + 0.01*this.target.distance(this.location);
     }
 
     @Override
     public boolean equals(Object o) {
-
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PathLocation nodeLocation = ((Node) o).getLocation();

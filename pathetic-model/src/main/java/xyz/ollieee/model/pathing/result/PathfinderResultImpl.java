@@ -17,6 +17,7 @@ public class PathfinderResultImpl implements PathfinderResult {
         return pathfinderState != PathfinderState.FAILED;
     }
 
+    @Override
     @NonNull
     public PathfinderState getPathfinderState() {
         return this.pathfinderState;

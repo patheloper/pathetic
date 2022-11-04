@@ -45,7 +45,7 @@ public class PathfinderImpl implements Pathfinder {
                     new PathfinderAsyncExceptionHandler(),
                     true);
 
-    private static final Set<PathLocation> EMPTY_LINKED_HASHSET = Collections.unmodifiableSet(new LinkedHashSet<>());
+    private static final Set<PathLocation> EMPTY_LINKED_HASHSET = Collections.unmodifiableSet(new LinkedHashSet<>(0));
 
     private static final PathVector[] OFFSETS = {
             new PathVector(1, 0, 0),
@@ -161,6 +161,7 @@ public class PathfinderImpl implements Pathfinder {
         final Set<Node> newNodes = new HashSet<>(offsets.length);
 
         for (PathVector offset : offsets) {
+
             Node newNode = new Node(currentNode.getLocation().add(offset), currentNode.getStart(), currentNode.getTarget(), currentNode.getDepth() + 1);
             newNode.setParent(currentNode);
 
@@ -208,7 +209,7 @@ public class PathfinderImpl implements Pathfinder {
 
         for(PathVector offset : offsets) {
 
-            PathLocation offsetLocation = target.clone().add(offset);
+            PathLocation offsetLocation = target.add(offset);
             PathBlock pathBlock = this.getSnapshotManager().getBlock(offsetLocation);
 
             if(pathBlock.isPassable())
@@ -239,7 +240,7 @@ public class PathfinderImpl implements Pathfinder {
 
                 for (PathVector offset : offsets) {
 
-                    PathLocation offsetLocation = location.clone().add(offset);
+                    PathLocation offsetLocation = location.add(offset);
                     PathBlock pathBlock = this.getSnapshotManager().getBlock(offsetLocation);
 
                     if (pathBlock.isPassable() && !pathBlock.getPathLocation().isInSameBlock(target))
