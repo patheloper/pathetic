@@ -11,7 +11,11 @@ import xyz.ollieee.api.pathing.result.task.PathingTask;
 import xyz.ollieee.api.wrapper.PathLocation;
 import xyz.ollieee.mapping.bukkit.BukkitMapper;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.Arrays;
 
 public class PatheticCommand implements TabExecutor {
 
@@ -26,10 +30,10 @@ public class PatheticCommand implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
-        if(!(sender instanceof Player))
+        if (!(sender instanceof Player))
             return false;
 
-        if(args.length != 1)
+        if (args.length != 1)
             return false;
 
         Player player = (Player) sender;

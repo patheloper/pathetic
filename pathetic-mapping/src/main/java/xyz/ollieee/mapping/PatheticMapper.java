@@ -9,6 +9,9 @@ import xyz.ollieee.api.pathing.Pathfinder;
 import xyz.ollieee.api.pathing.rules.PathingRuleSet;
 import xyz.ollieee.model.pathing.PathfinderImpl;
 
+/**
+ * PatheticMapper is a utility class that maps the Pathetic API to the Pathetic Implementation.
+ */
 @UtilityClass
 public class PatheticMapper {
 
