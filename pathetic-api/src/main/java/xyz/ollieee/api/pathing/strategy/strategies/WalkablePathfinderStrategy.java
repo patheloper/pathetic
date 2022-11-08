@@ -12,9 +12,6 @@ public class WalkablePathfinderStrategy implements PathfinderStrategy {
 
     private final int height;
 
-    /*
-     * TODO: Add going up or down (e.g. stairs, jumping down, jumping up)
-     */
     private PathLocation lastExamined;
 
     public WalkablePathfinderStrategy() {
@@ -40,7 +37,25 @@ public class WalkablePathfinderStrategy implements PathfinderStrategy {
             }
         }
 
-        return block.isPassable() && areBlocksAbovePassable && blockBelow.isSolid();
+        boolean canStandOnIt = block.isPassable() && blockBelow.isSolid() && areBlocksAbovePassable;
+
+        if(canStandOnIt) {
+            this.lastExamined = location;
+            return true;
+        }
+
+        if(lastExamined != null) {
+
+            double distance = lastExamined.distance(location);
+            boolean withinDistance = distance <= 3;
+
+            if(withinDistance && lastExamined.getY() - location.getY() < -2) // if its going up
+                return true;
+
+            return withinDistance && lastExamined.getY() - location.getY() > 2; // if its going down
+        }
+
+        return false;
     }
 
     @Override
