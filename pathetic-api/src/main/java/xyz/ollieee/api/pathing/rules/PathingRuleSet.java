@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
+import lombok.With;
 import xyz.ollieee.api.pathing.strategy.PathfinderStrategy;
 import xyz.ollieee.api.pathing.strategy.strategies.DirectPathfinderStrategy;
 
@@ -30,13 +31,26 @@ import xyz.ollieee.api.pathing.strategy.strategies.DirectPathfinderStrategy;
  *
  * loadChunks - Whether to load / generate chunks
  */
-@Builder
+@With
 @Value
 @Getter
+@Builder(toBuilder = true, access = AccessLevel.PRIVATE)
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class PathingRuleSet {
 
-    public static final PathingRuleSet DEFAULT_RULE_SET = builder().build();
+    /**
+     * @return A new {@link PathingRuleSet} with default values but async.
+     */
+    public static PathingRuleSet createAsyncRuleSet() {
+        return builder().async(true).build();
+    }
+
+    /**
+     * @return A new {@link PathingRuleSet} with default values.
+     */
+    public static PathingRuleSet createRuleSet() {
+        return builder().build();
+    }
 
     private static final PathfinderStrategy DEFAULT_STRATEGY = new DirectPathfinderStrategy();
 
@@ -45,11 +59,11 @@ public class PathingRuleSet {
     @Builder.Default
     int maxIterations = 5000; // to avoid freewheeling
     boolean async;
-    boolean allowDiagonal;
-    boolean allowAlternateTarget;
-    boolean allowFailFast;
-    boolean allowFallback;
-    boolean loadChunks;
+    boolean allowingDiagonal;
+    boolean allowingAlternateTarget;
+    boolean allowingFailFast;
+    boolean allowingFallback;
+    boolean loadingChunks;
 }
 
 

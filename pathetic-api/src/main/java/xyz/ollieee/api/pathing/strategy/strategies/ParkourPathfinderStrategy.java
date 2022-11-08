@@ -6,6 +6,12 @@ import xyz.ollieee.api.snapshot.SnapshotManager;
 import xyz.ollieee.api.wrapper.PathBlock;
 import xyz.ollieee.api.wrapper.PathLocation;
 
+/**
+ * A {@link PathfinderStrategy} to find the best walkable or even jumpable path.
+ *
+ * @deprecated WIP
+ */
+@Deprecated
 public class ParkourPathfinderStrategy implements PathfinderStrategy {
 
     private PathLocation lastStandable = null;

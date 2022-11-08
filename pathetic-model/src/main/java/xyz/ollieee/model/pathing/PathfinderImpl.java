@@ -127,10 +127,10 @@ public class PathfinderImpl implements Pathfinder {
         if (start.isInSameBlock(target))
             return finish(new PathfinderResultImpl(PathState.FOUND, new PathImpl(start, target, Collections.singleton(start))));
 
-        if (ruleSet.isAllowFailFast() && isTargetUnreachable(target, offsets))
+        if (ruleSet.isAllowingFailFast() && isTargetUnreachable(target, offsets))
             return finish(new PathfinderResultImpl(PathState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
 
-        if (ruleSet.isAllowAlternateTarget() && isTargetUnreachable(target, offsets))
+        if (ruleSet.isAllowingAlternateTarget() && isTargetUnreachable(target, offsets))
             target = bubbleSearch(target, offsets).getPathLocation();
 
         Node startNode = new Node(start.floor(), start.floor(), target.floor(), 0);
@@ -166,7 +166,7 @@ public class PathfinderImpl implements Pathfinder {
             depth++;
         }
 
-        if (ruleSet.isAllowFallback() && lastEverFound != null)
+        if (ruleSet.isAllowingFallback() && lastEverFound != null)
             return finish(new PathfinderResultImpl(PathState.FALLBACK, retracePath(lastEverFound)));
 
         return finish(new PathfinderResultImpl(PathState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
@@ -255,12 +255,12 @@ public class PathfinderImpl implements Pathfinder {
     }
 
     private SnapshotManager getSnapshotManager() {
-        return this.ruleSet.isLoadChunks() ? LOADING_SNAPSHOT_MANAGER : SIMPLE_SNAPSHOT_MANAGER;
+        return this.ruleSet.isLoadingChunks() ? LOADING_SNAPSHOT_MANAGER : SIMPLE_SNAPSHOT_MANAGER;
     }
 
     private PathingTask setAndStart(PathLocation start, PathLocation target) {
 
-        PathVector[] offsets = ruleSet.isAllowDiagonal() ? BOTH_OFFSETS : OFFSETS;
+        PathVector[] offsets = ruleSet.isAllowingDiagonal() ? BOTH_OFFSETS : OFFSETS;
         ProgressMonitor progressMonitor = new ProgressMonitor(start, target);
 
         CompletableFuture<PathfinderResult> future;

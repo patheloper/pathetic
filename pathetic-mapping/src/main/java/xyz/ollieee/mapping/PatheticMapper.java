@@ -47,7 +47,7 @@ public class PatheticMapper {
      * @throws IllegalStateException If the lib is not initialized yet
      */
     public @NonNull Pathfinder newPathfinder() {
-        return newPathfinder(PathingRuleSet.DEFAULT_RULE_SET);
+        return newPathfinder(PathingRuleSet.createAsyncRuleSet());
     }
 
 }
