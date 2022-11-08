@@ -49,10 +49,11 @@ public class WalkablePathfinderStrategy implements PathfinderStrategy {
             double distance = lastExamined.distance(location);
             boolean withinDistance = distance <= 3;
 
-            if(withinDistance && lastExamined.getY() - location.getY() < -2) // if its going up
-                return true;
+            boolean isHigher = location.getY() - lastExamined.getY() > 2;
+            boolean isLower = lastExamined.getY() - location.getY() > 2;
+            boolean isPassable = block.isPassable() && areBlocksAbovePassable;
 
-            return withinDistance && lastExamined.getY() - location.getY() > 2; // if its going down
+            return withinDistance && (isHigher || isLower) && isPassable;
         }
 
         return false;
