@@ -16,6 +16,9 @@ import xyz.ollieee.api.pathing.strategy.strategies.DirectPathfinderStrategy;
  *
  * maxIterations - The maximum amount of iterations to do while pathfinding.
  *
+ * maxLength - The maximum length of the path.
+ * This should not be set too high since it can cause a lagspike within the pathfinder which causes it to take longer.
+ *
  * async - Whether to run the pathfinding async or not.
  *
  * allowDiagonal - Whether to allow diagonal movement or not.
