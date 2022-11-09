@@ -86,6 +86,19 @@ public class PathfinderImpl implements Pathfinder {
         return new PathImpl(node.getStart(), node.getTarget(), path);
     }
 
+    private static int getLength(Node node) {
+
+        int length = 0;
+
+        Node currentNode = node;
+        while (currentNode != null) {
+            length++;
+            currentNode = currentNode.getParent();
+        }
+
+        return length;
+    }
+
     private static boolean isWithinWorldBounds(PathLocation location) {
         return location.getPathWorld().getMinHeight() < location.getBlockY() && location.getBlockY() < location.getPathWorld().getMaxHeight();
     }
@@ -156,6 +169,9 @@ public class PathfinderImpl implements Pathfinder {
 
             if(currentNode.heuristic() < lastEverFound.heuristic())
                 lastEverFound = currentNode;
+
+            if(ruleSet.getMaxLength() > 0 && getLength(lastEverFound) >= ruleSet.getMaxLength())
+                return finish(new PathfinderResultImpl(PathState.FOUND, retracePath(lastEverFound)));
 
             if (currentNode.hasReachedEnd()) {
                 Path path = retracePath(lastEverFound);

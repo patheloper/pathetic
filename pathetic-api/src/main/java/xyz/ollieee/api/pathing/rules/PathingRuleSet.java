@@ -58,6 +58,7 @@ public class PathingRuleSet {
     PathfinderStrategy strategy = DEFAULT_STRATEGY;
     @Builder.Default
     int maxIterations = 5000; // to avoid freewheeling
+    int maxLength;
     boolean async;
     boolean allowingDiagonal;
     boolean allowingAlternateTarget;
