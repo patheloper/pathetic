@@ -14,5 +14,4 @@ public class DirectPathfinderStrategy implements PathfinderStrategy {
     public boolean isValid(@NonNull PathLocation location, @NonNull SnapshotManager snapshotManager) {
         return snapshotManager.getBlock(location).isPassable();
     }
-
 }

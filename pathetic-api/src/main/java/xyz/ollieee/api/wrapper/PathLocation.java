@@ -1,27 +1,19 @@
 package xyz.ollieee.api.wrapper;
 
+import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import xyz.ollieee.api.util.NumberUtils;
 
 import java.util.Objects;
 
+@AllArgsConstructor
 public class PathLocation implements Cloneable {
 
     @NonNull
     private PathWorld pathWorld;
-
     private double x;
     private double y;
     private double z;
-
-    public PathLocation(@NonNull PathWorld pathWorld, double x, double y, double z) {
-
-        this.pathWorld = pathWorld;
-
-        this.x = x;
-        this.y = y;
-        this.z = z;
-    }
 
     /**
      * Checks to see if the two locations are in the same block
@@ -199,7 +191,7 @@ public class PathLocation implements Cloneable {
     public PathLocation floor() {
         return new PathLocation(this.pathWorld, this.getBlockX(), this.getBlockY(), this.getBlockZ());
     }
-    
+
     /**
      * Sets the coordinates to the middle of the block
      * @return A new {@link PathLocation}
@@ -250,8 +242,7 @@ public class PathLocation implements Cloneable {
         final PathLocation clone;
         try {
             clone = (PathLocation) super.clone();
-        }
-        catch (CloneNotSupportedException ex) {
+        } catch (CloneNotSupportedException ex) {
             throw new IllegalStateException("Superclass messed up", ex);
         }
 

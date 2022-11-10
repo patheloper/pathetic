@@ -6,8 +6,8 @@ import xyz.ollieee.api.event.PathingFinishedEvent;
 import xyz.ollieee.api.event.PathingStartFindEvent;
 import xyz.ollieee.api.pathing.Pathfinder;
 import xyz.ollieee.api.pathing.result.Path;
-import xyz.ollieee.api.pathing.result.PathfinderResult;
 import xyz.ollieee.api.pathing.result.PathState;
+import xyz.ollieee.api.pathing.result.PathfinderResult;
 import xyz.ollieee.api.pathing.result.progress.ProgressMonitor;
 import xyz.ollieee.api.pathing.result.task.PathingTask;
 import xyz.ollieee.api.pathing.rules.PathingRuleSet;
@@ -128,7 +128,7 @@ public class PathfinderImpl implements Pathfinder {
 
     private @NonNull PathfinderResult seekPath(PathLocation start, PathLocation target, PathVector[] offsets, ProgressMonitor progressMonitor) {
 
-        PathingStartFindEvent startEvent = new PathingStartFindEvent(start, target, ruleSet.getStrategy());
+        PathingStartFindEvent startEvent = new PathingStartFindEvent(start, target, this.ruleSet.getStrategy());
         EventPublisher.raiseEvent(startEvent);
 
         if (startEvent.isCancelled())
@@ -140,10 +140,10 @@ public class PathfinderImpl implements Pathfinder {
         if (start.isInSameBlock(target))
             return finish(new PathfinderResultImpl(PathState.FOUND, new PathImpl(start, target, Collections.singleton(start))));
 
-        if (ruleSet.isAllowingFailFast() && isTargetUnreachable(target, offsets))
+        if (this.ruleSet.isAllowingFailFast() && isTargetUnreachable(target, offsets))
             return finish(new PathfinderResultImpl(PathState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
 
-        if (ruleSet.isAllowingAlternateTarget() && isTargetUnreachable(target, offsets))
+        if (this.ruleSet.isAllowingAlternateTarget() && isTargetUnreachable(target, offsets))
             target = bubbleSearch(target, offsets).getPathLocation();
 
         Node startNode = new Node(start.floor(), start.floor(), target.floor(), 0);
@@ -154,12 +154,12 @@ public class PathfinderImpl implements Pathfinder {
         int depth = 1;
         Node lastEverFound = null;
 
-        while (!nodeQueue.isEmpty() && depth <= ruleSet.getMaxIterations()) {
+        while (!nodeQueue.isEmpty() && depth <= this.ruleSet.getMaxIterations()) {
 
             if (depth % 500 == 0) WatchdogUtil.tickWatchdog();
 
             Node currentNode = nodeQueue.poll();
-            if(lastEverFound == null)
+            if (lastEverFound == null)
                 lastEverFound = currentNode;
 
             if (currentNode == null)
@@ -170,7 +170,7 @@ public class PathfinderImpl implements Pathfinder {
             if(currentNode.heuristic() < lastEverFound.heuristic())
                 lastEverFound = currentNode;
 
-            if(ruleSet.getMaxLength() > 0 && getLength(lastEverFound) >= ruleSet.getMaxLength())
+            if (this.ruleSet.getMaxLength() > 0 && getLength(lastEverFound) >= this.ruleSet.getMaxLength())
                 return finish(new PathfinderResultImpl(PathState.FOUND, retracePath(lastEverFound)));
 
             if (currentNode.hasReachedEnd()) {
@@ -178,11 +178,11 @@ public class PathfinderImpl implements Pathfinder {
                 return finish(new PathfinderResultImpl(PathState.FOUND, path));
             }
 
-            evaluateNewNodes(nodeQueue, examinedLocations, currentNode, offsets, ruleSet.getStrategy());
+            evaluateNewNodes(nodeQueue, examinedLocations, currentNode, offsets, this.ruleSet.getStrategy());
             depth++;
         }
 
-        if (ruleSet.isAllowingFallback() && lastEverFound != null)
+        if (this.ruleSet.isAllowingFallback() && lastEverFound != null)
             return finish(new PathfinderResultImpl(PathState.FALLBACK, retracePath(lastEverFound)));
 
         return finish(new PathfinderResultImpl(PathState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
@@ -213,7 +213,7 @@ public class PathfinderImpl implements Pathfinder {
 
     private PathfinderResult finish(PathfinderResult pathfinderResult) {
 
-        ruleSet.getStrategy().cleanup();
+        this.ruleSet.getStrategy().cleanup();
         EventPublisher.raiseEvent(new PathingFinishedEvent(pathfinderResult));
 
         return pathfinderResult;
@@ -276,7 +276,7 @@ public class PathfinderImpl implements Pathfinder {
 
     private PathingTask setAndStart(PathLocation start, PathLocation target) {
 
-        PathVector[] offsets = ruleSet.isAllowingDiagonal() ? BOTH_OFFSETS : OFFSETS;
+        PathVector[] offsets = this.ruleSet.isAllowingDiagonal() ? BOTH_OFFSETS : OFFSETS;
         ProgressMonitor progressMonitor = new ProgressMonitor(start, target);
 
         CompletableFuture<PathfinderResult> future;

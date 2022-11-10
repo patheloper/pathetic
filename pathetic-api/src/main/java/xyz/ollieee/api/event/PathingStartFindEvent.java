@@ -1,6 +1,8 @@
 package xyz.ollieee.api.event;
 
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.event.Cancellable;
 import xyz.ollieee.api.pathing.strategy.PathfinderStrategy;
 import xyz.ollieee.api.wrapper.PathLocation;
@@ -8,37 +10,21 @@ import xyz.ollieee.api.wrapper.PathLocation;
 /**
  * An event called when a Pathfinder starts pathing.
  */
+@RequiredArgsConstructor
 public class PathingStartFindEvent extends PathingEvent implements Cancellable {
 
-    @NonNull
-    private final PathfinderStrategy pathfinderStrategy;
+    @Getter
     private final PathLocation start;
+    @Getter
     private final PathLocation target;
-
+    @NonNull
+    @Getter
+    private final PathfinderStrategy pathfinderStrategy;
     private boolean cancelled = false;
-
-    public PathingStartFindEvent(PathLocation start, PathLocation target, @NonNull PathfinderStrategy pathfinderStrategy) {
-
-        this.start = start;
-        this.target = target;
-        this.pathfinderStrategy = pathfinderStrategy;
-    }
 
     @Override
     public boolean isCancelled() {
         return this.cancelled;
-    }
-
-    public PathLocation getStart() {
-        return this.start;
-    }
-
-    public PathLocation getTarget() {
-        return this.target;
-    }
-
-    public @NonNull PathfinderStrategy getPathfinderStrategy() {
-        return this.pathfinderStrategy;
     }
 
     @Override

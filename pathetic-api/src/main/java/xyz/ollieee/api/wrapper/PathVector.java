@@ -1,8 +1,12 @@
 package xyz.ollieee.api.wrapper;
 
+import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import xyz.ollieee.api.util.NumberUtils;
 
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class PathVector implements Cloneable {
 
     /**
@@ -26,16 +30,6 @@ public class PathVector implements Cloneable {
     private double x;
     private double y;
     private double z;
-
-    public PathVector() {
-        this(0, 0, 0);
-    }
-
-    public PathVector(double x, double y, double z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-    }
 
     /**
      * Calculates the dot product of two vectors
@@ -187,8 +181,7 @@ public class PathVector implements Cloneable {
         final PathVector clone;
         try {
             clone = (PathVector) super.clone();
-        }
-        catch (CloneNotSupportedException ex) {
+        } catch (CloneNotSupportedException ex) {
             throw new RuntimeException("Superclass messed up", ex);
         }
         clone.x = this.x;

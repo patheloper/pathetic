@@ -2,7 +2,6 @@ package xyz.ollieee.api.pathing;
 
 import lombok.NonNull;
 import xyz.ollieee.api.pathing.result.task.PathingTask;
-import xyz.ollieee.api.pathing.rules.PathingRuleSet;
 import xyz.ollieee.api.wrapper.PathLocation;
 
 public interface Pathfinder {
@@ -14,5 +13,4 @@ public interface Pathfinder {
      */
     @NonNull
     PathingTask findPath(@NonNull PathLocation start, @NonNull PathLocation target);
-
 }

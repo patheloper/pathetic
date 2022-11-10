@@ -1,5 +1,6 @@
 package xyz.ollieee.api.pathing.strategy.strategies;
 
+import lombok.NonNull;
 import xyz.ollieee.api.pathing.strategy.PathfinderStrategy;
 import xyz.ollieee.api.snapshot.SnapshotManager;
 import xyz.ollieee.api.wrapper.PathBlock;
@@ -23,7 +24,7 @@ public class WalkablePathfinderStrategy implements PathfinderStrategy {
     }
 
     @Override
-    public boolean isValid(PathLocation location, SnapshotManager snapshotManager) {
+    public boolean isValid(@NonNull PathLocation location, @NonNull SnapshotManager snapshotManager) {
 
         PathBlock block = snapshotManager.getBlock(location);
         PathBlock blockBelow = snapshotManager.getBlock(location.add(0, -1, 0));

@@ -1,5 +1,8 @@
 package xyz.ollieee.api.util;
 
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
 public final class NumberUtils {
 
     public static double square(double value) {
@@ -12,8 +15,5 @@ public final class NumberUtils {
         double better = (sqrt + input / sqrt) / 2.0;
 
         return (better + input / better) / 2.0;
-    }
-
-    private NumberUtils() {
     }
 }
