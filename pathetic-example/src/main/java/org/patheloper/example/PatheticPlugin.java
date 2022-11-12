@@ -15,7 +15,7 @@ public final class PatheticPlugin extends JavaPlugin {
         PatheticMapper.initialize(this);
 
         Pathfinder reusablePathfinder = PatheticMapper.newPathfinder(PathingRuleSet.createAsyncRuleSet()
-                .withStrategy(new WalkablePathfinderStrategy())
+                .withStrategy(WalkablePathfinderStrategy.class)
                 .withAllowingDiagonal(true)
                 .withAllowingFailFast(true)
                 .withAllowingFallback(true)

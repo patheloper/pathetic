@@ -12,7 +12,7 @@ import org.patheloper.api.pathing.strategy.PathfinderStrategy;
 /**
  * A set of rules that are used while pathfinding.
  *
- * strategy - The strategy to use while pathfinding.
+ * strategy - The class of the strategy to use while pathfinding.
  *
  * maxIterations - The maximum amount of iterations to do while pathfinding.
  *
@@ -55,10 +55,10 @@ public class PathingRuleSet {
         return builder().build();
     }
 
-    private static final PathfinderStrategy DEFAULT_STRATEGY = new DirectPathfinderStrategy();
+    private static final Class<? extends PathfinderStrategy> DEFAULT_STRATEGY = DirectPathfinderStrategy.class;
 
     @Builder.Default
-    PathfinderStrategy strategy = DEFAULT_STRATEGY;
+    Class<? extends PathfinderStrategy> strategy = DEFAULT_STRATEGY;
     @Builder.Default
     int maxIterations = 5000; // to avoid freewheeling
     int maxLength;
