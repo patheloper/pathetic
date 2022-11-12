@@ -31,7 +31,7 @@ public class Pathetic {
         Bukkit.getPluginManager().registerEvents(new PathingEventListener(), javaPlugin);
         Bukkit.getPluginManager().registerEvents(new ChunkInvalidateListener(), javaPlugin);
 
-        logger.info("PatheticAPI successfully initialized");
+        logger.info("pathetic successfully initialized");
     }
 
     public static boolean isInitialized() {
