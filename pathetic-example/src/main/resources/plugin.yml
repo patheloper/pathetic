@@ -1,6 +1,6 @@
 name: PatheticTest
 version: '${project.version}'
-main: xyz.ollieee.example.PatheticPlugin
+main: org.patheloper.example.PatheticPlugin
 api-version: 1.19
 authors:
   - olijeffers0n
