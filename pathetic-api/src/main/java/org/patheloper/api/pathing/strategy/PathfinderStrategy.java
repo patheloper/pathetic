@@ -6,7 +6,11 @@ import org.patheloper.api.snapshot.SnapshotManager;
 import org.patheloper.api.wrapper.PathLocation;
 
 /**
- * A functional interface to modify the internal behaviour and choosing of the {@link Pathfinder}
+ * A functional interface to modify the internal behaviour and choosing of the {@link Pathfinder}.
+ * <p>
+ *
+ * @apiNote The instance of the strategy is created once every pathing and then thrown away.
+ *          It is not recommended to store any state in the strategy.
  */
 @FunctionalInterface
 public interface PathfinderStrategy {
@@ -20,11 +24,4 @@ public interface PathfinderStrategy {
      */
     boolean isValid(@NonNull PathLocation location, @NonNull SnapshotManager snapshotManager);
 
-    /**
-     * Called when the {@link Pathfinder} is done with pathfinding.
-     * <p>
-     * This is useful for resetting variables that are used in the {@link #isValid(PathLocation, SnapshotManager)} method
-     * since the {@link Pathfinder} will reuse the same instance of the strategy.
-     */
-    default void cleanup() {}
 }

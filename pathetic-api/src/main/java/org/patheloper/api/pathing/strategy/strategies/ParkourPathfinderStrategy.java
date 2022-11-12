@@ -34,11 +34,6 @@ public class ParkourPathfinderStrategy implements PathfinderStrategy {
         return false;
     }
 
-    @Override
-    public void cleanup() {
-        lastStandable = null;
-    }
-
     private boolean canTwoBlockHighEntityStandOnIt(PathBlock block, SnapshotManager snapshotManager) {
 
         PathLocation location = block.getPathLocation();

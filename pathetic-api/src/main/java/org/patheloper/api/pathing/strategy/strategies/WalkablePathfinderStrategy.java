@@ -59,9 +59,4 @@ public class WalkablePathfinderStrategy implements PathfinderStrategy {
 
         return false;
     }
-
-    @Override
-    public void cleanup() {
-        lastExamined = null;
-    }
 }

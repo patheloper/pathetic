@@ -214,10 +214,7 @@ public class PathfinderImpl implements Pathfinder {
     }
 
     private PathfinderResult finish(PathfinderResult pathfinderResult, PathfinderStrategy strategy) {
-
-        strategy.cleanup();
         EventPublisher.raiseEvent(new PathingFinishedEvent(pathfinderResult));
-
         return pathfinderResult;
     }
 

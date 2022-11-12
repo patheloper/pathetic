@@ -41,6 +41,8 @@ import org.patheloper.api.pathing.strategy.PathfinderStrategy;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class PathingRuleSet {
 
+    private static final Class<? extends PathfinderStrategy> DEFAULT_STRATEGY = DirectPathfinderStrategy.class;
+
     /**
      * @return A new {@link PathingRuleSet} with default values but async.
      */
@@ -54,8 +56,6 @@ public class PathingRuleSet {
     public static PathingRuleSet createRuleSet() {
         return builder().build();
     }
-
-    private static final Class<? extends PathfinderStrategy> DEFAULT_STRATEGY = DirectPathfinderStrategy.class;
 
     @Builder.Default
     Class<? extends PathfinderStrategy> strategy = DEFAULT_STRATEGY;
