@@ -13,8 +13,8 @@ A simple and intuitive 1.8-1.19 A* pathfinding API for Spigot & Paper plugins
 		</repository>
 	</repositories>
  
- 	<dependency>
-	    <groupId>com.github.patheloper</groupId>
+	<dependency>
+	    <groupId>com.github.patheloper.pathetic</groupId>
 	    <artifactId>pathetic-mapping</artifactId>
 	    <version>VERSION</version>
 	</dependency>
