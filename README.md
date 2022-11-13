@@ -29,8 +29,8 @@ A simple and intuitive 1.8-1.19 A* pathfinding API for Spigot & Paper plugins
 		}
 	}
     
-    	dependencies {
-	        implementation 'com.github.patheloper:pathetic-mapping:Tag'
+	dependencies {
+	        implementation 'com.github.patheloper.pathetic:pathetic-mapping:VERSION'
 	}
 ```
 
