@@ -60,12 +60,14 @@ public class PatheticCommand implements TabExecutor {
                     return false;
                 }
 
+                // Here we convert the Bukkit Locations to PathLocations to search with them for a path.
                 PathLocation start = BukkitMapper.toPathLocation(playerSession.getPos1());
                 PathLocation target = BukkitMapper.toPathLocation(playerSession.getPos2());
 
                 player.sendMessage("Starting pathfinding...");
-                PathingTask pathingTask = pathfinder.findPath(start, target);
+                PathingTask pathingTask = pathfinder.findPath(start, target); // This is the actual pathfinding.
 
+                // This is just a simple way to display the pathfinding result.
                 pathingTask.accept(result -> {
 
                     player.sendMessage("State: " + result.getPathState().name());

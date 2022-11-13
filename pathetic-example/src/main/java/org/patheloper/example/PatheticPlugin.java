@@ -12,8 +12,10 @@ public final class PatheticPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
 
+        // Before using Pathetic, you need to initialize it.
         PatheticMapper.initialize(this);
 
+        // Then you can use the PatheticMapper to get your own Pathfinder instance with your own set rules.
         Pathfinder reusablePathfinder = PatheticMapper.newPathfinder(PathingRuleSet.createAsyncRuleSet()
                 .withStrategy(WalkablePathfinderStrategy.class)
                 .withAllowingDiagonal(true)
