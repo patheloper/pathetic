@@ -32,11 +32,14 @@ public class Node implements Comparable<Node> {
 
     public double heuristic() {
 
+        // The "v" is the perpendicular distance between the current location and the line from the start to the target
         PathVector a = this.location.toVector();
         PathVector b = this.start.toVector();
         PathVector c = this.target.toVector();
         double v = a.subtract(b).getCrossProduct(c.subtract(b)).length() / c.subtract(b).length();
 
+        // We then multiply the perpendicular by the octile distance between the current location and the target
+        // and the euclidean distance between the current location and the start
         return this.location.octileDistance(target) * (v*0.00002) + 0.01*this.target.distance(this.location);
     }
 
@@ -75,6 +78,7 @@ public class Node implements Comparable<Node> {
 
     @Override
     public int compareTo(Node o) {
+        // This is used in the priority queue to sort the nodes
         return (int) Math.signum(this.heuristic() - o.heuristic());
     }
 }

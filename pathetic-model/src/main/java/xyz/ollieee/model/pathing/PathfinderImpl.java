@@ -131,6 +131,7 @@ public class PathfinderImpl implements Pathfinder {
         PathingStartFindEvent startEvent = new PathingStartFindEvent(start, target, this.ruleSet.getStrategy());
         EventPublisher.raiseEvent(startEvent);
 
+        // Do some initial checks to make sure that we should even bother with pathfinding
         if (startEvent.isCancelled())
             return finish(new PathfinderResultImpl(PathState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
 
@@ -146,18 +147,23 @@ public class PathfinderImpl implements Pathfinder {
         if (this.ruleSet.isAllowingAlternateTarget() && isTargetUnreachable(target, offsets))
             target = bubbleSearch(target, offsets).getPathLocation();
 
+        // Create the initial node
         Node startNode = new Node(start.floor(), start.floor(), target.floor(), 0);
 
+        // Create the open and closed sets
         PriorityQueue<Node> nodeQueue = new PriorityQueue<>(Collections.singleton(startNode));
         Set<PathLocation> examinedLocations = new HashSet<>();
 
+        // This is the current depth of the search and the last node
         int depth = 1;
         Node lastEverFound = null;
 
         while (!nodeQueue.isEmpty() && depth <= this.ruleSet.getMaxIterations()) {
 
+            // Every 500 iterations, tick the watchdog so that a watchdog timeout doesn't occur
             if (depth % 500 == 0) WatchdogUtil.tickWatchdog();
 
+            // Get the next node from the queue
             Node currentNode = nodeQueue.poll();
             if (lastEverFound == null)
                 lastEverFound = currentNode;
@@ -165,18 +171,19 @@ public class PathfinderImpl implements Pathfinder {
             if (currentNode == null)
                 throw new IllegalStateException("Something just exploded");
 
+            // Update the progress monitor for the pathfinding attempt with the current node
             progressMonitor.update(currentNode.getLocation());
 
             if(currentNode.heuristic() < lastEverFound.heuristic())
                 lastEverFound = currentNode;
 
+            // Check to see if we have reached the length limit
             if (this.ruleSet.getMaxLength() > 0 && getLength(lastEverFound) >= this.ruleSet.getMaxLength())
                 return finish(new PathfinderResultImpl(PathState.FOUND, retracePath(lastEverFound)));
 
-            if (currentNode.hasReachedEnd()) {
-                Path path = retracePath(lastEverFound);
-                return finish(new PathfinderResultImpl(PathState.FOUND, path));
-            }
+            // This means that the current node is the target, so we can stop here
+            if (currentNode.hasReachedEnd())
+                return finish(new PathfinderResultImpl(PathState.FOUND, retracePath(lastEverFound)));
 
             evaluateNewNodes(nodeQueue, examinedLocations, currentNode, offsets, this.ruleSet.getStrategy());
             depth++;
