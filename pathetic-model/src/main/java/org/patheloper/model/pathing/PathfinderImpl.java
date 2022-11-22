@@ -45,17 +45,17 @@ public class PathfinderImpl implements Pathfinder {
 
     private static final ExecutorService FIXED_POOL =
             new ThreadPoolExecutor(
+                    Runtime.getRuntime().availableProcessors() / 4,
                     Runtime.getRuntime().availableProcessors(),
-                    Runtime.getRuntime().availableProcessors(),
-                    1000L, // or we let them die instantly
+                    250L, // or we let them die instantly
                     TimeUnit.MILLISECONDS,
-                    new LinkedBlockingQueue<>(),
+                    new LinkedBlockingQueue<>(1000), // 1000 pathing-tasks allowed in queue
                     new ThreadFactoryBuilder()
                             .setUncaughtExceptionHandler(new PathfinderAsyncExceptionHandler())
                             .setDaemon(true)
-                            .setNameFormat("Pathfinder-%d")
+                            .setNameFormat("Pathfinder Task-%d")
                             .build(),
-                    new ThreadPoolExecutor.CallerRunsPolicy());
+                    new ThreadPoolExecutor.DiscardOldestPolicy()); // TODO: own policy
 
     private static final Set<PathLocation> EMPTY_LINKED_HASHSET = Collections.unmodifiableSet(new LinkedHashSet<>(0));
 
