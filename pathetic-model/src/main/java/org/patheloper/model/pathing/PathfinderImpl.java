@@ -53,7 +53,7 @@ public class PathfinderImpl implements Pathfinder {
                     new ThreadFactoryBuilder()
                             .setUncaughtExceptionHandler(new PathfinderAsyncExceptionHandler())
                             .setDaemon(true)
-                            .setNameFormat("Pathfinder-%d")
+                            .setNameFormat("pathetic-%d")
                             .build(),
                     new ThreadPoolExecutor.CallerRunsPolicy());
 
