@@ -1,5 +1,6 @@
 package org.patheloper.model.pathing;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.patheloper.api.event.PathingFinishedEvent;
@@ -17,10 +18,10 @@ import org.patheloper.api.wrapper.PathBlock;
 import org.patheloper.api.wrapper.PathLocation;
 import org.patheloper.api.wrapper.PathVector;
 import org.patheloper.bukkit.event.EventPublisher;
+import org.patheloper.model.pathing.handler.PathfinderAsyncExceptionHandler;
 import org.patheloper.model.pathing.result.PathImpl;
 import org.patheloper.model.pathing.result.PathfinderResultImpl;
 import org.patheloper.model.snapshot.FailingSnapshotManager;
-import org.patheloper.model.pathing.handler.PathfinderAsyncExceptionHandler;
 import org.patheloper.util.WatchdogUtil;
 
 import java.lang.reflect.InvocationTargetException;
@@ -33,18 +34,28 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 @RequiredArgsConstructor(onConstructor = @__(@NonNull))
 public class PathfinderImpl implements Pathfinder {
 
-    private static final Executor FORK_JOIN_POOL =
-            new ForkJoinPool(Runtime.getRuntime().availableProcessors(),
-                    ForkJoinPool.defaultForkJoinWorkerThreadFactory,
-                    new PathfinderAsyncExceptionHandler(),
-                    true);
+    private static final ExecutorService FIXED_POOL =
+            new ThreadPoolExecutor(
+                    Runtime.getRuntime().availableProcessors(),
+                    Runtime.getRuntime().availableProcessors(),
+                    1000L, // or we let them die instantly
+                    TimeUnit.MILLISECONDS,
+                    new LinkedBlockingQueue<>(),
+                    new ThreadFactoryBuilder()
+                            .setUncaughtExceptionHandler(new PathfinderAsyncExceptionHandler())
+                            .setDaemon(true)
+                            .setNameFormat("Pathfinder-%d")
+                            .build(),
+                    new ThreadPoolExecutor.CallerRunsPolicy());
 
     private static final Set<PathLocation> EMPTY_LINKED_HASHSET = Collections.unmodifiableSet(new LinkedHashSet<>(0));
 
@@ -295,7 +306,7 @@ public class PathfinderImpl implements Pathfinder {
         CompletableFuture<PathfinderResult> future;
         if (this.ruleSet.isAsync()) {
             future = CompletableFuture.supplyAsync(() ->
-                    seekPath(start, target, strategy, offsets, progressMonitor), FORK_JOIN_POOL);
+                    seekPath(start, target, strategy, offsets, progressMonitor), FIXED_POOL);
         } else {
             future = CompletableFuture.completedFuture(
                     seekPath(start, target, strategy, offsets, progressMonitor));
