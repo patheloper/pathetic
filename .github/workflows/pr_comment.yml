@@ -1,11 +1,4 @@
-# This workflow run on the completion of the
-# build workflow but only does anything if the
-# triggering workflow uploaded an artifact.
-#
-# Do note that it is then the trigger workflow that
-# determines if this will update the PR text body. All
-# this workflow does is check if an uploaded artifact
-# exists and there is a PR tied to the previous workflow.
+# Taken from Machine_Maker's work for paper.
 
 name: Comment on pull request
 on:

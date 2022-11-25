@@ -1,4 +1,4 @@
-# Here lie dragons!
+# Taken from Machine_Maker's work for paper.
 
 name: Build Pathetic
 on:
@@ -52,7 +52,7 @@ jobs:
             }
             core.info("This will not build a jar");
             return result;
-      - name: Apply Patches
+      - name: Build Jar
         run: |
           git config --global user.email "no-reply@github.com"
           git config --global user.name "Github Actions"
@@ -62,5 +62,5 @@ jobs:
         if: fromJSON(steps.determine.outputs.result).action == 'jar'
         uses: actions/upload-artifact@v3
         with:
-          name: paper-${{ fromJSON(steps.determine.outputs.result).pr }}
+          name: pathetic-${{ fromJSON(steps.determine.outputs.result).pr }}
           path: pathetic-example/target/pathetic-example-*-SNAPSHOT.jar
