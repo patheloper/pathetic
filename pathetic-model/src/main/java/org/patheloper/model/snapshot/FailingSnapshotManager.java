@@ -7,8 +7,8 @@ import org.bukkit.World;
 import org.patheloper.api.snapshot.SnapshotManager;
 import org.patheloper.api.wrapper.PathBlock;
 import org.patheloper.api.wrapper.PathBlockType;
-import org.patheloper.api.wrapper.PathLocation;
-import org.patheloper.api.wrapper.PathWorld;
+import org.patheloper.api.wrapper.PathPosition;
+import org.patheloper.api.wrapper.PathDomain;
 import org.patheloper.model.snapshot.world.WorldDomain;
 import org.patheloper.nms.NMSUtils;
 import org.patheloper.util.BukkitVersionUtil;
@@ -41,32 +41,32 @@ public class FailingSnapshotManager implements SnapshotManager {
         }
     }
 
-    private static synchronized Optional<PathBlock> fetchBlock(PathLocation location) {
+    private static synchronized Optional<PathBlock> fetchBlock(PathPosition position) {
 
-        Optional<ChunkSnapshot> chunkSnapshotOptional = getChunkSnapshot(location);
+        Optional<ChunkSnapshot> chunkSnapshotOptional = getChunkSnapshot(position);
 
-        int chunkX = location.getBlockX() >> 4;
-        int chunkZ = location.getBlockZ() >> 4;
+        int chunkX = position.getBlockX() >> 4;
+        int chunkZ = position.getBlockZ() >> 4;
 
         if (chunkSnapshotOptional.isPresent()) {
             PathBlockType pathBlockType = PathBlockType.fromMaterial(ChunkUtils.getMaterial(chunkSnapshotOptional.get(),
-                    location.getBlockX() - chunkX * 16,
-                    location.getBlockY(),
-                    location.getBlockZ() - chunkZ * 16));
-            return Optional.of(new PathBlock(location, pathBlockType));
+                    position.getBlockX() - chunkX * 16,
+                    position.getBlockY(),
+                    position.getBlockZ() - chunkZ * 16));
+            return Optional.of(new PathBlock(position, pathBlockType));
         }
 
         return Optional.empty();
     }
 
-    private static Optional<ChunkSnapshot> getChunkSnapshot(PathLocation location) {
+    private static Optional<ChunkSnapshot> getChunkSnapshot(PathPosition position) {
 
-        int chunkX = location.getBlockX() >> 4;
-        int chunkZ = location.getBlockZ() >> 4;
+        int chunkX = position.getBlockX() >> 4;
+        int chunkZ = position.getBlockZ() >> 4;
 
-        if (SNAPSHOTS_MAP.containsKey(location.getPathWorld().getUuid())) {
+        if (SNAPSHOTS_MAP.containsKey(position.getPathDomain().getUuid())) {
 
-            WorldDomain worldDomain = SNAPSHOTS_MAP.get(location.getPathWorld().getUuid());
+            WorldDomain worldDomain = SNAPSHOTS_MAP.get(position.getPathDomain().getUuid());
             long chunkKey = ChunkUtils.getChunkKey(chunkX, chunkZ);
 
             return worldDomain.getSnapshot(chunkKey);
@@ -79,58 +79,58 @@ public class FailingSnapshotManager implements SnapshotManager {
      * @return the block or null if the block is not loaded
      */
     @Override
-    public PathBlock getBlock(@NonNull PathLocation location) {
-        Optional<PathBlock> block = fetchBlock(location);
+    public PathBlock getBlock(@NonNull PathPosition position) {
+        Optional<PathBlock> block = fetchBlock(position);
         return block.orElse(null);
     }
 
     public static class RequestingSnapshotManager extends FailingSnapshotManager {
 
-        private static ChunkSnapshot retrieveChunkSnapshot(PathWorld world, int chunkX, int chunkZ) {
+        private static ChunkSnapshot retrieveChunkSnapshot(PathDomain world, int chunkX, int chunkZ) {
             World bukkitWorld = Bukkit.getWorld(world.getUuid());
             return NMS_UTILS.getNmsInterface().getSnapshot(bukkitWorld, chunkX, chunkZ);
         }
 
-        private static ChunkSnapshot retrieveSnapshot(PathLocation location) {
+        private static ChunkSnapshot retrieveSnapshot(PathPosition position) {
 
-            int chunkX = location.getBlockX() >> 4;
-            int chunkZ = location.getBlockZ() >> 4;
+            int chunkX = position.getBlockX() >> 4;
+            int chunkZ = position.getBlockZ() >> 4;
 
-            Optional<ChunkSnapshot> chunkSnapshotOptional = getChunkSnapshot(location);
+            Optional<ChunkSnapshot> chunkSnapshotOptional = getChunkSnapshot(position);
 
             return chunkSnapshotOptional.orElseGet(() -> {
 
-                ChunkSnapshot chunkSnapshot = retrieveChunkSnapshot(location.getPathWorld(), chunkX, chunkZ);
+                ChunkSnapshot chunkSnapshot = retrieveChunkSnapshot(position.getPathDomain(), chunkX, chunkZ);
 
                 if (chunkSnapshot == null)
                     throw new IllegalStateException("Could not retrieve chunk snapshot --> BOOM!");
 
-                WorldDomain worldDomain = SNAPSHOTS_MAP.computeIfAbsent(location.getPathWorld().getUuid(), uuid -> new WorldDomain());
+                WorldDomain worldDomain = SNAPSHOTS_MAP.computeIfAbsent(position.getPathDomain().getUuid(), uuid -> new WorldDomain());
                 worldDomain.addSnapshot(ChunkUtils.getChunkKey(chunkX, chunkZ), chunkSnapshot);
 
                 return chunkSnapshot;
             });
         }
 
-        private static synchronized PathBlock ensureBlock(PathLocation pathLocation) {
+        private static synchronized PathBlock ensureBlock(PathPosition pathPosition) {
 
-            int chunkX = pathLocation.getBlockX() >> 4;
-            int chunkZ = pathLocation.getBlockZ() >> 4;
+            int chunkX = pathPosition.getBlockX() >> 4;
+            int chunkZ = pathPosition.getBlockZ() >> 4;
 
-            ChunkSnapshot chunkSnapshot = retrieveSnapshot(pathLocation);
+            ChunkSnapshot chunkSnapshot = retrieveSnapshot(pathPosition);
             PathBlockType pathBlockType = PathBlockType
                     .fromMaterial(ChunkUtils.getMaterial(chunkSnapshot,
-                            pathLocation.getBlockX() - chunkX * 16,
-                            pathLocation.getBlockY(),
-                            pathLocation.getBlockZ() - chunkZ * 16));
+                            pathPosition.getBlockX() - chunkX * 16,
+                            pathPosition.getBlockY(),
+                            pathPosition.getBlockZ() - chunkZ * 16));
 
-            return new PathBlock(pathLocation, pathBlockType);
+            return new PathBlock(pathPosition, pathBlockType);
         }
 
         @Override
-        public PathBlock getBlock(@NonNull PathLocation location) {
-            PathBlock block = super.getBlock(location);
-            return block == null ? ensureBlock(location) : block;
+        public PathBlock getBlock(@NonNull PathPosition position) {
+            PathBlock block = super.getBlock(position);
+            return block == null ? ensureBlock(position) : block;
         }
     }
 

@@ -9,9 +9,9 @@ import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
 import org.patheloper.api.wrapper.PathBlock;
 import org.patheloper.api.wrapper.PathBlockType;
-import org.patheloper.api.wrapper.PathLocation;
+import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.api.wrapper.PathVector;
-import org.patheloper.api.wrapper.PathWorld;
+import org.patheloper.api.wrapper.PathDomain;
 
 import java.util.Arrays;
 
@@ -19,17 +19,17 @@ import java.util.Arrays;
 public class BukkitMapper {
 
     @NonNull
-    public Location toLocation(@NonNull PathLocation pathLocation) {
-        return new Location(toWorld(pathLocation.getPathWorld()), pathLocation.getX(), pathLocation.getY(), pathLocation.getZ());
+    public Location toLocation(@NonNull PathPosition pathPosition) {
+        return new Location(toWorld(pathPosition.getPathDomain()), pathPosition.getX(), pathPosition.getY(), pathPosition.getZ());
     }
 
     @NonNull
-    public PathLocation toPathLocation(@NonNull Location location) {
+    public PathPosition toPathPosition(@NonNull Location location) {
 
         if (location.getWorld() == null)
             throw new IllegalStateException("World is null");
 
-        return new PathLocation(toPathWorld(location.getWorld()), location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        return new PathPosition(toPathWorld(location.getWorld()), location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 
     @NonNull
@@ -44,21 +44,21 @@ public class BukkitMapper {
 
     @NonNull
     public Block toBlock(@NonNull PathBlock pathBlock) {
-        return toLocation(pathBlock.getPathLocation()).getBlock();
+        return toLocation(pathBlock.getPathPosition()).getBlock();
     }
 
     @NonNull
     public PathBlock toPathBlock(@NonNull Block block) {
-        return new PathBlock(new PathLocation(toPathWorld(block.getWorld()), block.getX(), block.getY(), block.getZ()), PathBlockType.fromMaterial(block.getType()));
+        return new PathBlock(new PathPosition(toPathWorld(block.getWorld()), block.getX(), block.getY(), block.getZ()), PathBlockType.fromMaterial(block.getType()));
     }
 
-    public World toWorld(@NonNull PathWorld pathWorld) {
-        return Bukkit.getWorld(pathWorld.getUuid());
+    public World toWorld(@NonNull PathDomain pathDomain) {
+        return Bukkit.getWorld(pathDomain.getUuid());
     }
 
     @NonNull
-    public PathWorld toPathWorld(@NonNull World world) {
-        return new PathWorld(world.getUID(), world.getName(), getMinHeight(world), getMaxHeight(world));
+    public PathDomain toPathWorld(@NonNull World world) {
+        return new PathDomain(world.getUID(), world.getName(), getMinHeight(world), getMaxHeight(world));
     }
 
     private final boolean IS_NEWER_WORLD;

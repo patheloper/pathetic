@@ -1,6 +1,6 @@
 package org.patheloper.model.pathing;
 
-import org.patheloper.api.wrapper.PathLocation;
+import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.api.wrapper.PathVector;
 
 import java.util.Objects;
@@ -8,15 +8,15 @@ import java.util.Objects;
 public class Node implements Comparable<Node> {
 
     private final Integer depth;
-    private final PathLocation location;
-    private final PathLocation target;
-    private final PathLocation start;
+    private final PathPosition position;
+    private final PathPosition target;
+    private final PathPosition start;
     
     private Node parent;
 
-    Node(PathLocation location, PathLocation start, PathLocation target, Integer depth) {
+    Node(PathPosition position, PathPosition start, PathPosition target, Integer depth) {
         
-        this.location = location;
+        this.position = position;
         this.target = target;
         this.start = start;
         this.depth = depth;
@@ -27,20 +27,20 @@ public class Node implements Comparable<Node> {
     }
 
     public boolean hasReachedEnd() {
-        return this.location.getBlockX() == target.getBlockX() && this.location.getBlockY() == target.getBlockY() && this.location.getBlockZ() == target.getBlockZ();
+        return this.position.getBlockX() == target.getBlockX() && this.position.getBlockY() == target.getBlockY() && this.position.getBlockZ() == target.getBlockZ();
     }
 
     public double heuristic() {
 
-        // The "v" is the perpendicular distance between the current location and the line from the start to the target
-        PathVector a = this.location.toVector();
+        // The "v" is the perpendicular distance between the current position and the line from the start to the target
+        PathVector a = this.position.toVector();
         PathVector b = this.start.toVector();
         PathVector c = this.target.toVector();
         double v = a.subtract(b).getCrossProduct(c.subtract(b)).length() / c.subtract(b).length();
 
-        // We then multiply the perpendicular by the octile distance between the current location and the target
-        // and the euclidean distance between the current location and the start
-        return this.location.octileDistance(target) * (v*0.00002) + 0.01*this.target.distance(this.location);
+        // We then multiply the perpendicular by the octile distance between the current position and the target
+        // and the euclidean distance between the current position and the start
+        return this.position.octileDistance(target) * (v*0.00002) + 0.01*this.target.distance(this.position);
     }
 
     public Node getParent() {
@@ -51,29 +51,29 @@ public class Node implements Comparable<Node> {
         return this.depth;
     }
 
-    public PathLocation getStart() {
+    public PathPosition getStart() {
         return this.start;
     }
 
-    public PathLocation getTarget() {
+    public PathPosition getTarget() {
         return this.target;
     }
 
-    public PathLocation getLocation() {
-        return this.location;
+    public PathPosition getPosition() {
+        return this.position;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        PathLocation nodeLocation = ((Node) o).getLocation();
-        return nodeLocation.getBlockX() == this.location.getBlockX() && nodeLocation.getBlockY() == this.location.getBlockY() && nodeLocation.getBlockZ() == this.location.getBlockZ();
+        PathPosition nodePosition = ((Node) o).getPosition();
+        return nodePosition.getBlockX() == this.position.getBlockX() && nodePosition.getBlockY() == this.position.getBlockY() && nodePosition.getBlockZ() == this.position.getBlockZ();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.location);
+        return Objects.hash(this.position);
     }
 
     @Override

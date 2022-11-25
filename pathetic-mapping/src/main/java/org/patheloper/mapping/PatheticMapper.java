@@ -6,7 +6,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.patheloper.Pathetic;
 import org.patheloper.api.pathing.Pathfinder;
 import org.patheloper.api.pathing.rules.PathingRuleSet;
-import org.patheloper.model.pathing.PathfinderImpl;
+import org.patheloper.model.pathing.AStarPathfinder;
 
 /**
  * PatheticMapper is a utility class that maps the Pathetic API to the Pathetic Implementation.
@@ -35,7 +35,7 @@ public class PatheticMapper {
     public @NonNull Pathfinder newPathfinder(PathingRuleSet pathingRuleSet) {
 
         if (Pathetic.isInitialized())
-            return new PathfinderImpl(pathingRuleSet);
+            return new AStarPathfinder(pathingRuleSet);
 
         throw new IllegalStateException("Pathetic is not initialized");
     }
