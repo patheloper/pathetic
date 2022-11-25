@@ -42,15 +42,22 @@ public class PathExample extends JavaPlugin {
     public void onEnable() {
     
         PatheticMapper.initialize(this);
-        goFindSomePath();
+        goFindSomePath(randomLocation(), randomLocation());
     }
     
-    private void goFindSomePath() {
+    private void goFindSomePath(PathLocation start, PathLocation end) {
 
         Pathfinder pathfinder = PatheticMapper.newPathfinder();
-        pathfinder.findPath(startLocation, endLocation).accept(pathfinderResult ->
+        pathfinder.findPath(start, end).thenAccept(pathfinderResult ->
                 pathfinderResult.getPath().getLocations().forEach(location ->
                         player.sendBlockChange(location, Material.YELLOW_STAINED_GLASS.createBlockData())));
+    }
+    
+    private PathLocation randomLocation() {
+        return new PathLocation(
+                ThreadLocalRandom.current().nextInt(0, 100),
+                ThreadLocalRandom.current().nextInt(0, 100),
+                ThreadLocalRandom.current().nextInt(0, 100));
     }
 }
 ```
