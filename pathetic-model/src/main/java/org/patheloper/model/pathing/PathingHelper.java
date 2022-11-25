@@ -7,7 +7,7 @@ import org.patheloper.api.pathing.result.PathfinderResult;
 import org.patheloper.api.pathing.strategy.PathfinderStrategy;
 import org.patheloper.api.snapshot.SnapshotManager;
 import org.patheloper.api.wrapper.PathBlock;
-import org.patheloper.api.wrapper.PathLocation;
+import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.api.wrapper.PathVector;
 import org.patheloper.bukkit.event.EventPublisher;
 import org.patheloper.model.pathing.result.PathImpl;
@@ -25,9 +25,9 @@ import java.util.Set;
  */
 class PathingHelper {
 
-    static void evaluateNewNodes(Collection<Node> nodeQueue, Set<PathLocation> examinedLocations, Node currentNode, Offset offset, PathfinderStrategy strategy, SnapshotManager snapshotManager) {
+    static void evaluateNewNodes(Collection<Node> nodeQueue, Set<PathPosition> examinedPositions, Node currentNode, Offset offset, PathfinderStrategy strategy, SnapshotManager snapshotManager) {
         for (Node neighbourNode : fetchNeighbours(currentNode, offset.getVectors()))
-            if (isNodeValid(neighbourNode, nodeQueue, snapshotManager, examinedLocations, strategy))
+            if (isNodeValid(neighbourNode, nodeQueue, snapshotManager, examinedPositions, strategy))
                 nodeQueue.add(neighbourNode);
     }
 
@@ -44,25 +44,25 @@ class PathingHelper {
         return length;
     }
 
-    static boolean isNodeValid(Node node, Collection<Node> nodeQueue, SnapshotManager snapshotManager, Set<PathLocation> examinedLocations, PathfinderStrategy strategy) {
+    static boolean isNodeValid(Node node, Collection<Node> nodeQueue, SnapshotManager snapshotManager, Set<PathPosition> examinedPositions, PathfinderStrategy strategy) {
 
-        if (examinedLocations.contains(node.getLocation()))
+        if (examinedPositions.contains(node.getPosition()))
             return false;
 
         if (nodeQueue.contains(node))
             return false;
 
-        if (!isWithinWorldBounds(node.getLocation()))
+        if (!isWithinWorldBounds(node.getPosition()))
             return false;
 
-        if (!strategy.isValid(node.getLocation(), snapshotManager))
+        if (!strategy.isValid(node.getPosition(), snapshotManager))
             return false;
 
-        return examinedLocations.add(node.getLocation());
+        return examinedPositions.add(node.getPosition());
     }
 
-    static boolean isWithinWorldBounds(PathLocation location) {
-        return location.getPathWorld().getMinHeight() < location.getBlockY() && location.getBlockY() < location.getPathWorld().getMaxHeight();
+    static boolean isWithinWorldBounds(PathPosition position) {
+        return position.getPathDomain().getMinHeight() < position.getBlockY() && position.getBlockY() < position.getPathDomain().getMaxHeight();
     }
 
     static Collection<Node> fetchNeighbours(Node currentNode, PathVector[] offsets) {
@@ -71,7 +71,7 @@ class PathingHelper {
 
         for (PathVector offset : offsets) {
 
-            Node newNode = new Node(currentNode.getLocation().add(offset), currentNode.getStart(), currentNode.getTarget(), currentNode.getDepth() + 1);
+            Node newNode = new Node(currentNode.getPosition().add(offset), currentNode.getStart(), currentNode.getTarget(), currentNode.getDepth() + 1);
             newNode.setParent(currentNode);
 
             newNodes.add(newNode);
@@ -83,13 +83,13 @@ class PathingHelper {
     static Path fetchRetracedPath(@NonNull Node node) {
 
         if(node.getParent() == null)
-            return new PathImpl(node.getStart(), node.getTarget(), Collections.singletonList(node.getLocation()));
+            return new PathImpl(node.getStart(), node.getTarget(), Collections.singletonList(node.getPosition()));
 
-        List<PathLocation> path = new ArrayList<>();
+        List<PathPosition> path = new ArrayList<>();
 
         Node currentNode = node;
         while (currentNode != null) {
-            path.add(currentNode.getLocation());
+            path.add(currentNode.getPosition());
             currentNode = currentNode.getParent();
         }
 
@@ -110,33 +110,33 @@ class PathingHelper {
      *
      * NOTE: The reachable block is not guaranteed to be the closest reachable block
      */
-    static PathBlock bubbleSearchAlternative(PathLocation target, Offset offset, SnapshotManager snapshotManager) {
+    static PathBlock bubbleSearchAlternative(PathPosition target, Offset offset, SnapshotManager snapshotManager) {
 
-        Set<PathLocation> newLocations = new HashSet<>();
-        newLocations.add(target);
+        Set<PathPosition> newPositions = new HashSet<>();
+        newPositions.add(target);
 
-        Set<PathLocation> examinedLocations = new HashSet<>();
-        while (!newLocations.isEmpty()) {
+        Set<PathPosition> examinedPositions = new HashSet<>();
+        while (!newPositions.isEmpty()) {
 
-            Set<PathLocation> nextLocations = new HashSet<>();
-            for (PathLocation location : newLocations) {
+            Set<PathPosition> nextPositions = new HashSet<>();
+            for (PathPosition position : newPositions) {
 
                 for (PathVector vector : offset.getVectors()) {
 
-                    PathLocation offsetLocation = location.add(vector);
-                    PathBlock pathBlock = snapshotManager.getBlock(offsetLocation);
+                    PathPosition offsetPosition = position.add(vector);
+                    PathBlock pathBlock = snapshotManager.getBlock(offsetPosition);
 
-                    if (pathBlock.isPassable() && !pathBlock.getPathLocation().isInSameBlock(target))
+                    if (pathBlock.isPassable() && !pathBlock.getPathPosition().isInSameBlock(target))
                         return pathBlock;
 
-                    if (!examinedLocations.contains(offsetLocation))
-                        nextLocations.add(offsetLocation);
+                    if (!examinedPositions.contains(offsetPosition))
+                        nextPositions.add(offsetPosition);
                 }
 
-                examinedLocations.add(location);
+                examinedPositions.add(position);
             }
 
-            newLocations = nextLocations;
+            newPositions = nextPositions;
         }
 
         return snapshotManager.getBlock(target);

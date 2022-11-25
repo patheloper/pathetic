@@ -12,7 +12,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public final class PathBlock {
 
-    private final PathLocation pathLocation;
+    private final PathPosition pathPosition;
     private final PathBlockType pathBlockType;
 
     /**
@@ -39,7 +39,7 @@ public final class PathBlock {
      * @return The X coordinate of the block
      */
     public int getBlockX() {
-        return this.pathLocation.getBlockX();
+        return this.pathPosition.getBlockX();
     }
 
     /**
@@ -48,7 +48,7 @@ public final class PathBlock {
      * @return The Y coordinate of the block
      */
     public int getBlockY() {
-        return this.pathLocation.getBlockY();
+        return this.pathPosition.getBlockY();
     }
 
     /**
@@ -57,7 +57,7 @@ public final class PathBlock {
      * @return The Z coordinate of the block
      */
     public int getBlockZ() {
-        return this.pathLocation.getBlockZ();
+        return this.pathPosition.getBlockZ();
     }
 
     @Override
@@ -65,15 +65,15 @@ public final class PathBlock {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PathBlock pathBlock = (PathBlock) o;
-        return this.pathBlockType == pathBlock.pathBlockType && Objects.equals(this.pathLocation, pathBlock.pathLocation);
+        return this.pathBlockType == pathBlock.pathBlockType && Objects.equals(this.pathPosition, pathBlock.pathPosition);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.pathBlockType, this.pathLocation);
+        return Objects.hash(this.pathBlockType, this.pathPosition);
     }
 
     public String toString() {
-        return "PathBlock(pathBlockType=" + this.getPathBlockType() + ", pathLocation=" + this.getPathLocation() + ")";
+        return "PathBlock(pathBlockType=" + this.getPathBlockType() + ", pathPosition=" + this.getPathPosition() + ")";
     }
 }

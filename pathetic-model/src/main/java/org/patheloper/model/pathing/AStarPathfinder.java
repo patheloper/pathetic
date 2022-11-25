@@ -4,7 +4,7 @@ import org.patheloper.api.pathing.result.PathState;
 import org.patheloper.api.pathing.result.PathfinderResult;
 import org.patheloper.api.pathing.rules.PathingRuleSet;
 import org.patheloper.api.pathing.strategy.PathfinderStrategy;
-import org.patheloper.api.wrapper.PathLocation;
+import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.model.pathing.result.PathImpl;
 import org.patheloper.model.pathing.result.PathfinderResultImpl;
 import org.patheloper.util.WatchdogUtil;
@@ -21,14 +21,14 @@ public class AStarPathfinder extends AbstractPathfinder {
     }
 
     @Override
-    protected PathfinderResult findPath(PathLocation start, PathLocation target, PathfinderStrategy strategy) {
+    protected PathfinderResult findPath(PathPosition start, PathPosition target, PathfinderStrategy strategy) {
 
         // Create the initial node
         Node startNode = new Node(start.floor(), start.floor(), target.floor(), 0);
 
         // Create the open and closed sets
         PriorityQueue<Node> nodeQueue = new PriorityQueue<>(Collections.singleton(startNode));
-        Set<PathLocation> examinedLocations = new HashSet<>();
+        Set<PathPosition> examinedPositions = new HashSet<>();
 
         // This is the current depth of the search and the last node
         int depth = 1;
@@ -55,7 +55,7 @@ public class AStarPathfinder extends AbstractPathfinder {
             if (currentNode.hasReachedEnd())
                 return PathingHelper.finishPathing(new PathfinderResultImpl(PathState.FOUND, PathingHelper.fetchRetracedPath(lastEverFound)));
 
-            PathingHelper.evaluateNewNodes(nodeQueue, examinedLocations, currentNode, offset, strategy, snapshotManager);
+            PathingHelper.evaluateNewNodes(nodeQueue, examinedPositions, currentNode, offset, strategy, snapshotManager);
             depth++;
         }
 
