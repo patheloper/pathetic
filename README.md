@@ -54,10 +54,8 @@ public class PathExample extends JavaPlugin {
     }
     
     private PathLocation randomLocation() {
-        return new PathLocation(
-                ThreadLocalRandom.current().nextInt(0, 100),
-                ThreadLocalRandom.current().nextInt(0, 100),
-                ThreadLocalRandom.current().nextInt(0, 100));
+        ThreadLocalRandom instance = ThreadLocalRandom.current();
+        return new PathLocation(instance.nextInt(0, 100), instance.nextInt(0, 100), instance.nextInt(0, 100));
     }
 }
 ```
