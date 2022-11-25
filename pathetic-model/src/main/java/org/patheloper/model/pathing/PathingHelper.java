@@ -17,16 +17,21 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.PriorityQueue;
 import java.util.Set;
 
 /*
  * TODO: 25.11.2022
- *  This class has improvement potential.
+ *  This class has a lot improvement potential.
  */
 class PathingHelper {
 
-    static int getLength(Node node) {
+    static void evaluateNewNodes(Collection<Node> nodeQueue, Set<PathLocation> examinedLocations, Node currentNode, Offset offset, PathfinderStrategy strategy, SnapshotManager snapshotManager) {
+        for (Node neighbourNode : fetchNeighbours(currentNode, offset.getVectors()))
+            if (isNodeValid(neighbourNode, nodeQueue, snapshotManager, examinedLocations, strategy))
+                nodeQueue.add(neighbourNode);
+    }
+
+    static int getProgress(Node node) {
 
         int length = 0;
 
@@ -39,13 +44,7 @@ class PathingHelper {
         return length;
     }
 
-    static void evaluateNewNodes(PriorityQueue<Node> nodeQueue, Set<PathLocation> examinedLocations, Node currentNode, Offset offset, PathfinderStrategy strategy, SnapshotManager snapshotManager) {
-        for (Node neighbourNode : getNeighbours(currentNode, offset.getVectors()))
-            if (nodeIsValid(neighbourNode, nodeQueue, snapshotManager, examinedLocations, strategy))
-                nodeQueue.add(neighbourNode);
-    }
-
-    static boolean nodeIsValid(Node node, PriorityQueue<Node> nodeQueue, SnapshotManager snapshotManager, Set<PathLocation> examinedLocations, PathfinderStrategy strategy) {
+    static boolean isNodeValid(Node node, Collection<Node> nodeQueue, SnapshotManager snapshotManager, Set<PathLocation> examinedLocations, PathfinderStrategy strategy) {
 
         if (examinedLocations.contains(node.getLocation()))
             return false;
@@ -53,7 +52,7 @@ class PathingHelper {
         if (nodeQueue.contains(node))
             return false;
 
-        if (!PathingHelper.isWithinWorldBounds(node.getLocation()))
+        if (!isWithinWorldBounds(node.getLocation()))
             return false;
 
         if (!strategy.isValid(node.getLocation(), snapshotManager))
@@ -66,7 +65,7 @@ class PathingHelper {
         return location.getPathWorld().getMinHeight() < location.getBlockY() && location.getBlockY() < location.getPathWorld().getMaxHeight();
     }
 
-    static Collection<Node> getNeighbours(Node currentNode, PathVector[] offsets) {
+    static Collection<Node> fetchNeighbours(Node currentNode, PathVector[] offsets) {
 
         Set<Node> newNodes = new HashSet<>(offsets.length);
 
@@ -81,7 +80,7 @@ class PathingHelper {
         return newNodes;
     }
 
-    static Path retracePath(@NonNull Node node) {
+    static Path fetchRetracedPath(@NonNull Node node) {
 
         if(node.getParent() == null)
             return new PathImpl(node.getStart(), node.getTarget(), Collections.singletonList(node.getLocation()));
@@ -100,7 +99,7 @@ class PathingHelper {
         return new PathImpl(node.getStart(), node.getTarget(), path);
     }
 
-    static PathfinderResult finish(PathfinderResult pathfinderResult) {
+    static PathfinderResult finishPathing(PathfinderResult pathfinderResult) {
         EventPublisher.raiseEvent(new PathingFinishedEvent(pathfinderResult));
         return pathfinderResult;
     }
@@ -111,7 +110,7 @@ class PathingHelper {
      *
      * NOTE: The reachable block is not guaranteed to be the closest reachable block
      */
-    static PathBlock bubbleSearch(PathLocation target, Offset offset, SnapshotManager snapshotManager) {
+    static PathBlock bubbleSearchAlternative(PathLocation target, Offset offset, SnapshotManager snapshotManager) {
 
         Set<PathLocation> newLocations = new HashSet<>();
         newLocations.add(target);
