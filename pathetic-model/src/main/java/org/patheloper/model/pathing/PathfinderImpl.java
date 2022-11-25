@@ -43,19 +43,21 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor(onConstructor = @__(@NonNull))
 public class PathfinderImpl implements Pathfinder {
 
+    private static final int QUEUE_CAPACITY = 10000;
+
     private static final ExecutorService FIXED_POOL =
             new ThreadPoolExecutor(
+                    Runtime.getRuntime().availableProcessors() / 4,
                     Runtime.getRuntime().availableProcessors(),
-                    Runtime.getRuntime().availableProcessors(),
-                    1000L, // or we let them die instantly
+                    250L,
                     TimeUnit.MILLISECONDS,
-                    new LinkedBlockingQueue<>(),
+                    new LinkedBlockingQueue<>(QUEUE_CAPACITY),
                     new ThreadFactoryBuilder()
                             .setUncaughtExceptionHandler(new PathfinderAsyncExceptionHandler())
                             .setDaemon(true)
-                            .setNameFormat("pathetic-%d")
+                            .setNameFormat("Pathfinder Task-%d")
                             .build(),
-                    new ThreadPoolExecutor.CallerRunsPolicy());
+                    new ThreadPoolExecutor.AbortPolicy());
 
     private static final Set<PathLocation> EMPTY_LINKED_HASHSET = Collections.unmodifiableSet(new LinkedHashSet<>(0));
 
