@@ -45,17 +45,17 @@ public class PathExample extends JavaPlugin {
         goFindSomePath(randomLocation(), randomLocation());
     }
     
-    private void goFindSomePath(PathLocation start, PathLocation end) {
+    private void goFindSomePath(PathPosition start, PathPosition end) {
 
         Pathfinder pathfinder = PatheticMapper.newPathfinder();
         pathfinder.findPath(start, end).thenAccept(pathfinderResult ->
-                pathfinderResult.getPath().getLocations().forEach(location ->
+                pathfinderResult.getPath().getPositions().forEach(location ->
                         player.sendBlockChange(location, Material.YELLOW_STAINED_GLASS.createBlockData())));
     }
     
-    private PathLocation randomLocation() {
+    private PathPosition randomLocation() {
         ThreadLocalRandom instance = ThreadLocalRandom.current();
-        return new PathLocation(instance.nextInt(0, 100), instance.nextInt(0, 100), instance.nextInt(0, 100));
+        return new PathPosition(instance.nextInt(0, 100), instance.nextInt(0, 100), instance.nextInt(0, 100));
     }
 }
 ```

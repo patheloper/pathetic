@@ -7,7 +7,7 @@ public enum PathState {
      */
     FOUND,
     /**
-     * The Path wasn't found, either it reached its max search depth or it couldn't find more locations
+     * The Path wasn't found, either it reached its max search depth or it couldn't find more positions
      */
     FAILED,
     /**
