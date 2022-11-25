@@ -1,0 +1,66 @@
+# Here lie dragons!
+
+name: Build Pathetic
+on:
+  push:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - labeled
+
+jobs:
+  build:
+    # Run on all label events (won't be duplicated) or all push events or on PR syncs not from the same repo
+    if: (github.event_name == 'pull_request' && github.event.action == 'labeled') || github.event_name != 'pull_request' || github.repository != github.event.pull_request.head.repo.full_name
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: 'adopt'
+
+      - name: Configure Build
+        uses: actions/github-script@v6
+        id: determine
+        with:
+          script: |
+            const {owner, repo} = context.repo;
+            const event_name = "${{ github.event_name }}";
+            const event = ${{ toJSON(github.event) }};
+            const ref_type = "${{ github.ref_type }}";
+            const ref_name = "${{ github.ref_name }}";
+            const result = {
+              action: "build"
+            };
+            if (event_name === "push" && ref_type === "branch") {
+              const {data: pulls} = await github.rest.pulls.list({ owner, repo, head: `${owner}:${ref_name}`, state: "open" });
+              const pull = pulls.find((pr) => !!pr.labels.find((l) => l.name === "build-pr-jar"));
+              if (pull) {
+                result["pr"] = pull.number;
+                result["action"] = "jar";
+                core.info(`This is a push action but to a branch with an open PR with the build jar label (${JSON.stringify(result)})`);
+                return result;
+              }
+            } else if (event_name === "pull_request" && event.pull_request.labels.find((l) => l.name === "build-pr-jar")) {
+              result["pr"] = event.pull_request.number;
+              result["action"] = "jar";
+              core.info(`This is a pull request action with a build jar label (${JSON.stringify(result)})`);
+              return result;
+            }
+            core.info("This will not build a jar");
+            return result;
+      - name: Apply Patches
+        run: |
+          git config --global user.email "no-reply@github.com"
+          git config --global user.name "Github Actions"
+          mvn clean package
+
+      - name: Upload Example Jar
+        if: fromJSON(steps.determine.outputs.result).action == 'jar'
+        uses: actions/upload-artifact@v3
+        with:
+          name: paper-${{ fromJSON(steps.determine.outputs.result).pr }}
+          path: pathetic-example/target/pathetic-example-*-SNAPSHOT.jar
