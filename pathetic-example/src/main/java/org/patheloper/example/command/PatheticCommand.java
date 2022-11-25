@@ -7,15 +7,16 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.patheloper.api.pathing.Pathfinder;
-import org.patheloper.api.pathing.result.task.PathingTask;
+import org.patheloper.api.pathing.result.PathfinderResult;
 import org.patheloper.api.wrapper.PathLocation;
 import org.patheloper.mapping.bukkit.BukkitMapper;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.Arrays;
+import java.util.concurrent.CompletionStage;
 
 public class PatheticCommand implements TabExecutor {
 
@@ -65,10 +66,10 @@ public class PatheticCommand implements TabExecutor {
                 PathLocation target = BukkitMapper.toPathLocation(playerSession.getPos2());
 
                 player.sendMessage("Starting pathfinding...");
-                PathingTask pathingTask = pathfinder.findPath(start, target); // This is the actual pathfinding.
+                CompletionStage<PathfinderResult> pathfindingResult = pathfinder.findPath(start, target); // This is the actual pathfinding.
 
                 // This is just a simple way to display the pathfinding result.
-                pathingTask.accept(result -> {
+                pathfindingResult.thenAccept(result -> {
 
                     player.sendMessage("State: " + result.getPathState().name());
                     player.sendMessage("Path length: " + result.getPath().length());
