@@ -48,21 +48,21 @@ public class AStarPathfinder extends AbstractPathfinder {
                 lastEverFound = currentNode;
 
             // Check to see if we have reached the length limit
-            if (pathingRuleSet.getMaxLength() > 0 && PathingHelper.getLength(lastEverFound) >= pathingRuleSet.getMaxLength())
-                return PathingHelper.finish(new PathfinderResultImpl(PathState.FOUND, PathingHelper.retracePath(lastEverFound)));
+            if (pathingRuleSet.getMaxLength() > 0 && PathingHelper.getProgress(lastEverFound) >= pathingRuleSet.getMaxLength())
+                return PathingHelper.finishPathing(new PathfinderResultImpl(PathState.FOUND, PathingHelper.fetchRetracedPath(lastEverFound)));
 
             // This means that the current node is the target, so we can stop here
             if (currentNode.hasReachedEnd())
-                return PathingHelper.finish(new PathfinderResultImpl(PathState.FOUND, PathingHelper.retracePath(lastEverFound)));
+                return PathingHelper.finishPathing(new PathfinderResultImpl(PathState.FOUND, PathingHelper.fetchRetracedPath(lastEverFound)));
 
             PathingHelper.evaluateNewNodes(nodeQueue, examinedLocations, currentNode, offset, strategy, snapshotManager);
             depth++;
         }
 
         if (pathingRuleSet.isAllowingFallback() && lastEverFound != null)
-            return PathingHelper.finish(new PathfinderResultImpl(PathState.FALLBACK, PathingHelper.retracePath(lastEverFound)));
+            return PathingHelper.finishPathing(new PathfinderResultImpl(PathState.FALLBACK, PathingHelper.fetchRetracedPath(lastEverFound)));
 
-        return PathingHelper.finish(new PathfinderResultImpl(PathState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
+        return PathingHelper.finishPathing(new PathfinderResultImpl(PathState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
     }
 
 }

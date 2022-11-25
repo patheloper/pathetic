@@ -35,10 +35,10 @@ public abstract class AbstractPathfinder implements Pathfinder {
 
     protected static final Set<PathLocation> EMPTY_LINKED_HASHSET = Collections.unmodifiableSet(new LinkedHashSet<>(0));
 
-    protected static final SnapshotManager SIMPLE_SNAPSHOT_MANAGER = new FailingSnapshotManager();
-    protected static final SnapshotManager LOADING_SNAPSHOT_MANAGER = new FailingSnapshotManager.RequestingSnapshotManager();
+    private static final SnapshotManager SIMPLE_SNAPSHOT_MANAGER = new FailingSnapshotManager();
+    private static final SnapshotManager LOADING_SNAPSHOT_MANAGER = new FailingSnapshotManager.RequestingSnapshotManager();
 
-    private static final Executor FIXED_POOL =
+    private static final Executor PATHING_EXECUTOR =
             new ThreadPoolExecutor(
                     Runtime.getRuntime().availableProcessors() / 4,
                     Runtime.getRuntime().availableProcessors(),
@@ -60,24 +60,24 @@ public abstract class AbstractPathfinder implements Pathfinder {
 
         this.pathingRuleSet = pathingRuleSet;
 
-        this.offset = pathingRuleSet.isAllowingDiagonal() ? Offset.MERGED : Offset.BLOCK_BY_BLOCK;
+        this.offset = pathingRuleSet.isAllowingDiagonal() ? Offset.MERGED : Offset.VERTICAL_AND_HORIZONTAL;
         this.snapshotManager = pathingRuleSet.isLoadingChunks() ? LOADING_SNAPSHOT_MANAGER : SIMPLE_SNAPSHOT_MANAGER;
     }
 
     @Override
     public @NonNull CompletionStage<PathfinderResult> findPath(@NonNull PathLocation start, @NonNull PathLocation target) {
 
-        PathfinderStrategy strategy = initializeStrategy();
+        PathfinderStrategy strategy = instantiateStrategy();
 
         PathingStartFindEvent startEvent = new PathingStartFindEvent(start, target, strategy);
         EventPublisher.raiseEvent(startEvent);
 
         if(initialChecksFailed(start, target, startEvent))
             return CompletableFuture.completedFuture(
-                    PathingHelper.finish(new PathfinderResultImpl(PathState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET))));
+                    PathingHelper.finishPathing(new PathfinderResultImpl(PathState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET))));
 
         if (pathingRuleSet.isAllowingAlternateTarget() && isTargetUnreachable(target))
-            target = PathingHelper.bubbleSearch(target, offset, snapshotManager).getPathLocation(); // TODO: this is always sync, maybe unwanted.
+            target = PathingHelper.bubbleSearchAlternative(target, offset, snapshotManager).getPathLocation(); // TODO: this is always sync, maybe unwanted.
 
         return producePathing(start, target, strategy);
     }
@@ -115,11 +115,11 @@ public abstract class AbstractPathfinder implements Pathfinder {
         return true;
     }
 
-    private PathfinderStrategy initializeStrategy() {
+    private PathfinderStrategy instantiateStrategy() {
         try {
             return pathingRuleSet.getStrategy().getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new PathfinderSpecificException("Failed to initialize PathfinderStrategy", e);
+            throw new PathfinderSpecificException("Failed to instantiate PathfinderStrategy", e);
         }
     }
 
@@ -127,11 +127,11 @@ public abstract class AbstractPathfinder implements Pathfinder {
 
         if(pathingRuleSet.isAsync()) {
             @NonNull PathLocation finalTarget = target;
-            return CompletableFuture.supplyAsync(() -> findPath(start, finalTarget, strategy), FIXED_POOL);
+            return CompletableFuture.supplyAsync(() -> findPath(start, finalTarget, strategy), PATHING_EXECUTOR);
         }
 
         PathfinderResult pathfinderResult = findPath(start, target, strategy);
-        return CompletableFuture.completedFuture(PathingHelper.finish(pathfinderResult));
+        return CompletableFuture.completedFuture(PathingHelper.finishPathing(pathfinderResult));
     }
 
     protected abstract PathfinderResult findPath(PathLocation start, PathLocation target, PathfinderStrategy strategy);
