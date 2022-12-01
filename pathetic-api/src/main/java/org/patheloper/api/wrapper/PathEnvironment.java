@@ -13,7 +13,7 @@ import java.util.UUID;
 @ToString
 @EqualsAndHashCode
 @RequiredArgsConstructor
-public class PathDomain {
+public class PathEnvironment {
 
     UUID uuid;
     String name;

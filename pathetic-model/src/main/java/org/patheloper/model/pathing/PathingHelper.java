@@ -62,7 +62,7 @@ class PathingHelper {
     }
 
     static boolean isWithinWorldBounds(PathPosition position) {
-        return position.getPathDomain().getMinHeight() < position.getBlockY() && position.getBlockY() < position.getPathDomain().getMaxHeight();
+        return position.getPathEnvironment().getMinHeight() < position.getBlockY() && position.getBlockY() < position.getPathEnvironment().getMaxHeight();
     }
 
     static Collection<Node> fetchNeighbours(Node currentNode, PathVector[] offsets) {

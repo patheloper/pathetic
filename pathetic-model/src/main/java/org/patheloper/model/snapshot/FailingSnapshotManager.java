@@ -8,7 +8,7 @@ import org.patheloper.api.snapshot.SnapshotManager;
 import org.patheloper.api.wrapper.PathBlock;
 import org.patheloper.api.wrapper.PathBlockType;
 import org.patheloper.api.wrapper.PathPosition;
-import org.patheloper.api.wrapper.PathDomain;
+import org.patheloper.api.wrapper.PathEnvironment;
 import org.patheloper.model.snapshot.world.WorldDomain;
 import org.patheloper.nms.NMSUtils;
 import org.patheloper.util.BukkitVersionUtil;
@@ -64,9 +64,9 @@ public class FailingSnapshotManager implements SnapshotManager {
         int chunkX = position.getBlockX() >> 4;
         int chunkZ = position.getBlockZ() >> 4;
 
-        if (SNAPSHOTS_MAP.containsKey(position.getPathDomain().getUuid())) {
+        if (SNAPSHOTS_MAP.containsKey(position.getPathEnvironment().getUuid())) {
 
-            WorldDomain worldDomain = SNAPSHOTS_MAP.get(position.getPathDomain().getUuid());
+            WorldDomain worldDomain = SNAPSHOTS_MAP.get(position.getPathEnvironment().getUuid());
             long chunkKey = ChunkUtils.getChunkKey(chunkX, chunkZ);
 
             return worldDomain.getSnapshot(chunkKey);
@@ -86,7 +86,7 @@ public class FailingSnapshotManager implements SnapshotManager {
 
     public static class RequestingSnapshotManager extends FailingSnapshotManager {
 
-        private static ChunkSnapshot retrieveChunkSnapshot(PathDomain world, int chunkX, int chunkZ) {
+        private static ChunkSnapshot retrieveChunkSnapshot(PathEnvironment world, int chunkX, int chunkZ) {
             World bukkitWorld = Bukkit.getWorld(world.getUuid());
             return NMS_UTILS.getNmsInterface().getSnapshot(bukkitWorld, chunkX, chunkZ);
         }
@@ -100,12 +100,12 @@ public class FailingSnapshotManager implements SnapshotManager {
 
             return chunkSnapshotOptional.orElseGet(() -> {
 
-                ChunkSnapshot chunkSnapshot = retrieveChunkSnapshot(position.getPathDomain(), chunkX, chunkZ);
+                ChunkSnapshot chunkSnapshot = retrieveChunkSnapshot(position.getPathEnvironment(), chunkX, chunkZ);
 
                 if (chunkSnapshot == null)
                     throw new IllegalStateException("Could not retrieve chunk snapshot --> BOOM!");
 
-                WorldDomain worldDomain = SNAPSHOTS_MAP.computeIfAbsent(position.getPathDomain().getUuid(), uuid -> new WorldDomain());
+                WorldDomain worldDomain = SNAPSHOTS_MAP.computeIfAbsent(position.getPathEnvironment().getUuid(), uuid -> new WorldDomain());
                 worldDomain.addSnapshot(ChunkUtils.getChunkKey(chunkX, chunkZ), chunkSnapshot);
 
                 return chunkSnapshot;

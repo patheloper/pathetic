@@ -92,7 +92,7 @@ public abstract class AbstractPathfinder implements Pathfinder {
         if (startEvent.isCancelled())
             return true;
 
-        if (!start.getPathDomain().equals(target.getPathDomain()))
+        if (!start.getPathEnvironment().equals(target.getPathEnvironment()))
             return true;
 
         if (start.isInSameBlock(target))

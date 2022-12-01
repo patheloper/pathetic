@@ -10,7 +10,7 @@ import java.util.Objects;
 public class PathPosition implements Cloneable {
 
     @NonNull
-    private PathDomain pathDomain;
+    private PathEnvironment pathEnvironment;
     private double x;
     private double y;
     private double z;
@@ -79,7 +79,7 @@ public class PathPosition implements Cloneable {
      * @return A new {@link PathPosition}
      */
     public PathPosition setX(double x) {
-        return new PathPosition(this.pathDomain, x, this.y, this.z);
+        return new PathPosition(this.pathEnvironment, x, this.y, this.z);
     }
 
     /**
@@ -89,7 +89,7 @@ public class PathPosition implements Cloneable {
      * @return A new {@link PathPosition}
      */
     public PathPosition setY(double y) {
-        return new PathPosition(this.pathDomain, this.x, y, this.z);
+        return new PathPosition(this.pathEnvironment, this.x, y, this.z);
     }
 
     /**
@@ -99,7 +99,7 @@ public class PathPosition implements Cloneable {
      * @return A new {@link PathPosition}
      */
     public PathPosition setZ(double z) {
-        return new PathPosition(this.pathDomain, this.x, this.y, z);
+        return new PathPosition(this.pathEnvironment, this.x, this.y, z);
     }
 
     /**
@@ -138,7 +138,7 @@ public class PathPosition implements Cloneable {
      */
     @NonNull
     public PathPosition add(final double x, final double y, final double z) {
-        return new PathPosition(this.pathDomain, this.x + x, this.y + y, this.z + z);
+        return new PathPosition(this.pathEnvironment, this.x + x, this.y + y, this.z + z);
     }
 
     /**
@@ -160,7 +160,7 @@ public class PathPosition implements Cloneable {
      */
     @NonNull
     public PathPosition subtract(final double x, final double y, final double z) {
-        return new PathPosition(this.pathDomain, this.x - x, this.y - y, this.z - z);
+        return new PathPosition(this.pathEnvironment, this.x - x, this.y - y, this.z - z);
     }
 
     /**
@@ -189,7 +189,7 @@ public class PathPosition implements Cloneable {
      * @return A new {@link PathPosition}
      */
     public PathPosition floor() {
-        return new PathPosition(this.pathDomain, this.getBlockX(), this.getBlockY(), this.getBlockZ());
+        return new PathPosition(this.pathEnvironment, this.getBlockX(), this.getBlockY(), this.getBlockZ());
     }
 
     /**
@@ -197,16 +197,16 @@ public class PathPosition implements Cloneable {
      * @return A new {@link PathPosition}
      */
     public PathPosition mid() {
-        return new PathPosition(this.pathDomain, this.getBlockX() + 0.5, this.getBlockY() + 0.5, this.getBlockZ() + 0.5);
+        return new PathPosition(this.pathEnvironment, this.getBlockX() + 0.5, this.getBlockY() + 0.5, this.getBlockZ() + 0.5);
     }
 
     /**
-     * Gets the {@link PathDomain} the position is in
+     * Gets the {@link PathEnvironment} the position is in
      *
-     * @return The {@link PathDomain} the position is in
+     * @return The {@link PathEnvironment} the position is in
      */
-    public @NonNull PathDomain getPathDomain() {
-        return this.pathDomain;
+    public @NonNull PathEnvironment getPathEnvironment() {
+        return this.pathEnvironment;
     }
 
     /**
@@ -246,7 +246,7 @@ public class PathPosition implements Cloneable {
             throw new IllegalStateException("Superclass messed up", ex);
         }
 
-        clone.pathDomain = this.pathDomain;
+        clone.pathEnvironment = this.pathEnvironment;
 
         clone.x = this.x;
         clone.y = this.y;
@@ -260,15 +260,15 @@ public class PathPosition implements Cloneable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PathPosition that = (PathPosition) o;
-        return Double.compare(that.x, x) == 0 && Double.compare(that.y, y) == 0 && Double.compare(that.z, z) == 0 && pathDomain.equals(that.pathDomain);
+        return Double.compare(that.x, x) == 0 && Double.compare(that.y, y) == 0 && Double.compare(that.z, z) == 0 && pathEnvironment.equals(that.pathEnvironment);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(pathDomain, x, y, z);
+        return Objects.hash(pathEnvironment, x, y, z);
     }
 
     public String toString() {
-        return "PathPosition(pathDomain=" + this.getPathDomain() + ", x=" + this.getX() + ", y=" + this.getY() + ", z=" + this.getZ() + ")";
+        return "PathPosition(pathDomain=" + this.getPathEnvironment() + ", x=" + this.getX() + ", y=" + this.getY() + ", z=" + this.getZ() + ")";
     }
 }
