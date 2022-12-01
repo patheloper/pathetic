@@ -17,7 +17,6 @@
     <modules>
         <module>pathetic-api</module>
         <module>pathetic-example</module>
-        <module>pathetic-legacy</module>
         <module>pathetic-mapping</module>
         <module>pathetic-nms</module>
         <module>pathetic-nms/v1_19</module>
