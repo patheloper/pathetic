@@ -11,7 +11,7 @@ import org.patheloper.api.wrapper.PathBlock;
 import org.patheloper.api.wrapper.PathBlockType;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.api.wrapper.PathVector;
-import org.patheloper.api.wrapper.PathDomain;
+import org.patheloper.api.wrapper.PathEnvironment;
 
 import java.util.Arrays;
 
@@ -20,7 +20,7 @@ public class BukkitMapper {
 
     @NonNull
     public Location toLocation(@NonNull PathPosition pathPosition) {
-        return new Location(toWorld(pathPosition.getPathDomain()), pathPosition.getX(), pathPosition.getY(), pathPosition.getZ());
+        return new Location(toWorld(pathPosition.getPathEnvironment()), pathPosition.getX(), pathPosition.getY(), pathPosition.getZ());
     }
 
     @NonNull
@@ -52,13 +52,13 @@ public class BukkitMapper {
         return new PathBlock(new PathPosition(toPathWorld(block.getWorld()), block.getX(), block.getY(), block.getZ()), PathBlockType.fromMaterial(block.getType()));
     }
 
-    public World toWorld(@NonNull PathDomain pathDomain) {
-        return Bukkit.getWorld(pathDomain.getUuid());
+    public World toWorld(@NonNull PathEnvironment pathEnvironment) {
+        return Bukkit.getWorld(pathEnvironment.getUuid());
     }
 
     @NonNull
-    public PathDomain toPathWorld(@NonNull World world) {
-        return new PathDomain(world.getUID(), world.getName(), getMinHeight(world), getMaxHeight(world));
+    public PathEnvironment toPathWorld(@NonNull World world) {
+        return new PathEnvironment(world.getUID(), world.getName(), getMinHeight(world), getMaxHeight(world));
     }
 
     private final boolean IS_NEWER_WORLD;

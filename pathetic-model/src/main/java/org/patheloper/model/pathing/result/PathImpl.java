@@ -110,7 +110,7 @@ public class PathImpl implements Path {
             double ty = 0.5f * (path.points.get(p0).getY() * q1 + path.points.get(p1).getY() * q2 + path.points.get(p2).getY() * q3 + path.points.get(p3).getY() * q4);
             double tz = 0.5f * (path.points.get(p0).getZ() * q1 + path.points.get(p1).getZ() * q2 + path.points.get(p2).getZ() * q3 + path.points.get(p3).getZ() * q4);
 
-            return new PathPosition(path.points.get(0).getPathDomain(), tx, ty, tz);
+            return new PathPosition(path.points.get(0).getPathEnvironment(), tx, ty, tz);
         }
 
         private SplineHelper() {
