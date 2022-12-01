@@ -6,10 +6,10 @@
 
     <groupId>org.patheloper</groupId>
     <artifactId>pathetic-example</artifactId>
-    <version>1.0</version>
+    <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>PatheticExample</name>
+    <name>PatheticTest</name>
 
     <properties>
         <java.version>1.8</java.version>
@@ -39,7 +39,6 @@
                         </goals>
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <finalName>pathetic-example</finalName>
                         </configuration>
                     </execution>
                 </executions>
