@@ -41,8 +41,9 @@ public class ChunkUtils {
                 e.printStackTrace();
                 return null;
             }
-        } else
+        } else {
             return snapshot.getBlockType(x, y, z);
+        }
     }
 
 }
