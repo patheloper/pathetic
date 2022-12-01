@@ -29,7 +29,9 @@ public enum PathBlockType {
      */
     public static PathBlockType fromMaterial(Material material) {
 
-        if (material.isAir())
+        // TODO: A Better AIR check and also TALL_GRASS doesn't work on older versions as it doesn't exist
+
+        if (material == Material.AIR)
             return AIR;
 
         switch (material) {
