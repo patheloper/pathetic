@@ -1,5 +1,6 @@
 package org.patheloper.util;
 
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
@@ -32,9 +33,10 @@ public class ChunkUtils {
     /**
      * Get the block type from a chunk snapshot at the given coordinates
      */
+    @SneakyThrows
     public Material getMaterial(ChunkSnapshot snapshot, int x, int y, int z) {
         if (BukkitVersionUtil.isUnder(13)) {
-            if (materialMethod == null || blockTypeMethod == null) return null;
+            if (materialMethod == null || blockTypeMethod == null) throw new IllegalStateException("Reflection Failed");
             try {
                 return (Material) materialMethod.invoke(null, blockTypeMethod.invoke(snapshot, x, y, z));
             } catch (IllegalAccessException | InvocationTargetException e) {
