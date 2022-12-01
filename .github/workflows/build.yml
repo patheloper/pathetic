@@ -41,17 +41,18 @@ jobs:
               if (pull) {
                 result["pr"] = pull.number;
                 result["action"] = "jar";
-                core.info(`This is a push action but to a branch with an open PR with the build jar label (${JSON.stringify(result)})`);
+                core.notice(`This is a push action but to a branch with an open PR with the build jar label (${JSON.stringify(result)})`);
                 return result;
               }
             } else if (event_name === "pull_request" && event.pull_request.labels.find((l) => l.name === "build-pr-jar")) {
               result["pr"] = event.pull_request.number;
               result["action"] = "jar";
-              core.info(`This is a pull request action with a build jar label (${JSON.stringify(result)})`);
+              core.notice(`This is a pull request action with a build jar label (${JSON.stringify(result)})`);
               return result;
             }
-            core.info("This will not build a jar");
+            core.notice("This will not build a jar");
             return result;
+
       - name: Build Jar
         run: |
           git config --global user.email "no-reply@github.com"
@@ -63,4 +64,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: pathetic-${{ fromJSON(steps.determine.outputs.result).pr }}
-          path: pathetic-example/target/pathetic-example-*-SNAPSHOT.jar
+          path: pathetic-example/target/pathetic-example.jar
