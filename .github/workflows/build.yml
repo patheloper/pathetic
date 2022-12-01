@@ -41,18 +41,17 @@ jobs:
               if (pull) {
                 result["pr"] = pull.number;
                 result["action"] = "jar";
-                core.notice(`This is a push action but to a branch with an open PR with the build jar label (${JSON.stringify(result)})`);
+                core.info(`This is a push action but to a branch with an open PR with the build jar label (${JSON.stringify(result)})`);
                 return result;
               }
             } else if (event_name === "pull_request" && event.pull_request.labels.find((l) => l.name === "build-pr-jar")) {
               result["pr"] = event.pull_request.number;
               result["action"] = "jar";
-              core.notice(`This is a pull request action with a build jar label (${JSON.stringify(result)})`);
+              core.info(`This is a pull request action with a build jar label (${JSON.stringify(result)})`);
               return result;
             }
-            core.notice("This will not build a jar");
+            core.info("This will not build a jar");
             return result;
-
       - name: Build Jar
         run: |
           git config --global user.email "no-reply@github.com"
@@ -64,62 +63,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: pathetic-${{ fromJSON(steps.determine.outputs.result).pr }}
-          path: pathetic-example/target/pathetic-example.jar
-
-  pr_comment:
-    if: github.event.workflow_run.conclusion == 'success'
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - uses: actions/github-script@v6
-        with:
-          # This snippet is public-domain, taken from
-          # https://github.com/oprypin/nightly.link/blob/master/.github/workflows/pr-comment.yml
-          # Modified extensively by Machine_Maker
-          script: |
-            async function updatePR(owner, repo, issue_number, purpose, body) {
-              const { data } = await github.rest.issues.get({ owner, repo, issue_number });
-              core.debug(JSON.stringify(data, null, 2));
-            
-              const marker = `<!-- bot: ${purpose} -->`;
-              let new_body = data.body ? data.body.trim().split(marker)[0].trim() : "";
-              new_body += `\n${marker}\n---\n${body}`;
-              core.info(`Updating the text body of PR #${issue_number} in ${owner}/${repo}`);
-              await github.rest.issues.update({ owner, repo, issue_number, body: new_body });
-            }
-            const { owner, repo } = context.repo;
-            const run_id = ${{ github.event.workflow_run.id }};
-            const repo_id = ${{ github.event.repository.id }};
-            
-            let pulls = [];
-            const event_type = "${{ github.event.workflow_run.event}}";
-            if (event_type === "push") { // if push, it's from the same repo which means `pull_requests` is populated
-              pulls = ${{ toJSON(github.event.workflow_run.pull_requests) }};
-            } else {
-              const pr_branch = "${{ github.event.workflow_run.head_branch }}";
-              const pr_sha = "${{ github.event.workflow_run.head_sha }}";
-              const pr_owner = "${{ github.event.workflow_run.head_repository.owner.login }}";
-              const { data } = await github.rest.pulls.list({ owner, repo, head: `${pr_owner}:${pr_branch}`, state: "open" });
-              core.debug(JSON.stringify(data, null, 2));
-              pulls = data.filter((pr) => pr.head.sha === pr_sha && pr.labels.find((l) => l.name === "build-pr-jar"));
-            }
-            if (!pulls.length) {
-              return core.notice("This workflow doesn't have any pull requests!");
-            } else if (pulls.length > 1) {
-              core.info(JSON.stringify(pulls, null, 2));
-              return core.error("Found multiple matching PRs");
-            }
-            const pull_request = pulls[0];
-            const artifacts = await github.paginate(github.rest.actions.listWorkflowRunArtifacts, { owner, repo, run_id });
-            if (!artifacts.length) {
-              return core.info("Skipping comment due to no artifact found");
-            }
-            const artifact = artifacts.find((art) => art.name === `pathetic-${pull_request.number}`);
-            if (!artifact) {
-              return core.info("Skipping comment to no matching artifact found");
-            }
-            
-            const link = `https://nightly.link/${owner}/${repo}/actions/artifacts/${artifact.id}.zip`;
-            const body = `Download the Example Plugin jar for this pull request: [${artifact.name}.zip](${link})`;
-            core.info(`Adding a link to ${link}`);
-            await updatePR(owner, repo, pull_request.number, "pathetic-pr-build", body);
+          path: pathetic-example/target/pathetic-example-*-SNAPSHOT.jar
