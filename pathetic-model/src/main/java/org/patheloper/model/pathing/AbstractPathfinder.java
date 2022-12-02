@@ -98,7 +98,7 @@ public abstract class AbstractPathfinder implements Pathfinder {
         if (start.isInSameBlock(target))
             return true;
 
-        return this.pathingRuleSet.isAllowingFailFast() && isTargetUnreachable(target);
+        return this.pathingRuleSet.isAllowingFailFast() && isTargetUnreachable(target) || isStartNotEscapable(start);
     }
 
     private boolean isTargetUnreachable(PathPosition target) {
@@ -106,6 +106,20 @@ public abstract class AbstractPathfinder implements Pathfinder {
         for(PathVector vector : offset.getVectors()) {
 
             PathPosition offsetPosition = target.add(vector);
+            PathBlock pathBlock = this.getSnapshotManager().getBlock(offsetPosition);
+
+            if(pathBlock.isPassable())
+                return false;
+        }
+
+        return true;
+    }
+
+    private boolean isStartNotEscapable(PathPosition start) {
+
+        for(PathVector vector : offset.getVectors()) {
+
+            PathPosition offsetPosition = start.add(vector);
             PathBlock pathBlock = this.getSnapshotManager().getBlock(offsetPosition);
 
             if(pathBlock.isPassable())
