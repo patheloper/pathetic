@@ -68,22 +68,25 @@ public abstract class AbstractPathfinder implements Pathfinder {
     public @NonNull CompletionStage<PathfinderResult> findPath(@NonNull PathPosition start, @NonNull PathPosition target) {
 
         PathfinderStrategy strategy = instantiateStrategy();
-
-        PathingStartFindEvent startEvent = new PathingStartFindEvent(start, target, strategy);
-        EventPublisher.raiseEvent(startEvent);
+        PathingStartFindEvent startEvent = raiseStart(start, target, strategy);
 
         if(initialChecksFailed(start, target, startEvent))
             return CompletableFuture.completedFuture(
                     PathingHelper.finishPathing(new PathfinderResultImpl(PathState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET))));
-
-        if (pathingRuleSet.isAllowingAlternateTarget() && isTargetUnreachable(target))
-            target = PathingHelper.bubbleSearchAlternative(target, offset, snapshotManager).getPathPosition(); // TODO: this is always sync, maybe unwanted.
 
         return producePathing(start, target, strategy);
     }
 
     protected SnapshotManager getSnapshotManager() {
         return snapshotManager;
+    }
+
+    private PathingStartFindEvent raiseStart(PathPosition start, PathPosition target, PathfinderStrategy strategy) {
+
+        PathingStartFindEvent startEvent = new PathingStartFindEvent(start, target, strategy);
+        EventPublisher.raiseEvent(startEvent);
+
+        return startEvent;
     }
 
     private boolean initialChecksFailed(PathPosition start, PathPosition target, Cancellable startEvent) {
@@ -137,14 +140,20 @@ public abstract class AbstractPathfinder implements Pathfinder {
         }
     }
 
+    private PathPosition relocateTargetPosition(PathPosition target) {
+
+        if (pathingRuleSet.isAllowingAlternateTarget() && isTargetUnreachable(target))
+            return PathingHelper.bubbleSearchAlternative(target, offset, snapshotManager).getPathPosition();
+
+        return target;
+    }
+
     private CompletionStage<PathfinderResult> producePathing(PathPosition start, PathPosition target, PathfinderStrategy strategy) {
 
-        if(pathingRuleSet.isAsync()) {
-            @NonNull PathPosition finalTarget = target;
-            return CompletableFuture.supplyAsync(() -> findPath(start, finalTarget, strategy), PATHING_EXECUTOR);
-        }
+        if(pathingRuleSet.isAsync())
+            return CompletableFuture.supplyAsync(() -> findPath(start, relocateTargetPosition(target), strategy), PATHING_EXECUTOR);
 
-        PathfinderResult pathfinderResult = findPath(start, target, strategy);
+        PathfinderResult pathfinderResult = findPath(start, relocateTargetPosition(target), strategy);
         return CompletableFuture.completedFuture(PathingHelper.finishPathing(pathfinderResult));
     }
 
