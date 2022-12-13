@@ -52,20 +52,20 @@ public class AStarPathfinder extends AbstractPathfinder {
 
             // Check to see if we have reached the length limit
             if (pathingRuleSet.getMaxLength() > 0 && PathingHelper.getProgress(lastEverFound) >= pathingRuleSet.getMaxLength())
-                return PathingHelper.finishPathing(new PathfinderResultImpl(PathState.FOUND, PathingHelper.fetchRetracedPath(lastEverFound)));
+                return finishPathing(new PathfinderResultImpl(PathState.FOUND, PathingHelper.fetchRetracedPath(lastEverFound)));
 
             // This means that the current node is the target, so we can stop here
             if (currentNode.hasReachedEnd())
-                return PathingHelper.finishPathing(new PathfinderResultImpl(PathState.FOUND, PathingHelper.fetchRetracedPath(lastEverFound)));
+                return finishPathing(new PathfinderResultImpl(PathState.FOUND, PathingHelper.fetchRetracedPath(lastEverFound)));
 
             PathingHelper.evaluateNewNodes(nodeQueue, examinedPositions, currentNode, offset, strategy, snapshotManager);
             depth++;
         }
 
         if (pathingRuleSet.isAllowingFallback() && lastEverFound != null)
-            return PathingHelper.finishPathing(new PathfinderResultImpl(PathState.FALLBACK, PathingHelper.fetchRetracedPath(lastEverFound)));
+            return finishPathing(new PathfinderResultImpl(PathState.FALLBACK, PathingHelper.fetchRetracedPath(lastEverFound)));
 
-        return PathingHelper.finishPathing(new PathfinderResultImpl(PathState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
+        return finishPathing(new PathfinderResultImpl(PathState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
     }
 
 }

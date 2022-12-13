@@ -3,6 +3,7 @@ package org.patheloper.model.pathing;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.NonNull;
 import org.bukkit.event.Cancellable;
+import org.patheloper.api.event.PathingFinishedEvent;
 import org.patheloper.api.event.PathingStartFindEvent;
 import org.patheloper.api.pathing.Pathfinder;
 import org.patheloper.api.pathing.result.PathState;
@@ -22,6 +23,7 @@ import org.patheloper.model.snapshot.FailingSnapshotManager;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -71,10 +73,14 @@ public abstract class AbstractPathfinder implements Pathfinder {
         PathingStartFindEvent startEvent = raiseStart(start, target, strategy);
 
         if(initialChecksFailed(start, target, startEvent))
-            return CompletableFuture.completedFuture(
-                    PathingHelper.finishPathing(new PathfinderResultImpl(PathState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET))));
+            return CompletableFuture.completedFuture(finishPathing(new PathfinderResultImpl(PathState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET))));
 
         return producePathing(start, target, strategy);
+    }
+
+    protected PathfinderResult finishPathing(PathfinderResult pathfinderResult) {
+        EventPublisher.raiseEvent(new PathingFinishedEvent(pathfinderResult));
+        return pathfinderResult;
     }
 
     protected SnapshotManager getSnapshotManager() {
@@ -140,10 +146,48 @@ public abstract class AbstractPathfinder implements Pathfinder {
         }
     }
 
+    /*
+     * Bloating up like a bubble until a reachable block is found
+     * The block itself might not be passable, but at least reachable from the outside
+     *
+     * NOTE: The reachable block is not guaranteed to be the closest reachable block
+     */
+    private PathBlock bubbleSearchAlternative(PathPosition target, Offset offset, SnapshotManager snapshotManager) {
+
+        Set<PathPosition> newPositions = new HashSet<>();
+        newPositions.add(target);
+
+        Set<PathPosition> examinedPositions = new HashSet<>();
+        while (!newPositions.isEmpty()) {
+
+            Set<PathPosition> nextPositions = new HashSet<>();
+            for (PathPosition position : newPositions) {
+
+                for (PathVector vector : offset.getVectors()) {
+
+                    PathPosition offsetPosition = position.add(vector);
+                    PathBlock pathBlock = snapshotManager.getBlock(offsetPosition);
+
+                    if (pathBlock.isPassable() && !pathBlock.getPathPosition().isInSameBlock(target))
+                        return pathBlock;
+
+                    if (!examinedPositions.contains(offsetPosition))
+                        nextPositions.add(offsetPosition);
+                }
+
+                examinedPositions.add(position);
+            }
+
+            newPositions = nextPositions;
+        }
+
+        return snapshotManager.getBlock(target);
+    }
+
     private PathPosition relocateTargetPosition(PathPosition target) {
 
         if (pathingRuleSet.isAllowingAlternateTarget() && isTargetUnreachable(target))
-            return PathingHelper.bubbleSearchAlternative(target, offset, snapshotManager).getPathPosition();
+            return bubbleSearchAlternative(target, offset, snapshotManager).getPathPosition();
 
         return target;
     }
@@ -154,7 +198,7 @@ public abstract class AbstractPathfinder implements Pathfinder {
             return CompletableFuture.supplyAsync(() -> findPath(start, relocateTargetPosition(target), strategy), PATHING_EXECUTOR);
 
         PathfinderResult pathfinderResult = findPath(start, relocateTargetPosition(target), strategy);
-        return CompletableFuture.completedFuture(PathingHelper.finishPathing(pathfinderResult));
+        return CompletableFuture.completedFuture(finishPathing(pathfinderResult));
     }
 
     protected abstract PathfinderResult findPath(PathPosition start, PathPosition target, PathfinderStrategy strategy);
