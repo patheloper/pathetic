@@ -14,6 +14,9 @@ import java.util.HashSet;
 import java.util.PriorityQueue;
 import java.util.Set;
 
+/**
+ * A pathfinder that uses the A* algorithm.
+ */
 public class AStarPathfinder extends AbstractPathfinder {
 
     public AStarPathfinder(PathingRuleSet pathingRuleSet) {
