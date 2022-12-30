@@ -15,6 +15,15 @@ public class PathPosition implements Cloneable {
     private double y;
     private double z;
 
+    public PathPosition interpolate(PathPosition other, double progress) {
+
+        double x = NumberUtils.interpolate(this.x, other.x, progress);
+        double y = NumberUtils.interpolate(this.y, other.y, progress);
+        double z = NumberUtils.interpolate(this.z, other.z, progress);
+
+        return new PathPosition(pathEnvironment, x, y, z);
+    }
+
     /**
      * Checks to see if the two positions are in the same block
      *
