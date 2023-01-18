@@ -107,35 +107,21 @@ public abstract class AbstractPathfinder implements Pathfinder {
         if (start.isInSameBlock(target))
             return true;
 
-        return this.pathingRuleSet.isAllowingFailFast() && isTargetUnreachable(target) || isStartNotEscapable(start);
+        return this.pathingRuleSet.isAllowingFailFast() && isBlockReachable(target) || isBlockReachable(start);
     }
 
-    private boolean isTargetUnreachable(PathPosition target) {
+    private boolean isBlockReachable(PathPosition position) {
 
         for(PathVector vector : offset.getVectors()) {
 
-            PathPosition offsetPosition = target.add(vector);
+            PathPosition offsetPosition = position.add(vector);
             PathBlock pathBlock = this.getSnapshotManager().getBlock(offsetPosition);
 
             if(pathBlock.isPassable())
-                return false;
+                return true;
         }
 
-        return true;
-    }
-
-    private boolean isStartNotEscapable(PathPosition start) {
-
-        for(PathVector vector : offset.getVectors()) {
-
-            PathPosition offsetPosition = start.add(vector);
-            PathBlock pathBlock = this.getSnapshotManager().getBlock(offsetPosition);
-
-            if(pathBlock.isPassable())
-                return false;
-        }
-
-        return true;
+        return false;
     }
 
     private PathfinderStrategy instantiateStrategy() {
@@ -186,7 +172,7 @@ public abstract class AbstractPathfinder implements Pathfinder {
 
     private PathPosition relocateTargetPosition(PathPosition target) {
 
-        if (pathingRuleSet.isAllowingAlternateTarget() && isTargetUnreachable(target))
+        if (pathingRuleSet.isAllowingAlternateTarget() && isBlockReachable(target))
             return bubbleSearchAlternative(target, offset, snapshotManager).getPathPosition();
 
         return target;
