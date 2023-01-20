@@ -107,10 +107,10 @@ public abstract class AbstractPathfinder implements Pathfinder {
         if (start.isInSameBlock(target))
             return true;
 
-        return this.pathingRuleSet.isAllowingFailFast() && isBlockReachable(target) || isBlockReachable(start);
+        return this.pathingRuleSet.isAllowingFailFast() && isBlockUnreachable(target) || isBlockUnreachable(start);
     }
 
-    private boolean isBlockReachable(PathPosition position) {
+    private boolean isBlockUnreachable(PathPosition position) {
 
         for(PathVector vector : offset.getVectors()) {
 
@@ -118,10 +118,10 @@ public abstract class AbstractPathfinder implements Pathfinder {
             PathBlock pathBlock = this.getSnapshotManager().getBlock(offsetPosition);
 
             if(pathBlock.isPassable())
-                return true;
+                return false;
         }
 
-        return false;
+        return true;
     }
 
     private PathfinderStrategy instantiateStrategy() {
@@ -172,7 +172,7 @@ public abstract class AbstractPathfinder implements Pathfinder {
 
     private PathPosition relocateTargetPosition(PathPosition target) {
 
-        if (pathingRuleSet.isAllowingAlternateTarget() && isBlockReachable(target))
+        if (pathingRuleSet.isAllowingAlternateTarget() && isBlockUnreachable(target))
             return bubbleSearchAlternative(target, offset, snapshotManager).getPathPosition();
 
         return target;
