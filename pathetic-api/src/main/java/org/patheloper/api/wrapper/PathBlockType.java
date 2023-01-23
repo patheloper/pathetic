@@ -29,7 +29,7 @@ public enum PathBlockType {
      */
     public static PathBlockType fromMaterial(Material material) {
 
-        if (material.isAir())
+        if (material == Material.AIR)
             return AIR;
 
         switch (material) {
@@ -37,7 +37,6 @@ public enum PathBlockType {
             case LAVA:
                 return LIQUID;
             case GRASS:
-            case TALL_GRASS:
                 return OTHER;
             default:
                 return SOLID;
