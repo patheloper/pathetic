@@ -23,6 +23,13 @@ public interface Path {
     Path interpolate(int nthBlock, double resolution);
 
     /**
+     * Enlarges the path by filling in the spaces between the points and adding new points in between based on the given resolution
+     * @param resolution The resolution of the enlargement (in blocks). The lower the resolution, the more points will be added
+     *                   between the existing points
+     */
+    Path enlarge(double resolution);
+
+    /**
      * Joins this Path with the given Path.
      * @param path which will be appended at the end.
      * @return {@link Path} the new Path

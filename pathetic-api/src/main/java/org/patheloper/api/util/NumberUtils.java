@@ -5,6 +5,10 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public final class NumberUtils {
 
+    public static double interpolate(double a, double b, double progress) {
+        return a + (b - a) * progress;
+    }
+
     public static double square(double value) {
         return value * value;
     }

@@ -1,15 +1,11 @@
 package org.patheloper.model.pathing;
 
 import lombok.NonNull;
-import org.patheloper.api.event.PathingFinishedEvent;
 import org.patheloper.api.pathing.result.Path;
-import org.patheloper.api.pathing.result.PathfinderResult;
 import org.patheloper.api.pathing.strategy.PathfinderStrategy;
 import org.patheloper.api.snapshot.SnapshotManager;
-import org.patheloper.api.wrapper.PathBlock;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.api.wrapper.PathVector;
-import org.patheloper.bukkit.event.EventPublisher;
 import org.patheloper.model.pathing.result.PathImpl;
 
 import java.util.ArrayList;
@@ -22,6 +18,13 @@ import java.util.Set;
 /*
  * TODO: 25.11.2022
  *  This class has a lot improvement potential.
+ *
+ * TODO: 14.12.2022
+ *  This class is a mess. It needs to be refactored. I'm planning to merge it into the AbstractPathfinder class.
+ *  I'm also planning to make it more generic, so that it can be used for other pathfinding algorithms. More or less with the same interface.
+ *  F.e. could the method isNodeValid be custom implemented and evaluateNewNodes be force-used within the internals of the AbstractPathfinder.
+ *  The AbstractPathfinder could also keep track of the latestNode and the latestPath.
+ *      With that methods like getProgress would have more of a (simpler) internal use.
  */
 class PathingHelper {
 
@@ -98,48 +101,4 @@ class PathingHelper {
 
         return new PathImpl(node.getStart(), node.getTarget(), path);
     }
-
-    static PathfinderResult finishPathing(PathfinderResult pathfinderResult) {
-        EventPublisher.raiseEvent(new PathingFinishedEvent(pathfinderResult));
-        return pathfinderResult;
-    }
-
-    /*
-     * Bloating up like a bubble until a reachable block is found
-     * The block itself might not be passable, but at least reachable from the outside
-     *
-     * NOTE: The reachable block is not guaranteed to be the closest reachable block
-     */
-    static PathBlock bubbleSearchAlternative(PathPosition target, Offset offset, SnapshotManager snapshotManager) {
-
-        Set<PathPosition> newPositions = new HashSet<>();
-        newPositions.add(target);
-
-        Set<PathPosition> examinedPositions = new HashSet<>();
-        while (!newPositions.isEmpty()) {
-
-            Set<PathPosition> nextPositions = new HashSet<>();
-            for (PathPosition position : newPositions) {
-
-                for (PathVector vector : offset.getVectors()) {
-
-                    PathPosition offsetPosition = position.add(vector);
-                    PathBlock pathBlock = snapshotManager.getBlock(offsetPosition);
-
-                    if (pathBlock.isPassable() && !pathBlock.getPathPosition().isInSameBlock(target))
-                        return pathBlock;
-
-                    if (!examinedPositions.contains(offsetPosition))
-                        nextPositions.add(offsetPosition);
-                }
-
-                examinedPositions.add(position);
-            }
-
-            newPositions = nextPositions;
-        }
-
-        return snapshotManager.getBlock(target);
-    }
-
 }

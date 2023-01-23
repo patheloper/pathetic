@@ -40,6 +40,35 @@ public class PathImpl implements Path {
     }
 
     @Override
+    public Path enlarge(double resolution) {
+
+            List<PathPosition> enlargedPositions = new ArrayList<>();
+
+            PathPosition previousPosition = null;
+            for (PathPosition position : positions) {
+
+                if (previousPosition != null) {
+
+                    double distance = previousPosition.distance(position);
+                    int steps = (int) Math.ceil(distance / resolution);
+
+                    for (int i = 1; i <= steps; i++) {
+
+                        double progress = (double) i / steps;
+                        PathPosition interpolatedPosition = previousPosition.interpolate(position, progress);
+
+                        enlargedPositions.add(interpolatedPosition);
+                    }
+                }
+
+                enlargedPositions.add(position);
+                previousPosition = position;
+            }
+
+            return new PathImpl(start, end, enlargedPositions);
+    }
+
+    @Override
     public Path interpolate(int nthBlock, double resolution) {
         Iterable<PathPosition> interpolate = SplineHelper.interpolate(new SplineHelper.Spline(positions, nthBlock), resolution);
         return new PathImpl(start, end, interpolate);
