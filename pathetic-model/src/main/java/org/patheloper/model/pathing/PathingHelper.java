@@ -25,6 +25,9 @@ import java.util.Set;
  *  F.e. could the method isNodeValid be custom implemented and evaluateNewNodes be force-used within the internals of the AbstractPathfinder.
  *  The AbstractPathfinder could also keep track of the latestNode and the latestPath.
  *      With that methods like getProgress would have more of a (simpler) internal use.
+ *
+ * TODO: 13.02.2023
+ *  Less of a mess now, but still redundant. Planning to merge this class into the AbstractPathfinder.
  */
 class PathingHelper {
 
