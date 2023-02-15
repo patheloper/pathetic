@@ -41,7 +41,7 @@ public class FailingSnapshotManager implements SnapshotManager {
         }
     }
 
-    private static synchronized Optional<PathBlock> fetchBlock(PathPosition position) {
+    private static Optional<PathBlock> fetchBlock(PathPosition position) {
 
         Optional<ChunkSnapshot> chunkSnapshotOptional = getChunkSnapshot(position);
 
@@ -112,7 +112,7 @@ public class FailingSnapshotManager implements SnapshotManager {
             });
         }
 
-        private static synchronized PathBlock ensureBlock(PathPosition pathPosition) {
+        private static PathBlock ensureBlock(PathPosition pathPosition) {
 
             int chunkX = pathPosition.getBlockX() >> 4;
             int chunkZ = pathPosition.getBlockZ() >> 4;
