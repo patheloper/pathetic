@@ -15,7 +15,6 @@ import org.patheloper.api.wrapper.PathBlock;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.api.wrapper.PathVector;
 import org.patheloper.bukkit.event.EventPublisher;
-import org.patheloper.model.exception.PatheticException;
 import org.patheloper.model.pathing.handler.PathfinderAsyncExceptionHandler;
 import org.patheloper.model.pathing.result.PathImpl;
 import org.patheloper.model.pathing.result.PathfinderResultImpl;
@@ -128,7 +127,7 @@ abstract class AbstractPathfinder implements Pathfinder {
         try {
             return pathingRuleSet.getStrategy().getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new PatheticException("Failed to instantiate PathfinderStrategy", e);
+            throw new IllegalStateException("Failed to instantiate PathfinderStrategy", e);
         }
     }
 
