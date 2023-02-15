@@ -57,13 +57,11 @@ abstract class AbstractPathfinder implements Pathfinder {
     protected final PathingRuleSet pathingRuleSet;
     protected final Offset offset;
     protected final SnapshotManager snapshotManager;
-    protected final PathfinderStrategy strategy;
 
     protected AbstractPathfinder(PathingRuleSet pathingRuleSet) {
 
         this.pathingRuleSet = pathingRuleSet;
 
-        this.strategy = instantiateStrategy();
         this.offset = pathingRuleSet.isAllowingDiagonal() ? Offset.MERGED : Offset.VERTICAL_AND_HORIZONTAL;
         this.snapshotManager = pathingRuleSet.isLoadingChunks() ? LOADING_SNAPSHOT_MANAGER : SIMPLE_SNAPSHOT_MANAGER;
     }
@@ -71,7 +69,10 @@ abstract class AbstractPathfinder implements Pathfinder {
     @Override
     public @NonNull CompletionStage<PathfinderResult> findPath(@NonNull PathPosition start, @NonNull PathPosition target) {
 
-        if(initialChecksFailed(start, target, raiseStart(start, target, strategy)))
+        PathfinderStrategy strategy = instantiateStrategy();
+        PathingStartFindEvent startEvent = raiseStart(start, target, strategy);
+
+        if(initialChecksFailed(start, target, startEvent))
             return CompletableFuture.completedFuture(finishPathing(new PathfinderResultImpl(PathState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET))));
 
         return producePathing(start, target, strategy);
