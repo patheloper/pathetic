@@ -29,6 +29,7 @@ import java.util.Set;
  * TODO: 13.02.2023
  *  Less of a mess now, but still redundant. Planning to merge this class into the AbstractPathfinder.
  */
+@Deprecated
 class PathingHelper {
 
     static void evaluateNewNodes(Collection<Node> nodeQueue, Set<PathPosition> examinedPositions, Node currentNode, Offset offset, PathfinderStrategy strategy, SnapshotManager snapshotManager) {
