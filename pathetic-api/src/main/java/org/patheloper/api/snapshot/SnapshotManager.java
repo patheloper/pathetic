@@ -8,6 +8,8 @@ public interface SnapshotManager {
     /**
      * Gets the block at the given position
      *
+     * @apiNote If the pathfinder is not permitted to load chunks, this method will return null if the chunk is not loaded.
+     *
      * @param position the position to get as block-form
      * @return {@link PathBlock} the block.
      */
