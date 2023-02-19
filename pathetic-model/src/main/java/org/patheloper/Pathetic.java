@@ -3,8 +3,6 @@ package org.patheloper;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.patheloper.bstats.BStatsHandler;
-import org.patheloper.bukkit.event.PathingEventListener;
 import org.patheloper.bukkit.listeners.ChunkInvalidateListener;
 
 @UtilityClass
@@ -21,9 +19,7 @@ public class Pathetic {
             throw new IllegalStateException("Can't be initialized twice");
 
         instance = javaPlugin;
-        BStatsHandler.init(javaPlugin);
 
-        Bukkit.getPluginManager().registerEvents(new PathingEventListener(), javaPlugin);
         Bukkit.getPluginManager().registerEvents(new ChunkInvalidateListener(), javaPlugin);
 
         javaPlugin.getLogger().info("pathetic successfully initialized");
