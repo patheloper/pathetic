@@ -20,7 +20,7 @@ jobs:
         with:
           distribution: 'corretto'
           java-package: 'jdk'
-          java-version: '8'
+          java-version: '17'
 
       - name: Set up Maven
         uses: stCarolas/setup-maven@v4.4
