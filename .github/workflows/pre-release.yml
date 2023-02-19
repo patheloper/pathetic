@@ -46,7 +46,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: pathetic-example
-          path: D:\a\pathetic\pathetic-example\target\pathetic-example.jar
+          path: D:\a\pathetic\pathetic\pathetic-example\target\pathetic-example.jar
 
   pre-release:
     name: Pre Release
