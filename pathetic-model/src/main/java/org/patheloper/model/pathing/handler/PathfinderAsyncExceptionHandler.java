@@ -1,18 +1,12 @@
 package org.patheloper.model.pathing.handler;
 
-import org.bukkit.Bukkit;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 public class PathfinderAsyncExceptionHandler implements Thread.UncaughtExceptionHandler {
 
     @Override
     public void uncaughtException(Thread t, Throwable e) {
-
-        StringBuilder visualizeStacktrace = new StringBuilder("Exception caught in PathfinderAsyncHandler:").append("\n");
-
-        visualizeStacktrace.append(e.toString()).append("\n");
-        for (StackTraceElement stackTraceElement : e.getStackTrace())
-            visualizeStacktrace.append("\tat: ").append(stackTraceElement.toString()).append("\n");
-
-        Bukkit.getLogger().severe(visualizeStacktrace.toString());
+        log.error("Exception caught in PathfinderAsyncHandler:", e);
     }
 }

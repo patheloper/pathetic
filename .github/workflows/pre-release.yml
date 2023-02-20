@@ -1,0 +1,70 @@
+name: CI Build and Pre-Release
+
+on:
+  push:
+    branches:
+      - "stage"
+
+jobs:
+  build:
+
+    name: Build
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v1
+        with:
+          distribution: 'corretto'
+          java-package: 'jdk'
+          java-version: '17'
+
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v4.4
+        with:
+          maven-version: 3.8.6
+
+      - name: Cache local Maven repository
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml', '**/*.target') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Clean install
+        run: mvn clean install -U
+
+      - name: Build Pathetic-Example
+        run: |
+          mvn -U -V -e -B -ntp clean install compile package -pl pathetic-example -amd -DskipTests
+
+      - name: Upload Pathetic-Example
+        uses: actions/upload-artifact@v3
+        with:
+          name: pathetic-example
+          path: D:\a\pathetic\pathetic\pathetic-example\target\pathetic-example.jar
+
+  pre-release:
+    name: Pre Release
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download Pathetic-Example
+        uses: actions/download-artifact@v3
+        with:
+          name: pathetic-example
+
+      - name: Release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: true
+          title: "Development Build"
+          files: |
+            *.jar

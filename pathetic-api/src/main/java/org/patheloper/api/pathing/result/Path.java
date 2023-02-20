@@ -2,12 +2,12 @@ package org.patheloper.api.pathing.result;
 
 import lombok.NonNull;
 import org.patheloper.api.util.ParameterizedSupplier;
-import org.patheloper.api.wrapper.PathLocation;
+import org.patheloper.api.wrapper.PathPosition;
 
 public interface Path {
 
     /**
-     * The length of the Path compiled from the number of locations
+     * The length of the Path compiled from the number of positions
      * @return the length of the path
      */
     int length();
@@ -18,9 +18,16 @@ public interface Path {
      * @param nthBlock   Will use every nth block of the path as a control point
      * @param resolution The resolution of the interpolation (in blocks). The higher the resolution, the more points will be interpolated
      * @return a newly created Path with interpolated points
-     * @see #getLocations
+     * @see #getPositions
      */
     Path interpolate(int nthBlock, double resolution);
+
+    /**
+     * Enlarges the path by filling in the spaces between the points and adding new points in between based on the given resolution
+     * @param resolution The resolution of the enlargement (in blocks). The lower the resolution, the more points will be added
+     *                   between the existing points
+     */
+    Path enlarge(double resolution);
 
     /**
      * Joins this Path with the given Path.
@@ -37,31 +44,31 @@ public interface Path {
     Path trim(int length);
 
     /**
-     * Mutates each of the locations in the path with the given consumer
+     * Mutates each of the positions in the path with the given consumer
      *
-     * @param mutator the {@link ParameterizedSupplier} to mutate the locations with
+     * @param mutator the {@link ParameterizedSupplier} to mutate the positions with
      * @return {@link Path} the new Path
      */
     @NonNull
-    Path mutateLocations(ParameterizedSupplier<PathLocation> mutator);
+    Path mutatePositions(ParameterizedSupplier<PathPosition> mutator);
 
     /**
-     * Returns the start location of the path
-     * @return {@link PathLocation} The location of the start
+     * Returns the start position of the path
+     * @return {@link PathPosition} The position of the start
      */
     @NonNull
-    PathLocation getStart();
+    PathPosition getStart();
 
     /**
-     * Returns the target location of the path
-     * @return {@link PathLocation} The location of the target
+     * Returns the target position of the path
+     * @return {@link PathPosition} The position of the target
      */
     @NonNull
-    PathLocation getEnd();
+    PathPosition getEnd();
 
     /**
-     * Returns the path from the Pathfinder as a {@link Iterable} full of {@link PathLocation}
+     * Returns the path from the Pathfinder as a {@link Iterable} full of {@link PathPosition}
      */
     @NonNull
-    Iterable<PathLocation> getLocations();
+    Iterable<PathPosition> getPositions();
 }
