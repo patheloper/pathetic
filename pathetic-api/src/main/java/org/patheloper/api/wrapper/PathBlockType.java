@@ -29,8 +29,6 @@ public enum PathBlockType {
      */
     public static PathBlockType fromMaterial(Material material) {
 
-        // TODO: A Better AIR check and also TALL_GRASS doesn't work on older versions as it doesn't exist
-
         if (material == Material.AIR)
             return AIR;
 
@@ -39,7 +37,6 @@ public enum PathBlockType {
             case LAVA:
                 return LIQUID;
             case GRASS:
-            case TALL_GRASS:
                 return OTHER;
             default:
                 return SOLID;
