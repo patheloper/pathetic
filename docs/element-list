@@ -1,8 +1,6 @@
 org.patheloper.api.event
 org.patheloper.api.pathing
 org.patheloper.api.pathing.result
-org.patheloper.api.pathing.result.progress
-org.patheloper.api.pathing.result.task
 org.patheloper.api.pathing.rules
 org.patheloper.api.pathing.strategy
 org.patheloper.api.pathing.strategy.strategies
