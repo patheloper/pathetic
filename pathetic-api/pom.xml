@@ -55,7 +55,7 @@
                     <destDir>javadoc</destDir>
                     <tags>
                         <tag>
-                            <name>apiNote</name>
+                            <name>api.Note</name>
                             <placement>a</placement>
                             <head>API Note:</head>
                         </tag>
