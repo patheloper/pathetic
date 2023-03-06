@@ -63,7 +63,7 @@ public class PlayerPathfinderStrategy implements PathfinderStrategy {
     }
 
     private boolean canJumpFrom(PathPosition pathPosition, SnapshotManager snapshotManager) {
-        return isGenerallyPassable(pathPosition, snapshotManager) && snapshotManager.getBlock(pathPosition.add(0, 2, 0)).isPassable();
+        return canStandOn(pathPosition, snapshotManager) && snapshotManager.getBlock(pathPosition.add(0, 2, 0)).isPassable();
     }
 
     private boolean canJumpTo(PathPosition pathPosition, SnapshotManager snapshotManager) {
