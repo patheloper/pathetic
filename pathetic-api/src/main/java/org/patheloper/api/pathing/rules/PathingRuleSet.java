@@ -19,12 +19,7 @@ import org.patheloper.api.pathing.strategy.PathfinderStrategy;
  * maxLength - The maximum length of the path.
  * This should not be set too high since it can cause a lagspike within the pathfinder which causes it to take longer.
  *
- * maxRecursionDepth - The maximum recursion depth to use while pathfinding.
- *
  * async - Whether to run the pathfinding async or not.
- *
- * allowRecursiveFinding - Whether to allow recursive pathfinding or not.
- * NOTE: This can be a very expensive operation and should only be used if you know what you are doing.
  *
  * allowDiagonal - Whether to allow diagonal movement or not.
  *
@@ -67,10 +62,7 @@ public class PathingRuleSet {
     @Builder.Default
     int maxIterations = 5000; // to avoid freewheeling
     int maxLength;
-    @Builder.Default
-    int maxRecursionDepth = 100;
     boolean async;
-    boolean allowingRecursiveFinding;
     boolean allowingDiagonal;
     boolean allowingAlternateTarget;
     boolean allowingFailFast;
