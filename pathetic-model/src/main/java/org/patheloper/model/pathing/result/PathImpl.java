@@ -1,7 +1,6 @@
 package org.patheloper.model.pathing.result;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.NonNull;
 import org.patheloper.api.pathing.result.Path;
@@ -9,12 +8,8 @@ import org.patheloper.api.util.ParameterizedSupplier;
 import org.patheloper.api.wrapper.PathPosition;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class PathImpl implements Path {
 
@@ -40,38 +35,32 @@ public class PathImpl implements Path {
     }
 
     @Override
-    public Path enlarge(double resolution) {
+    public Path interpolate(double resolution) {
 
-            List<PathPosition> enlargedPositions = new ArrayList<>();
+        List<PathPosition> enlargedPositions = new ArrayList<>();
 
-            PathPosition previousPosition = null;
-            for (PathPosition position : positions) {
+        PathPosition previousPosition = null;
+        for (PathPosition position : positions) {
 
-                if (previousPosition != null) {
+            if (previousPosition != null) {
 
-                    double distance = previousPosition.distance(position);
-                    int steps = (int) Math.ceil(distance / resolution);
+                double distance = previousPosition.distance(position);
+                int steps = (int) Math.ceil(distance / resolution);
 
-                    for (int i = 1; i <= steps; i++) {
+                for (int i = 1; i <= steps; i++) {
 
-                        double progress = (double) i / steps;
-                        PathPosition interpolatedPosition = previousPosition.interpolate(position, progress);
+                    double progress = (double) i / steps;
+                    PathPosition interpolatedPosition = previousPosition.interpolate(position, progress);
 
-                        enlargedPositions.add(interpolatedPosition);
-                    }
+                    enlargedPositions.add(interpolatedPosition);
                 }
-
-                enlargedPositions.add(position);
-                previousPosition = position;
             }
 
-            return new PathImpl(start, end, enlargedPositions);
-    }
+            enlargedPositions.add(position);
+            previousPosition = position;
+        }
 
-    @Override
-    public Path interpolate(int nthBlock, double resolution) {
-        Iterable<PathPosition> interpolate = SplineHelper.interpolate(new SplineHelper.Spline(positions, nthBlock), resolution);
-        return new PathImpl(start, end, interpolate);
+        return new PathImpl(start, end, enlargedPositions);
     }
 
     @Override
@@ -99,67 +88,5 @@ public class PathImpl implements Path {
     @Override
     public int length() {
         return length;
-    }
-
-    private static final class SplineHelper {
-
-        public static Iterable<PathPosition> interpolate(Spline path, double resolution) {
-
-            if(path.points.isEmpty())
-                return Collections.emptyList();
-
-            LinkedHashSet<PathPosition> pathPositions = new LinkedHashSet<>();
-
-            for (float t = 0; t < path.points.size() - 3; t = (float) (t + resolution)) {
-                PathPosition pos = getPoint(t, path);
-                pathPositions.add(pos);
-            }
-
-            return Collections.unmodifiableSet(pathPositions);
-        }
-
-        private static PathPosition getPoint(float t, Spline path) {
-
-            int p0 = (int) t;
-            int p1 = (int) t + 1;
-            int p2 = p1 + 1;
-            int p3 = p1 + 2;
-
-            float v = t - (int) t;
-
-            double tt = v * v;
-            double ttt = tt * v;
-
-            double q1 = -ttt + 2.0f * tt - v;
-            double q2 = 3.0f * ttt - 5.0f * tt + 2.0f;
-            double q3 = -3.0f * ttt + 4.0f * tt + v;
-            double q4 = ttt - tt;
-
-            double tx = 0.5f * (path.points.get(p0).getX() * q1 + path.points.get(p1).getX() * q2 + path.points.get(p2).getX() * q3 + path.points.get(p3).getX() * q4);
-            double ty = 0.5f * (path.points.get(p0).getY() * q1 + path.points.get(p1).getY() * q2 + path.points.get(p2).getY() * q3 + path.points.get(p3).getY() * q4);
-            double tz = 0.5f * (path.points.get(p0).getZ() * q1 + path.points.get(p1).getZ() * q2 + path.points.get(p2).getZ() * q3 + path.points.get(p3).getZ() * q4);
-
-            return new PathPosition(path.points.get(0).getPathEnvironment(), tx, ty, tz);
-        }
-
-        private SplineHelper() {
-        }
-
-        static class Spline {
-
-            List<PathPosition> points;
-
-            public Spline(Iterable<PathPosition> points, Integer nthBlock) {
-                ArrayList<PathPosition> pointsList = Lists.newArrayList(points);
-
-                this.points = IntStream.range(0, pointsList.size())
-                        .filter(n -> n % nthBlock == 0)
-                        .mapToObj(pointsList::get)
-                        .collect(Collectors.toList());
-
-                this.points.addAll(Collections.nCopies(3, Iterables.getLast(points)));
-                this.points.addAll(0, Collections.nCopies(3, Iterables.getFirst(points, null)));
-            }
-        }
     }
 }
