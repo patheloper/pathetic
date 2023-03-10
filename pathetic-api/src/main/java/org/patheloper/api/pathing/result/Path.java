@@ -13,21 +13,20 @@ public interface Path {
     int length();
 
     /**
-     * Interpolates the points of this Path using a spline algorithm
+     * Interpolates the positions of this Path to a new Path with the given resolution.
      *
-     * @param nthBlock   Will use every nth block of the path as a control point
-     * @param resolution The resolution of the interpolation (in blocks). The higher the resolution, the more points will be interpolated
-     * @return a newly created Path with interpolated points
+     * <p>The resulting path will have additional positions inserted between consecutive positions in the
+     * original path such that no two consecutive positions are more than `resolution` blocks apart.
+     * The interpolated positions are computed using linear interpolation, which means that the
+     * resulting path will have a smooth curve that passes through each of the original positions.
+     *
+     * @param resolution The desired distance between consecutive positions in the resulting path, in blocks.
+     *                   A lower value will result in a higher resolution and a smoother curve, but will also increase the
+     *                   number of positions in the resulting path and possibly reduce performance.
+     * @return a newly created Path with interpolated positions.
      * @see #getPositions
      */
-    Path interpolate(int nthBlock, double resolution);
-
-    /**
-     * Enlarges the path by filling in the spaces between the points and adding new points in between based on the given resolution
-     * @param resolution The resolution of the enlargement (in blocks). The lower the resolution, the more points will be added
-     *                   between the existing points
-     */
-    Path enlarge(double resolution);
+    Path interpolate(double resolution);
 
     /**
      * Joins this Path with the given Path.
