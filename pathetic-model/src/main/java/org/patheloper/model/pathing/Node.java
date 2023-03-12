@@ -14,7 +14,7 @@ public class Node implements Comparable<Node> {
     
     private Node parent;
 
-    Node(PathPosition position, PathPosition start, PathPosition target, Integer depth) {
+    public Node(PathPosition position, PathPosition start, PathPosition target, Integer depth) {
         
         this.position = position;
         this.target = target;

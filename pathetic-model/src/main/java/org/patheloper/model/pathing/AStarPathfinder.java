@@ -7,6 +7,7 @@ import org.patheloper.api.pathing.strategy.PathfinderStrategy;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.model.pathing.result.PathImpl;
 import org.patheloper.model.pathing.result.PathfinderResultImpl;
+import org.patheloper.util.NodeUtil;
 import org.patheloper.util.WatchdogUtil;
 
 import java.util.Collections;
@@ -51,19 +52,19 @@ public class AStarPathfinder extends AbstractPathfinder {
                 lastEverFound = currentNode;
 
             // Check to see if we have reached the length limit
-            if (pathingRuleSet.getMaxLength() > 0 && PathingHelper.getProgress(lastEverFound) >= pathingRuleSet.getMaxLength())
-                return finishPathing(new PathfinderResultImpl(PathState.FOUND, PathingHelper.fetchRetracedPath(lastEverFound)));
+            if (pathingRuleSet.getMaxLength() > 0 && NodeUtil.getProgress(lastEverFound) >= pathingRuleSet.getMaxLength())
+                return finishPathing(new PathfinderResultImpl(PathState.FOUND, NodeUtil.fetchRetracedPath(lastEverFound)));
 
             // This means that the current node is the target, so we can stop here
             if (currentNode.hasReachedEnd())
-                return finishPathing(new PathfinderResultImpl(PathState.FOUND, PathingHelper.fetchRetracedPath(lastEverFound)));
+                return finishPathing(new PathfinderResultImpl(PathState.FOUND, NodeUtil.fetchRetracedPath(lastEverFound)));
 
-            PathingHelper.evaluateNewNodes(nodeQueue, examinedPositions, currentNode, offset, strategy, snapshotManager);
+            NodeUtil.evaluateNewNodes(nodeQueue, examinedPositions, currentNode, offset, strategy, snapshotManager);
             depth++;
         }
 
         if (pathingRuleSet.isAllowingFallback() && lastEverFound != null)
-            return finishPathing(new PathfinderResultImpl(PathState.FALLBACK, PathingHelper.fetchRetracedPath(lastEverFound)));
+            return finishPathing(new PathfinderResultImpl(PathState.FALLBACK, NodeUtil.fetchRetracedPath(lastEverFound)));
 
         return finishPathing(new PathfinderResultImpl(PathState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
     }
