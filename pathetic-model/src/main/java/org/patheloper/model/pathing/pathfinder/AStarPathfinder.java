@@ -1,5 +1,6 @@
 package org.patheloper.model.pathing.pathfinder;
 
+import org.checkerframework.checker.units.qual.A;
 import org.patheloper.api.pathing.result.PathState;
 import org.patheloper.api.pathing.result.PathfinderResult;
 import org.patheloper.api.pathing.rules.PathingRuleSet;
@@ -62,6 +63,15 @@ public class AStarPathfinder extends AbstractPathfinder {
 
             NodeUtil.evaluateNewNodes(nodeQueue, examinedPositions, currentNode, offset, strategy, snapshotManager);
             depth++;
+        }
+        
+        if(pathingRuleSet.isCounterCheck()) {
+            
+            AStarPathfinder aStarPathfinder = new AStarPathfinder(pathingRuleSet.withCounterCheck(false));
+            PathfinderResult pathfinderResult = aStarPathfinder.findPath(target, start, strategy);
+            
+            if(pathfinderResult.getPathState() == PathState.FOUND)
+                return finishPathing(new PathfinderResultImpl(PathState.FOUND, pathfinderResult.getPath()));
         }
 
         if (pathingRuleSet.isAllowingFallback() && lastEverFound != null)
