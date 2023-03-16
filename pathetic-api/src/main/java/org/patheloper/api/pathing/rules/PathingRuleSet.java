@@ -33,6 +33,8 @@ import org.patheloper.api.pathing.strategy.PathfinderStrategy;
  * fallback - If pathfinding fails, it will fallback to the already found path.
  *
  * loadChunks - Whether to load / generate chunks
+ *
+ * postOptimization - Whether to run the post optimization algorithm
  */
 @With
 @Value
@@ -68,6 +70,7 @@ public class PathingRuleSet {
     boolean allowingFailFast;
     boolean allowingFallback;
     boolean loadingChunks;
+    boolean postOptimization;
 }
 
 

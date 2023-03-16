@@ -16,6 +16,7 @@ import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.api.wrapper.PathVector;
 import org.patheloper.bukkit.event.EventPublisher;
 import org.patheloper.model.pathing.Offset;
+import org.patheloper.model.pathing.algorithm.PostOptimizationAlgorithm;
 import org.patheloper.model.pathing.handler.PathfinderAsyncExceptionHandler;
 import org.patheloper.model.pathing.result.PathImpl;
 import org.patheloper.model.pathing.result.PathfinderResultImpl;
@@ -181,9 +182,16 @@ abstract class AbstractPathfinder implements Pathfinder {
     private CompletionStage<PathfinderResult> producePathing(PathPosition start, PathPosition target, PathfinderStrategy strategy) {
 
         if(pathingRuleSet.isAsync())
-            return CompletableFuture.supplyAsync(() -> findPath(start, relocateTargetPosition(target), strategy), PATHING_EXECUTOR);
+            return CompletableFuture.supplyAsync(() -> {
+                PathfinderResult result = findPath(start, relocateTargetPosition(target), strategy);
+                if(pathingRuleSet.isPostOptimization())
+                    return finishPathing(new PathfinderResultImpl(result.getPathState(), new PostOptimizationAlgorithm(pathingRuleSet).apply(result.getPath())));
+                return finishPathing(result);
+            }, PATHING_EXECUTOR);
 
         PathfinderResult pathfinderResult = findPath(start, relocateTargetPosition(target), strategy);
+        if(pathingRuleSet.isPostOptimization())
+            return CompletableFuture.completedFuture(finishPathing(new PathfinderResultImpl(pathfinderResult.getPathState(), new PostOptimizationAlgorithm(pathingRuleSet).apply(pathfinderResult.getPath()))));
         return CompletableFuture.completedFuture(finishPathing(pathfinderResult));
     }
 
