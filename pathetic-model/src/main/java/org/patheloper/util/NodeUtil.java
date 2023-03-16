@@ -118,6 +118,40 @@ public class NodeUtil {
 
         return newNodes;
     }
+    
+    public static Path fetchMergedPath(Node endNode1, Node endNode2) {
+        List<PathPosition> path1 = new ArrayList<>();
+        List<PathPosition> path2 = new ArrayList<>();
+        
+        // Trace path 1 from end to start
+        Node currentNode = endNode1;
+        while (currentNode != null) {
+            path1.add(currentNode.getPosition());
+            currentNode = currentNode.getParent();
+        }
+        
+        // Trace path 2 from end to start
+        currentNode = endNode2;
+        while (currentNode != null) {
+            path2.add(currentNode.getPosition());
+            currentNode = currentNode.getParent();
+        }
+        
+        // Combine the two paths in reverse order
+        Collections.reverse(path1);
+        List<PathPosition> mergedPath = new ArrayList<>(path1);
+        mergedPath.addAll(path2);
+        
+        // Remove overlapping nodes
+        for (int i = 0; i < mergedPath.size() - 1; i++) {
+            if (mergedPath.get(i).equals(mergedPath.get(i + 1))) {
+                mergedPath.remove(i + 1);
+                i--;
+            }
+        }
+        
+        return new PathImpl(endNode1.getStart(), endNode1.getTarget(), mergedPath);
+    }
 
     /**
      * Fetches the path represented by the given node by retracing the steps from the node's parent.

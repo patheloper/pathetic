@@ -1,10 +1,11 @@
-package org.patheloper.model.pathing;
+package org.patheloper.model.pathing.pathfinder;
 
 import org.patheloper.api.pathing.result.PathState;
 import org.patheloper.api.pathing.result.PathfinderResult;
 import org.patheloper.api.pathing.rules.PathingRuleSet;
 import org.patheloper.api.pathing.strategy.PathfinderStrategy;
 import org.patheloper.api.wrapper.PathPosition;
+import org.patheloper.model.pathing.Node;
 import org.patheloper.model.pathing.result.PathImpl;
 import org.patheloper.model.pathing.result.PathfinderResultImpl;
 import org.patheloper.util.NodeUtil;
