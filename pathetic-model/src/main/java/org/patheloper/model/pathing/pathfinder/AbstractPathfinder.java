@@ -1,4 +1,4 @@
-package org.patheloper.model.pathing;
+package org.patheloper.model.pathing.pathfinder;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.NonNull;
@@ -15,6 +15,7 @@ import org.patheloper.api.wrapper.PathBlock;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.api.wrapper.PathVector;
 import org.patheloper.bukkit.event.EventPublisher;
+import org.patheloper.model.pathing.Offset;
 import org.patheloper.model.pathing.handler.PathfinderAsyncExceptionHandler;
 import org.patheloper.model.pathing.result.PathImpl;
 import org.patheloper.model.pathing.result.PathfinderResultImpl;

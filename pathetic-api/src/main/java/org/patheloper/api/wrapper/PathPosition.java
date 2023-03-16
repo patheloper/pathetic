@@ -209,6 +209,10 @@ public class PathPosition implements Cloneable {
         return new PathPosition(this.pathEnvironment, this.getBlockX() + 0.5, this.getBlockY() + 0.5, this.getBlockZ() + 0.5);
     }
 
+    public PathPosition midPoint(PathPosition end) {
+        return new PathPosition(this.pathEnvironment, (this.x + end.x) / 2, (this.y + end.y) / 2, (this.z + end.z) / 2);
+    }
+    
     /**
      * Gets the {@link PathEnvironment} the position is in
      *
