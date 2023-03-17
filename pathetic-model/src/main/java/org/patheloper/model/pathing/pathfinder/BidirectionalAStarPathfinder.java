@@ -20,7 +20,8 @@ public class BidirectionalAStarPathfinder extends AbstractPathfinder {
     
     public BidirectionalAStarPathfinder(PathingRuleSet ruleSet) {
         super(ruleSet);
-        this.aStarPathfinder = new AStarPathfinder(ruleSet);
+        this.aStarPathfinder = new AStarPathfinder(ruleSet.withAsync(false)
+                .withMaxIterations(ruleSet.getMaxIterations() / 2));
     }
     
     @Override
@@ -29,7 +30,7 @@ public class BidirectionalAStarPathfinder extends AbstractPathfinder {
         PathPosition midPoint = start.midPoint(target);
         
         PathfinderResult firstHalf = aStarPathfinder.findPath(start, midPoint, strategy);
-        PathfinderResult secondHalf = aStarPathfinder.findPath(midPoint, target, strategy);
+        PathfinderResult secondHalf = aStarPathfinder.findPath(firstHalf.getPath().getEnd(), target, strategy);
         
         if(!firstHalf.successful() || !secondHalf.successful())
             return finishPathing(new PathfinderResultImpl(PathState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
