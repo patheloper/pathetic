@@ -13,6 +13,7 @@ import org.patheloper.util.WatchdogUtil;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Set;
 
@@ -65,18 +66,26 @@ public class AStarPathfinder extends AbstractPathfinder {
         }
         
         if(pathingRuleSet.isCounterCheck()) {
-            
-            AStarPathfinder aStarPathfinder = new AStarPathfinder(pathingRuleSet.withCounterCheck(false));
-            PathfinderResult pathfinderResult = aStarPathfinder.findPath(target, start, strategy);
-            
-            if(pathfinderResult.getPathState() == PathState.FOUND)
-                return finishPathing(new PathfinderResultImpl(PathState.FOUND, pathfinderResult.getPath()));
+            Optional<PathfinderResult> counterCheck = counterCheck(start, target, strategy);
+            if(counterCheck.isPresent())
+                return counterCheck.get();
         }
 
         if (pathingRuleSet.isAllowingFallback() && lastEverFound != null)
             return finishPathing(new PathfinderResultImpl(PathState.FALLBACK, NodeUtil.fetchRetracedPath(lastEverFound)));
 
         return finishPathing(new PathfinderResultImpl(PathState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
+    }
+    
+    private Optional<PathfinderResult> counterCheck(PathPosition start, PathPosition target, PathfinderStrategy strategy) {
+        
+        AStarPathfinder aStarPathfinder = new AStarPathfinder(pathingRuleSet.withCounterCheck(false));
+        PathfinderResult pathfinderResult = aStarPathfinder.findPath(target, start, strategy);
+        
+        if(pathfinderResult.getPathState() == PathState.FOUND)
+            return Optional.of(pathfinderResult);
+        
+        return Optional.empty();
     }
 
 }
