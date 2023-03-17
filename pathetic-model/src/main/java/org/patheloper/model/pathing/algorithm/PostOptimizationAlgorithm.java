@@ -19,7 +19,7 @@ public class PostOptimizationAlgorithm implements Function<Path, Path> {
     
     public PostOptimizationAlgorithm(PathingRuleSet pathingRuleSet) {
         // TODO: Don't default to AStarPathfinder
-        this.pathfinder = new AStarPathfinder(pathingRuleSet.withPostOptimization(false));
+        this.pathfinder = new AStarPathfinder(pathingRuleSet.withAsync(false).withPostOptimization(false));
     }
     
     @Override
