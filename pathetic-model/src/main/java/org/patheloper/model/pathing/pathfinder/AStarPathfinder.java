@@ -1,6 +1,5 @@
 package org.patheloper.model.pathing.pathfinder;
 
-import org.checkerframework.checker.units.qual.A;
 import org.patheloper.api.pathing.result.PathState;
 import org.patheloper.api.pathing.result.PathfinderResult;
 import org.patheloper.api.pathing.rules.PathingRuleSet;
