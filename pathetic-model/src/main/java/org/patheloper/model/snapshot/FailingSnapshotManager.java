@@ -75,9 +75,6 @@ public class FailingSnapshotManager implements SnapshotManager {
         return Optional.empty();
     }
 
-    /**
-     * @return the block or null if the block is not loaded
-     */
     @Override
     public PathBlock getBlock(@NonNull PathPosition position) {
         Optional<PathBlock> block = fetchBlock(position);
