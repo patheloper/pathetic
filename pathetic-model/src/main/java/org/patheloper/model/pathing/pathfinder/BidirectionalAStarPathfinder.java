@@ -34,11 +34,8 @@ public class BidirectionalAStarPathfinder extends AbstractPathfinder {
         
         if(!firstHalf.successful() || !secondHalf.successful())
             return finishPathing(new PathfinderResultImpl(PathState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
-        
-        if(firstHalf.getPath().getEnd().equals(secondHalf.getPath().getEnd()))
-            return finishPathing(new PathfinderResultImpl(PathState.FOUND, new PathImpl(start, target, mergePaths(firstHalf.getPath().getPositions(), secondHalf.getPath().getPositions()))));
-        
-        return finishPathing(new PathfinderResultImpl(PathState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
+    
+        return finishPathing(new PathfinderResultImpl(PathState.FOUND, new PathImpl(start, target, mergePaths(firstHalf.getPath().getPositions(), secondHalf.getPath().getPositions()))));
     }
     
     private Iterable<PathPosition> mergePaths(Iterable<PathPosition> firstHalf, Iterable<PathPosition> secondHalf) {
