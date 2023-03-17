@@ -172,23 +172,27 @@ abstract class AbstractPathfinder implements Pathfinder {
     }
 
     private PathPosition relocateTargetPosition(PathPosition target) {
-
         if (pathingRuleSet.isAllowingAlternateTarget() && isBlockUnreachable(target))
             return bubbleSearchAlternative(target, offset, snapshotManager).getPathPosition();
-
         return target;
     }
 
     private CompletionStage<PathfinderResult> producePathing(PathPosition start, PathPosition target, PathfinderStrategy strategy) {
-
         if(pathingRuleSet.isAsync())
-            return CompletableFuture.supplyAsync(() -> {
-                PathfinderResult result = findPath(start, relocateTargetPosition(target), strategy);
-                if(pathingRuleSet.isPostOptimization())
-                    return finishPathing(new PathfinderResultImpl(result.getPathState(), new PostOptimizationAlgorithm(pathingRuleSet).apply(result.getPath())));
-                return finishPathing(result);
-            }, PATHING_EXECUTOR);
-
+            return produceAsyncPathing(start, target, strategy);
+        return produceSyncPathing(start, target, strategy);
+    }
+    
+    private CompletionStage<PathfinderResult> produceAsyncPathing(PathPosition start, PathPosition target, PathfinderStrategy strategy) {
+        return CompletableFuture.supplyAsync(() -> {
+            PathfinderResult result = findPath(start, relocateTargetPosition(target), strategy);
+            if(pathingRuleSet.isPostOptimization())
+                return finishPathing(new PathfinderResultImpl(result.getPathState(), new PostOptimizationAlgorithm(pathingRuleSet).apply(result.getPath())));
+            return finishPathing(result);
+        }, PATHING_EXECUTOR);
+    }
+    
+    private CompletionStage<PathfinderResult> produceSyncPathing(PathPosition start, PathPosition target, PathfinderStrategy strategy) {
         PathfinderResult pathfinderResult = findPath(start, relocateTargetPosition(target), strategy);
         if(pathingRuleSet.isPostOptimization())
             return CompletableFuture.completedFuture(finishPathing(new PathfinderResultImpl(pathfinderResult.getPathState(), new PostOptimizationAlgorithm(pathingRuleSet).apply(pathfinderResult.getPath()))));
