@@ -16,7 +16,7 @@ public class ChunkUtils {
     private static Method blockTypeMethod;
 
     static {
-        if (BukkitVersionUtil.isUnder(13)) {
+        if (BukkitVersionUtil.getVersion().isUnder(13, 0)) {
             try {
                 materialMethod = Material.class.getDeclaredMethod("getMaterial", int.class);
                 blockTypeMethod = ChunkSnapshot.class.getDeclaredMethod("getBlockTypeId", int.class, int.class, int.class);
@@ -35,7 +35,7 @@ public class ChunkUtils {
      */
     @SneakyThrows
     public Material getMaterial(ChunkSnapshot snapshot, int x, int y, int z) {
-        if (BukkitVersionUtil.isUnder(13)) {
+        if (BukkitVersionUtil.getVersion().isUnder(13, 0)) {
             if (materialMethod == null || blockTypeMethod == null) throw new IllegalStateException("Reflection Failed");
             try {
                 return (Material) materialMethod.invoke(null, blockTypeMethod.invoke(snapshot, x, y, z));

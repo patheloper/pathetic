@@ -21,7 +21,8 @@ public final class PatheticPlugin extends JavaPlugin {
                 .withAllowingDiagonal(true)
                 .withAllowingFailFast(true)
                 .withAllowingFallback(true)
-                .withLoadingChunks(true));
+                .withLoadingChunks(true),
+                PatheticMapper.PathfinderType.ASTAR);
 
         getCommand("pathetic").setExecutor(new PatheticCommand(reusablePathfinder));
     }

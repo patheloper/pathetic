@@ -1,4 +1,4 @@
-package org.patheloper.nms.v1_19;
+package org.patheloper.nms.v1_19_R2;
 
 import net.minecraft.server.level.WorldServer;
 import net.minecraft.world.level.block.state.IBlockData;
@@ -12,7 +12,7 @@ import org.patheloper.api.snapshot.NMSInterface;
 
 import java.lang.reflect.Field;
 
-public class OneNineteenNMSInterface implements NMSInterface {
+public class OneNineteenTwoNMSInterface implements NMSInterface {
 
     private static final Field blockIDField;
 
