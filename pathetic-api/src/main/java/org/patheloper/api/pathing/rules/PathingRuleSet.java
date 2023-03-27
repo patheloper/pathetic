@@ -33,6 +33,12 @@ import org.patheloper.api.pathing.strategy.PathfinderStrategy;
  * fallback - If pathfinding fails, it will fallback to the already found path.
  *
  * loadChunks - Whether to load / generate chunks
+ *
+ * postOptimization - Whether to run the post optimization algorithm
+ * NOTE: This can be very expensive
+ *
+ * counterCheck - Whether to run the counter check the path if it's not found to validate the result
+ * NOTE: counterCheck is a fallback mechanism which researches the entire path from end to beginning again
  */
 @With
 @Value
@@ -68,6 +74,8 @@ public class PathingRuleSet {
     boolean allowingFailFast;
     boolean allowingFallback;
     boolean loadingChunks;
+    boolean postOptimization;
+    boolean counterCheck;
 }
 
 

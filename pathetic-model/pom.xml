@@ -7,11 +7,11 @@
     <parent>
         <artifactId>pathetic-main</artifactId>
         <groupId>org.patheloper</groupId>
-        <version>2.1.0</version>
+        <version>2.1.1</version>
     </parent>
 
     <artifactId>pathetic-model</artifactId>
-    <version>2.1.0</version>
+    <version>2.1.1</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -32,6 +32,14 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>16</source>
+                    <target>16</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -75,14 +83,14 @@
         <dependency>
             <groupId>org.patheloper</groupId>
             <artifactId>pathetic-api</artifactId>
-            <version>2.1.0</version>
+            <version>2.1.1</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.patheloper</groupId>
             <artifactId>pathetic-nms</artifactId>
-            <version>2.1.0</version>
+            <version>2.1.1</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

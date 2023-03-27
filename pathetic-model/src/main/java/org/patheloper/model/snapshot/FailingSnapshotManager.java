@@ -26,7 +26,8 @@ public class FailingSnapshotManager implements SnapshotManager {
     private static final NMSUtils NMS_UTILS;
 
     static {
-        NMS_UTILS = new NMSUtils((int) BukkitVersionUtil.get());
+        BukkitVersionUtil.Version version = BukkitVersionUtil.getVersion();
+        NMS_UTILS = new NMSUtils((int) version.major(), (int) version.minor());
     }
 
     public static void invalidateChunk(UUID worldUUID, int chunkX, int chunkZ) {
@@ -75,9 +76,6 @@ public class FailingSnapshotManager implements SnapshotManager {
         return Optional.empty();
     }
 
-    /**
-     * @return the block or null if the block is not loaded
-     */
     @Override
     public PathBlock getBlock(@NonNull PathPosition position) {
         Optional<PathBlock> block = fetchBlock(position);

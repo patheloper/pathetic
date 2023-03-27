@@ -1,16 +1,19 @@
-package org.patheloper.model.pathing;
+package org.patheloper.model.pathing.pathfinder;
 
 import org.patheloper.api.pathing.result.PathState;
 import org.patheloper.api.pathing.result.PathfinderResult;
 import org.patheloper.api.pathing.rules.PathingRuleSet;
 import org.patheloper.api.pathing.strategy.PathfinderStrategy;
 import org.patheloper.api.wrapper.PathPosition;
+import org.patheloper.model.pathing.Node;
 import org.patheloper.model.pathing.result.PathImpl;
 import org.patheloper.model.pathing.result.PathfinderResultImpl;
+import org.patheloper.util.NodeUtil;
 import org.patheloper.util.WatchdogUtil;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Set;
 
@@ -51,21 +54,38 @@ public class AStarPathfinder extends AbstractPathfinder {
                 lastEverFound = currentNode;
 
             // Check to see if we have reached the length limit
-            if (pathingRuleSet.getMaxLength() > 0 && PathingHelper.getProgress(lastEverFound) >= pathingRuleSet.getMaxLength())
-                return finishPathing(new PathfinderResultImpl(PathState.FOUND, PathingHelper.fetchRetracedPath(lastEverFound)));
+            if (pathingRuleSet.getMaxLength() > 0 && NodeUtil.getProgress(lastEverFound) >= pathingRuleSet.getMaxLength())
+                return finishPathing(new PathfinderResultImpl(PathState.FOUND, NodeUtil.fetchRetracedPath(lastEverFound)));
 
             // This means that the current node is the target, so we can stop here
             if (currentNode.hasReachedEnd())
-                return finishPathing(new PathfinderResultImpl(PathState.FOUND, PathingHelper.fetchRetracedPath(lastEverFound)));
+                return finishPathing(new PathfinderResultImpl(PathState.FOUND, NodeUtil.fetchRetracedPath(lastEverFound)));
 
-            PathingHelper.evaluateNewNodes(nodeQueue, examinedPositions, currentNode, offset, strategy, snapshotManager);
+            NodeUtil.evaluateNewNodes(nodeQueue, examinedPositions, currentNode, offset, strategy, snapshotManager);
             depth++;
+        }
+        
+        if(pathingRuleSet.isCounterCheck()) {
+            Optional<PathfinderResult> counterCheck = counterCheck(start, target, strategy);
+            if(counterCheck.isPresent())
+                return counterCheck.get();
         }
 
         if (pathingRuleSet.isAllowingFallback() && lastEverFound != null)
-            return finishPathing(new PathfinderResultImpl(PathState.FALLBACK, PathingHelper.fetchRetracedPath(lastEverFound)));
+            return finishPathing(new PathfinderResultImpl(PathState.FALLBACK, NodeUtil.fetchRetracedPath(lastEverFound)));
 
         return finishPathing(new PathfinderResultImpl(PathState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
+    }
+    
+    private Optional<PathfinderResult> counterCheck(PathPosition start, PathPosition target, PathfinderStrategy strategy) {
+        
+        AStarPathfinder aStarPathfinder = new AStarPathfinder(pathingRuleSet.withCounterCheck(false));
+        PathfinderResult pathfinderResult = aStarPathfinder.findPath(target, start, strategy);
+        
+        if(pathfinderResult.getPathState() == PathState.FOUND)
+            return Optional.of(pathfinderResult);
+        
+        return Optional.empty();
     }
 
 }
