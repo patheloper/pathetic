@@ -10,7 +10,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>v1_19</artifactId>
+    <artifactId>v1_19_R2</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

@@ -26,7 +26,7 @@ public class FailingSnapshotManager implements SnapshotManager {
     private static final NMSUtils NMS_UTILS;
 
     static {
-        NMS_UTILS = new NMSUtils((int) BukkitVersionUtil.get());
+        NMS_UTILS = new NMSUtils((int) BukkitVersionUtil.get(), 0 /*TODO*/);
     }
 
     public static void invalidateChunk(UUID worldUUID, int chunkX, int chunkZ) {
