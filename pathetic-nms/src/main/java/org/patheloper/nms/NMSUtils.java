@@ -7,6 +7,7 @@ import org.patheloper.nms.v1_16.OneSixteenNMSInterface;
 import org.patheloper.nms.v1_17.OneSeventeenNMSInterface;
 import org.patheloper.nms.v1_18.OneEighteenNMSInterface;
 import org.patheloper.nms.v1_19_R2.OneNineteenTwoNMSInterface;
+import org.patheloper.nms.v1_19_R3.OneNineteenThreeNMSInterface;
 import org.patheloper.nms.v1_8.OneEightNMSInterface;
 
 public class NMSUtils {
@@ -19,8 +20,11 @@ public class NMSUtils {
                 if (minor == 2 || minor == 3) {
                     nmsInterface = new OneNineteenTwoNMSInterface();
                     break;
+                } else if (minor == 4) {
+                    nmsInterface = new OneNineteenThreeNMSInterface();
+                    break;
                 }
-                break;
+                throw new IllegalArgumentException("Unsupported version: " + major + "." + minor);
             case 18:
                 nmsInterface = new OneEighteenNMSInterface();
                 break;
@@ -40,7 +44,7 @@ public class NMSUtils {
                 nmsInterface = new OneEightNMSInterface();
                 break;
             default:
-                throw new IllegalArgumentException("Unsupported version: " + version);
+                throw new IllegalArgumentException("Unsupported version: " + major + "." + minor);
         }
     }
 
