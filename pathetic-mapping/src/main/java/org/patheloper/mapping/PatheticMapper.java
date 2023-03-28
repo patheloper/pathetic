@@ -54,7 +54,9 @@ public class PatheticMapper {
      * @param pathfinderType - The {@link PathfinderType}
      * @return The {@link Pathfinder} object
      * @throws IllegalStateException If the lib is not initialized yet
+     * @deprecated WIP DO NOT USE
      */
+    @Deprecated
     public @NonNull Pathfinder newPathfinder(PathingRuleSet pathingRuleSet, PathfinderType pathfinderType) {
 
         if (Pathetic.isInitialized()) {
@@ -74,6 +76,11 @@ public class PatheticMapper {
     public enum PathfinderType {
         
         ASTAR,
+
+        /**
+         * WIP DO NOT USE
+         */
+        @Deprecated
         BIDIRECTIONAL_ASTAR
     }
 
