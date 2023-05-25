@@ -7,9 +7,13 @@ import org.patheloper.api.pathing.result.Path;
 import org.patheloper.api.util.ParameterizedSupplier;
 import org.patheloper.api.wrapper.PathPosition;
 
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 public class PathImpl implements Path {
 
@@ -64,13 +68,22 @@ public class PathImpl implements Path {
     }
 
     @Override
-    public Path simplify(double epsilon) {
+    public Path simplify(double epsilon) throws IllegalArgumentException {
 
-        List<PathPosition> originalPositions = new ArrayList<>();
-        positions.forEach(originalPositions::add);
+        if (epsilon <= 0.0 || epsilon > 1.0)
+            throw new IllegalArgumentException("Epsilon value should be greater than 0.0 and less than or equal to 1.0");
 
-        List<PathPosition> simplifiedPositions = new ArrayList<>();
-        simplifyRecursive(originalPositions, 0, originalPositions.size() - 1, epsilon, simplifiedPositions);
+        Set<PathPosition> simplifiedPositions = new HashSet<>();
+        simplifiedPositions.add(start);
+        simplifiedPositions.add(end);
+
+        int index = 0;
+        for (PathPosition pathPosition : positions) {
+            if (index % (1.0 / epsilon) == 0) {
+                simplifiedPositions.add(pathPosition);
+            }
+            index++;
+        }
 
         return new PathImpl(start, end, simplifiedPositions);
     }
@@ -100,50 +113,5 @@ public class PathImpl implements Path {
     @Override
     public int length() {
         return length;
-    }
-
-    /**
-     * Recursive helper method to simplify positions using the Ramer-Douglas-Peucker algorithm.
-     */
-    private void simplifyRecursive(List<PathPosition> positions, int start, int end, double epsilon, List<PathPosition> simplifiedPositions) {
-
-        // Find the position with the maximum distance
-        double maxDistance = 0;
-        int maxDistanceIndex = 0;
-
-        for (int i = start + 1; i < end; i++) {
-            double distance = getDistance(positions.get(i), positions.get(start), positions.get(end));
-            if (distance > maxDistance) {
-                maxDistance = distance;
-                maxDistanceIndex = i;
-            }
-        }
-
-        // If the maximum distance is greater than epsilon, recursively simplify the two subpaths
-        if (maxDistance > epsilon) {
-
-            simplifyRecursive(positions, start, maxDistanceIndex, epsilon, simplifiedPositions);
-            simplifiedPositions.add(positions.get(maxDistanceIndex));
-
-            simplifyRecursive(positions, maxDistanceIndex, end, epsilon, simplifiedPositions);
-        }
-    }
-
-    /**
-     * Calculates the perpendicular distance between a position and a line segment.
-     */
-    private double getDistance(PathPosition position, PathPosition lineStart, PathPosition lineEnd) {
-
-        double x = position.getX();
-        double y = position.getY();
-        double startX = lineStart.getX();
-        double startY = lineStart.getY();
-        double endX = lineEnd.getX();
-        double endY = lineEnd.getY();
-
-        double numerator = Math.abs((endY - startY) * x - (endX - startX) * y + endX * startY - endY * startX);
-        double denominator = Math.sqrt(Math.pow(endY - startY, 2) + Math.pow(endX - startX, 2));
-
-        return numerator / denominator;
     }
 }
