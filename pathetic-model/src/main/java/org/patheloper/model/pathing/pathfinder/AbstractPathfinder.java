@@ -16,7 +16,7 @@ import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.api.wrapper.PathVector;
 import org.patheloper.bukkit.event.EventPublisher;
 import org.patheloper.model.pathing.Offset;
-import org.patheloper.model.pathing.handler.PathfinderAsyncExceptionHandler;
+import org.patheloper.model.pathing.handler.PathfinderExceptionHandlingBiConsumer;
 import org.patheloper.model.pathing.result.PathImpl;
 import org.patheloper.model.pathing.result.PathfinderResultImpl;
 import org.patheloper.model.snapshot.FailingSnapshotManager;
@@ -48,7 +48,6 @@ abstract class AbstractPathfinder implements Pathfinder {
                     TimeUnit.MILLISECONDS,
                     new LinkedBlockingQueue<>(10000),
                     new ThreadFactoryBuilder()
-                            .setUncaughtExceptionHandler(new PathfinderAsyncExceptionHandler())
                             .setDaemon(true)
                             .setNameFormat("Pathfinder Task-%d")
                             .build(),
@@ -186,12 +185,12 @@ abstract class AbstractPathfinder implements Pathfinder {
         return CompletableFuture.supplyAsync(() -> {
             PathfinderResult result = findPath(start, relocateTargetPosition(target), strategy);
             return finishPathing(result);
-        }, PATHING_EXECUTOR);
+        }, PATHING_EXECUTOR).whenComplete(new PathfinderExceptionHandlingBiConsumer<>());
     }
     
     private CompletionStage<PathfinderResult> produceSyncPathing(PathPosition start, PathPosition target, PathfinderStrategy strategy) {
         PathfinderResult pathfinderResult = findPath(start, relocateTargetPosition(target), strategy);
-        return CompletableFuture.completedFuture(finishPathing(pathfinderResult));
+        return CompletableFuture.completedFuture(finishPathing(pathfinderResult)).whenComplete(new PathfinderExceptionHandlingBiConsumer<>());
     }
 
     protected abstract PathfinderResult findPath(PathPosition start, PathPosition target, PathfinderStrategy strategy);
