@@ -7,7 +7,6 @@ on:
 
 jobs:
   build:
-
     name: Build
     runs-on: windows-latest
 
@@ -59,11 +58,15 @@ jobs:
         with:
           name: pathetic-example
 
+      - name: Determine Tag Number
+        id: determine_tag
+        run: echo "::set-output name=tag_number::dev-build-$(( ${{ github.run_number }} - 1 ))"
+
       - name: Release
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "latest"
+          automatic_release_tag: "${{ steps.determine_tag.outputs.tag_number }}"
           prerelease: true
           title: "Development Build"
           files: |
