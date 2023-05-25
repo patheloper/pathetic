@@ -64,6 +64,18 @@ public class PathImpl implements Path {
     }
 
     @Override
+    public Path simplify(double epsilon) {
+
+        List<PathPosition> originalPositions = new ArrayList<>();
+        positions.forEach(originalPositions::add);
+
+        List<PathPosition> simplifiedPositions = new ArrayList<>();
+        simplifyRecursive(originalPositions, 0, originalPositions.size() - 1, epsilon, simplifiedPositions);
+
+        return new PathImpl(start, end, simplifiedPositions);
+    }
+
+    @Override
     public Path join(Path path) {
         return new PathImpl(start, path.getEnd(), Iterables.concat(positions, path.getPositions()));
     }
@@ -88,5 +100,50 @@ public class PathImpl implements Path {
     @Override
     public int length() {
         return length;
+    }
+
+    /**
+     * Recursive helper method to simplify positions using the Ramer-Douglas-Peucker algorithm.
+     */
+    private void simplifyRecursive(List<PathPosition> positions, int start, int end, double epsilon, List<PathPosition> simplifiedPositions) {
+
+        // Find the position with the maximum distance
+        double maxDistance = 0;
+        int maxDistanceIndex = 0;
+
+        for (int i = start + 1; i < end; i++) {
+            double distance = getDistance(positions.get(i), positions.get(start), positions.get(end));
+            if (distance > maxDistance) {
+                maxDistance = distance;
+                maxDistanceIndex = i;
+            }
+        }
+
+        // If the maximum distance is greater than epsilon, recursively simplify the two subpaths
+        if (maxDistance > epsilon) {
+
+            simplifyRecursive(positions, start, maxDistanceIndex, epsilon, simplifiedPositions);
+            simplifiedPositions.add(positions.get(maxDistanceIndex));
+
+            simplifyRecursive(positions, maxDistanceIndex, end, epsilon, simplifiedPositions);
+        }
+    }
+
+    /**
+     * Calculates the perpendicular distance between a position and a line segment.
+     */
+    private double getDistance(PathPosition position, PathPosition lineStart, PathPosition lineEnd) {
+
+        double x = position.getX();
+        double y = position.getY();
+        double startX = lineStart.getX();
+        double startY = lineStart.getY();
+        double endX = lineEnd.getX();
+        double endY = lineEnd.getY();
+
+        double numerator = Math.abs((endY - startY) * x - (endX - startX) * y + endX * startY - endY * startX);
+        double denominator = Math.sqrt(Math.pow(endY - startY, 2) + Math.pow(endX - startX, 2));
+
+        return numerator / denominator;
     }
 }

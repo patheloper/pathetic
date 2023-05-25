@@ -29,6 +29,15 @@ public interface Path {
     Path interpolate(double resolution);
 
     /**
+     * Simplifies the positions of this Path using the Ramer-Douglas-Peucker algorithm.
+     * The resulting path will only remain with the positions that are necessary to describe the path within the given epsilon.
+     *
+     * @param epsilon The maximum distance between a position and the simplified line segment. Smaller values result in more precise simplification.
+     * @return a newly created Path with simplified positions.
+     */
+    Path simplify(double epsilon);
+
+    /**
      * Joins this Path with the given Path.
      * @param path which will be appended at the end.
      * @return {@link Path} the new Path
