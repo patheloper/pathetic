@@ -18,8 +18,7 @@ import java.util.function.Function;
  * reverses it, overlays the original and reversed paths, and interpolates them to find an optimal path.
  *
  * @deprecated This class is deprecated and should not be used. It is a work in progress and has known issues
- *             that may lead to incorrect or unexpected results. Consider using alternative path optimization algorithms
- *             provided by the library.
+ *             that may lead to incorrect or unexpected results.
  */
 @Deprecated
 public class PostOptimizationAlgorithm implements Function<Path, Path> {

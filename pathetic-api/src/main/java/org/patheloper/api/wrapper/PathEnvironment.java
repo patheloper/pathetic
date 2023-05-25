@@ -13,6 +13,9 @@ import java.util.UUID;
 @ToString
 @EqualsAndHashCode
 @RequiredArgsConstructor
+/**
+ * Represents the pathing environment
+ */
 public class PathEnvironment {
 
     UUID uuid;

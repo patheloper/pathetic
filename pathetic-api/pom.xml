@@ -40,28 +40,4 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <finalName>${project.name}</finalName>
-        <defaultGoal>javadoc:javadoc</defaultGoal>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.5.0</version>
-                <configuration>
-                    <source>8</source>
-                    <reportOutputDirectory>../</reportOutputDirectory>
-                    <destDir>javadoc</destDir>
-                    <tags>
-                        <tag>
-                            <name>api.Note</name>
-                            <placement>a</placement>
-                            <head>API Note:</head>
-                        </tag>
-                    </tags>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>

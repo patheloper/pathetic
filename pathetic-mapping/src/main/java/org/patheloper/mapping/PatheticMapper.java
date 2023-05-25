@@ -4,6 +4,7 @@ import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.patheloper.Pathetic;
+import org.patheloper.api.annotation.Experimental;
 import org.patheloper.api.pathing.Pathfinder;
 import org.patheloper.api.pathing.rules.PathingRuleSet;
 import org.patheloper.model.pathing.pathfinder.AStarPathfinder;
@@ -54,9 +55,9 @@ public class PatheticMapper {
      * @param pathfinderType - The {@link PathfinderType}
      * @return The {@link Pathfinder} object
      * @throws IllegalStateException If the lib is not initialized yet
-     * @deprecated WIP DO NOT USE
+     * @experimental See {@link BidirectionalAStarPathfinder} for more information.
      */
-    @Deprecated
+    @Experimental
     public @NonNull Pathfinder newPathfinder(PathingRuleSet pathingRuleSet, PathfinderType pathfinderType) {
 
         if (Pathetic.isInitialized()) {
@@ -78,9 +79,9 @@ public class PatheticMapper {
         ASTAR,
 
         /**
-         * WIP DO NOT USE
+         * @experimental See {@link BidirectionalAStarPathfinder} for more information.
          */
-        @Deprecated
+        @Experimental
         BIDIRECTIONAL_ASTAR
     }
 
