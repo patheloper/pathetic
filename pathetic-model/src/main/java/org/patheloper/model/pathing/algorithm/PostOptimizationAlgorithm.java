@@ -13,15 +13,24 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
+/**
+ * This class implements a post-optimization algorithm for paths. It takes a path to be optimized,
+ * reverses it, overlays the original and reversed paths, and interpolates them to find an optimal path.
+ *
+ * @deprecated This class is deprecated and should not be used. It is a work in progress and has known issues
+ *             that may lead to incorrect or unexpected results. Consider using alternative path optimization algorithms
+ *             provided by the library.
+ */
+@Deprecated
 public class PostOptimizationAlgorithm implements Function<Path, Path> {
     
     private final Pathfinder pathfinder;
     
     public PostOptimizationAlgorithm(PathingRuleSet pathingRuleSet) {
         // TODO: Don't default to AStarPathfinder
-        this.pathfinder = new AStarPathfinder(pathingRuleSet.withAsync(false).withPostOptimization(false));
+        this.pathfinder = new AStarPathfinder(pathingRuleSet.withAsync(false)); // TODO: .withPostOptimization(false)
     }
-    
+
     @Override
     public Path apply(Path path) {
     
@@ -35,7 +44,14 @@ public class PostOptimizationAlgorithm implements Function<Path, Path> {
         Path reversedPath = result.join().getPath();
         return interpolatePaths(path, reversedPath);
     }
-    
+
+    /**
+     * Interpolates the positions from two paths to create an optimized path.
+     *
+     * @param path1 The first path.
+     * @param path2 The second path.
+     * @return The optimized path.
+     */
     private Path interpolatePaths(Path path1, Path path2) {
         
         List<PathPosition> positions = new ArrayList<>();
