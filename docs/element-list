@@ -1,3 +1,4 @@
+org.patheloper.api.annotation
 org.patheloper.api.event
 org.patheloper.api.pathing
 org.patheloper.api.pathing.result
