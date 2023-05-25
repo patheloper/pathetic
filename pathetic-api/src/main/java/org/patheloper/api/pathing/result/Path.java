@@ -1,6 +1,7 @@
 package org.patheloper.api.pathing.result;
 
 import lombok.NonNull;
+import org.patheloper.api.annotation.Experimental;
 import org.patheloper.api.util.ParameterizedSupplier;
 import org.patheloper.api.wrapper.PathPosition;
 
@@ -35,6 +36,7 @@ public interface Path {
      * @param epsilon The maximum distance between a position and the simplified line segment. Smaller values result in more precise simplification.
      * @return a newly created Path with simplified positions.
      */
+    @Experimental
     Path simplify(double epsilon);
 
     /**
