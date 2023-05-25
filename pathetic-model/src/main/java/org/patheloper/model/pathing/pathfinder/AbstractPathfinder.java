@@ -20,10 +20,10 @@ import org.patheloper.model.pathing.handler.PathfinderExceptionHandlingBiConsume
 import org.patheloper.model.pathing.result.PathImpl;
 import org.patheloper.model.pathing.result.PathfinderResultImpl;
 import org.patheloper.model.snapshot.FailingSnapshotManager;
+import org.patheloper.util.NodeUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -131,47 +131,9 @@ abstract class AbstractPathfinder implements Pathfinder {
         }
     }
 
-    /*
-     * Bloating up like a bubble until a reachable block is found
-     * The block itself might not be passable, but at least reachable from the outside
-     *
-     * NOTE: The reachable block is not guaranteed to be the closest reachable block
-     */
-    private PathBlock bubbleSearchAlternative(PathPosition target, Offset offset, SnapshotManager snapshotManager) {
-
-        Set<PathPosition> newPositions = new HashSet<>();
-        newPositions.add(target);
-
-        Set<PathPosition> examinedPositions = new HashSet<>();
-        while (!newPositions.isEmpty()) {
-
-            Set<PathPosition> nextPositions = new HashSet<>();
-            for (PathPosition position : newPositions) {
-
-                for (PathVector vector : offset.getVectors()) {
-
-                    PathPosition offsetPosition = position.add(vector);
-                    PathBlock pathBlock = snapshotManager.getBlock(offsetPosition);
-
-                    if (pathBlock.isPassable() && !pathBlock.getPathPosition().isInSameBlock(target))
-                        return pathBlock;
-
-                    if (!examinedPositions.contains(offsetPosition))
-                        nextPositions.add(offsetPosition);
-                }
-
-                examinedPositions.add(position);
-            }
-
-            newPositions = nextPositions;
-        }
-
-        return snapshotManager.getBlock(target);
-    }
-
     private PathPosition relocateTargetPosition(PathPosition target) {
         if (pathingRuleSet.isAllowingAlternateTarget() && isBlockUnreachable(target))
-            return bubbleSearchAlternative(target, offset, snapshotManager).getPathPosition();
+            return NodeUtil.bubbleSearchAlternative(target, offset, snapshotManager).getPathPosition();
         return target;
     }
 
