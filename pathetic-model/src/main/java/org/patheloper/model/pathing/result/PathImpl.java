@@ -7,10 +7,8 @@ import org.patheloper.api.pathing.result.Path;
 import org.patheloper.api.util.ParameterizedSupplier;
 import org.patheloper.api.wrapper.PathPosition;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -68,10 +66,10 @@ public class PathImpl implements Path {
     }
 
     @Override
-    public Path simplify(double epsilon) throws IllegalArgumentException {
+    public Path simplify(double epsilon) {
 
         if (epsilon <= 0.0 || epsilon > 1.0)
-            throw new IllegalArgumentException("Epsilon value should be greater than 0.0 and less than or equal to 1.0");
+            throw new IllegalArgumentException("Epsilon must be in the range of 0.0 to 1.0, inclusive.");
 
         Set<PathPosition> simplifiedPositions = new HashSet<>();
         simplifiedPositions.add(start);

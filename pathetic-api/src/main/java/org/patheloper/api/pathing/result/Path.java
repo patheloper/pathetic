@@ -36,7 +36,7 @@ public interface Path {
      * @param epsilon the epsilon value representing the fraction of positions to keep
      *                (should be in the range greater than 0.0 to 1.0, inclusive)
      * @return a simplified path containing a subset of positions from the original path
-     * @throws IllegalArgumentException if the epsilon value is less than or equal to 0.0 or greater than 1.0
+     * @throws IllegalArgumentException if epsilon is not in the range greater than 0.0 to 1.0, inclusive
      */
     @Experimental
     Path simplify(double epsilon);
