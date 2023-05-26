@@ -1,13 +1,12 @@
-name: CI Build and Pre-Release
+name: Build and Attach pathetic-example jar to release
 
 on:
-  push:
-    branches:
-      - "stage"
+  release:
+    types: [published]
 
 jobs:
-  build:
-    name: Build
+  build-and-release:
+    name: Build and Attach
     runs-on: windows-latest
 
     steps:
@@ -47,27 +46,12 @@ jobs:
           name: pathetic-example
           path: D:\a\pathetic\pathetic\pathetic-example\target\pathetic-example.jar
 
-  pre-release:
-    name: Pre Release
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Download Pathetic-Example
-        uses: actions/download-artifact@v3
+      - name: Attach pathetic-example jar to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: pathetic-example
-
-      - name: Determine Tag Number
-        id: determine_tag
-        run: echo "::set-output name=tag_number::dev-build-$(( ${{ github.run_number }} - 1 ))"
-
-      - name: Release
-        uses: "marvinpinto/action-automatic-releases@latest"
-        with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "${{ steps.determine_tag.outputs.tag_number }}"
-          prerelease: true
-          title: "Development Build"
-          files: |
-            *.jar
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: D:\a\pathetic\pathetic\pathetic-example\target\pathetic-example.jar
+          asset_name: pathetic-example.jar
+          asset_content_type: application/java-archive
