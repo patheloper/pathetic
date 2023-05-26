@@ -3,6 +3,7 @@ package org.patheloper.model.pathing.result;
 import com.google.common.collect.Iterables;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.extern.log4j.Log4j2;
 import org.patheloper.api.pathing.result.Path;
 import org.patheloper.api.util.ParameterizedSupplier;
 import org.patheloper.api.wrapper.PathPosition;
@@ -13,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+@Log4j2
 public class PathImpl implements Path {
 
     @NonNull
@@ -67,23 +69,33 @@ public class PathImpl implements Path {
 
     @Override
     public Path simplify(double epsilon) {
+        try {
+            validateEpsilon(epsilon);
 
-        if (epsilon <= 0.0 || epsilon > 1.0)
-            throw new IllegalArgumentException("Epsilon must be in the range of 0.0 to 1.0, inclusive.");
+            Set<PathPosition> simplifiedPositions = new HashSet<>();
+            simplifiedPositions.add(start);
+            simplifiedPositions.add(end);
 
-        Set<PathPosition> simplifiedPositions = new HashSet<>();
-        simplifiedPositions.add(start);
-        simplifiedPositions.add(end);
-
-        int index = 0;
-        for (PathPosition pathPosition : positions) {
-            if (index % (1.0 / epsilon) == 0) {
-                simplifiedPositions.add(pathPosition);
+            int index = 0;
+            for (PathPosition pathPosition : positions) {
+                if (index % (1.0 / epsilon) == 0) {
+                    simplifiedPositions.add(pathPosition);
+                }
+                index++;
             }
-            index++;
-        }
 
-        return new PathImpl(start, end, simplifiedPositions);
+            return new PathImpl(start, end, simplifiedPositions);
+        } catch (IllegalArgumentException e) {
+            log.error("Invalid epsilon value for path simplification", e);
+            // Return a default or fallback path if desired
+            return this; // Or return a new Path instance, or null, depending on your needs
+        }
+    }
+
+    private void validateEpsilon(double epsilon) {
+        if (epsilon <= 0.0 || epsilon > 1.0) {
+            throw new IllegalArgumentException("Epsilon must be in the range of 0.0 to 1.0, inclusive.");
+        }
     }
 
     @Override
