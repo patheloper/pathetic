@@ -2,6 +2,7 @@ package org.patheloper.model.pathing.pathfinder;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.NonNull;
+import lombok.extern.log4j.Log4j2;
 import org.bukkit.event.Cancellable;
 import org.patheloper.api.event.PathingFinishedEvent;
 import org.patheloper.api.event.PathingStartFindEvent;
@@ -16,7 +17,6 @@ import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.api.wrapper.PathVector;
 import org.patheloper.bukkit.event.EventPublisher;
 import org.patheloper.model.pathing.Offset;
-import org.patheloper.model.pathing.handler.PathfinderExceptionHandlingBiConsumer;
 import org.patheloper.model.pathing.result.PathImpl;
 import org.patheloper.model.pathing.result.PathfinderResultImpl;
 import org.patheloper.model.snapshot.FailingSnapshotManager;
@@ -33,6 +33,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+@Log4j2
 abstract class AbstractPathfinder implements Pathfinder {
 
     protected static final Set<PathPosition> EMPTY_LINKED_HASHSET = Collections.unmodifiableSet(new LinkedHashSet<>(0));
@@ -51,7 +52,8 @@ abstract class AbstractPathfinder implements Pathfinder {
                             .setDaemon(true)
                             .setNameFormat("Pathfinder Task-%d")
                             .build(),
-                    new ThreadPoolExecutor.AbortPolicy());
+                    new ThreadPoolExecutor.AbortPolicy()
+            );
 
     protected final PathingRuleSet pathingRuleSet;
     protected final Offset offset;
@@ -145,14 +147,22 @@ abstract class AbstractPathfinder implements Pathfinder {
     
     private CompletionStage<PathfinderResult> produceAsyncPathing(PathPosition start, PathPosition target, PathfinderStrategy strategy) {
         return CompletableFuture.supplyAsync(() -> {
-            PathfinderResult result = findPath(start, relocateTargetPosition(target), strategy);
-            return finishPathing(result);
-        }, PATHING_EXECUTOR).whenComplete(new PathfinderExceptionHandlingBiConsumer<>());
+            try {
+                return findPath(start, relocateTargetPosition(target), strategy);
+            } catch (Exception e) {
+                log.error("Failed to find path", e);
+                return new PathfinderResultImpl(PathState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET));
+            }
+        }, PATHING_EXECUTOR).thenApply(this::finishPathing);
     }
     
     private CompletionStage<PathfinderResult> produceSyncPathing(PathPosition start, PathPosition target, PathfinderStrategy strategy) {
-        PathfinderResult pathfinderResult = findPath(start, relocateTargetPosition(target), strategy);
-        return CompletableFuture.completedFuture(finishPathing(pathfinderResult)).whenComplete(new PathfinderExceptionHandlingBiConsumer<>());
+        try {
+            return CompletableFuture.completedFuture(findPath(start, relocateTargetPosition(target), strategy));
+        } catch (Exception e) {
+            log.error("Failed to find path", e);
+            return CompletableFuture.completedFuture(new PathfinderResultImpl(PathState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
+        }
     }
 
     protected abstract PathfinderResult findPath(PathPosition start, PathPosition target, PathfinderStrategy strategy);
