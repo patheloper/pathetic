@@ -20,7 +20,8 @@ public class NMSUtils {
                 if (minor == 2 || minor == 3) {
                     nmsInterface = new OneNineteenTwoNMSInterface();
                     break;
-                } else if (minor == 4) {
+                }
+                if (minor == 4) {
                     nmsInterface = new OneNineteenThreeNMSInterface();
                     break;
                 }

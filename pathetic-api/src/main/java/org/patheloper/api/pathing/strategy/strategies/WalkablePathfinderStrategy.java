@@ -25,11 +25,31 @@ public class WalkablePathfinderStrategy implements PathfinderStrategy {
 
     @Override
     public boolean isValid(@NonNull PathPosition position, @NonNull SnapshotManager snapshotManager) {
-
         PathBlock block = snapshotManager.getBlock(position);
         PathBlock blockBelow = snapshotManager.getBlock(position.add(0, -1, 0));
 
-        boolean areBlocksAbovePassable = true;
+        boolean canStandOnIt = canStandOnBlock(position, snapshotManager, block, blockBelow);
+
+        if (canStandOnIt) {
+            this.lastExamined = position;
+            return true;
+        }
+
+        if (lastExamined != null) {
+            boolean withinDistance = isWithinDistance(lastExamined, position);
+            boolean isHigher = isHigherPosition(lastExamined, position);
+            boolean isLower = isLowerPosition(lastExamined, position);
+            boolean isPassable = isPassableBlock(block, snapshotManager, areBlocksAbovePassable(position, snapshotManager));
+
+            return withinDistance && (isHigher || isLower) && isPassable;
+        }
+
+        return false;
+    }
+
+    private boolean canStandOnBlock(PathPosition position, SnapshotManager snapshotManager, PathBlock block, PathBlock blockBelow) {
+        boolean areBlocksAbovePassable = areBlocksAbovePassable(position, snapshotManager);
+
         for (int i = 1; i < height; i++) {
             PathBlock blockAbove = snapshotManager.getBlock(position.add(0, i, 0));
             if (!blockAbove.isPassable()) {
@@ -38,25 +58,35 @@ public class WalkablePathfinderStrategy implements PathfinderStrategy {
             }
         }
 
-        boolean canStandOnIt = block.isPassable() && blockBelow.isSolid() && areBlocksAbovePassable;
+        return block.isPassable() && blockBelow.isSolid() && areBlocksAbovePassable;
+    }
 
-        if(canStandOnIt) {
-            this.lastExamined = position;
-            return true;
+    private boolean isWithinDistance(PathPosition lastExamined, PathPosition position) {
+        double distance = lastExamined.distance(position);
+        return distance <= 3;
+    }
+
+    private boolean isHigherPosition(PathPosition lastExamined, PathPosition position) {
+        return position.getY() - lastExamined.getY() > 2;
+    }
+
+    private boolean isLowerPosition(PathPosition lastExamined, PathPosition position) {
+        return lastExamined.getY() - position.getY() > 2;
+    }
+
+    private boolean isPassableBlock(PathBlock block, SnapshotManager snapshotManager, boolean areBlocksAbovePassable) {
+        return block.isPassable() && areBlocksAbovePassable;
+    }
+
+    private boolean areBlocksAbovePassable(PathPosition position, SnapshotManager snapshotManager) {
+        boolean areBlocksAbovePassable = true;
+        for (int i = 1; i < height; i++) {
+            PathBlock blockAbove = snapshotManager.getBlock(position.add(0, i, 0));
+            if (!blockAbove.isPassable()) {
+                areBlocksAbovePassable = false;
+                break;
+            }
         }
-
-        if(lastExamined != null) {
-
-            double distance = lastExamined.distance(position);
-            boolean withinDistance = distance <= 3;
-
-            boolean isHigher = position.getY() - lastExamined.getY() > 2;
-            boolean isLower = lastExamined.getY() - position.getY() > 2;
-            boolean isPassable = block.isPassable() && areBlocksAbovePassable;
-
-            return withinDistance && (isHigher || isLower) && isPassable;
-        }
-
-        return false;
+        return areBlocksAbovePassable;
     }
 }

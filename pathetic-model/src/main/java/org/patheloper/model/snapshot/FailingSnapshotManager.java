@@ -31,7 +31,6 @@ public class FailingSnapshotManager implements SnapshotManager {
     }
 
     public static void invalidateChunk(UUID worldUUID, int chunkX, int chunkZ) {
-
         if (SNAPSHOTS_MAP.containsKey(worldUUID)) {
 
             WorldDomain worldDomain = SNAPSHOTS_MAP.get(worldUUID);
@@ -43,7 +42,6 @@ public class FailingSnapshotManager implements SnapshotManager {
     }
 
     private static Optional<PathBlock> fetchBlock(PathPosition position) {
-
         Optional<ChunkSnapshot> chunkSnapshotOptional = getChunkSnapshot(position);
 
         int chunkX = position.getBlockX() >> 4;
@@ -61,7 +59,6 @@ public class FailingSnapshotManager implements SnapshotManager {
     }
 
     private static Optional<ChunkSnapshot> getChunkSnapshot(PathPosition position) {
-
         int chunkX = position.getBlockX() >> 4;
         int chunkZ = position.getBlockZ() >> 4;
 
@@ -90,7 +87,6 @@ public class FailingSnapshotManager implements SnapshotManager {
         }
 
         private static ChunkSnapshot retrieveSnapshot(PathPosition position) {
-
             int chunkX = position.getBlockX() >> 4;
             int chunkZ = position.getBlockZ() >> 4;
 
@@ -103,15 +99,17 @@ public class FailingSnapshotManager implements SnapshotManager {
                 if (chunkSnapshot == null)
                     throw new IllegalStateException("Could not retrieve chunk snapshot --> BOOM!");
 
-                WorldDomain worldDomain = SNAPSHOTS_MAP.computeIfAbsent(position.getPathEnvironment().getUuid(), uuid -> new WorldDomain());
-                worldDomain.addSnapshot(ChunkUtils.getChunkKey(chunkX, chunkZ), chunkSnapshot);
-
+                addChunkSnapshot(position, chunkX, chunkZ, chunkSnapshot);
                 return chunkSnapshot;
             });
         }
 
-        private static PathBlock ensureBlock(PathPosition pathPosition) {
+        private static void addChunkSnapshot(PathPosition position, int chunkX, int chunkZ, ChunkSnapshot chunkSnapshot) {
+            WorldDomain worldDomain = SNAPSHOTS_MAP.computeIfAbsent(position.getPathEnvironment().getUuid(), uuid -> new WorldDomain());
+            worldDomain.addSnapshot(ChunkUtils.getChunkKey(chunkX, chunkZ), chunkSnapshot);
+        }
 
+        private static PathBlock ensureBlock(PathPosition pathPosition) {
             int chunkX = pathPosition.getBlockX() >> 4;
             int chunkZ = pathPosition.getBlockZ() >> 4;
 

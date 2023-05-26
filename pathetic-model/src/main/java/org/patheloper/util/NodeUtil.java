@@ -49,7 +49,6 @@ public class NodeUtil {
      * @return the progress made so far along the path represented by the given node
      */
     public static int getProgress(Node node) {
-
         int length = 0;
 
         Node currentNode = node;
@@ -68,27 +67,14 @@ public class NodeUtil {
      * @api.Note The reachable block is not guaranteed to be the closest reachable block
      */
     public static PathBlock bubbleSearchAlternative(PathPosition target, Offset offset, SnapshotManager snapshotManager) {
-
         Set<PathPosition> newPositions = new HashSet<>();
         newPositions.add(target);
 
         Set<PathPosition> examinedPositions = new HashSet<>();
         while (!newPositions.isEmpty()) {
             Set<PathPosition> nextPositions = new HashSet<>();
-            for (PathPosition position : newPositions) {
-                for (PathVector vector : offset.getVectors()) {
-
-                    PathPosition offsetPosition = position.add(vector);
-                    PathBlock pathBlock = snapshotManager.getBlock(offsetPosition);
-
-                    if (pathBlock.isPassable() && !pathBlock.getPathPosition().isInSameBlock(target))
-                        return pathBlock;
-
-                    if (!examinedPositions.contains(offsetPosition))
-                        nextPositions.add(offsetPosition);
-                }
-                examinedPositions.add(position);
-            }
+            PathBlock pathBlock = getPathBlock(target, offset, snapshotManager, newPositions, examinedPositions, nextPositions);
+            if (pathBlock != null) return pathBlock;
             newPositions = nextPositions;
         }
 
@@ -106,17 +92,7 @@ public class NodeUtil {
      * @return {@code true} if the node is valid and can be added to the node queue, {@code false} otherwise
      */
     public static boolean isNodeValid(Node node, Collection<Node> nodeQueue, SnapshotManager snapshotManager, Set<PathPosition> examinedPositions, PathfinderStrategy strategy) {
-
-        if (examinedPositions.contains(node.getPosition()))
-            return false;
-
-        if (nodeQueue.contains(node))
-            return false;
-
-        if (!isWithinWorldBounds(node.getPosition()))
-            return false;
-
-        if (!strategy.isValid(node.getPosition(), snapshotManager))
+        if (examinedPositions.contains(node.getPosition()) || nodeQueue.contains(node) || !isWithinWorldBounds(node.getPosition()) || !strategy.isValid(node.getPosition(), snapshotManager))
             return false;
 
         return examinedPositions.add(node.getPosition());
@@ -140,51 +116,29 @@ public class NodeUtil {
      * @return a collection of neighbour nodes
      */
     public static Collection<Node> fetchNeighbours(Node currentNode, PathVector[] offsets) {
-
         Set<Node> newNodes = new HashSet<>(offsets.length);
 
         for (PathVector offset : offsets) {
-
-            Node newNode = new Node(currentNode.getPosition().add(offset), currentNode.getStart(), currentNode.getTarget(), currentNode.getDepth() + 1);
-            newNode.setParent(currentNode);
-
+            Node newNode = createNeighbourNode(currentNode, offset);
             newNodes.add(newNode);
         }
 
         return newNodes;
     }
-    
+
+    private static Node createNeighbourNode(Node currentNode, PathVector offset) {
+        Node newNode = new Node(currentNode.getPosition().add(offset), currentNode.getStart(), currentNode.getTarget(), currentNode.getDepth() + 1);
+        newNode.setParent(currentNode);
+        return newNode;
+    }
+
     public static Path fetchMergedPath(Node endNode1, Node endNode2) {
-        List<PathPosition> path1 = new ArrayList<>();
-        List<PathPosition> path2 = new ArrayList<>();
-        
-        // Trace path 1 from end to start
-        Node currentNode = endNode1;
-        while (currentNode != null) {
-            path1.add(currentNode.getPosition());
-            currentNode = currentNode.getParent();
-        }
-        
-        // Trace path 2 from end to start
-        currentNode = endNode2;
-        while (currentNode != null) {
-            path2.add(currentNode.getPosition());
-            currentNode = currentNode.getParent();
-        }
-        
-        // Combine the two paths in reverse order
-        Collections.reverse(path1);
-        List<PathPosition> mergedPath = new ArrayList<>(path1);
-        mergedPath.addAll(path2);
-        
-        // Remove overlapping nodes
-        for (int i = 0; i < mergedPath.size() - 1; i++) {
-            if (mergedPath.get(i).equals(mergedPath.get(i + 1))) {
-                mergedPath.remove(i + 1);
-                i--;
-            }
-        }
-        
+        List<PathPosition> path1 = tracePathFromNode(endNode1);
+        List<PathPosition> path2 = tracePathFromNode(endNode2);
+
+        List<PathPosition> mergedPath = combinePaths(path1, path2);
+        removeOverlappingNodes(mergedPath);
+
         return new PathImpl(endNode1.getStart(), endNode1.getTarget(), mergedPath);
     }
 
@@ -199,17 +153,56 @@ public class NodeUtil {
         if(node.getParent() == null)
             return new PathImpl(node.getStart(), node.getTarget(), Collections.singletonList(node.getPosition()));
 
-        List<PathPosition> path = new ArrayList<>();
+        List<PathPosition> path = tracePathFromNode(node);
+        path.add(node.getStart());
 
-        Node currentNode = node;
+        Collections.reverse(path);
+        return new PathImpl(node.getStart(), node.getTarget(), path);
+    }
+
+    private static List<PathPosition> tracePathFromNode(Node endNode) {
+        List<PathPosition> path = new ArrayList<>();
+        Node currentNode = endNode;
+
         while (currentNode != null) {
             path.add(currentNode.getPosition());
             currentNode = currentNode.getParent();
         }
 
-        path.add(node.getStart());
         Collections.reverse(path);
+        return path;
+    }
 
-        return new PathImpl(node.getStart(), node.getTarget(), path);
+    private static List<PathPosition> combinePaths(List<PathPosition> path1, List<PathPosition> path2) {
+        List<PathPosition> mergedPath = new ArrayList<>(path1);
+        mergedPath.addAll(path2);
+        return mergedPath;
+    }
+
+    private static void removeOverlappingNodes(List<PathPosition> mergedPath) {
+        for (int i = 0; i < mergedPath.size() - 1; i++) {
+            if (mergedPath.get(i).equals(mergedPath.get(i + 1))) {
+                mergedPath.remove(i + 1);
+                i--;
+            }
+        }
+    }
+
+    private static PathBlock getPathBlock(PathPosition target, Offset offset, SnapshotManager snapshotManager, Set<PathPosition> newPositions, Set<PathPosition> examinedPositions, Set<PathPosition> nextPositions) {
+        for (PathPosition position : newPositions) {
+            for (PathVector vector : offset.getVectors()) {
+
+                PathPosition offsetPosition = position.add(vector);
+                PathBlock pathBlock = snapshotManager.getBlock(offsetPosition);
+
+                if (pathBlock.isPassable() && !pathBlock.getPathPosition().isInSameBlock(target))
+                    return pathBlock;
+
+                if (!examinedPositions.contains(offsetPosition))
+                    nextPositions.add(offsetPosition);
+            }
+            examinedPositions.add(position);
+        }
+        return null;
     }
 }

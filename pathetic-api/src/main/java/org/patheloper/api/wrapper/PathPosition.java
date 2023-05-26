@@ -1,12 +1,16 @@
 package org.patheloper.api.wrapper;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
+import lombok.ToString;
 import org.patheloper.api.util.NumberUtils;
 
 import java.util.Objects;
 
 @AllArgsConstructor
+@EqualsAndHashCode
+@ToString
 public class PathPosition implements Cloneable {
 
     @NonNull
@@ -16,11 +20,9 @@ public class PathPosition implements Cloneable {
     private double z;
 
     public PathPosition interpolate(PathPosition other, double progress) {
-
         double x = NumberUtils.interpolate(this.x, other.x, progress);
         double y = NumberUtils.interpolate(this.y, other.y, progress);
         double z = NumberUtils.interpolate(this.z, other.z, progress);
-
         return new PathPosition(pathEnvironment, x, y, z);
     }
 
@@ -258,30 +260,10 @@ public class PathPosition implements Cloneable {
         } catch (CloneNotSupportedException ex) {
             throw new IllegalStateException("Superclass messed up", ex);
         }
-
         clone.pathEnvironment = this.pathEnvironment;
-
         clone.x = this.x;
         clone.y = this.y;
         clone.z = this.z;
-
         return clone;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        PathPosition that = (PathPosition) o;
-        return Double.compare(that.x, x) == 0 && Double.compare(that.y, y) == 0 && Double.compare(that.z, z) == 0 && pathEnvironment.equals(that.pathEnvironment);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(pathEnvironment, x, y, z);
-    }
-
-    public String toString() {
-        return "PathPosition(pathDomain=" + this.getPathEnvironment() + ", x=" + this.getX() + ", y=" + this.getY() + ", z=" + this.getZ() + ")";
     }
 }

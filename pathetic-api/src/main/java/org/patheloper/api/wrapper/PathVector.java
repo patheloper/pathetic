@@ -1,12 +1,12 @@
 package org.patheloper.api.wrapper;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import org.patheloper.api.util.NumberUtils;
 
 @AllArgsConstructor
-@RequiredArgsConstructor
+@EqualsAndHashCode
 public class PathVector implements Cloneable {
 
     /**
@@ -18,7 +18,7 @@ public class PathVector implements Cloneable {
      */
     public static double computeDistance(PathVector A, PathVector B, PathVector C) {
 
-        PathVector d = (C.subtract(B)).divide(C.distance(B));
+        PathVector d = C.subtract(B).divide(C.distance(B));
         PathVector v = A.subtract(B);
 
         double t = v.dot(d);
@@ -182,25 +182,11 @@ public class PathVector implements Cloneable {
         try {
             clone = (PathVector) super.clone();
         } catch (CloneNotSupportedException ex) {
-            throw new RuntimeException("Superclass messed up", ex);
+            throw new IllegalStateException("Superclass messed up", ex);
         }
         clone.x = this.x;
         clone.y = this.y;
         clone.z = this.z;
         return clone;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-
-        if (!(obj instanceof PathVector)) {
-            return false;
-        }
-
-        final PathVector other = (PathVector) obj;
-        return this.x == other.x && this.y == other.y && this.z == other.z;
     }
 }

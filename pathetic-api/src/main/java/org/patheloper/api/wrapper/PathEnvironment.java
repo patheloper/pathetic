@@ -20,7 +20,9 @@ public class PathEnvironment {
 
     UUID uuid;
     String name;
+    @EqualsAndHashCode.Exclude
     Integer minHeight;
+    @EqualsAndHashCode.Exclude
     Integer maxHeight;
 }
 

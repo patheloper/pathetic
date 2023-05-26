@@ -37,21 +37,25 @@ public class PlayerPathfinderStrategy implements PathfinderStrategy {
         if(canJumpFrom(lastStandOn, snapshotManager) && canJumpTo(location, snapshotManager))
             return true;
 
-        if(canJumpFrom(lastStandOn, snapshotManager) && canJumpOver(location, snapshotManager)) {
-
+        if (canJumpFrom(lastStandOn, snapshotManager) && canJumpOver(location, snapshotManager)) {
             double distance = lastStandOn.distance(location);
             double height = location.getY() - lastStandOn.getY();
-            double initialVelocity = Math.sqrt(2 * GRAVITY * height);
-            double timeToReachMaxHeight = initialVelocity / GRAVITY;
-
-            double maxHorizontalDistance = initialVelocity * timeToReachMaxHeight;
-            double maxHeight = initialVelocity * timeToReachMaxHeight - 0.5 * GRAVITY * timeToReachMaxHeight * timeToReachMaxHeight;
-            double maxDistance = Math.sqrt(maxHorizontalDistance * maxHorizontalDistance + maxHeight * maxHeight);
+            double maxDistance = calculateMaxDistance(height);
 
             return distance <= MAX_JUMP_DISTANCE_IN_BLOCKS && height <= MAX_JUMP_HEIGHT_IN_BLOCKS && distance <= maxDistance;
         }
 
         return false;
+    }
+
+    private double calculateMaxDistance(double height) {
+        double initialVelocity = Math.sqrt(2 * GRAVITY * height);
+        double timeToReachMaxHeight = initialVelocity / GRAVITY;
+
+        double maxHorizontalDistance = initialVelocity * timeToReachMaxHeight;
+        double maxHeight = initialVelocity * timeToReachMaxHeight - 0.5 * GRAVITY * timeToReachMaxHeight * timeToReachMaxHeight;
+
+        return Math.sqrt(maxHorizontalDistance * maxHorizontalDistance + maxHeight * maxHeight);
     }
 
     private boolean isGenerallyPassable(PathPosition pathPosition, SnapshotManager snapshotManager) {

@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.generator.WorldInfo;
 import org.bukkit.util.Vector;
 import org.patheloper.api.wrapper.PathBlock;
 import org.patheloper.api.wrapper.PathBlockType;
@@ -66,11 +67,11 @@ public class BukkitMapper {
         IS_NEWER_WORLD = Arrays.stream(World.class.getMethods()).anyMatch(method -> "getMinHeight".equalsIgnoreCase(method.getName()));
     }
 
-    private int getMinHeight(World world) {
+    private int getMinHeight(WorldInfo world) {
         return IS_NEWER_WORLD ? world.getMinHeight() : 0;
     }
 
-    private int getMaxHeight(World world) {
+    private int getMaxHeight(WorldInfo world) {
         return IS_NEWER_WORLD ? world.getMaxHeight() : 256;
     }
 }

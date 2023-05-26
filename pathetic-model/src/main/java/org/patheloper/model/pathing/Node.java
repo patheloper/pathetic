@@ -1,21 +1,23 @@
 package org.patheloper.model.pathing;
 
+import lombok.EqualsAndHashCode;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.api.wrapper.PathVector;
 
-import java.util.Objects;
-
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Node implements Comparable<Node> {
 
     private final Integer depth;
+
+    @EqualsAndHashCode.Include
     private final PathPosition position;
+
     private final PathPosition target;
     private final PathPosition start;
     
     private Node parent;
 
     public Node(PathPosition position, PathPosition start, PathPosition target, Integer depth) {
-        
         this.position = position;
         this.target = target;
         this.start = start;
@@ -31,16 +33,15 @@ public class Node implements Comparable<Node> {
     }
 
     public double heuristic() {
+        double v = calculatePerpendicularDistance();
+        return this.position.octileDistance(target) * (v*0.00002) + 0.01*this.target.distance(this.position);
+    }
 
-        // The "v" is the perpendicular distance between the current position and the line from the start to the target
+    private double calculatePerpendicularDistance() {
         PathVector a = this.position.toVector();
         PathVector b = this.start.toVector();
         PathVector c = this.target.toVector();
-        double v = a.subtract(b).getCrossProduct(c.subtract(b)).length() / c.subtract(b).length();
-
-        // We then multiply the perpendicular by the octile distance between the current position and the target
-        // and the euclidean distance between the current position and the start
-        return this.position.octileDistance(target) * (v*0.00002) + 0.01*this.target.distance(this.position);
+        return a.subtract(b).getCrossProduct(c.subtract(b)).length() / c.subtract(b).length();
     }
 
     public Node getParent() {
@@ -61,19 +62,6 @@ public class Node implements Comparable<Node> {
 
     public PathPosition getPosition() {
         return this.position;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        PathPosition nodePosition = ((Node) o).getPosition();
-        return nodePosition.getBlockX() == this.position.getBlockX() && nodePosition.getBlockY() == this.position.getBlockY() && nodePosition.getBlockZ() == this.position.getBlockZ();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.position);
     }
 
     @Override

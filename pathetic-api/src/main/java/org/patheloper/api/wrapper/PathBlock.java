@@ -1,7 +1,9 @@
 package org.patheloper.api.wrapper;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 import java.util.Objects;
 
@@ -10,6 +12,8 @@ import java.util.Objects;
  */
 @Getter
 @RequiredArgsConstructor
+@ToString
+@EqualsAndHashCode
 public final class PathBlock {
 
     private final PathPosition pathPosition;
@@ -58,22 +62,5 @@ public final class PathBlock {
      */
     public int getBlockZ() {
         return this.pathPosition.getBlockZ();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        PathBlock pathBlock = (PathBlock) o;
-        return this.pathBlockType == pathBlock.pathBlockType && Objects.equals(this.pathPosition, pathBlock.pathPosition);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.pathBlockType, this.pathPosition);
-    }
-
-    public String toString() {
-        return "PathBlock(pathBlockType=" + this.getPathBlockType() + ", pathPosition=" + this.getPathPosition() + ")";
     }
 }

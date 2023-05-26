@@ -60,7 +60,6 @@ abstract class AbstractPathfinder implements Pathfinder {
     protected final SnapshotManager snapshotManager;
 
     protected AbstractPathfinder(PathingRuleSet pathingRuleSet) {
-
         this.pathingRuleSet = pathingRuleSet;
 
         this.offset = pathingRuleSet.isAllowingDiagonal() ? Offset.MERGED : Offset.VERTICAL_AND_HORIZONTAL;
@@ -69,7 +68,6 @@ abstract class AbstractPathfinder implements Pathfinder {
 
     @Override
     public @NonNull CompletionStage<PathfinderResult> findPath(@NonNull PathPosition start, @NonNull PathPosition target) {
-
         PathfinderStrategy strategy = instantiateStrategy();
         PathingStartFindEvent startEvent = raiseStart(start, target, strategy);
 
@@ -89,7 +87,6 @@ abstract class AbstractPathfinder implements Pathfinder {
     }
 
     private PathingStartFindEvent raiseStart(PathPosition start, PathPosition target, PathfinderStrategy strategy) {
-
         PathingStartFindEvent startEvent = new PathingStartFindEvent(start, target, strategy);
         EventPublisher.raiseEvent(startEvent);
 
@@ -98,21 +95,13 @@ abstract class AbstractPathfinder implements Pathfinder {
 
     private boolean initialChecksFailed(PathPosition start, PathPosition target, Cancellable startEvent) {
 
-        // Do some initial checks to make sure that we should even bother with pathfinding
-        if (startEvent.isCancelled())
-            return true;
-
-        if (!start.getPathEnvironment().equals(target.getPathEnvironment()))
-            return true;
-
-        if (start.isInSameBlock(target))
+        if (startEvent.isCancelled() || !start.getPathEnvironment().equals(target.getPathEnvironment()) || start.isInSameBlock(target))
             return true;
 
         return this.pathingRuleSet.isAllowingFailFast() && isBlockUnreachable(target) || isBlockUnreachable(start);
     }
 
     private boolean isBlockUnreachable(PathPosition position) {
-
         for(PathVector vector : offset.getVectors()) {
 
             PathPosition offsetPosition = position.add(vector);

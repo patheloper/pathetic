@@ -59,7 +59,6 @@ public class PatheticMapper {
      */
     @Experimental
     public @NonNull Pathfinder newPathfinder(PathingRuleSet pathingRuleSet, PathfinderType pathfinderType) {
-
         if (Pathetic.isInitialized()) {
             switch (pathfinderType) {
                 case ASTAR:
