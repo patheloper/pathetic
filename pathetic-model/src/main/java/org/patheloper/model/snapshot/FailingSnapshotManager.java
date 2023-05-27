@@ -75,14 +75,15 @@ public class FailingSnapshotManager implements SnapshotManager {
         if (world == null) return Optional.empty();
 
         if (world.isChunkLoaded(chunkX, chunkZ))
-            addChunkSnapshot(position, chunkX, chunkZ, NMS_UTILS.getNmsInterface().getSnapshot(world, chunkX, chunkZ));
+            return Optional.ofNullable(processChunkSnapshot(position, chunkX, chunkZ, NMS_UTILS.getNmsInterface().getSnapshot(world, chunkX, chunkZ)));
 
         return Optional.empty();
     }
 
-    private static void addChunkSnapshot(PathPosition position, int chunkX, int chunkZ, ChunkSnapshot chunkSnapshot) {
+    private static ChunkSnapshot processChunkSnapshot(PathPosition position, int chunkX, int chunkZ, ChunkSnapshot chunkSnapshot) {
         WorldDomain worldDomain = SNAPSHOTS_MAP.computeIfAbsent(position.getPathEnvironment().getUuid(), uuid -> new WorldDomain());
         worldDomain.addSnapshot(ChunkUtils.getChunkKey(chunkX, chunkZ), chunkSnapshot);
+        return chunkSnapshot;
     }
 
     @Override
@@ -111,7 +112,7 @@ public class FailingSnapshotManager implements SnapshotManager {
                 if (chunkSnapshot == null)
                     throw new IllegalStateException("Could not retrieve chunk snapshot --> BOOM!");
 
-                addChunkSnapshot(position, chunkX, chunkZ, chunkSnapshot);
+                processChunkSnapshot(position, chunkX, chunkZ, chunkSnapshot);
                 return chunkSnapshot;
             });
         }
