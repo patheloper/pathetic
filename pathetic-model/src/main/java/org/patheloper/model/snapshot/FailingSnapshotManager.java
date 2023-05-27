@@ -74,15 +74,15 @@ public class FailingSnapshotManager implements SnapshotManager {
         World world = Bukkit.getWorld(position.getPathEnvironment().getUuid());
         if (world == null) return Optional.empty();
 
-        if (world.isChunkLoaded(chunkX, chunkZ)) {
-            ChunkSnapshot snapshot = NMS_UTILS.getNmsInterface().getSnapshot(world, chunkX, chunkZ);
-            WorldDomain worldDomain = new WorldDomain();
-            worldDomain.addSnapshot(ChunkUtils.getChunkKey(chunkX, chunkZ), snapshot);
-            SNAPSHOTS_MAP.put(position.getPathEnvironment().getUuid(), worldDomain);
-            return Optional.ofNullable(snapshot);
-        }
+        if (world.isChunkLoaded(chunkX, chunkZ))
+            addChunkSnapshot(position, chunkX, chunkZ, NMS_UTILS.getNmsInterface().getSnapshot(world, chunkX, chunkZ));
 
         return Optional.empty();
+    }
+
+    private static void addChunkSnapshot(PathPosition position, int chunkX, int chunkZ, ChunkSnapshot chunkSnapshot) {
+        WorldDomain worldDomain = SNAPSHOTS_MAP.computeIfAbsent(position.getPathEnvironment().getUuid(), uuid -> new WorldDomain());
+        worldDomain.addSnapshot(ChunkUtils.getChunkKey(chunkX, chunkZ), chunkSnapshot);
     }
 
     @Override
@@ -114,11 +114,6 @@ public class FailingSnapshotManager implements SnapshotManager {
                 addChunkSnapshot(position, chunkX, chunkZ, chunkSnapshot);
                 return chunkSnapshot;
             });
-        }
-
-        private static void addChunkSnapshot(PathPosition position, int chunkX, int chunkZ, ChunkSnapshot chunkSnapshot) {
-            WorldDomain worldDomain = SNAPSHOTS_MAP.computeIfAbsent(position.getPathEnvironment().getUuid(), uuid -> new WorldDomain());
-            worldDomain.addSnapshot(ChunkUtils.getChunkKey(chunkX, chunkZ), chunkSnapshot);
         }
 
         private static PathBlock ensureBlock(PathPosition pathPosition) {
