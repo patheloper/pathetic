@@ -107,6 +107,9 @@ abstract class AbstractPathfinder implements Pathfinder {
             PathPosition offsetPosition = position.add(vector);
             PathBlock pathBlock = this.getSnapshotManager().getBlock(offsetPosition);
 
+            if (pathBlock == null)
+                continue;
+
             if(pathBlock.isPassable())
                 return false;
         }
