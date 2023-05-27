@@ -67,7 +67,19 @@ public class FailingSnapshotManager implements SnapshotManager {
             WorldDomain worldDomain = SNAPSHOTS_MAP.get(position.getPathEnvironment().getUuid());
             long chunkKey = ChunkUtils.getChunkKey(chunkX, chunkZ);
 
-            return worldDomain.getSnapshot(chunkKey);
+            Optional<ChunkSnapshot> snapshot = worldDomain.getSnapshot(chunkKey);
+            if (snapshot.isPresent()) return snapshot;
+        }
+
+        World world = Bukkit.getWorld(position.getPathEnvironment().getUuid());
+        if (world == null) return Optional.empty();
+
+        if (world.isChunkLoaded(chunkX, chunkZ)) {
+            ChunkSnapshot snapshot = NMS_UTILS.getNmsInterface().getSnapshot(world, chunkX, chunkZ);
+            WorldDomain worldDomain = new WorldDomain();
+            worldDomain.addSnapshot(ChunkUtils.getChunkKey(chunkX, chunkZ), snapshot);
+            SNAPSHOTS_MAP.put(position.getPathEnvironment().getUuid(), worldDomain);
+            return Optional.ofNullable(snapshot);
         }
 
         return Optional.empty();
