@@ -9,24 +9,24 @@ import java.util.concurrent.TimeUnit;
 
 public class WorldDomain {
 
-    private static final Cache<Long, ChunkSnapshot> CHUNK_SNAPSHOT_CACHE = CacheBuilder.newBuilder()
+    private final Cache<Long, ChunkSnapshot> chunkSnapshotCache = CacheBuilder.newBuilder()
             .maximumSize(100000)
-            .expireAfterWrite(5, TimeUnit.MINUTES)
+            .expireAfterAccess(5, TimeUnit.MINUTES)
             .build();
 
     public Optional<ChunkSnapshot> getSnapshot(long key) {
-        return Optional.ofNullable(CHUNK_SNAPSHOT_CACHE.getIfPresent(key));
+        return Optional.ofNullable(chunkSnapshotCache.getIfPresent(key));
     }
 
     public void addSnapshot(final long key, final ChunkSnapshot snapshot) {
-        CHUNK_SNAPSHOT_CACHE.put(key, snapshot);
+        chunkSnapshotCache.put(key, snapshot);
     }
 
     public void removeSnapshot(final long key) {
-        CHUNK_SNAPSHOT_CACHE.invalidate(key);
+        chunkSnapshotCache.invalidate(key);
     }
 
     public boolean containsSnapshot(final long key) {
-        return CHUNK_SNAPSHOT_CACHE.getIfPresent(key) != null;
+        return chunkSnapshotCache.getIfPresent(key) != null;
     }
 }
