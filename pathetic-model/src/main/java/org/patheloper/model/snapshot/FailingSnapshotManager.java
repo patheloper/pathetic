@@ -32,12 +32,10 @@ public class FailingSnapshotManager implements SnapshotManager {
 
     public static void invalidateChunk(UUID worldUUID, int chunkX, int chunkZ) {
         if (SNAPSHOTS_MAP.containsKey(worldUUID)) {
-
             WorldDomain worldDomain = SNAPSHOTS_MAP.get(worldUUID);
             long chunkKey = ChunkUtils.getChunkKey(chunkX, chunkZ);
 
-            if (worldDomain.containsSnapshot(chunkKey))
-                worldDomain.removeSnapshot(chunkKey);
+            worldDomain.removeSnapshot(chunkKey);
         }
     }
 
