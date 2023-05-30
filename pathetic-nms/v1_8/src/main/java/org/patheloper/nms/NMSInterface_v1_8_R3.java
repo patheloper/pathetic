@@ -1,4 +1,4 @@
-package org.patheloper.nms.v1_8;
+package org.patheloper.nms;
 
 import net.minecraft.server.v1_8_R3.Chunk;
 import net.minecraft.server.v1_8_R3.WorldServer;
@@ -7,7 +7,7 @@ import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.patheloper.api.snapshot.NMSInterface;
 
-public class OneEightNMSInterface implements NMSInterface {
+public class NMSInterface_v1_8_R3 implements NMSInterface {
 
     @Override
     public ChunkSnapshot getSnapshot(World world, int chunkX, int chunkZ) {

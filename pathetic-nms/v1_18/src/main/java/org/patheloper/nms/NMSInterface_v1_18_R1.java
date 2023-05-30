@@ -1,4 +1,4 @@
-package org.patheloper.nms.v1_19_R2;
+package org.patheloper.nms;
 
 import net.minecraft.server.level.WorldServer;
 import net.minecraft.world.level.block.state.IBlockData;
@@ -6,13 +6,13 @@ import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.chunk.DataPaletteBlock;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_19_R2.CraftChunk;
-import org.bukkit.craftbukkit.v1_19_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_18_R1.CraftChunk;
+import org.bukkit.craftbukkit.v1_18_R1.CraftWorld;
 import org.patheloper.api.snapshot.NMSInterface;
 
 import java.lang.reflect.Field;
 
-public class OneNineteenTwoNMSInterface implements NMSInterface {
+public class NMSInterface_v1_18_R1 implements NMSInterface {
 
     private static final Field blockIDField;
 

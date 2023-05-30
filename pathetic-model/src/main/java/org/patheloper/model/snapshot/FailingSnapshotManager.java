@@ -11,7 +11,6 @@ import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.api.wrapper.PathEnvironment;
 import org.patheloper.model.snapshot.world.WorldDomain;
 import org.patheloper.nms.NMSUtils;
-import org.patheloper.util.BukkitVersionUtil;
 import org.patheloper.util.ChunkUtils;
 
 import java.util.HashMap;
@@ -26,8 +25,7 @@ public class FailingSnapshotManager implements SnapshotManager {
     private static final NMSUtils NMS_UTILS;
 
     static {
-        BukkitVersionUtil.Version version = BukkitVersionUtil.getVersion();
-        NMS_UTILS = new NMSUtils((int) version.major(), (int) version.minor());
+        NMS_UTILS = new NMSUtils();
     }
 
     public static void invalidateChunk(UUID worldUUID, int chunkX, int chunkZ) {

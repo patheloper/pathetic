@@ -1,4 +1,4 @@
-package org.patheloper.nms.v1_17;
+package org.patheloper.nms;
 
 import net.minecraft.server.level.WorldServer;
 import net.minecraft.world.level.chunk.ChunkStatus;
@@ -8,7 +8,7 @@ import org.bukkit.craftbukkit.v1_17_R1.CraftChunk;
 import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
 import org.patheloper.api.snapshot.NMSInterface;
 
-public class OneSeventeenNMSInterface implements NMSInterface {
+public class NMSInterface_v1_17_R1 implements NMSInterface {
 
 
     @Override
