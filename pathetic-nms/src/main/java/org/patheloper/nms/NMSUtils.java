@@ -25,7 +25,6 @@ public class NMSUtils {
                 throw new IllegalArgumentException("Could not create NMSInterface for version " + nmsVersion, e);
             }
         }
-        System.out.println("Used NMS interface: " + nmsInterface);
     }
 
     public NMSInterface getNmsInterface() {
@@ -34,7 +33,7 @@ public class NMSUtils {
 
     private boolean supportsAsyncLoading() {
         try {
-            World.class.getDeclaredMethod("getChunkAtAsync", int.class, int.class, boolean.class, boolean.class);
+            World.class.getDeclaredMethod("getChunkAtAsyncUrgently", int.class, int.class);
             return true;
         } catch (NoSuchMethodException e) {
             return false;

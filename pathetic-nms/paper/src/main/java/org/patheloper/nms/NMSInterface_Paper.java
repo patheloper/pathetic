@@ -14,7 +14,7 @@ public class NMSInterface_Paper implements NMSInterface {
             // we would enter a deadlock when using .join()
             return world.getChunkAt(chunkX, chunkZ).getChunkSnapshot();
         } else {
-            return world.getChunkAtAsync(chunkX, chunkZ).join().getChunkSnapshot();
+            return world.getChunkAtAsyncUrgently(chunkX, chunkZ).join().getChunkSnapshot();
         }
     }
 }
