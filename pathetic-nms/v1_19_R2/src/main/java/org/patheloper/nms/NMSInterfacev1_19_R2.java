@@ -12,7 +12,7 @@ import org.patheloper.api.snapshot.NMSInterface;
 
 import java.lang.reflect.Field;
 
-public class NMSInterface_v1_19_R2 implements NMSInterface {
+public class NMSInterfacev1_19_R2 implements NMSInterface {
 
     private static final Field blockIDField;
 

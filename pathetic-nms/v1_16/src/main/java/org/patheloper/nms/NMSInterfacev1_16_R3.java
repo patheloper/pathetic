@@ -8,7 +8,7 @@ import org.bukkit.craftbukkit.v1_16_R3.CraftChunk;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.patheloper.api.snapshot.NMSInterface;
 
-public class NMSInterface_v1_16_R3 implements NMSInterface {
+public class NMSInterfacev1_16_R3 implements NMSInterface {
 
     @Override
     public ChunkSnapshot getSnapshot(World world, int chunkX, int chunkZ) {

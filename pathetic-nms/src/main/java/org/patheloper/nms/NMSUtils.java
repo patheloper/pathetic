@@ -12,11 +12,11 @@ public class NMSUtils {
         String nmsVersion = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
 
         if (supportsAsyncLoading()) {
-            nmsInterface = new NMSInterface_Paper();
+            nmsInterface = new NMSInterfacePaper();
         } else {
             try {
                 nmsInterface =
-                        (NMSInterface) Class.forName(getClass().getPackage().getName() + ".NMSInterface_" + nmsVersion)
+                        (NMSInterface) Class.forName(getClass().getPackage().getName() + ".NMSInterface" + nmsVersion)
                                 .getConstructor()
                                 .newInstance();
             } catch (ClassNotFoundException e) {

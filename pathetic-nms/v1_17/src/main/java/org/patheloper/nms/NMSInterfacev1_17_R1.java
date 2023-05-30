@@ -8,7 +8,7 @@ import org.bukkit.craftbukkit.v1_17_R1.CraftChunk;
 import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
 import org.patheloper.api.snapshot.NMSInterface;
 
-public class NMSInterface_v1_17_R1 implements NMSInterface {
+public class NMSInterfacev1_17_R1 implements NMSInterface {
 
 
     @Override

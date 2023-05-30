@@ -5,7 +5,7 @@ import org.bukkit.ChunkSnapshot;
 import org.bukkit.World;
 import org.patheloper.api.snapshot.NMSInterface;
 
-public class NMSInterface_Paper implements NMSInterface {
+public class NMSInterfacePaper implements NMSInterface {
 
     @Override
     public ChunkSnapshot getSnapshot(World world, int chunkX, int chunkZ) {
