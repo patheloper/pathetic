@@ -43,13 +43,6 @@
 
         <dependency>
             <groupId>org.patheloper</groupId>
-            <artifactId>paper</artifactId>
-            <version>2.1.4</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.patheloper</groupId>
             <artifactId>v1_19_R2</artifactId>
             <version>2.1.4</version>
             <scope>compile</scope>
