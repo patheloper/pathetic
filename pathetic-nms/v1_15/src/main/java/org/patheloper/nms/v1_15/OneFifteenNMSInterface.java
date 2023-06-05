@@ -1,11 +1,11 @@
 package org.patheloper.nms.v1_15;
 
-import net.minecraft.server.v1_16_R3.ChunkStatus;
-import net.minecraft.server.v1_16_R3.WorldServer;
+import net.minecraft.server.v1_15_R1.ChunkStatus;
+import net.minecraft.server.v1_15_R1.WorldServer;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_16_R3.CraftChunk;
-import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_15_R1.CraftChunk;
+import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
 import org.patheloper.api.snapshot.NMSInterface;
 
 public class OneFifteenNMSInterface implements NMSInterface {
