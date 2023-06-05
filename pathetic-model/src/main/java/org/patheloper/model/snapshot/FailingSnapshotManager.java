@@ -32,12 +32,10 @@ public class FailingSnapshotManager implements SnapshotManager {
 
     public static void invalidateChunk(UUID worldUUID, int chunkX, int chunkZ) {
         if (SNAPSHOTS_MAP.containsKey(worldUUID)) {
-
             WorldDomain worldDomain = SNAPSHOTS_MAP.get(worldUUID);
             long chunkKey = ChunkUtils.getChunkKey(chunkX, chunkZ);
 
-            if (worldDomain.containsSnapshot(chunkKey))
-                worldDomain.removeSnapshot(chunkKey);
+            worldDomain.removeSnapshot(chunkKey);
         }
     }
 
@@ -67,10 +65,23 @@ public class FailingSnapshotManager implements SnapshotManager {
             WorldDomain worldDomain = SNAPSHOTS_MAP.get(position.getPathEnvironment().getUuid());
             long chunkKey = ChunkUtils.getChunkKey(chunkX, chunkZ);
 
-            return worldDomain.getSnapshot(chunkKey);
+            Optional<ChunkSnapshot> snapshot = worldDomain.getSnapshot(chunkKey);
+            if (snapshot.isPresent()) return snapshot;
         }
 
+        World world = Bukkit.getWorld(position.getPathEnvironment().getUuid());
+        if (world == null) return Optional.empty();
+
+        if (world.isChunkLoaded(chunkX, chunkZ))
+            return Optional.ofNullable(processChunkSnapshot(position, chunkX, chunkZ, NMS_UTILS.getNmsInterface().getSnapshot(world, chunkX, chunkZ)));
+
         return Optional.empty();
+    }
+
+    private static ChunkSnapshot processChunkSnapshot(PathPosition position, int chunkX, int chunkZ, ChunkSnapshot chunkSnapshot) {
+        WorldDomain worldDomain = SNAPSHOTS_MAP.computeIfAbsent(position.getPathEnvironment().getUuid(), uuid -> new WorldDomain());
+        worldDomain.addSnapshot(ChunkUtils.getChunkKey(chunkX, chunkZ), chunkSnapshot);
+        return chunkSnapshot;
     }
 
     @Override
@@ -99,14 +110,9 @@ public class FailingSnapshotManager implements SnapshotManager {
                 if (chunkSnapshot == null)
                     throw new IllegalStateException("Could not retrieve chunk snapshot --> BOOM!");
 
-                addChunkSnapshot(position, chunkX, chunkZ, chunkSnapshot);
+                processChunkSnapshot(position, chunkX, chunkZ, chunkSnapshot);
                 return chunkSnapshot;
             });
-        }
-
-        private static void addChunkSnapshot(PathPosition position, int chunkX, int chunkZ, ChunkSnapshot chunkSnapshot) {
-            WorldDomain worldDomain = SNAPSHOTS_MAP.computeIfAbsent(position.getPathEnvironment().getUuid(), uuid -> new WorldDomain());
-            worldDomain.addSnapshot(ChunkUtils.getChunkKey(chunkX, chunkZ), chunkSnapshot);
         }
 
         private static PathBlock ensureBlock(PathPosition pathPosition) {

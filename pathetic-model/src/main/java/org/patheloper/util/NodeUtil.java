@@ -154,9 +154,6 @@ public class NodeUtil {
             return new PathImpl(node.getStart(), node.getTarget(), Collections.singletonList(node.getPosition()));
 
         List<PathPosition> path = tracePathFromNode(node);
-        path.add(node.getStart());
-
-        Collections.reverse(path);
         return new PathImpl(node.getStart(), node.getTarget(), path);
     }
 
@@ -169,7 +166,7 @@ public class NodeUtil {
             currentNode = currentNode.getParent();
         }
 
-        Collections.reverse(path);
+        Collections.reverse(path); // make it the right order
         return path;
     }
 
