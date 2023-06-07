@@ -12,7 +12,7 @@ public class BukkitVersionUtil {
     static {
         String[] versionParts = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
         CURRENT_MAJOR = Double.parseDouble(versionParts[1]);
-        CURRENT_MINOR = Double.parseDouble(versionParts[2]);
+        CURRENT_MINOR = versionParts.length >= 3 ? Double.parseDouble(versionParts[2]): 0;
     }
 
     public static Version getVersion() {
