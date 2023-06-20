@@ -1,6 +1,6 @@
 # Pathetic
 
-A simple and intuitive 1.8-1.19 A* pathfinding API for Spigot & Paper plugins 
+A simple and intuitive 1.8-1.20 A* pathfinding API for Spigot & Paper plugins 
 
 ### How to import
 
