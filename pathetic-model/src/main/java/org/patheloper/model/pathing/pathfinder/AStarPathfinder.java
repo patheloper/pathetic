@@ -58,7 +58,7 @@ public class AStarPathfinder extends AbstractPathfinder {
                 return finishPathing(new PathfinderResultImpl(PathState.FOUND, NodeUtil.fetchRetracedPath(lastEverFound)));
 
             // This means that the current node is the target, so we can stop here
-            if (currentNode.hasReachedEnd())
+            if (currentNode.isAtTarget())
                 return finishPathing(new PathfinderResultImpl(PathState.FOUND, NodeUtil.fetchRetracedPath(lastEverFound)));
 
             NodeUtil.evaluateNewNodes(nodeQueue, examinedPositions, currentNode, offset, strategy, snapshotManager);
