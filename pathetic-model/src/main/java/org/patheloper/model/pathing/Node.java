@@ -3,15 +3,16 @@ package org.patheloper.model.pathing;
 import lombok.EqualsAndHashCode;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.api.wrapper.PathVector;
+import org.patheloper.util.ComputingCache;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Node implements Comparable<Node> {
 
     private final Integer depth;
+    private final ComputingCache<Double> heuristic = new ComputingCache<>(this::heuristic);
 
     @EqualsAndHashCode.Include
     private final PathPosition position;
-
     private final PathPosition target;
     private final PathPosition start;
     
@@ -32,7 +33,7 @@ public class Node implements Comparable<Node> {
         return this.position.getBlockX() == target.getBlockX() && this.position.getBlockY() == target.getBlockY() && this.position.getBlockZ() == target.getBlockZ();
     }
 
-    public double heuristic() {
+    private double heuristic() {
         double v = calculatePerpendicularDistance();
         return this.position.octileDistance(target) * (v*0.00002) + 0.01*(this.target.distance(this.position) + this.start.distance(this.position));
     }
@@ -67,6 +68,6 @@ public class Node implements Comparable<Node> {
     @Override
     public int compareTo(Node o) {
         // This is used in the priority queue to sort the nodes
-        return (int) Math.signum(this.heuristic() - o.heuristic());
+        return (int) Math.signum(this.heuristic.get() - o.heuristic.get());
     }
 }
