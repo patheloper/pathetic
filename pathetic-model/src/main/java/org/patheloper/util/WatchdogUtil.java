@@ -1,6 +1,8 @@
 package org.patheloper.util;
 
 import lombok.experimental.UtilityClass;
+import org.bukkit.Bukkit;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -20,12 +22,13 @@ public class WatchdogUtil {
     }
 
     public void tickWatchdog() {
-        if (tickMethod != null && watchdogClazz != null) {
-            try {
-                tickMethod.invoke(watchdogClazz);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
+        if (Bukkit.isPrimaryThread())
+            if (tickMethod != null && watchdogClazz != null) {
+                try {
+                    tickMethod.invoke(watchdogClazz);
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    e.printStackTrace();
+                }
             }
-        }
     }
 }
