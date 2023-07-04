@@ -56,7 +56,7 @@ public class AStarPathfinder extends AbstractPathfinder {
 
             // Check to see if we have reached the length limit
             if (pathingRuleSet.getMaxLength() > 0 && lastEverFound.getDepth() >= pathingRuleSet.getMaxLength())
-                return finishPathing(new PathfinderResultImpl(PathState.FOUND, NodeUtil.fetchRetracedPath(lastEverFound)));
+                return finishPathing(new PathfinderResultImpl(PathState.LENGTH_LIMITED, NodeUtil.fetchRetracedPath(lastEverFound)));
 
             // This means that the current node is the target, so we can stop here
             if (currentNode.isAtTarget())

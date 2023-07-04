@@ -13,6 +13,10 @@ public enum PathState {
     /**
      * Signifies that the pathfinder fell back during the pathfinding attempt
      */
-    FALLBACK;
+    FALLBACK,
+    /**
+     * Signifies that the pathfinder reached its length limit
+     */
+    LENGTH_LIMITED;
 
 }
