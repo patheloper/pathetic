@@ -51,16 +51,16 @@ public class AStarPathfinder extends AbstractPathfinder {
             if (currentNode == null)
                 throw ErrorLogger.logFatalError("A node was null when it shouldn't have been");
 
-            // if(lastEverFound == null || currentNode.heuristic() < lastEverFound.heuristic())
+            // if(lastEverFound == null || currentNode.getHeuristic().get() < lastEverFound.getHeuristic().get())
             //     lastEverFound = currentNode;
 
             // Check to see if we have reached the length limit
             if (pathingRuleSet.getMaxLength() > 0/* && lastEverFound.getDepth() >= pathingRuleSet.getMaxLength()*/)
-                return finishPathing(new PathfinderResultImpl(PathState.LENGTH_LIMITED, NodeUtil.fetchRetracedPath(currentNode)));
+                return finishPathing(new PathfinderResultImpl(PathState.LENGTH_LIMITED, NodeUtil.fetchRetracedPath(/*lastEverFound*/ currentNode)));
 
             // This means that the current node is the target, so we can stop here
             if (currentNode.isAtTarget())
-                return finishPathing(new PathfinderResultImpl(PathState.FOUND, NodeUtil.fetchRetracedPath(currentNode)));
+                return finishPathing(new PathfinderResultImpl(PathState.FOUND, NodeUtil.fetchRetracedPath(/*lastEverFound*/ currentNode)));
 
             NodeUtil.evaluateNewNodes(nodeQueue, examinedPositions, currentNode, offset, strategy, snapshotManager);
             depth++;

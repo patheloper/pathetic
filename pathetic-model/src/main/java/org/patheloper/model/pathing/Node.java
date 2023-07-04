@@ -1,6 +1,7 @@
 package org.patheloper.model.pathing;
 
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.api.wrapper.PathVector;
 import org.patheloper.util.ComputingCache;
@@ -9,6 +10,7 @@ import org.patheloper.util.ComputingCache;
 public class Node implements Comparable<Node> {
 
     private final Integer depth;
+    @Getter
     private final ComputingCache<Double> heuristic = new ComputingCache<>(this::heuristic);
 
     @EqualsAndHashCode.Include
