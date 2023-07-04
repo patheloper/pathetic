@@ -43,24 +43,6 @@ public class NodeUtil {
     }
 
     /**
-     * Returns the progress made so far along the path represented by the given node.
-     *
-     * @param node the node to calculate progress for
-     * @return the progress made so far along the path represented by the given node
-     */
-    public static int getProgress(Node node) {
-        int length = 0;
-
-        Node currentNode = node;
-        while (currentNode != null) {
-            length++;
-            currentNode = currentNode.getParent();
-        }
-
-        return length;
-    }
-
-    /**
      * Bloating up like a bubble until a reachable block is found
      * The block itself might not be passable, but at least reachable from the outside
      *
