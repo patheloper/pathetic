@@ -39,7 +39,7 @@ public class AStarPathfinder extends AbstractPathfinder {
 
         // This is the current depth of the search and the last node
         int depth = 1;
-        Node lastEverFound = null;
+        // Node lastEverFound = null;
 
         while (!nodeQueue.isEmpty() && depth <= pathingRuleSet.getMaxIterations()) {
 
@@ -51,16 +51,16 @@ public class AStarPathfinder extends AbstractPathfinder {
             if (currentNode == null)
                 throw ErrorLogger.logFatalError("A node was null when it shouldn't have been");
 
-            if(lastEverFound == null || currentNode.heuristic() < lastEverFound.heuristic())
-                lastEverFound = currentNode;
+            // if(lastEverFound == null || currentNode.heuristic() < lastEverFound.heuristic())
+            //     lastEverFound = currentNode;
 
             // Check to see if we have reached the length limit
-            if (pathingRuleSet.getMaxLength() > 0 && lastEverFound.getDepth() >= pathingRuleSet.getMaxLength())
-                return finishPathing(new PathfinderResultImpl(PathState.LENGTH_LIMITED, NodeUtil.fetchRetracedPath(lastEverFound)));
+            if (pathingRuleSet.getMaxLength() > 0/* && lastEverFound.getDepth() >= pathingRuleSet.getMaxLength()*/)
+                return finishPathing(new PathfinderResultImpl(PathState.LENGTH_LIMITED, NodeUtil.fetchRetracedPath(currentNode)));
 
             // This means that the current node is the target, so we can stop here
             if (currentNode.isAtTarget())
-                return finishPathing(new PathfinderResultImpl(PathState.FOUND, NodeUtil.fetchRetracedPath(lastEverFound)));
+                return finishPathing(new PathfinderResultImpl(PathState.FOUND, NodeUtil.fetchRetracedPath(currentNode)));
 
             NodeUtil.evaluateNewNodes(nodeQueue, examinedPositions, currentNode, offset, strategy, snapshotManager);
             depth++;
@@ -72,8 +72,8 @@ public class AStarPathfinder extends AbstractPathfinder {
                 return counterCheck.get();
         }
 
-        if (pathingRuleSet.isAllowingFallback() && lastEverFound != null)
-            return finishPathing(new PathfinderResultImpl(PathState.FALLBACK, NodeUtil.fetchRetracedPath(lastEverFound)));
+        // if (pathingRuleSet.isAllowingFallback() && lastEverFound != null)
+        //     return finishPathing(new PathfinderResultImpl(PathState.FALLBACK, NodeUtil.fetchRetracedPath(lastEverFound)));
 
         return finishPathing(new PathfinderResultImpl(PathState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
     }

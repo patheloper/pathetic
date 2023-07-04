@@ -34,7 +34,7 @@ public class Node implements Comparable<Node> {
 
     public double heuristic() {
         double v = calculatePerpendicularDistance();
-        return this.position.octileDistance(target) * (v*0.00002) + 0.01*this.target.distance(this.position);
+        return this.position.octileDistance(target) * (v*0.00002) + 0.01*(this.target.distance(this.position) + this.start.distance(this.position));
     }
 
     private double calculatePerpendicularDistance() {
