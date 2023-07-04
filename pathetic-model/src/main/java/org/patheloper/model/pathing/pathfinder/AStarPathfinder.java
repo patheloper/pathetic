@@ -8,6 +8,7 @@ import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.model.pathing.Node;
 import org.patheloper.model.pathing.result.PathImpl;
 import org.patheloper.model.pathing.result.PathfinderResultImpl;
+import org.patheloper.util.ErrorLogger;
 import org.patheloper.util.NodeUtil;
 import org.patheloper.util.WatchdogUtil;
 
@@ -48,7 +49,7 @@ public class AStarPathfinder extends AbstractPathfinder {
             // Get the next node from the queue
             Node currentNode = nodeQueue.poll();
             if (currentNode == null)
-                throw new IllegalStateException("Something just exploded");
+                throw ErrorLogger.logFatalError("A node was null when it shouldn't have been");
 
             if(lastEverFound == null || currentNode.heuristic() < lastEverFound.heuristic())
                 lastEverFound = currentNode;

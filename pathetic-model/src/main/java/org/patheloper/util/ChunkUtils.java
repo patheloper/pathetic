@@ -36,7 +36,7 @@ public class ChunkUtils {
     @SneakyThrows
     public Material getMaterial(ChunkSnapshot snapshot, int x, int y, int z) {
         if (BukkitVersionUtil.getVersion().isUnder(13, 0)) {
-            if (materialMethod == null || blockTypeMethod == null) throw new IllegalStateException("Reflection Failed");
+            if (materialMethod == null || blockTypeMethod == null) throw ErrorLogger.logFatalError("Reflection Failed");
             try {
                 return (Material) materialMethod.invoke(null, blockTypeMethod.invoke(snapshot, x, y, z));
             } catch (IllegalAccessException | InvocationTargetException e) {

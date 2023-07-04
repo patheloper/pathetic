@@ -13,6 +13,7 @@ import org.patheloper.model.snapshot.world.WorldDomain;
 import org.patheloper.nms.NMSUtils;
 import org.patheloper.util.BukkitVersionUtil;
 import org.patheloper.util.ChunkUtils;
+import org.patheloper.util.ErrorLogger;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -108,7 +109,7 @@ public class FailingSnapshotManager implements SnapshotManager {
                 ChunkSnapshot chunkSnapshot = retrieveChunkSnapshot(position.getPathEnvironment(), chunkX, chunkZ);
 
                 if (chunkSnapshot == null)
-                    throw new IllegalStateException("Could not retrieve chunk snapshot --> BOOM!");
+                    throw ErrorLogger.logFatalError("Could not retrieve chunk snapshot --> BOOM!");
 
                 processChunkSnapshot(position, chunkX, chunkZ, chunkSnapshot);
                 return chunkSnapshot;
