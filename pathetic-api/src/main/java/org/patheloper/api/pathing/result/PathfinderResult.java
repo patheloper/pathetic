@@ -20,6 +20,13 @@ public interface PathfinderResult {
     boolean hasFailed();
 
     /**
+     * Whether a pathfinder has resulted in a fallback.
+     *
+     * @return Whether a pathfinder has resulted in a fallback
+     */
+    boolean hasFallenBack();
+
+    /**
      * Returns the state of the pathfinding.
      *
      * @return The {@link PathState}
