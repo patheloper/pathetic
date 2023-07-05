@@ -17,6 +17,10 @@ public enum PathState {
     /**
      * Signifies that the pathfinder reached its length limit
      */
-    LENGTH_LIMITED;
+    LENGTH_LIMITED,
+    /**
+     * Signifies that the pathfinder reached its iteration limit
+     */
+    MAX_ITERATIONS_REACHED,
 
 }

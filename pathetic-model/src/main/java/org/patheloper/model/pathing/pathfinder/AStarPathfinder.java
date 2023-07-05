@@ -39,7 +39,7 @@ public class AStarPathfinder extends AbstractPathfinder {
 
         // This is the current depth of the search and the last node
         int depth = 1;
-        Node fallbackNode = null;
+        Node fallbackNode = startNode;
 
         while (!nodeQueue.isEmpty() && depth <= pathingRuleSet.getMaxIterations()) {
 
@@ -64,14 +64,23 @@ public class AStarPathfinder extends AbstractPathfinder {
             NodeUtil.evaluateNewNodes(nodeQueue, examinedPositions, currentNode, offset, strategy, snapshotManager);
             depth++;
         }
-        
+
+        // If the pathfinding failed, we try to backup from that or fail if we can't do anything anymore
+        return backupPathfindingOrFailure(depth, start, target, strategy, fallbackNode);
+    }
+
+    private PathfinderResult backupPathfindingOrFailure(int depth, PathPosition start, PathPosition target, PathfinderStrategy strategy, Node fallbackNode) {
+
+        if(depth > pathingRuleSet.getMaxIterations())
+            return finishPathing(new PathfinderResultImpl(PathState.MAX_ITERATIONS_REACHED, NodeUtil.fetchRetracedPath(fallbackNode)));
+
         if(pathingRuleSet.isCounterCheck()) {
             Optional<PathfinderResult> counterCheck = counterCheck(start, target, strategy);
             if(counterCheck.isPresent())
                 return counterCheck.get();
         }
 
-        if (pathingRuleSet.isAllowingFallback() && fallbackNode != null)
+        if (pathingRuleSet.isAllowingFallback())
             return finishPathing(new PathfinderResultImpl(PathState.FALLBACK, NodeUtil.fetchRetracedPath(fallbackNode)));
 
         return finishPathing(new PathfinderResultImpl(PathState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
