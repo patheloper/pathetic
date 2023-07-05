@@ -38,7 +38,6 @@ public interface Path {
      * @return a simplified path containing a subset of positions from the original path
      * @throws IllegalArgumentException if epsilon is not in the range greater than 0.0 to 1.0, inclusive
      */
-    @Experimental
     Path simplify(double epsilon);
 
     /**
