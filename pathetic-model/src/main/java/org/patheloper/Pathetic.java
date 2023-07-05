@@ -4,6 +4,7 @@ import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.patheloper.bukkit.listeners.ChunkInvalidateListener;
+import org.patheloper.util.NodeUtil;
 
 @UtilityClass
 public class Pathetic {
@@ -23,6 +24,9 @@ public class Pathetic {
         Bukkit.getPluginManager().registerEvents(new ChunkInvalidateListener(), javaPlugin);
 
         javaPlugin.getLogger().info("pathetic successfully initialized");
+
+        NodeUtil.setDebugMode(true);
+        NodeUtil.spawnParticlesContinuously(javaPlugin);
     }
 
     public static boolean isInitialized() {

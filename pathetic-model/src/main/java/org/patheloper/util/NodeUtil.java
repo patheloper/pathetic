@@ -1,7 +1,14 @@
 package org.patheloper.util;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
+import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.plugin.Plugin;
 import org.patheloper.api.pathing.result.Path;
 import org.patheloper.api.pathing.strategy.PathfinderStrategy;
 import org.patheloper.api.snapshot.SnapshotManager;
@@ -17,7 +24,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is a utility class that provides various helper methods for working with {@link Node} objects.
@@ -25,6 +34,25 @@ import java.util.Set;
  */
 @UtilityClass
 public class NodeUtil {
+
+    private static boolean debugMode = false;
+    private static Cache<Node, Color> evaluatedNodesCache;
+
+    /**
+     * Enables or disables debugging mode.
+     *
+     * @param enabled true to enable debugging mode, false to disable it
+     */
+    public static void setDebugMode(boolean enabled) {
+        debugMode = enabled;
+        if (enabled) {
+            evaluatedNodesCache = CacheBuilder.newBuilder()
+                    .expireAfterWrite(5, TimeUnit.MINUTES)
+                    .build();
+        } else {
+            evaluatedNodesCache = null;
+        }
+    }
 
     /**
      * Evaluates new nodes and adds them to the given node queue if they are valid.
@@ -38,6 +66,41 @@ public class NodeUtil {
      */
     public static void evaluateNewNodes(Collection<Node> nodeQueue, Set<PathPosition> examinedPositions, Node currentNode, Offset offset, PathfinderStrategy strategy, SnapshotManager snapshotManager) {
         nodeQueue.addAll(fetchValidNeighbours(nodeQueue, examinedPositions, currentNode, offset, strategy, snapshotManager));
+    }
+
+    /**
+     * Spawns particles continuously using a 1 tick spigot scheduler.
+     * The particle color is based on the depth of the nodes.
+     */
+    public static void spawnParticlesContinuously(Plugin plugin) {
+        Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            if (debugMode) {
+                for (Map.Entry<Node, Color> entry : evaluatedNodesCache.asMap().entrySet()) {
+                    Node evaluatedNode = entry.getKey();
+                    PathPosition position = evaluatedNode.getPosition();
+
+                    Location location = new Location(Bukkit.getWorld(position.getPathEnvironment().getUuid()), position.getX(), position.getY(), position.getZ());
+                    location.add(0.5, 0.5, 0.5);
+                    Particle.DustOptions dustOptions = new Particle.DustOptions(entry.getValue(), 1.0f);
+                    location.getWorld().spawnParticle(Particle.REDSTONE, location, 1, 0, 0, 0, 0, dustOptions);
+                }
+            }
+        }, 0L, 1L);
+    }
+
+    /**
+     * Generates a hex color based on the depth of the node.
+     * The hex value will be darker the more depth the node has.
+     *
+     * @param depth the depth of the node
+     * @return the generated hex color
+     */
+    private static Color generateHexColor(int depth) {
+        int red = Math.max(0, 255 - depth * 10);
+        int green = Math.max(0, 255 - depth * 10);
+        int blue = Math.max(0, 255 - depth * 10);
+
+        return Color.fromRGB(red, green, blue);
     }
 
     /**
@@ -109,6 +172,11 @@ public class NodeUtil {
 
         for (Offset.OffsetEntry entry : offset.getOffsets()) {
             Node newNode = createNeighbourNode(currentNode, entry.getVector());
+
+            if (debugMode) {
+                Color hexColor = generateHexColor(newNode.getDepth());
+                evaluatedNodesCache.put(newNode, hexColor);
+            }
 
             if (isNodeValid(newNode, currentNode, nodeQueue, snapshotManager, examinedPositions, strategy, entry.getCornerCuts()))
                 newNodes.add(newNode);
