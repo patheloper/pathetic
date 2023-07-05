@@ -37,9 +37,7 @@ public class NodeUtil {
      * @param snapshotManager   the snapshot manager to use for validating nodes
      */
     public static void evaluateNewNodes(Collection<Node> nodeQueue, Set<PathPosition> examinedPositions, Node currentNode, Offset offset, PathfinderStrategy strategy, SnapshotManager snapshotManager) {
-        for (Node neighbourNode : fetchNeighbours(currentNode, offset.getVectors()))
-            if (isNodeValid(neighbourNode, nodeQueue, snapshotManager, examinedPositions, strategy))
-                nodeQueue.add(neighbourNode);
+        nodeQueue.addAll(fetchValidNeighbours(nodeQueue, examinedPositions, currentNode, offset, strategy, snapshotManager));
     }
 
     /**
@@ -73,9 +71,17 @@ public class NodeUtil {
      * @param strategy          the pathfinder strategy to use for validating nodes
      * @return {@code true} if the node is valid and can be added to the node queue, {@code false} otherwise
      */
-    public static boolean isNodeValid(Node node, Collection<Node> nodeQueue, SnapshotManager snapshotManager, Set<PathPosition> examinedPositions, PathfinderStrategy strategy) {
+    public static boolean isNodeValid(Node node, Collection<Node> nodeQueue, SnapshotManager snapshotManager, Set<PathPosition> examinedPositions, PathfinderStrategy strategy, PathVector[] cornerCuts) {
         if (examinedPositions.contains(node.getPosition()) || nodeQueue.contains(node) || !isWithinWorldBounds(node.getPosition()) || !strategy.isValid(node.getPosition(), snapshotManager))
             return false;
+
+        // The idea here is that if ANY of the corner cuts are valid, then the node is valid.
+        // Doesn't seem to work at all though...
+        // TODO: Fix this
+        for (PathVector cornerCut : cornerCuts) {
+            if (isNodeValid(createNeighbourNode(node, cornerCut), nodeQueue, snapshotManager, examinedPositions, strategy, new PathVector[0]))
+                return examinedPositions.add(node.getPosition());
+        }
 
         return examinedPositions.add(node.getPosition());
     }
@@ -94,15 +100,17 @@ public class NodeUtil {
      * Fetches the neighbours of the given node.
      *
      * @param currentNode the node to fetch neighbours for
-     * @param offsets     the offsets to apply to the current node's position to find neighbours
+     * @param offset      the offset to apply to the current node's position to find neighbours
      * @return a collection of neighbour nodes
      */
-    public static Collection<Node> fetchNeighbours(Node currentNode, PathVector[] offsets) {
-        Set<Node> newNodes = new HashSet<>(offsets.length);
+    public static Collection<Node> fetchValidNeighbours(Collection<Node> nodeQueue, Set<PathPosition> examinedPositions, Node currentNode, Offset offset, PathfinderStrategy strategy, SnapshotManager snapshotManager) {
+        Set<Node> newNodes = new HashSet<>(offset.getOffsets().length);
 
-        for (PathVector offset : offsets) {
-            Node newNode = createNeighbourNode(currentNode, offset);
-            newNodes.add(newNode);
+        for (Offset.OffsetEntry entry : offset.getOffsets()) {
+            Node newNode = createNeighbourNode(currentNode, entry.getVector());
+
+            if (isNodeValid(newNode, nodeQueue, snapshotManager, examinedPositions, strategy, entry.getCornerCuts()))
+                newNodes.add(newNode);
         }
 
         return newNodes;
@@ -169,9 +177,9 @@ public class NodeUtil {
 
     private static PathBlock getPathBlock(PathPosition target, Offset offset, SnapshotManager snapshotManager, Set<PathPosition> newPositions, Set<PathPosition> examinedPositions, Set<PathPosition> nextPositions) {
         for (PathPosition position : newPositions) {
-            for (PathVector vector : offset.getVectors()) {
+            for (Offset.OffsetEntry entry : offset.getOffsets()) {
 
-                PathPosition offsetPosition = position.add(vector);
+                PathPosition offsetPosition = position.add(entry.getVector());
                 PathBlock pathBlock = snapshotManager.getBlock(offsetPosition);
 
                 if (pathBlock.isPassable() && !pathBlock.getPathPosition().isInSameBlock(target))

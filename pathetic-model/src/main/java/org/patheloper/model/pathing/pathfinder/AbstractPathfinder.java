@@ -102,9 +102,9 @@ abstract class AbstractPathfinder implements Pathfinder {
     }
 
     private boolean isBlockUnreachable(PathPosition position) {
-        for(PathVector vector : offset.getVectors()) {
+        for(Offset.OffsetEntry offset : offset.getOffsets()) {
 
-            PathPosition offsetPosition = position.add(vector);
+            PathPosition offsetPosition = position.add(offset.getVector());
             PathBlock pathBlock = this.getSnapshotManager().getBlock(offsetPosition);
 
             if (pathBlock == null)
