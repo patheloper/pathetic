@@ -1,7 +1,6 @@
 package org.patheloper.model.pathfinder;
 
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.patheloper.api.pathing.Pathfinder;
 import org.patheloper.api.pathing.result.PathfinderResult;
 import org.patheloper.api.pathing.rules.PathingRuleSet;
@@ -16,7 +15,7 @@ import static org.junit.Assert.assertTrue;
 public class PathfinderTest {
 
     @Test
-    void doesFindPath() {
+    void doesAStarPathfinderFindPath() {
 
         /* Given */
         PathEnvironment environment = new PathEnvironment(null, "test", 0, 256);
