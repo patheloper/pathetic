@@ -124,6 +124,8 @@ public class NodeUtil {
         return snapshotManager.getBlock(target);
     }
 
+    private static final Set<Node> notValidCornerCutsSet = new HashSet<>();
+
     /**
      * Determines whether the given node is valid and can be added to the node queue.
      *
@@ -134,17 +136,22 @@ public class NodeUtil {
      * @param strategy          the pathfinder strategy to use for validating nodes
      * @return {@code true} if the node is valid and can be added to the node queue, {@code false} otherwise
      */
-    public static boolean isNodeValid(Node node, Node currentNode, Collection<Node> nodeQueue, SnapshotManager snapshotManager, Set<PathPosition> examinedPositions, PathfinderStrategy strategy, PathVector[] cornerCuts) {
-        if (examinedPositions.contains(node.getPosition()) || nodeQueue.contains(node) || !isWithinWorldBounds(node.getPosition()) || !strategy.isValid(node.getPosition(), snapshotManager))
+    public static boolean isNodeValid(Node node, Node currentNode, Collection<Node> nodeQueue,
+                                      SnapshotManager snapshotManager, Set<PathPosition> examinedPositions,
+                                      PathfinderStrategy strategy, PathVector[] cornerCuts) {
+        if (examinedPositions.contains(node.getPosition()) || nodeQueue.contains(node) ||
+                !isWithinWorldBounds(node.getPosition()) || !strategy.isValid(node.getPosition(), snapshotManager) || notValidCornerCutsSet.contains(node)) {
+            notValidCornerCutsSet.add(node);
             return false;
+        }
 
         for (PathVector cornerCut : cornerCuts) {
-            if (
-                    isWithinWorldBounds(currentNode.getPosition().add(cornerCut)) &&
-                    strategy.isValid(currentNode.getPosition().add(cornerCut), snapshotManager)
-            ) {
+            if (isWithinWorldBounds(currentNode.getPosition().add(cornerCut)) &&
+                    strategy.isValid(currentNode.getPosition().add(cornerCut), snapshotManager) &&
+                    !notValidCornerCutsSet.contains(node)) {
                 return examinedPositions.add(node.getPosition());
             }
+            notValidCornerCutsSet.add(node);
         }
 
         return examinedPositions.add(node.getPosition());
