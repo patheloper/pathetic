@@ -12,6 +12,14 @@ public interface PathfinderResult {
     boolean successful();
 
     /**
+     * Whether the pathfinder has failed to reach its target. This includes
+     * {@link PathState#FAILED}, {@link PathState#LENGTH_LIMITED}, {@link PathState#MAX_ITERATIONS_REACHED} and {@link PathState#FALLBACK}
+     *
+     * @return Whether the pathfinder has failed to reach its target
+     */
+    boolean hasFailed();
+
+    /**
      * Returns the state of the pathfinding.
      *
      * @return The {@link PathState}
