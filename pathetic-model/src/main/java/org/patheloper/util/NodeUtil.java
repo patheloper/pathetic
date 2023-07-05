@@ -71,16 +71,17 @@ public class NodeUtil {
      * @param strategy          the pathfinder strategy to use for validating nodes
      * @return {@code true} if the node is valid and can be added to the node queue, {@code false} otherwise
      */
-    public static boolean isNodeValid(Node node, Collection<Node> nodeQueue, SnapshotManager snapshotManager, Set<PathPosition> examinedPositions, PathfinderStrategy strategy, PathVector[] cornerCuts) {
+    public static boolean isNodeValid(Node node, Node currentNode, Collection<Node> nodeQueue, SnapshotManager snapshotManager, Set<PathPosition> examinedPositions, PathfinderStrategy strategy, PathVector[] cornerCuts) {
         if (examinedPositions.contains(node.getPosition()) || nodeQueue.contains(node) || !isWithinWorldBounds(node.getPosition()) || !strategy.isValid(node.getPosition(), snapshotManager))
             return false;
 
-        // The idea here is that if ANY of the corner cuts are valid, then the node is valid.
-        // Doesn't seem to work at all though...
-        // TODO: Fix this
         for (PathVector cornerCut : cornerCuts) {
-            if (isNodeValid(createNeighbourNode(node, cornerCut), nodeQueue, snapshotManager, examinedPositions, strategy, new PathVector[0]))
+            if (
+                    isWithinWorldBounds(currentNode.getPosition().add(cornerCut)) &&
+                    strategy.isValid(currentNode.getPosition().add(cornerCut), snapshotManager)
+            ) {
                 return examinedPositions.add(node.getPosition());
+            }
         }
 
         return examinedPositions.add(node.getPosition());
@@ -109,7 +110,7 @@ public class NodeUtil {
         for (Offset.OffsetEntry entry : offset.getOffsets()) {
             Node newNode = createNeighbourNode(currentNode, entry.getVector());
 
-            if (isNodeValid(newNode, nodeQueue, snapshotManager, examinedPositions, strategy, entry.getCornerCuts()))
+            if (isNodeValid(newNode, currentNode, nodeQueue, snapshotManager, examinedPositions, strategy, entry.getCornerCuts()))
                 newNodes.add(newNode);
         }
 
