@@ -54,7 +54,7 @@ public class AStarPathfinder extends AbstractPathfinder {
             fallbackNode = currentNode;
 
             // Check to see if we have reached the length limit
-            if (pathingRuleSet.getMaxLength() > 0)
+            if (currentNode.getDepth() > pathingRuleSet.getMaxLength())
                 return finishPathing(new PathfinderResultImpl(PathState.LENGTH_LIMITED, NodeUtil.fetchRetracedPath(currentNode)));
 
             // This means that the current node is the target, so we can stop here
