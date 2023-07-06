@@ -231,6 +231,9 @@ public class NodeUtil {
         return Color.fromRGB(red, green, blue);
     }
 
+    /**
+     * Traces the path from the given node by retracing the steps from the node's parent.
+     */
     private static List<PathPosition> tracePathFromNode(Node endNode) {
         List<PathPosition> path = new ArrayList<>();
         Node currentNode = endNode;
@@ -244,22 +247,9 @@ public class NodeUtil {
         return path;
     }
 
-    private static List<PathPosition> combinePaths(List<PathPosition> path1, List<PathPosition> path2) {
-        List<PathPosition> mergedPath = new ArrayList<>(path1);
-        mergedPath.addAll(path2);
-        return mergedPath;
-    }
-
-    private static void removeOverlappingNodes(List<PathPosition> mergedPath) {
-        for (int i = 0; i < mergedPath.size() - 1; i++) {
-            if (mergedPath.get(i).equals(mergedPath.get(i + 1))) {
-                mergedPath.remove(i + 1);
-                i--;
-            }
-        }
-    }
-
-    private static PathBlock getPathBlock(PathPosition target, Offset offset, SnapshotManager snapshotManager, Set<PathPosition> newPositions, Set<PathPosition> examinedPositions, Set<PathPosition> nextPositions) {
+    private static PathBlock getPathBlock(PathPosition target, Offset offset, SnapshotManager snapshotManager,
+                                          Set<PathPosition> newPositions, Set<PathPosition> examinedPositions,
+                                          Set<PathPosition> nextPositions) {
         for (PathPosition position : newPositions) {
             for (Offset.OffsetEntry entry : offset.getOffsets()) {
 
