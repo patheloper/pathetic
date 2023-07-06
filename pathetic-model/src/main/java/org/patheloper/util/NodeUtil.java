@@ -9,6 +9,8 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.patheloper.Pathetic;
 import org.patheloper.api.pathing.result.Path;
 import org.patheloper.api.pathing.strategy.PathfinderStrategy;
 import org.patheloper.api.snapshot.SnapshotManager;
@@ -49,6 +51,7 @@ public class NodeUtil {
             evaluatedNodesCache = CacheBuilder.newBuilder()
                     .expireAfterWrite(5, TimeUnit.MINUTES)
                     .build();
+            spawnParticlesContinuously(Pathetic.getPluginInstance());
         } else {
             evaluatedNodesCache = null;
         }
@@ -66,41 +69,6 @@ public class NodeUtil {
      */
     public static void evaluateNewNodes(Collection<Node> nodeQueue, Set<PathPosition> examinedPositions, Node currentNode, Offset offset, PathfinderStrategy strategy, SnapshotManager snapshotManager) {
         nodeQueue.addAll(fetchValidNeighbours(nodeQueue, examinedPositions, currentNode, offset, strategy, snapshotManager));
-    }
-
-    /**
-     * Spawns particles continuously using a 1 tick spigot scheduler.
-     * The particle color is based on the depth of the nodes.
-     */
-    public static void spawnParticlesContinuously(Plugin plugin) {
-        Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-            if (debugMode) {
-                for (Map.Entry<Node, Color> entry : evaluatedNodesCache.asMap().entrySet()) {
-                    Node evaluatedNode = entry.getKey();
-                    PathPosition position = evaluatedNode.getPosition();
-
-                    Location location = new Location(Bukkit.getWorld(position.getPathEnvironment().getUuid()), position.getX(), position.getY(), position.getZ());
-                    location.add(0.5, 0.5, 0.5);
-                    Particle.DustOptions dustOptions = new Particle.DustOptions(entry.getValue(), 1.0f);
-                    location.getWorld().spawnParticle(Particle.REDSTONE, location, 1, 0, 0, 0, 0, dustOptions);
-                }
-            }
-        }, 0L, 1L);
-    }
-
-    /**
-     * Generates a hex color based on the depth of the node.
-     * The hex value will be darker the more depth the node has.
-     *
-     * @param depth the depth of the node
-     * @return the generated hex color
-     */
-    private static Color generateHexColor(int depth) {
-        int red = Math.max(0, 255 - depth * 10);
-        int green = Math.max(0, 255 - depth * 10);
-        int blue = Math.max(0, 255 - depth * 10);
-
-        return Color.fromRGB(red, green, blue);
     }
 
     /**
@@ -153,13 +121,6 @@ public class NodeUtil {
         return examinedPositions.add(node.getPosition());
     }
 
-    private static boolean isNodeInvalid(Node node, Collection<Node> nodeQueue,
-                                         SnapshotManager snapshotManager, Set<PathPosition> examinedPositions,
-                                         PathfinderStrategy strategy) {
-        return examinedPositions.contains(node.getPosition()) || nodeQueue.contains(node) ||
-                !isWithinWorldBounds(node.getPosition()) || !strategy.isValid(node.getPosition(), snapshotManager);
-    }
-
     /**
      * Determines whether the given position is within the bounds of the world.
      *
@@ -195,22 +156,6 @@ public class NodeUtil {
         return newNodes;
     }
 
-    private static Node createNeighbourNode(Node currentNode, PathVector offset) {
-        Node newNode = new Node(currentNode.getPosition().add(offset), currentNode.getStart(), currentNode.getTarget(), currentNode.getDepth() + 1);
-        newNode.setParent(currentNode);
-        return newNode;
-    }
-
-    public static Path fetchMergedPath(Node endNode1, Node endNode2) {
-        List<PathPosition> path1 = tracePathFromNode(endNode1);
-        List<PathPosition> path2 = tracePathFromNode(endNode2);
-
-        List<PathPosition> mergedPath = combinePaths(path1, path2);
-        removeOverlappingNodes(mergedPath);
-
-        return new PathImpl(endNode1.getStart(), endNode1.getTarget(), mergedPath);
-    }
-
     /**
      * Fetches the path represented by the given node by retracing the steps from the node's parent.
      *
@@ -224,6 +169,66 @@ public class NodeUtil {
 
         List<PathPosition> path = tracePathFromNode(node);
         return new PathImpl(node.getStart(), node.getTarget(), path);
+    }
+
+    /**
+     * Creates a new node based on the given node and offset.
+     */
+    private static Node createNeighbourNode(Node currentNode, PathVector offset) {
+        Node newNode = new Node(currentNode.getPosition().add(offset), currentNode.getStart(), currentNode.getTarget(), currentNode.getDepth() + 1);
+        newNode.setParent(currentNode);
+        return newNode;
+    }
+
+    /**
+     * @return whether the given node is invalid or not
+     */
+    private static boolean isNodeInvalid(Node node, Collection<Node> nodeQueue,
+                                         SnapshotManager snapshotManager, Set<PathPosition> examinedPositions,
+                                         PathfinderStrategy strategy) {
+        return examinedPositions.contains(node.getPosition()) || nodeQueue.contains(node) ||
+                !isWithinWorldBounds(node.getPosition()) || !strategy.isValid(node.getPosition(), snapshotManager);
+    }
+
+    /**
+     * Spawns particles continuously using a 1 tick spigot scheduler.
+     * The particle color is based on the depth of the nodes.
+     */
+    private static void spawnParticlesContinuously(Plugin plugin) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (debugMode) {
+                    for (Map.Entry<Node, Color> entry : evaluatedNodesCache.asMap().entrySet()) {
+                        Node evaluatedNode = entry.getKey();
+                        PathPosition position = evaluatedNode.getPosition();
+
+                        Location location = new Location(Bukkit.getWorld(position.getPathEnvironment().getUuid()), position.getX(), position.getY(), position.getZ());
+                        location.add(0.5, 0.5, 0.5);
+
+                        Particle.DustOptions dustOptions = new Particle.DustOptions(entry.getValue(), 1.0f);
+                        location.getWorld().spawnParticle(Particle.REDSTONE, location, 1, 0, 0, 0, 0, dustOptions);
+                    }
+                } else {
+                    cancel();
+                }
+            }
+        }.runTaskTimer(plugin, 0L, 1L);
+    }
+
+    /**
+     * Generates a hex color based on the depth of the node.
+     * The hex value will be darker the more depth the node has.
+     *
+     * @param depth the depth of the node
+     * @return the generated hex color
+     */
+    private static Color generateHexColor(int depth) {
+        int red = Math.max(0, 255 - depth * 10);
+        int green = Math.max(0, 255 - depth * 10);
+        int blue = Math.max(0, 255 - depth * 10);
+
+        return Color.fromRGB(red, green, blue);
     }
 
     private static List<PathPosition> tracePathFromNode(Node endNode) {
