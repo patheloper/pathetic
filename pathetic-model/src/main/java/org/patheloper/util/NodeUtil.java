@@ -124,8 +124,6 @@ public class NodeUtil {
         return snapshotManager.getBlock(target);
     }
 
-    private static final Set<Node> notValidCornerCutsSet = new HashSet<>();
-
     /**
      * Determines whether the given node is valid and can be added to the node queue.
      *
@@ -139,22 +137,28 @@ public class NodeUtil {
     public static boolean isNodeValid(Node node, Node currentNode, Collection<Node> nodeQueue,
                                       SnapshotManager snapshotManager, Set<PathPosition> examinedPositions,
                                       PathfinderStrategy strategy, PathVector[] cornerCuts) {
-        if (examinedPositions.contains(node.getPosition()) || nodeQueue.contains(node) ||
-                !isWithinWorldBounds(node.getPosition()) || !strategy.isValid(node.getPosition(), snapshotManager) || notValidCornerCutsSet.contains(node)) {
-            notValidCornerCutsSet.add(node);
+        if (isNodeInvalid(node, nodeQueue, snapshotManager, examinedPositions, strategy))
             return false;
-        }
+
+        if(isNodeInvalid(currentNode, nodeQueue, snapshotManager, examinedPositions, strategy))
+            return false;
 
         for (PathVector cornerCut : cornerCuts) {
-            if (isWithinWorldBounds(currentNode.getPosition().add(cornerCut)) &&
-                    strategy.isValid(currentNode.getPosition().add(cornerCut), snapshotManager) &&
-                    !notValidCornerCutsSet.contains(node)) {
+            PathPosition modified = currentNode.getPosition().add(cornerCut);
+            Node modifiedNode = new Node(modified, currentNode.getStart(), currentNode.getTarget(), currentNode.getDepth() + 1);
+            if (!isNodeInvalid(modifiedNode, nodeQueue, snapshotManager, examinedPositions, strategy)) {
                 return examinedPositions.add(node.getPosition());
             }
-            notValidCornerCutsSet.add(node);
         }
 
         return examinedPositions.add(node.getPosition());
+    }
+
+    private static boolean isNodeInvalid(Node node, Collection<Node> nodeQueue,
+                                         SnapshotManager snapshotManager, Set<PathPosition> examinedPositions,
+                                         PathfinderStrategy strategy) {
+        return examinedPositions.contains(node.getPosition()) || nodeQueue.contains(node) ||
+                !isWithinWorldBounds(node.getPosition()) || !strategy.isValid(node.getPosition(), snapshotManager);
     }
 
     /**
