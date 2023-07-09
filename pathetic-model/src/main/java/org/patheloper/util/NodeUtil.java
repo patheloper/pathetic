@@ -144,13 +144,23 @@ public class NodeUtil {
         for (Offset.OffsetEntry entry : offset.getOffsets()) {
             Node newNode = createNeighbourNode(currentNode, entry.getVector());
 
-            if (debugMode) {
-                Color hexColor = generateHexColor(newNode.getDepth());
-                evaluatedNodesCache.put(newNode, hexColor);
-            }
+            Color darkRedHexColor = Color.fromRGB(0x8B0000);
+            Color darkGreenHexColor = Color.fromRGB(0x006400);
 
-            if (isNodeValid(newNode, currentNode, nodeQueue, snapshotManager, examinedPositions, strategy, entry.getCornerCuts()))
+            if (isNodeValid(newNode, currentNode, nodeQueue, snapshotManager, examinedPositions, strategy, entry.getCornerCuts())) {
+                if(debugMode) {
+                    if(!evaluatedNodesCache.asMap().containsKey(newNode)) {
+                        evaluatedNodesCache.put(newNode, darkGreenHexColor);
+                    }
+                }
                 newNodes.add(newNode);
+            } else {
+                if(debugMode) {
+                    if(!evaluatedNodesCache.asMap().containsKey(newNode)) {
+                        evaluatedNodesCache.put(newNode, darkRedHexColor);
+                    }
+                }
+            }
         }
 
         return newNodes;
@@ -214,21 +224,6 @@ public class NodeUtil {
                 }
             }
         }.runTaskTimer(plugin, 0L, 1L);
-    }
-
-    /**
-     * Generates a hex color based on the depth of the node.
-     * The hex value will be darker the more depth the node has.
-     *
-     * @param depth the depth of the node
-     * @return the generated hex color
-     */
-    private static Color generateHexColor(int depth) {
-        int red = Math.max(0, 255 - depth * 10);
-        int green = Math.max(0, 255 - depth * 10);
-        int blue = Math.max(0, 255 - depth * 10);
-
-        return Color.fromRGB(red, green, blue);
     }
 
     /**
