@@ -108,12 +108,11 @@ public class NodeUtil {
         if (isNodeInvalid(node, nodeQueue, snapshotManager, examinedPositions, strategy))
             return false;
 
-        if(!isNodeInvalid(currentNode, nodeQueue, snapshotManager, examinedPositions, strategy)) {
+        if (!isNodeInvalid(currentNode, nodeQueue, snapshotManager, examinedPositions, strategy)) {
             for (PathVector cornerCut : cornerCuts) {
-                PathPosition modified = currentNode.getPosition().add(cornerCut);
-                Node modifiedNode = new Node(modified, currentNode.getStart(), currentNode.getTarget(), currentNode.getDepth() + 1);
-                if (!isNodeInvalid(modifiedNode, nodeQueue, snapshotManager, examinedPositions, strategy)) {
-                    return examinedPositions.add(node.getPosition());
+                Node cornerCutNode = createNeighbourNode(currentNode, cornerCut);
+                if (!isNodeInvalid(cornerCutNode, nodeQueue, snapshotManager, examinedPositions, strategy)) {
+                    return true;
                 }
             }
         }
