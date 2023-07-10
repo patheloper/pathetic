@@ -139,9 +139,9 @@ public class NodeUtil {
      * @return a collection of neighbour nodes
      */
     public static Collection<Node> fetchValidNeighbours(Collection<Node> nodeQueue, Set<PathPosition> examinedPositions, Node currentNode, Offset offset, PathfinderStrategy strategy, SnapshotManager snapshotManager) {
-        Set<Node> newNodes = new HashSet<>(offset.getOffsets().length);
+        Set<Node> newNodes = new HashSet<>(offset.getEntries().length);
 
-        for (Offset.OffsetEntry entry : offset.getOffsets()) {
+        for (Offset.OffsetEntry entry : offset.getEntries()) {
             Node newNode = createNeighbourNode(currentNode, entry.getVector());
 
             Color darkRedHexColor = Color.fromRGB(0x8B0000);
@@ -246,7 +246,7 @@ public class NodeUtil {
                                           Set<PathPosition> newPositions, Set<PathPosition> examinedPositions,
                                           Set<PathPosition> nextPositions) {
         for (PathPosition position : newPositions) {
-            for (Offset.OffsetEntry entry : offset.getOffsets()) {
+            for (Offset.OffsetEntry entry : offset.getEntries()) {
 
                 PathPosition offsetPosition = position.add(entry.getVector());
                 PathBlock pathBlock = snapshotManager.getBlock(offsetPosition);
