@@ -109,11 +109,17 @@ public class NodeUtil {
             return false;
 
         if (!isNodeInvalid(currentNode, nodeQueue, snapshotManager, examinedPositions, strategy)) {
+            int invalidCutsIndex = 0;
+            int totalCuts = cornerCuts.length;
             for (PathVector cornerCut : cornerCuts) {
                 Node cornerCutNode = createNeighbourNode(currentNode, cornerCut);
-                if (!isNodeInvalid(cornerCutNode, nodeQueue, snapshotManager, examinedPositions, strategy)) {
-                    return true;
+                if (isNodeInvalid(cornerCutNode, nodeQueue, snapshotManager, examinedPositions, strategy)) {
+                    invalidCutsIndex++;
                 }
+            }
+
+            if (invalidCutsIndex == totalCuts) {
+                return false;
             }
         }
 
