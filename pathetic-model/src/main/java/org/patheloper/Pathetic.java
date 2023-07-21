@@ -24,7 +24,6 @@ public class Pathetic {
         Bukkit.getPluginManager().registerEvents(new ChunkInvalidateListener(), javaPlugin);
 
         javaPlugin.getLogger().info("pathetic successfully initialized");
-        NodeUtil.setDebugMode(true);
     }
 
     public static boolean isInitialized() {
