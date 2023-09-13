@@ -6,6 +6,7 @@ import org.patheloper.api.wrapper.PathVector;
 
 import java.util.stream.Stream;
 
+@Getter
 @AllArgsConstructor
 public enum Offset {
 
@@ -45,21 +46,17 @@ public enum Offset {
     MERGED(Stream.concat(Stream.of(VERTICAL_AND_HORIZONTAL.getEntries()), Stream.of(DIAGONAL.getEntries()))
             .toArray(OffsetEntry[]::new));
 
-    @Getter
     private final OffsetEntry[] entries;
 
+    @Getter
     public final static class OffsetEntry {
 
-        @Getter
         private final PathVector vector;
-        @Getter
         private final PathVector[] cornerCuts;
 
         OffsetEntry(PathVector vector, PathVector... cornerCuts) {
             this.vector = vector;
             this.cornerCuts = cornerCuts;
         }
-
     }
-
 }

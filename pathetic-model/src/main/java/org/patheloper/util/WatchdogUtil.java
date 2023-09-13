@@ -27,7 +27,7 @@ public class WatchdogUtil {
                 try {
                     tickMethod.invoke(watchdogClazz);
                 } catch (IllegalAccessException | InvocationTargetException e) {
-                    e.printStackTrace();
+                    throw ErrorLogger.logFatalError(e.getMessage());
                 }
             }
     }

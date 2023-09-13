@@ -1,5 +1,6 @@
 package org.patheloper.model.pathing.pathfinder;
 
+import org.checkerframework.checker.units.qual.N;
 import org.patheloper.api.pathing.result.PathState;
 import org.patheloper.api.pathing.result.PathfinderResult;
 import org.patheloper.api.pathing.rules.PathingRuleSet;
@@ -26,68 +27,93 @@ public class AStarPathfinder extends AbstractPathfinder {
     public AStarPathfinder(PathingRuleSet pathingRuleSet) {
         super(pathingRuleSet);
     }
-
+    
     @Override
     protected PathfinderResult findPath(PathPosition start, PathPosition target, PathfinderStrategy strategy) {
-
-        // Create the initial node
         Node startNode = new Node(start.floor(), start.floor(), target.floor(), 0);
-
-        // Create the open and closed sets
+        
         PriorityQueue<Node> nodeQueue = new PriorityQueue<>(Collections.singleton(startNode));
         Set<PathPosition> examinedPositions = new HashSet<>();
-
-        // This is the current depth of the search and the last node
+        
         int depth = 1;
         Node fallbackNode = startNode;
-
+        
         while (!nodeQueue.isEmpty() && depth <= pathingRuleSet.getMaxIterations()) {
-
-            // Every 500 iterations, tick the watchdog so that a watchdog timeout doesn't occur
-            if (depth % 500 == 0) WatchdogUtil.tickWatchdog();
-
-            // Get the next node from the queue
-            Node currentNode = nodeQueue.poll();
-            if (currentNode == null)
-                throw ErrorLogger.logFatalError("A node was null when it shouldn't have been");
-
+            tickWatchdogIfNeeded(depth);
+            
+            Node currentNode = getNextNodeFromQueue(nodeQueue);
             fallbackNode = currentNode;
-
-            // Check to see if we have reached the length limit
-            if (pathingRuleSet.getMaxLength() != 0 && currentNode.getDepth() > pathingRuleSet.getMaxLength())
-                return finishPathing(new PathfinderResultImpl(PathState.LENGTH_LIMITED, NodeUtil.fetchRetracedPath(currentNode)));
-
-            // This means that the current node is the target, so we can stop here
-            if (currentNode.isAtTarget())
-                return finishPathing(new PathfinderResultImpl(PathState.FOUND, NodeUtil.fetchRetracedPath(currentNode)));
-
-            NodeUtil.evaluateNewNodes(nodeQueue, examinedPositions, currentNode, offset, strategy, snapshotManager);
+            
+            if (hasReachedLengthLimit(currentNode)) {
+                return finishPathing(PathState.LENGTH_LIMITED, currentNode);
+            }
+            
+            if (currentNode.isAtTarget()) {
+                return finishPathing(PathState.FOUND, currentNode);
+            }
+            
+            evaluateNewNodes(nodeQueue, strategy, examinedPositions, currentNode);
             depth++;
         }
-
-        // If the pathfinding failed, we try to backup from that or fail if we can't do anything anymore
+        
         return backupPathfindingOrFailure(depth, start, target, strategy, fallbackNode);
+    }
+    
+    private void tickWatchdogIfNeeded(int depth) {
+        if (depth % 500 == 0) {
+            WatchdogUtil.tickWatchdog();
+        }
+    }
+    
+    private Node getNextNodeFromQueue(PriorityQueue<Node> nodeQueue) {
+        Node currentNode = nodeQueue.poll();
+        if (currentNode == null) {
+            throw ErrorLogger.logFatalError("A node was null when it shouldn't have been");
+        }
+        return currentNode;
+    }
+    
+    private boolean hasReachedLengthLimit(Node currentNode) {
+        return pathingRuleSet.getMaxLength() != 0 && currentNode.getDepth() > pathingRuleSet.getMaxLength();
+    }
+    
+    private PathfinderResult finishPathing(PathState pathState, Node currentNode) {
+        return finishPathing(new PathfinderResultImpl(pathState, NodeUtil.fetchRetracedPath(currentNode)));
+    }
+    
+    private void evaluateNewNodes(PriorityQueue<Node> nodeQueue,
+                                  PathfinderStrategy strategy,
+                                  Set<PathPosition> examinedPositions,
+                                  Node currentNode) {
+        NodeUtil.evaluateNewNodes(nodeQueue, examinedPositions, currentNode, offset, strategy, snapshotManager);
     }
 
     private PathfinderResult backupPathfindingOrFailure(int depth, PathPosition start, PathPosition target, PathfinderStrategy strategy, Node fallbackNode) {
-
+        return maxIterations(depth, fallbackNode)
+                .or(() -> counterCheck(start, target, strategy))
+                .or(() -> fallback(fallbackNode))
+                .orElse(finishPathing(new PathfinderResultImpl(
+                        PathState.FAILED,
+                        new PathImpl(start, target, EMPTY_LINKED_HASHSET))));
+    }
+    
+    private Optional<PathfinderResult> maxIterations(int depth, Node fallbackNode) {
         if(depth > pathingRuleSet.getMaxIterations())
-            return finishPathing(new PathfinderResultImpl(PathState.MAX_ITERATIONS_REACHED, NodeUtil.fetchRetracedPath(fallbackNode)));
-
-        if(pathingRuleSet.isCounterCheck()) {
-            Optional<PathfinderResult> counterCheck = counterCheck(start, target, strategy);
-            if(counterCheck.isPresent())
-                return counterCheck.get();
-        }
-
+            return Optional.of(finishPathing(new PathfinderResultImpl(
+                    PathState.MAX_ITERATIONS_REACHED,
+                    NodeUtil.fetchRetracedPath(fallbackNode))));
+        return Optional.empty();
+    }
+    
+    private Optional<PathfinderResult> fallback(Node fallbackNode) {
         if (pathingRuleSet.isAllowingFallback())
-            return finishPathing(new PathfinderResultImpl(PathState.FALLBACK, NodeUtil.fetchRetracedPath(fallbackNode)));
-
-        return finishPathing(new PathfinderResultImpl(PathState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
+            return Optional.of(finishPathing(new PathfinderResultImpl(
+                    PathState.FALLBACK,
+                    NodeUtil.fetchRetracedPath(fallbackNode))));
+        return Optional.empty();
     }
     
     private Optional<PathfinderResult> counterCheck(PathPosition start, PathPosition target, PathfinderStrategy strategy) {
-        
         AStarPathfinder aStarPathfinder = new AStarPathfinder(pathingRuleSet.withCounterCheck(false));
         PathfinderResult pathfinderResult = aStarPathfinder.findPath(target, start, strategy);
         

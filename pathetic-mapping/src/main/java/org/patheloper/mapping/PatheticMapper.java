@@ -9,6 +9,7 @@ import org.patheloper.api.pathing.Pathfinder;
 import org.patheloper.api.pathing.rules.PathingRuleSet;
 import org.patheloper.model.pathing.pathfinder.AStarPathfinder;
 import org.patheloper.model.pathing.pathfinder.BidirectionalAStarPathfinder;
+import org.patheloper.util.ErrorLogger;
 
 /**
  * PatheticMapper is a utility class that maps the Pathetic API to the Pathetic Implementation.
@@ -66,11 +67,10 @@ public class PatheticMapper {
                 case BIDIRECTIONAL_ASTAR:
                     return new BidirectionalAStarPathfinder(pathingRuleSet);
                 default:
-                    throw new IllegalArgumentException("Unknown pathfinder type: " + pathfinderType);
+                    throw ErrorLogger.logFatalError("Unknown pathfinder type: " + pathfinderType);
             }
         }
-
-        throw new IllegalStateException("Pathetic is not initialized");
+        throw ErrorLogger.logFatalError("Pathetic is not initialized");
     }
     
     public enum PathfinderType {

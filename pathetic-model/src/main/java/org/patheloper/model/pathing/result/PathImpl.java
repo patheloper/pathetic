@@ -7,6 +7,7 @@ import lombok.extern.log4j.Log4j2;
 import org.patheloper.api.pathing.result.Path;
 import org.patheloper.api.util.ParameterizedSupplier;
 import org.patheloper.api.wrapper.PathPosition;
+import org.patheloper.util.ErrorLogger;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -31,7 +32,9 @@ public class PathImpl implements Path {
 
     private final int length;
 
-    public PathImpl(@NonNull PathPosition start, @NonNull PathPosition end, @NonNull Iterable<@NonNull PathPosition> positions) {
+    public PathImpl(@NonNull PathPosition start,
+                    @NonNull PathPosition end,
+                    @NonNull Iterable<@NonNull PathPosition> positions) {
         this.start = start;
         this.end = end;
         this.positions = positions;
@@ -54,7 +57,10 @@ public class PathImpl implements Path {
         return new PathImpl(start, end, enlargedPositions);
     }
 
-    private void interpolateBetweenPositions(PathPosition startPosition, PathPosition endPosition, double resolution, List<PathPosition> result) {
+    private void interpolateBetweenPositions(PathPosition startPosition,
+                                             PathPosition endPosition,
+                                             double resolution,
+                                             List<PathPosition> result) {
         double distance = startPosition.distance(endPosition);
         int steps = (int) Math.ceil(distance / resolution);
 
@@ -77,8 +83,7 @@ public class PathImpl implements Path {
             simplifiedPositions.addAll(filterPositionsByEpsilon(epsilon));
             return new PathImpl(start, end, simplifiedPositions);
         } catch (IllegalArgumentException e) {
-            log.error("Invalid epsilon value for path simplification", e);
-            return this;
+            throw ErrorLogger.logFatalError("Invalid epsilon value for path simplification");
         }
     }
 
@@ -98,7 +103,7 @@ public class PathImpl implements Path {
 
     private void validateEpsilon(double epsilon) {
         if (epsilon <= 0.0 || epsilon > 1.0) {
-            throw new IllegalArgumentException("Epsilon must be in the range of 0.0 to 1.0, inclusive.");
+            throw ErrorLogger.logFatalError("Epsilon must be in the range of 0.0 to 1.0, inclusive");
         }
     }
 

@@ -13,6 +13,7 @@ import org.patheloper.api.wrapper.PathBlockType;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.api.wrapper.PathVector;
 import org.patheloper.api.wrapper.PathEnvironment;
+import org.patheloper.util.ErrorLogger;
 
 import java.util.Arrays;
 
@@ -21,16 +22,22 @@ public class BukkitMapper {
 
     @NonNull
     public Location toLocation(@NonNull PathPosition pathPosition) {
-        return new Location(toWorld(pathPosition.getPathEnvironment()), pathPosition.getX(), pathPosition.getY(), pathPosition.getZ());
+        return new Location(toWorld(pathPosition.getPathEnvironment()),
+                pathPosition.getX(),
+                pathPosition.getY(),
+                pathPosition.getZ());
     }
 
     @NonNull
     public PathPosition toPathPosition(@NonNull Location location) {
 
         if (location.getWorld() == null)
-            throw new IllegalStateException("World is null");
+            throw ErrorLogger.logFatalError("World is null");
 
-        return new PathPosition(toPathWorld(location.getWorld()), location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        return new PathPosition(toPathWorld(location.getWorld()),
+                location.getBlockX(),
+                location.getBlockY(),
+                location.getBlockZ());
     }
 
     @NonNull
@@ -50,7 +57,12 @@ public class BukkitMapper {
 
     @NonNull
     public PathBlock toPathBlock(@NonNull Block block) {
-        return new PathBlock(new PathPosition(toPathWorld(block.getWorld()), block.getX(), block.getY(), block.getZ()), PathBlockType.fromMaterial(block.getType()));
+        return new PathBlock(new PathPosition(
+                toPathWorld(block.getWorld()),
+                block.getX(),
+                block.getY(),
+                block.getZ()),
+                PathBlockType.fromMaterial(block.getType()));
     }
 
     public World toWorld(@NonNull PathEnvironment pathEnvironment) {
@@ -64,7 +76,8 @@ public class BukkitMapper {
 
     private final boolean IS_NEWER_WORLD;
     static {
-        IS_NEWER_WORLD = Arrays.stream(World.class.getMethods()).anyMatch(method -> "getMinHeight".equalsIgnoreCase(method.getName()));
+        IS_NEWER_WORLD = Arrays.stream(World.class.getMethods())
+                .anyMatch(method -> "getMinHeight".equalsIgnoreCase(method.getName()));
     }
 
     private int getMinHeight(WorldInfo world) {

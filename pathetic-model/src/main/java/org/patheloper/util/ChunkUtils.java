@@ -12,14 +12,14 @@ import java.lang.reflect.Method;
 public class ChunkUtils {
 
     private static Method materialMethod;
-
     private static Method blockTypeMethod;
 
     static {
         if (BukkitVersionUtil.getVersion().isUnder(13, 0)) {
             try {
                 materialMethod = Material.class.getDeclaredMethod("getMaterial", int.class);
-                blockTypeMethod = ChunkSnapshot.class.getDeclaredMethod("getBlockTypeId", int.class, int.class, int.class);
+                blockTypeMethod = ChunkSnapshot.class.getDeclaredMethod("getBlockTypeId",
+                        int.class, int.class, int.class);
             } catch (NoSuchMethodException e) {
                 e.printStackTrace();
             }
@@ -36,12 +36,12 @@ public class ChunkUtils {
     @SneakyThrows
     public Material getMaterial(ChunkSnapshot snapshot, int x, int y, int z) {
         if (BukkitVersionUtil.getVersion().isUnder(13, 0)) {
-            if (materialMethod == null || blockTypeMethod == null) throw ErrorLogger.logFatalError("Reflection Failed");
+            if (materialMethod == null || blockTypeMethod == null)
+                throw ErrorLogger.logFatalError("Reflection Failure");
             try {
                 return (Material) materialMethod.invoke(null, blockTypeMethod.invoke(snapshot, x, y, z));
             } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
-                return null;
+                throw ErrorLogger.logFatalError(e.getMessage());
             }
         }
         return snapshot.getBlockType(x, y, z);

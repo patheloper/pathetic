@@ -56,7 +56,9 @@ public class PathVector implements Cloneable {
      * @return The distance
      */
     public double distance(PathVector otherVector) {
-        return Math.sqrt(NumberUtils.square(this.x - otherVector.x) + NumberUtils.square(this.y - otherVector.y) + NumberUtils.square(this.z - otherVector.z));
+        return Math.sqrt(NumberUtils.square(this.x - otherVector.x)
+                + NumberUtils.square(this.y - otherVector.y)
+                + NumberUtils.square(this.z - otherVector.z));
     }
 
     /**
@@ -184,6 +186,7 @@ public class PathVector implements Cloneable {
         } catch (CloneNotSupportedException ex) {
             throw new IllegalStateException("Superclass messed up", ex);
         }
+        
         clone.x = this.x;
         clone.y = this.y;
         clone.z = this.z;

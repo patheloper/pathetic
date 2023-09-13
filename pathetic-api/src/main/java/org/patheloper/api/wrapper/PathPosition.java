@@ -2,19 +2,20 @@ package org.patheloper.api.wrapper;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
 import org.patheloper.api.util.NumberUtils;
 
-import java.util.Objects;
-
 @AllArgsConstructor
 @EqualsAndHashCode
+@Getter
 @ToString
 public class PathPosition implements Cloneable {
 
     @NonNull
     private PathEnvironment pathEnvironment;
+    
     private double x;
     private double y;
     private double z;
@@ -33,7 +34,9 @@ public class PathPosition implements Cloneable {
      * @return True if the positions are in the same block
      */
     public boolean isInSameBlock(PathPosition otherPosition) {
-        return this.getBlockX() == otherPosition.getBlockX() && this.getBlockY() == otherPosition.getBlockY() && this.getBlockZ() == otherPosition.getBlockZ();
+        return this.getBlockX() == otherPosition.getBlockX()
+                && this.getBlockY() == otherPosition.getBlockY()
+                && this.getBlockZ() == otherPosition.getBlockZ();
     }
 
     /**
@@ -42,7 +45,9 @@ public class PathPosition implements Cloneable {
      * @return the distance
      */
     public int manhattanDistance(PathPosition otherPosition) {
-        return Math.abs(this.getBlockX() - otherPosition.getBlockX()) + Math.abs(this.getBlockY() - otherPosition.getBlockY()) + Math.abs(this.getBlockZ() - otherPosition.getBlockZ());
+        return Math.abs(this.getBlockX() - otherPosition.getBlockX())
+                + Math.abs(this.getBlockY() - otherPosition.getBlockY())
+                + Math.abs(this.getBlockZ() - otherPosition.getBlockZ());
     }
 
     /**
@@ -72,7 +77,9 @@ public class PathPosition implements Cloneable {
      * @return The distance squared
      */
     public double distanceSquared(PathPosition otherPosition) {
-        return NumberUtils.square(this.x - otherPosition.x) + NumberUtils.square(this.y - otherPosition.y) + NumberUtils.square(this.z - otherPosition.z);
+        return NumberUtils.square(this.x - otherPosition.x)
+                + NumberUtils.square(this.y - otherPosition.y)
+                + NumberUtils.square(this.z - otherPosition.z);
     }
 
     /**
@@ -208,49 +215,19 @@ public class PathPosition implements Cloneable {
      * @return A new {@link PathPosition}
      */
     public PathPosition mid() {
-        return new PathPosition(this.pathEnvironment, this.getBlockX() + 0.5, this.getBlockY() + 0.5, this.getBlockZ() + 0.5);
+        return new PathPosition(this.pathEnvironment,
+                this.getBlockX() + 0.5,
+                this.getBlockY() + 0.5,
+                this.getBlockZ() + 0.5);
     }
 
     public PathPosition midPoint(PathPosition end) {
-        return new PathPosition(this.pathEnvironment, (this.x + end.x) / 2, (this.y + end.y) / 2, (this.z + end.z) / 2);
+        return new PathPosition(this.pathEnvironment,
+                (this.x + end.x) / 2,
+                (this.y + end.y) / 2,
+                (this.z + end.z) / 2);
     }
     
-    /**
-     * Gets the {@link PathEnvironment} the position is in
-     *
-     * @return The {@link PathEnvironment} the position is in
-     */
-    public @NonNull PathEnvironment getPathEnvironment() {
-        return this.pathEnvironment;
-    }
-
-    /**
-     * Gets the x value of the position
-     *
-     * @return The x value of the position
-     */
-    public double getX() {
-        return this.x;
-    }
-
-    /**
-     * Gets the y value of the position
-     *
-     * @return The y value of the position
-     */
-    public double getY() {
-        return this.y;
-    }
-
-    /**
-     * Gets the z value of the position
-     *
-     * @return The z value of the position
-     */
-    public double getZ() {
-        return this.z;
-    }
-
     @Override
     public PathPosition clone() {
 
@@ -260,6 +237,7 @@ public class PathPosition implements Cloneable {
         } catch (CloneNotSupportedException ex) {
             throw new IllegalStateException("Superclass messed up", ex);
         }
+        
         clone.pathEnvironment = this.pathEnvironment;
         clone.x = this.x;
         clone.y = this.y;

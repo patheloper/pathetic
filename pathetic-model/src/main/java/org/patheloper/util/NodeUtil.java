@@ -67,8 +67,18 @@ public class NodeUtil {
      * @param strategy          the pathfinder strategy to use for validating nodes
      * @param snapshotManager   the snapshot manager to use for validating nodes
      */
-    public static void evaluateNewNodes(Collection<Node> nodeQueue, Set<PathPosition> examinedPositions, Node currentNode, Offset offset, PathfinderStrategy strategy, SnapshotManager snapshotManager) {
-        nodeQueue.addAll(fetchValidNeighbours(nodeQueue, examinedPositions, currentNode, offset, strategy, snapshotManager));
+    public static void evaluateNewNodes(Collection<Node> nodeQueue,
+                                        Set<PathPosition> examinedPositions,
+                                        Node currentNode,
+                                        Offset offset,
+                                        PathfinderStrategy strategy,
+                                        SnapshotManager snapshotManager) {
+        nodeQueue.addAll(fetchValidNeighbours(nodeQueue,
+                examinedPositions,
+                currentNode,
+                offset,
+                strategy,
+                snapshotManager));
     }
 
     /**
@@ -77,14 +87,21 @@ public class NodeUtil {
      *
      * @api.Note The reachable block is not guaranteed to be the closest reachable block
      */
-    public static PathBlock bubbleSearchAlternative(PathPosition target, Offset offset, SnapshotManager snapshotManager) {
+    public static PathBlock bubbleSearchAlternative(PathPosition target,
+                                                    Offset offset,
+                                                    SnapshotManager snapshotManager) {
         Set<PathPosition> newPositions = new HashSet<>();
         newPositions.add(target);
 
         Set<PathPosition> examinedPositions = new HashSet<>();
         while (!newPositions.isEmpty()) {
             Set<PathPosition> nextPositions = new HashSet<>();
-            PathBlock pathBlock = getPathBlock(target, offset, snapshotManager, newPositions, examinedPositions, nextPositions);
+            PathBlock pathBlock = getPathBlock(target,
+                    offset,
+                    snapshotManager,
+                    newPositions,
+                    examinedPositions,
+                    nextPositions);
             if (pathBlock != null) return pathBlock;
             newPositions = nextPositions;
         }
@@ -102,9 +119,13 @@ public class NodeUtil {
      * @param strategy          the pathfinder strategy to use for validating nodes
      * @return {@code true} if the node is valid and can be added to the node queue, {@code false} otherwise
      */
-    public static boolean isNodeValid(Node node, Node currentNode, Collection<Node> nodeQueue,
-                                      SnapshotManager snapshotManager, Set<PathPosition> examinedPositions,
-                                      PathfinderStrategy strategy, PathVector[] cornerCuts) {
+    public static boolean isNodeValid(Node node,
+                                      Node currentNode,
+                                      Collection<Node> nodeQueue,
+                                      SnapshotManager snapshotManager,
+                                      Set<PathPosition> examinedPositions,
+                                      PathfinderStrategy strategy,
+                                      PathVector[] cornerCuts) {
         if (isNodeInvalid(node, nodeQueue, snapshotManager, examinedPositions, strategy))
             return false;
 
@@ -133,7 +154,8 @@ public class NodeUtil {
      * @return {@code true} if the position is within the bounds of the world, {@code false} otherwise
      */
     public static boolean isWithinWorldBounds(PathPosition position) {
-        return position.getPathEnvironment().getMinHeight() < position.getBlockY() && position.getBlockY() < position.getPathEnvironment().getMaxHeight();
+        return position.getPathEnvironment().getMinHeight() < position.getBlockY()
+                && position.getBlockY() < position.getPathEnvironment().getMaxHeight();
     }
 
     /**
@@ -143,7 +165,12 @@ public class NodeUtil {
      * @param offset      the offset to apply to the current node's position to find neighbours
      * @return a collection of neighbour nodes
      */
-    public static Collection<Node> fetchValidNeighbours(Collection<Node> nodeQueue, Set<PathPosition> examinedPositions, Node currentNode, Offset offset, PathfinderStrategy strategy, SnapshotManager snapshotManager) {
+    public static Collection<Node> fetchValidNeighbours(Collection<Node> nodeQueue,
+                                                        Set<PathPosition> examinedPositions,
+                                                        Node currentNode,
+                                                        Offset offset,
+                                                        PathfinderStrategy strategy,
+                                                        SnapshotManager snapshotManager) {
         Set<Node> newNodes = new HashSet<>(offset.getEntries().length);
 
         for (Offset.OffsetEntry entry : offset.getEntries()) {
@@ -152,7 +179,13 @@ public class NodeUtil {
             Color darkRedHexColor = Color.fromRGB(0x8B0000);
             Color darkGreenHexColor = Color.fromRGB(0x006400);
 
-            if (isNodeValid(newNode, currentNode, nodeQueue, snapshotManager, examinedPositions, strategy, entry.getCornerCuts())) {
+            if (isNodeValid(newNode,
+                    currentNode,
+                    nodeQueue,
+                    snapshotManager,
+                    examinedPositions,
+                    strategy,
+                    entry.getCornerCuts())) {
                 if(debugMode) {
                     if(!evaluatedNodesCache.asMap().containsKey(newNode)) {
                         evaluatedNodesCache.put(newNode, darkGreenHexColor);
@@ -190,7 +223,10 @@ public class NodeUtil {
      * Creates a new node based on the given node and offset.
      */
     private static Node createNeighbourNode(Node currentNode, PathVector offset) {
-        Node newNode = new Node(currentNode.getPosition().add(offset), currentNode.getStart(), currentNode.getTarget(), currentNode.getDepth() + 1);
+        Node newNode = new Node(currentNode.getPosition().add(offset),
+                currentNode.getStart(),
+                currentNode.getTarget(),
+                currentNode.getDepth() + 1);
         newNode.setParent(currentNode);
         return newNode;
     }
@@ -198,11 +234,15 @@ public class NodeUtil {
     /**
      * @return whether the given node is invalid or not
      */
-    private static boolean isNodeInvalid(Node node, Collection<Node> nodeQueue,
-                                         SnapshotManager snapshotManager, Set<PathPosition> examinedPositions,
+    private static boolean isNodeInvalid(Node node,
+                                         Collection<Node> nodeQueue,
+                                         SnapshotManager snapshotManager,
+                                         Set<PathPosition> examinedPositions,
                                          PathfinderStrategy strategy) {
-        return examinedPositions.contains(node.getPosition()) || nodeQueue.contains(node) ||
-                !isWithinWorldBounds(node.getPosition()) || !strategy.isValid(node.getPosition(), snapshotManager);
+        return examinedPositions.contains(node.getPosition())
+                || nodeQueue.contains(node)
+                || !isWithinWorldBounds(node.getPosition())
+                || !strategy.isValid(node.getPosition(), snapshotManager);
     }
 
     /**
@@ -218,7 +258,11 @@ public class NodeUtil {
                         Node evaluatedNode = entry.getKey();
                         PathPosition position = evaluatedNode.getPosition();
 
-                        Location location = new Location(Bukkit.getWorld(position.getPathEnvironment().getUuid()), position.getX(), position.getY(), position.getZ());
+                        Location location = new Location(Bukkit.getWorld(
+                                position.getPathEnvironment().getUuid()),
+                                position.getX(),
+                                position.getY(),
+                                position.getZ());
                         location.add(0.5, 0.5, 0.5);
 
                         Particle.DustOptions dustOptions = new Particle.DustOptions(entry.getValue(), 1.0f);
@@ -247,8 +291,11 @@ public class NodeUtil {
         return path;
     }
 
-    private static PathBlock getPathBlock(PathPosition target, Offset offset, SnapshotManager snapshotManager,
-                                          Set<PathPosition> newPositions, Set<PathPosition> examinedPositions,
+    private static PathBlock getPathBlock(PathPosition target,
+                                          Offset offset,
+                                          SnapshotManager snapshotManager,
+                                          Set<PathPosition> newPositions,
+                                          Set<PathPosition> examinedPositions,
                                           Set<PathPosition> nextPositions) {
         for (PathPosition position : newPositions) {
             for (Offset.OffsetEntry entry : offset.getEntries()) {

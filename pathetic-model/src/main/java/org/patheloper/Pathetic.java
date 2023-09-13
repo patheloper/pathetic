@@ -4,6 +4,7 @@ import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.patheloper.bukkit.listeners.ChunkInvalidateListener;
+import org.patheloper.util.ErrorLogger;
 import org.patheloper.util.NodeUtil;
 
 @UtilityClass
@@ -17,10 +18,9 @@ public class Pathetic {
     public static void initialize(JavaPlugin javaPlugin) {
 
         if(instance != null)
-            throw new IllegalStateException("Can't be initialized twice");
+            throw ErrorLogger.logFatalError("Can't be initialized twice");
 
         instance = javaPlugin;
-
         Bukkit.getPluginManager().registerEvents(new ChunkInvalidateListener(), javaPlugin);
 
         javaPlugin.getLogger().info("pathetic successfully initialized");
