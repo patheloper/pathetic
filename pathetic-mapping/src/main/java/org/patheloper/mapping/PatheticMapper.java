@@ -8,8 +8,9 @@ import org.patheloper.api.annotation.Experimental;
 import org.patheloper.api.pathing.Pathfinder;
 import org.patheloper.api.pathing.rules.PathingRuleSet;
 import org.patheloper.model.pathing.pathfinder.AStarPathfinder;
-import org.patheloper.model.pathing.pathfinder.BidirectionalAStarPathfinder;
 import org.patheloper.util.ErrorLogger;
+
+import java.util.Objects;
 
 /**
  * PatheticMapper is a utility class that maps the Pathetic API to the Pathetic Implementation.
@@ -56,32 +57,22 @@ public class PatheticMapper {
      * @param pathfinderType - The {@link PathfinderType}
      * @return The {@link Pathfinder} object
      * @throws IllegalStateException If the lib is not initialized yet
-     * @experimental See {@link BidirectionalAStarPathfinder} for more information.
      */
-    @Experimental
+    @Deprecated
     public @NonNull Pathfinder newPathfinder(PathingRuleSet pathingRuleSet, PathfinderType pathfinderType) {
         if (Pathetic.isInitialized()) {
-            switch (pathfinderType) {
-                case ASTAR:
-                    return new AStarPathfinder(pathingRuleSet);
-                case BIDIRECTIONAL_ASTAR:
-                    return new BidirectionalAStarPathfinder(pathingRuleSet);
-                default:
-                    throw ErrorLogger.logFatalError("Unknown pathfinder type: " + pathfinderType);
+            if (Objects.requireNonNull(pathfinderType) == PathfinderType.ASTAR) {
+                return new AStarPathfinder(pathingRuleSet);
             }
+            throw ErrorLogger.logFatalError("Unknown pathfinder type: " + pathfinderType);
         }
         throw ErrorLogger.logFatalError("Pathetic is not initialized");
     }
-    
+
+    @Deprecated
     public enum PathfinderType {
         
-        ASTAR,
-
-        /**
-         * @experimental See {@link BidirectionalAStarPathfinder} for more information.
-         */
-        @Experimental
-        BIDIRECTIONAL_ASTAR
+        ASTAR;
     }
 
 }

@@ -10,7 +10,6 @@ import org.patheloper.api.pathing.result.PathState;
 import org.patheloper.api.pathing.result.PathfinderResult;
 import org.patheloper.api.pathing.rules.PathingRuleSet;
 import org.patheloper.api.pathing.strategy.PathfinderStrategy;
-import org.patheloper.api.pathing.strategy.strategies.DirectPathfinderStrategy;
 import org.patheloper.api.snapshot.SnapshotManager;
 import org.patheloper.api.wrapper.PathBlock;
 import org.patheloper.api.wrapper.PathPosition;

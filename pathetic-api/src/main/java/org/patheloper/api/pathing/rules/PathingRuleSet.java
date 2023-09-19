@@ -10,32 +10,31 @@ import org.patheloper.api.pathing.strategy.strategies.DirectPathfinderStrategy;
 import org.patheloper.api.pathing.strategy.PathfinderStrategy;
 
 /**
- * A set of rules that are used while pathfinding.
- * <p>
- * strategy - The class of the strategy to use while pathfinding.
- * <p>
- * maxIterations - The maximum amount of iterations to do while pathfinding.
- * <p>
- * maxLength - The maximum length of the path.
- * This should not be set too high since it can cause a lagspike within the pathfinder which causes it to take longer.
- * <p>
- * async - Whether to run the pathfinding async or not.
- * <p>
- * allowDiagonal - Whether to allow diagonal movement or not.
- * <p>
- * alternateTarget - Whether to allow the pathfinder to end at a different block than the target if the target is unreachable.
- * NOTE: In most cases fallback is the better option since this can be in the worst case a very expensive radical operation
- * in addition to the regular pathfinding with only the goal to find an alternate target
- * no matter where or in what relation to anything.
- * <p>
- * failFast - Whether to fail fast or not, if the target is unreachable by the beginning.
- * <p>
- * fallback - If pathfinding fails, it will fallback to the already found path.
- * <p>
- * loadChunks - Whether to load / generate chunks
- * <p>
- * counterCheck - Whether to run the counter check the path if it's not found to validate the result
- * NOTE: counterCheck is a fallback mechanism which researches the entire path from end to beginning again
+ * Configuration options for pathfinding.
+ *
+ * This class defines a set of rules that guide the behavior of the pathfinding process.
+ *
+ * - `strategy`: The class of the strategy to use for pathfinding. Defaults to {@link DirectPathfinderStrategy}.
+ *
+ * - `maxIterations`: The maximum number of iterations allowed during pathfinding. Set this to prevent infinite loops.
+ *
+ * - `maxLength`: The maximum length of the path. Avoid setting this too high as it can cause performance issues.
+ *
+ * - `async`: Whether to run pathfinding asynchronously or not.
+ *
+ * - `allowingDiagonal`: Whether to allow diagonal movement when pathfinding.
+ *
+ * - `allowingAlternateTarget`: Whether to allow the pathfinder to end at a different block than the target if the target is unreachable.
+ *   Note: In most cases, using `fallback` is a better option as this operation can be very expensive in the worst case scenario.
+ *
+ * - `allowingFailFast`: Whether to fail fast if the target is unreachable from the start.
+ *
+ * - `allowingFallback`: If pathfinding fails, whether to fall back to the previously found path.
+ *
+ * - `loadingChunks`: Whether to load or generate chunks during pathfinding.
+ *
+ * - `counterCheck`: Whether to run a counter check on the path if it's not found to validate the result.
+ *   Note: `counterCheck` is a fallback mechanism that reevaluates the entire path from end to beginning.
  */
 @With
 @Value

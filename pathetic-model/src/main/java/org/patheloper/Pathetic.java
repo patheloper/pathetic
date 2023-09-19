@@ -5,7 +5,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.patheloper.bukkit.listeners.ChunkInvalidateListener;
 import org.patheloper.util.ErrorLogger;
-import org.patheloper.util.NodeUtil;
 
 @UtilityClass
 public class Pathetic {
