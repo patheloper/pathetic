@@ -18,6 +18,10 @@ public class NMSUtils {
     public NMSUtils(int major, int minor) {
         switch (major) {
             case 20:
+                if(minor == 2) {
+                    nmsInterface = new OneTwentyTwoNMSInterface();
+                    break;
+                }
                 nmsInterface = new OneTwentyOneNMSInterface();
                 break;
             case 19:
