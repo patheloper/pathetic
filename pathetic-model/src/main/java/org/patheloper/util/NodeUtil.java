@@ -120,12 +120,10 @@ public class NodeUtil {
      * @return {@code true} if the node is valid and can be added to the node queue, {@code false} otherwise
      */
     public static boolean isNodeValid(Node node,
-                                      Node currentNode,
                                       Collection<Node> nodeQueue,
                                       SnapshotManager snapshotManager,
                                       Set<PathPosition> examinedPositions,
-                                      PathfinderStrategy strategy,
-                                      PathVector[] cornerCuts) {
+                                      PathfinderStrategy strategy) {
         if (isNodeInvalid(node, nodeQueue, snapshotManager, examinedPositions, strategy))
             return false;
 
@@ -165,12 +163,10 @@ public class NodeUtil {
             Node newNode = createNeighbourNode(currentNode, entry.getVector());
 
             if (isNodeValid(newNode,
-                    currentNode,
                     nodeQueue,
                     snapshotManager,
                     examinedPositions,
-                    strategy,
-                    entry.getCornerCuts())) {
+                    strategy)) {
                 debug(newNode, DARK_GREEN_HEX_COLOR);
                 newNodes.add(newNode);
             } else {
