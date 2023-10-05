@@ -29,17 +29,17 @@ public enum PathBlockType {
      */
     public static PathBlockType fromMaterial(Material material) {
 
-        if (material == Material.AIR)
+        if (material == Material.AIR) // can't check for cave or void air due to backwards compatibility
             return AIR;
 
-        switch (material) {
-            case WATER:
-            case LAVA:
-                return LIQUID;
-            case GRASS:
-                return OTHER;
-            default:
-                return SOLID;
+        if(material.isSolid()) {
+            return SOLID;
         }
+        
+        if(material == Material.LAVA || material == Material.WATER) {
+            return LIQUID;
+        }
+        
+        return OTHER;
     }
 }
