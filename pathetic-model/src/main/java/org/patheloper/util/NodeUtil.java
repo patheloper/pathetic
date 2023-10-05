@@ -157,6 +157,9 @@ public class NodeUtil {
         return position.getPathEnvironment().getMinHeight() < position.getBlockY()
                 && position.getBlockY() < position.getPathEnvironment().getMaxHeight();
     }
+    
+    private static final Color DARK_RED_HEX_COLOR = Color.fromRGB(0x8B0000);
+    private static final Color DARK_GREEN_HEX_COLOR = Color.fromRGB(0x006400);
 
     /**
      * Fetches the neighbours of the given node.
@@ -176,9 +179,6 @@ public class NodeUtil {
         for (Offset.OffsetEntry entry : offset.getEntries()) {
             Node newNode = createNeighbourNode(currentNode, entry.getVector());
 
-            Color darkRedHexColor = Color.fromRGB(0x8B0000);
-            Color darkGreenHexColor = Color.fromRGB(0x006400);
-
             if (isNodeValid(newNode,
                     currentNode,
                     nodeQueue,
@@ -186,22 +186,20 @@ public class NodeUtil {
                     examinedPositions,
                     strategy,
                     entry.getCornerCuts())) {
-                if(debugMode) {
-                    if(!evaluatedNodesCache.asMap().containsKey(newNode)) {
-                        evaluatedNodesCache.put(newNode, darkGreenHexColor);
-                    }
-                }
+                debug(newNode, DARK_GREEN_HEX_COLOR);
                 newNodes.add(newNode);
             } else {
-                if(debugMode) {
-                    if(!evaluatedNodesCache.asMap().containsKey(newNode)) {
-                        evaluatedNodesCache.put(newNode, darkRedHexColor);
-                    }
-                }
+                debug(newNode, DARK_RED_HEX_COLOR);
             }
         }
 
         return newNodes;
+    }
+    
+    private static void debug(Node node, Color color) {
+        if(debugMode) {
+            evaluatedNodesCache.put(node, color);
+        }
     }
 
     /**
