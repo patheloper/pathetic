@@ -84,7 +84,7 @@ public class AStarPathfinder extends AbstractPathfinder {
                                   PathfinderStrategy strategy,
                                   Set<PathPosition> examinedPositions,
                                   Node currentNode) {
-        NodeUtil.evaluateNewNodes(nodeQueue, examinedPositions, currentNode, offset, strategy, snapshotManager);
+        NodeUtil.evaluateNewNodes(nodeQueue, examinedPositions, currentNode, offset, strategy, snapshotManager, this.pathingRuleSet.isAllowingDiagonal());
     }
 
     private PathfinderResult backupPathfindingOrFailure(int depth, PathPosition start, PathPosition target, PathfinderStrategy strategy, Node fallbackNode) {

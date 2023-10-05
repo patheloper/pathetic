@@ -76,7 +76,7 @@ public class PatheticCommand implements TabExecutor {
                     player.sendMessage("State: " + result.getPathState().name());
                     player.sendMessage("Path length: " + result.getPath().length());
 
-                    if(result.successful()) {
+                    if(result.successful() || result.hasFallenBack()) {
 
                         result.getPath().getPositions().forEach(position -> {
                             Location location = BukkitMapper.toLocation(position);

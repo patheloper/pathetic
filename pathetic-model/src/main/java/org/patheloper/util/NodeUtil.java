@@ -66,19 +66,22 @@ public class NodeUtil {
      * @param offset            the offset to apply to the current node's position to find neighbours
      * @param strategy          the pathfinder strategy to use for validating nodes
      * @param snapshotManager   the snapshot manager to use for validating nodes
+     * @param allowingDiagonal  whether diagonal movement is allowed
      */
     public static void evaluateNewNodes(Collection<Node> nodeQueue,
                                         Set<PathPosition> examinedPositions,
                                         Node currentNode,
                                         Offset offset,
                                         PathfinderStrategy strategy,
-                                        SnapshotManager snapshotManager) {
+                                        SnapshotManager snapshotManager,
+                                        boolean allowingDiagonal) {
         nodeQueue.addAll(fetchValidNeighbours(nodeQueue,
                 examinedPositions,
                 currentNode,
                 offset,
                 strategy,
-                snapshotManager));
+                snapshotManager,
+                allowingDiagonal));
     }
 
     /**
@@ -112,22 +115,45 @@ public class NodeUtil {
     /**
      * Determines whether the given node is valid and can be added to the node queue.
      *
-     * @param node              the node to validate
+     * @param currentNode       the node we are moving from
+     * @param newNode           the node to validate
      * @param nodeQueue         the node queue to check for duplicates
      * @param snapshotManager   the snapshot manager to use for validating nodes
      * @param examinedPositions a set of examined positions
      * @param strategy          the pathfinder strategy to use for validating nodes
+     * @param allowingDiagonal
      * @return {@code true} if the node is valid and can be added to the node queue, {@code false} otherwise
      */
-    public static boolean isNodeValid(Node node,
+    public static boolean isNodeValid(Node currentNode,
+                                      Node newNode,
                                       Collection<Node> nodeQueue,
                                       SnapshotManager snapshotManager,
                                       Set<PathPosition> examinedPositions,
-                                      PathfinderStrategy strategy) {
-        if (isNodeInvalid(node, nodeQueue, snapshotManager, examinedPositions, strategy))
+                                      PathfinderStrategy strategy,
+                                      PathVector[] cornerCuts,
+                                      boolean allowingDiagonal) {
+        if (isNodeInvalid(newNode, nodeQueue, snapshotManager, examinedPositions, strategy))
             return false;
 
-        return examinedPositions.add(node.getPosition());
+        // So at this point there is nothing wrong with the node itself, We can move to it technically.
+        // But we need to check if we can move to it from the current node. If we are moving diagonally, we need to check
+        // if we can move to the adjacent nodes as well. The cornerCuts represent the offsets from the current node to the
+        // adjacent nodes. If we can't move to any of the adjacent nodes, we can't move to the current node either.
+
+        if (!allowingDiagonal)
+            return examinedPositions.add(newNode.getPosition());
+
+        for (PathVector cornerCut : cornerCuts) {
+            // Let's create the neighbour node and check if we can move to it
+            Node cuttingNode = createNeighbourNode(currentNode, cornerCut);
+            // If it's not invalid, we can move to the corner cut which means we can move to the new node
+            if (!isNodeInvalid(cuttingNode, nodeQueue, snapshotManager, examinedPositions, strategy))
+                // We can move to the corner cut, so its valid so we add the new node to the examined positions
+                return examinedPositions.add(newNode.getPosition());
+        }
+
+        // None of the corner cuts are valid, so we can't move to the new node
+        return false;
     }
 
     /**
@@ -147,8 +173,9 @@ public class NodeUtil {
     /**
      * Fetches the neighbours of the given node.
      *
-     * @param currentNode the node to fetch neighbours for
-     * @param offset      the offset to apply to the current node's position to find neighbours
+     * @param currentNode      the node to fetch neighbours for
+     * @param offset           the offset to apply to the current node's position to find neighbours
+     * @param allowingDiagonal
      * @return a collection of neighbour nodes
      */
     public static Collection<Node> fetchValidNeighbours(Collection<Node> nodeQueue,
@@ -156,17 +183,20 @@ public class NodeUtil {
                                                         Node currentNode,
                                                         Offset offset,
                                                         PathfinderStrategy strategy,
-                                                        SnapshotManager snapshotManager) {
+                                                        SnapshotManager snapshotManager,
+                                                        boolean allowingDiagonal) {
         Set<Node> newNodes = new HashSet<>(offset.getEntries().length);
 
         for (Offset.OffsetEntry entry : offset.getEntries()) {
             Node newNode = createNeighbourNode(currentNode, entry.getVector());
 
-            if (isNodeValid(newNode,
+            if (isNodeValid(currentNode, newNode,
                     nodeQueue,
                     snapshotManager,
                     examinedPositions,
-                    strategy)) {
+                    strategy,
+                    entry.getCornerCuts(),
+                    allowingDiagonal)) {
                 debug(newNode, DARK_GREEN_HEX_COLOR);
                 newNodes.add(newNode);
             } else {
