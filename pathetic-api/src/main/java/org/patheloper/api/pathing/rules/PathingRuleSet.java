@@ -6,15 +6,11 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.With;
-import org.patheloper.api.pathing.strategy.strategies.DirectPathfinderStrategy;
-import org.patheloper.api.pathing.strategy.PathfinderStrategy;
 
 /**
  * Configuration options for pathfinding.
  *
  * This class defines a set of rules that guide the behavior of the pathfinding process.
- *
- * - `strategy`: The class of the strategy to use for pathfinding. Defaults to {@link DirectPathfinderStrategy}.
  *
  * - `maxIterations`: The maximum number of iterations allowed during pathfinding. Set this to prevent infinite loops.
  *
@@ -43,8 +39,6 @@ import org.patheloper.api.pathing.strategy.PathfinderStrategy;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class PathingRuleSet {
 
-    private static final Class<? extends PathfinderStrategy> DEFAULT_STRATEGY = DirectPathfinderStrategy.class;
-
     /**
      * @return A new {@link PathingRuleSet} with default values but async.
      */
@@ -59,8 +53,6 @@ public class PathingRuleSet {
         return builder().build();
     }
 
-    @Builder.Default
-    Class<? extends PathfinderStrategy> strategy = DEFAULT_STRATEGY;
     @Builder.Default
     int maxIterations = 5000; // to avoid freewheeling
     int maxLength;
