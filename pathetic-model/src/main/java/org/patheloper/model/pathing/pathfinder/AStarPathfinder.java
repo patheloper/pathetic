@@ -28,7 +28,7 @@ public class AStarPathfinder extends AbstractPathfinder {
     }
     
     @Override
-    protected PathfinderResult findPath(PathPosition start, PathPosition target, PathfinderStrategy strategy) {
+    protected PathfinderResult resolvePath(PathPosition start, PathPosition target, PathfinderStrategy strategy) {
         Node startNode = new Node(start.floor(), start.floor(), target.floor(), 0);
         
         PriorityQueue<Node> nodeQueue = new PriorityQueue<>(Collections.singleton(startNode));
@@ -114,7 +114,7 @@ public class AStarPathfinder extends AbstractPathfinder {
     
     private Optional<PathfinderResult> counterCheck(PathPosition start, PathPosition target, PathfinderStrategy strategy) {
         AStarPathfinder aStarPathfinder = new AStarPathfinder(pathingRuleSet.withCounterCheck(false));
-        PathfinderResult pathfinderResult = aStarPathfinder.findPath(target, start, strategy);
+        PathfinderResult pathfinderResult = aStarPathfinder.resolvePath(target, start, strategy);
         
         if(pathfinderResult.getPathState() == PathState.FOUND)
             return Optional.of(pathfinderResult);

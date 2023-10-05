@@ -8,6 +8,7 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.patheloper.api.pathing.Pathfinder;
 import org.patheloper.api.pathing.result.PathfinderResult;
+import org.patheloper.api.pathing.strategy.strategies.WalkablePathfinderStrategy;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.mapping.bukkit.BukkitMapper;
 
@@ -66,7 +67,8 @@ public class PatheticCommand implements TabExecutor {
                 PathPosition target = BukkitMapper.toPathPosition(playerSession.getPos2());
 
                 player.sendMessage("Starting pathfinding...");
-                CompletionStage<PathfinderResult> pathfindingResult = pathfinder.findPath(start, target); // This is the actual pathfinding.
+                CompletionStage<PathfinderResult> pathfindingResult =
+                        pathfinder.findPath(start, target, new WalkablePathfinderStrategy()); // This is the actual pathfinding.
 
                 // This is just a simple way to display the pathfinding result.
                 pathfindingResult.thenAccept(result -> {
