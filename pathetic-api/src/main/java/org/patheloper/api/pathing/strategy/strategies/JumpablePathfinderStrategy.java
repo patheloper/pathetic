@@ -1,10 +1,17 @@
 package org.patheloper.api.pathing.strategy.strategies;
 
 import lombok.NonNull;
+import org.patheloper.api.annotation.Experimental;
 import org.patheloper.api.snapshot.SnapshotManager;
 import org.patheloper.api.wrapper.PathBlock;
 import org.patheloper.api.wrapper.PathPosition;
 
+/**
+ * A {@link WalkablePathfinderStrategy} that allows jumping.
+ *
+ * @experimental This class is experimental and may be change a lot in the future
+ */
+@Experimental
 public class JumpablePathfinderStrategy extends WalkablePathfinderStrategy {
     
     private final int jumpHeight;
