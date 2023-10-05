@@ -9,9 +9,9 @@ import org.patheloper.api.wrapper.PathPosition;
 /**
  * A {@link PathfinderStrategy} to find the best path for a player. This currently only takes basic jumps and walkable paths into account.
  *
- * @experimental This strategy is experimental and may not work as expected.
+ * @deprecated This class is about to be removed. See {@link JumpablePathfinderStrategy}
  */
-@Experimental
+@Deprecated
 public class PlayerPathfinderStrategy implements PathfinderStrategy {
 
     private static final double MAX_JUMP_HEIGHT_IN_BLOCKS = 1.25;
