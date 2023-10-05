@@ -27,14 +27,14 @@ public class WalkablePathfinderStrategy implements PathfinderStrategy {
         return canStandOn(block, snapshotManager);
     }
     
-    private boolean canStandOn(PathBlock block, SnapshotManager snapshotManager) {
+    protected boolean canStandOn(PathBlock block, SnapshotManager snapshotManager) {
         PathBlock below = snapshotManager.getBlock(block.getPathPosition().add(0, -1, 0));
         return areBlocksAbovePassable(block.getPathPosition(), snapshotManager)
                 && block.isPassable()
                 && below.isSolid();
     }
 
-    private boolean areBlocksAbovePassable(PathPosition position, SnapshotManager snapshotManager) {
+    protected boolean areBlocksAbovePassable(PathPosition position, SnapshotManager snapshotManager) {
         boolean areBlocksAbovePassable = true;
         for(int i = 1; i <= height; i++) {
             PathBlock block = snapshotManager.getBlock(position.add(0, i, 0));
