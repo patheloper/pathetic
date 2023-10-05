@@ -113,6 +113,8 @@ public class AStarPathfinder extends AbstractPathfinder {
     }
     
     private Optional<PathfinderResult> counterCheck(PathPosition start, PathPosition target, PathfinderStrategy strategy) {
+        if(!pathingRuleSet.isCounterCheck()) return Optional.empty();
+        
         AStarPathfinder aStarPathfinder = new AStarPathfinder(pathingRuleSet.withCounterCheck(false));
         PathfinderResult pathfinderResult = aStarPathfinder.resolvePath(target, start, strategy);
         
