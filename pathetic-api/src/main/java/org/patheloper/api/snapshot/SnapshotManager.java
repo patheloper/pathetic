@@ -3,6 +3,10 @@ package org.patheloper.api.snapshot;
 import org.patheloper.api.wrapper.PathBlock;
 import org.patheloper.api.wrapper.PathPosition;
 
+/**
+ * The SnapshotManager interface defines methods for retrieving block data snapshots at specific positions
+ * within a Minecraft world.
+ */
 public interface SnapshotManager {
 
     /**
