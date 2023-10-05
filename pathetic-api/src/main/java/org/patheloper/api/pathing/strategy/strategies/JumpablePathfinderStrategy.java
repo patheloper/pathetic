@@ -18,6 +18,10 @@ public class JumpablePathfinderStrategy extends WalkablePathfinderStrategy {
     
     public JumpablePathfinderStrategy(int height, int jumpHeight, int jumpDistance) {
         super(height);
+        
+        if(jumpHeight <= 0) throw new IllegalArgumentException("Jump height must be greater than 0");
+        if(jumpDistance <= 0) throw new IllegalArgumentException("Jump distance must be greater than 0");
+        
         this.jumpHeight = jumpHeight;
         this.jumpDistance = jumpDistance;
     }

@@ -18,6 +18,8 @@ public class WalkablePathfinderStrategy implements PathfinderStrategy {
     }
 
     public WalkablePathfinderStrategy(int height) {
+        if(height <= 0) throw new IllegalArgumentException("Height must be greater than 0");
+        
         this.height = height;
     }
 
@@ -30,19 +32,16 @@ public class WalkablePathfinderStrategy implements PathfinderStrategy {
     protected boolean canStandOn(PathBlock block, SnapshotManager snapshotManager) {
         PathBlock below = snapshotManager.getBlock(block.getPathPosition().add(0, -1, 0));
         return areBlocksAbovePassable(block.getPathPosition(), snapshotManager)
-                && block.isPassable()
                 && below.isSolid();
     }
 
     protected boolean areBlocksAbovePassable(PathPosition position, SnapshotManager snapshotManager) {
-        boolean areBlocksAbovePassable = true;
-        for(int i = 1; i <= height; i++) {
+        for (int i = 0; i < height; i++) {
             PathBlock block = snapshotManager.getBlock(position.add(0, i, 0));
-            if(!block.isPassable()) {
-                areBlocksAbovePassable = false;
-                break;
+            if (!block.isPassable()) {
+                return false;
             }
         }
-        return areBlocksAbovePassable;
+        return true;
     }
 }
