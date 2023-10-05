@@ -3,6 +3,7 @@ package org.patheloper.model.pathing.pathfinder;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.NonNull;
 import org.bukkit.event.Cancellable;
+import org.patheloper.Pathetic;
 import org.patheloper.api.event.PathingFinishedEvent;
 import org.patheloper.api.event.PathingStartFindEvent;
 import org.patheloper.api.pathing.Pathfinder;
@@ -22,6 +23,8 @@ import org.patheloper.model.snapshot.FailingSnapshotManager;
 import org.patheloper.util.ErrorLogger;
 import org.patheloper.util.NodeUtil;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -31,6 +34,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+import java.util.logging.Logger;
 
 abstract class AbstractPathfinder implements Pathfinder {
 
@@ -152,17 +157,30 @@ abstract class AbstractPathfinder implements Pathfinder {
             try {
                 return resolvePath(start, relocateTargetPosition(target), strategy);
             } catch (Exception e) {
-                throw ErrorLogger.logFatalError("Failed to find path async");
+                throw ErrorLogger.logFatalError("Failed to find path async", e);
             }
-        }, PATHING_EXECUTOR).thenApply(this::finishPathing);
+        }, PATHING_EXECUTOR).thenApply(this::finishPathing).exceptionally(this::exceptionHandler);
     }
     
     private CompletionStage<PathfinderResult> produceSyncPathing(PathPosition start, PathPosition target, PathfinderStrategy strategy) {
         try {
             return CompletableFuture.completedFuture(resolvePath(start, relocateTargetPosition(target), strategy));
         } catch (Exception e) {
-            throw ErrorLogger.logFatalError("Failed to find path sync");
+            throw ErrorLogger.logFatalError("Failed to find path sync", e);
         }
+    }
+    
+    private PathfinderResult exceptionHandler(Throwable throwable) {
+        Logger logger = Pathetic.getPluginInstance().getLogger();
+        
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        throwable.printStackTrace(pw);
+        logger.severe(sw.toString());
+        
+        return finishPathing(new PathfinderResultImpl(
+                PathState.FAILED,
+                new PathImpl(null, null, EMPTY_LINKED_HASHSET)));
     }
     
     // name clash with the interface, therefore "resolve" instead of "find"

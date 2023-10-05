@@ -83,7 +83,7 @@ public class PathImpl implements Path {
             simplifiedPositions.addAll(filterPositionsByEpsilon(epsilon));
             return new PathImpl(start, end, simplifiedPositions);
         } catch (IllegalArgumentException e) {
-            throw ErrorLogger.logFatalError("Invalid epsilon value for path simplification");
+            throw ErrorLogger.logFatalError("Invalid epsilon value for path simplification", e);
         }
     }
 

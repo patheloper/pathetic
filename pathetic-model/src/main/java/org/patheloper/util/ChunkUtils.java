@@ -41,7 +41,7 @@ public class ChunkUtils {
             try {
                 return (Material) materialMethod.invoke(null, blockTypeMethod.invoke(snapshot, x, y, z));
             } catch (IllegalAccessException | InvocationTargetException e) {
-                throw ErrorLogger.logFatalError(e.getMessage());
+                throw ErrorLogger.logFatalError(e.getMessage(), e);
             }
         }
         return snapshot.getBlockType(x, y, z);
