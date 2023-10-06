@@ -43,7 +43,7 @@ public enum Offset {
             new OffsetEntry(new PathVector(-1, -1, 1)),
     }),
 
-    MERGED(Stream.concat(Stream.of(VERTICAL_AND_HORIZONTAL.getEntries()), Stream.of(DIAGONAL.getEntries()))
+    MERGED(Stream.concat(Stream.of(DIAGONAL.getEntries()), Stream.of(VERTICAL_AND_HORIZONTAL.getEntries()))
             .toArray(OffsetEntry[]::new));
 
     private final OffsetEntry[] entries;

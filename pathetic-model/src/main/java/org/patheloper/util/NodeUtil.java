@@ -135,12 +135,18 @@ public class NodeUtil {
         if (isNodeInvalid(newNode, nodeQueue, snapshotManager, examinedPositions, strategy))
             return false;
 
-        // So at this point there is nothing wrong with the node itself, We can move to it technically.
-        // But we need to check if we can move to it from the current node. If we are moving diagonally, we need to check
-        // if we can move to the adjacent nodes as well. The cornerCuts represent the offsets from the current node to the
-        // adjacent nodes. If we can't move to any of the adjacent nodes, we can't move to the current node either.
+        /*
+         * So at this point there is nothing wrong with the node itself, We can move to it technically.
+         * But we need to check if we can move to it from the current node. If we are moving diagonally, we need to check
+         * if we can move to the adjacent nodes as well. The cornerCuts represent the offsets from the current node to the
+         * adjacent nodes. If we can't move to any of the adjacent nodes, we can't move to the current node either.
+         */
 
         if (!allowingDiagonal)
+            return examinedPositions.add(newNode.getPosition());
+
+        // If there are no corner cuts, we can move to the new node because we are not moving diagonally.
+        if(cornerCuts.length == 0)
             return examinedPositions.add(newNode.getPosition());
 
         for (PathVector cornerCut : cornerCuts) {
