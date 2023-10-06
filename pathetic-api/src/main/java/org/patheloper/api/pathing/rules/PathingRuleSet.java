@@ -20,9 +20,6 @@ import lombok.With;
  *
  * - `allowingDiagonal`: Whether to allow diagonal movement when pathfinding.
  *
- * - `allowingAlternateTarget`: Whether to allow the pathfinder to end at a different block than the target if the target is unreachable.
- *   Note: In most cases, using `fallback` is a better option as this operation can be very expensive in the worst case scenario.
- *
  * - `allowingFailFast`: Whether to fail fast if the target is unreachable from the start.
  *
  * - `allowingFallback`: If pathfinding fails, whether to fall back to the previously found path.
@@ -58,7 +55,6 @@ public class PathingRuleSet {
     int maxLength;
     boolean async;
     boolean allowingDiagonal;
-    boolean allowingAlternateTarget;
     boolean allowingFailFast;
     boolean allowingFallback;
     boolean loadingChunks;

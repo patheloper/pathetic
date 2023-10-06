@@ -21,7 +21,6 @@ import org.patheloper.model.pathing.result.PathImpl;
 import org.patheloper.model.pathing.result.PathfinderResultImpl;
 import org.patheloper.model.snapshot.FailingSnapshotManager;
 import org.patheloper.util.ErrorLogger;
-import org.patheloper.util.NodeUtil;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -34,7 +33,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 import java.util.logging.Logger;
 
 abstract class AbstractPathfinder implements Pathfinder {
@@ -138,13 +136,6 @@ abstract class AbstractPathfinder implements Pathfinder {
         return true;
     }
 
-    private PathPosition relocateTargetPosition(PathPosition target) {
-        if (pathingRuleSet.isAllowingAlternateTarget() && isBlockUnreachable(target))
-            return NodeUtil.bubbleSearchAlternative(target, offset, snapshotManager).getPathPosition();
-        
-        return target;
-    }
-
     private CompletionStage<PathfinderResult> producePathing(PathPosition start, PathPosition target, PathfinderStrategy strategy) {
         if(pathingRuleSet.isAsync())
             return produceAsyncPathing(start, target, strategy);
@@ -155,7 +146,7 @@ abstract class AbstractPathfinder implements Pathfinder {
     private CompletionStage<PathfinderResult> produceAsyncPathing(PathPosition start, PathPosition target, PathfinderStrategy strategy) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                return resolvePath(start, relocateTargetPosition(target), strategy);
+                return resolvePath(start, target, strategy);
             } catch (Exception e) {
                 throw ErrorLogger.logFatalError("Failed to find path async", e);
             }
@@ -164,7 +155,7 @@ abstract class AbstractPathfinder implements Pathfinder {
     
     private CompletionStage<PathfinderResult> produceSyncPathing(PathPosition start, PathPosition target, PathfinderStrategy strategy) {
         try {
-            return CompletableFuture.completedFuture(resolvePath(start, relocateTargetPosition(target), strategy));
+            return CompletableFuture.completedFuture(resolvePath(start, target, strategy));
         } catch (Exception e) {
             throw ErrorLogger.logFatalError("Failed to find path sync", e);
         }

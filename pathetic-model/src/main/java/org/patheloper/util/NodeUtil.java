@@ -85,34 +85,6 @@ public class NodeUtil {
     }
 
     /**
-     * Bloating up like a bubble until a reachable block is found
-     * The block itself might not be passable, but at least reachable from the outside
-     *
-     * @api.Note The reachable block is not guaranteed to be the closest reachable block
-     */
-    public static PathBlock bubbleSearchAlternative(PathPosition target,
-                                                    Offset offset,
-                                                    SnapshotManager snapshotManager) {
-        Set<PathPosition> newPositions = new HashSet<>();
-        newPositions.add(target);
-
-        Set<PathPosition> examinedPositions = new HashSet<>();
-        while (!newPositions.isEmpty()) {
-            Set<PathPosition> nextPositions = new HashSet<>();
-            PathBlock pathBlock = getPathBlock(target,
-                    offset,
-                    snapshotManager,
-                    newPositions,
-                    examinedPositions,
-                    nextPositions);
-            if (pathBlock != null) return pathBlock;
-            newPositions = nextPositions;
-        }
-
-        return snapshotManager.getBlock(target);
-    }
-
-    /**
      * Determines whether the given node is valid and can be added to the node queue.
      *
      * @param currentNode       the node we are moving from
