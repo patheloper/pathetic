@@ -36,13 +36,11 @@ public class Node implements Comparable<Node> {
                 && this.position.getBlockY() == target.getBlockY()
                 && this.position.getBlockZ() == target.getBlockZ();
     }
-
+    
     private double heuristic() {
-        double v = calculatePerpendicularDistance();
-        return this.position.octileDistance(target)
-                * (v*0.00002)
-                + 0.01*(this.target.distance(this.position)
-                + this.start.distance(this.position));
+        double manhattanDistance = this.position.manhattanDistance(target);
+        double perpendicularDistance = calculatePerpendicularDistance();
+        return manhattanDistance * 0.8 + perpendicularDistance * 0.2;
     }
 
     private double calculatePerpendicularDistance() {
