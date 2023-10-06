@@ -54,7 +54,8 @@ public class PathingRuleSet {
     int maxIterations = 5000; // to avoid freewheeling
     int maxLength;
     boolean async;
-    boolean allowingDiagonal;
+    @Builder.Default
+    boolean allowingDiagonal = true;
     boolean allowingFailFast;
     boolean allowingFallback;
     boolean loadingChunks;
