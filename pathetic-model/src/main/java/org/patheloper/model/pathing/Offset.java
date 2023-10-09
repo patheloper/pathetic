@@ -18,29 +18,37 @@ public enum Offset {
             new OffsetEntry(new PathVector(0, 1, 0)),
             new OffsetEntry(new PathVector(0, -1, 0)),
     }),
-
+    
     DIAGONAL(new OffsetEntry[] {
-            new OffsetEntry(new PathVector(1, 0, 1), new PathVector(1, 0, 0), new PathVector(0, 0, 1)),
             new OffsetEntry(new PathVector(-1, 0, -1), new PathVector(-1, 0, 0), new PathVector(0, 0, -1)),
+            new OffsetEntry(new PathVector(-1, 0, 0), new PathVector(-1, 0, 0), new PathVector(0, 0, 0)),
             new OffsetEntry(new PathVector(-1, 0, 1), new PathVector(0, 0, 1), new PathVector(-1, 0, 0)),
+            new OffsetEntry(new PathVector(0, 0, -1), new PathVector(0, 0, -1), new PathVector(0, 0, 0)),
+            new OffsetEntry(new PathVector(0, 0, 0), new PathVector(0, 0, 0), new PathVector(0, 0, 0)),
+            new OffsetEntry(new PathVector(0, 0, 1), new PathVector(0, 0, 1), new PathVector(0, 0, 0)),
             new OffsetEntry(new PathVector(1, 0, -1), new PathVector(0, 0, -1), new PathVector(1, 0, 0)),
-
-            new OffsetEntry(new PathVector(0, 1, 1), new PathVector(0, 0, 1), new PathVector(0, 1, 0)),
-            new OffsetEntry(new PathVector(1, 1, 1), new PathVector(1, 0, 0), new PathVector(0, 1, 0)),
-            new OffsetEntry(new PathVector(1, 1, 0), new PathVector(1, 0, 0), new PathVector(0, 1, 0)),
-            new OffsetEntry(new PathVector(1, 1, -1), new PathVector(1, 0, 0), new PathVector(0, 1, 0)),
-            new OffsetEntry(new PathVector(0, 1, -1), new PathVector(0, 0, -1), new PathVector(0, 1, 0)),
+            new OffsetEntry(new PathVector(1, 0, 0), new PathVector(1, 0, 0), new PathVector(0, 0, 0)),
+            new OffsetEntry(new PathVector(1, 0, 1), new PathVector(1, 0, 0), new PathVector(0, 0, 1)),
+            
             new OffsetEntry(new PathVector(-1, 1, -1), new PathVector(-1, 0, 0), new PathVector(0, 1, 0)),
             new OffsetEntry(new PathVector(-1, 1, 0), new PathVector(0, 1, 0), new PathVector(-1, 0, 0)),
             new OffsetEntry(new PathVector(-1, 1, 1), new PathVector(0, 1, 0), new PathVector(-1, 0, 0)),
-            new OffsetEntry(new PathVector(0, -1, 1), new PathVector(0, 0, 1), new PathVector(0, -1, 0)),
-            new OffsetEntry(new PathVector(1, -1, 1), new PathVector(1, 0, 0), new PathVector(0, -1, 0)),
-            new OffsetEntry(new PathVector(1, -1, 0), new PathVector(1, 0, 0), new PathVector(0, -1, 0)),
-            new OffsetEntry(new PathVector(1, -1, -1), new PathVector(1, 0, 0), new PathVector(0, -1, 0)),
-            new OffsetEntry(new PathVector(0, -1, -1), new PathVector(0, 0, -1), new PathVector(0, -1, 0)),
+            new OffsetEntry(new PathVector(0, 1, -1), new PathVector(0, 0, -1), new PathVector(0, 1, 0)),
+            new OffsetEntry(new PathVector(0, 1, 0), new PathVector(0, 1, 0), new PathVector(0, 0, 0)),
+            new OffsetEntry(new PathVector(0, 1, 1), new PathVector(0, 1, 0), new PathVector(0, 0, 0)),
+            new OffsetEntry(new PathVector(1, 1, -1), new PathVector(1, 0, 0), new PathVector(0, 1, 0)),
+            new OffsetEntry(new PathVector(1, 1, 0), new PathVector(1, 0, 0), new PathVector(0, 1, 0)),
+            new OffsetEntry(new PathVector(1, 1, 1), new PathVector(1, 0, 0), new PathVector(0, 1, 0)),
+            
             new OffsetEntry(new PathVector(-1, -1, -1), new PathVector(-1, 0, 0), new PathVector(0, -1, 0)),
             new OffsetEntry(new PathVector(-1, -1, 0), new PathVector(0, -1, 0), new PathVector(-1, 0, 0)),
             new OffsetEntry(new PathVector(-1, -1, 1), new PathVector(0, -1, 0), new PathVector(-1, 0, 0)),
+            new OffsetEntry(new PathVector(0, -1, -1), new PathVector(0, 0, -1), new PathVector(0, -1, 0)),
+            new OffsetEntry(new PathVector(0, -1, 0), new PathVector(0, -1, 0), new PathVector(0, 0, 0)),
+            new OffsetEntry(new PathVector(0, -1, 1), new PathVector(0, -1, 0), new PathVector(0, 0, 0)),
+            new OffsetEntry(new PathVector(1, -1, -1), new PathVector(1, 0, 0), new PathVector(0, -1, 0)),
+            new OffsetEntry(new PathVector(1, -1, 0), new PathVector(1, 0, 0), new PathVector(0, -1, 0)),
+            new OffsetEntry(new PathVector(1, -1, 1), new PathVector(1, 0, 0), new PathVector(0, -1, 0))
     }),
 
     MERGED(Stream.concat(Stream.of(DIAGONAL.getEntries()), Stream.of(VERTICAL_AND_HORIZONTAL.getEntries()))
