@@ -14,7 +14,6 @@ import org.patheloper.Pathetic;
 import org.patheloper.api.pathing.result.Path;
 import org.patheloper.api.pathing.strategy.PathfinderStrategy;
 import org.patheloper.api.snapshot.SnapshotManager;
-import org.patheloper.api.wrapper.PathBlock;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.api.wrapper.PathVector;
 import org.patheloper.model.pathing.Node;
@@ -276,28 +275,5 @@ public class NodeUtil {
 
         Collections.reverse(path); // make it the right order
         return path;
-    }
-
-    private static PathBlock getPathBlock(PathPosition target,
-                                          Offset offset,
-                                          SnapshotManager snapshotManager,
-                                          Set<PathPosition> newPositions,
-                                          Set<PathPosition> examinedPositions,
-                                          Set<PathPosition> nextPositions) {
-        for (PathPosition position : newPositions) {
-            for (Offset.OffsetEntry entry : offset.getEntries()) {
-
-                PathPosition offsetPosition = position.add(entry.getVector());
-                PathBlock pathBlock = snapshotManager.getBlock(offsetPosition);
-
-                if (pathBlock.isPassable() && !pathBlock.getPathPosition().isInSameBlock(target))
-                    return pathBlock;
-
-                if (!examinedPositions.contains(offsetPosition))
-                    nextPositions.add(offsetPosition);
-            }
-            examinedPositions.add(position);
-        }
-        return null;
     }
 }
