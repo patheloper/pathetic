@@ -124,7 +124,7 @@ public class NodeUtil {
             // Let's create the neighbour node and check if we can move to it
             Node cuttingNode = createNeighbourNode(currentNode, cornerCut);
             // If it's not invalid, we can move to the corner cut which means we can move to the new node
-            if (!isNodeInvalid(cuttingNode, nodeQueue, snapshotManager, examinedPositions, strategy))
+            if (!isCornerCutInvalid(cuttingNode, snapshotManager, strategy))
                 // We can move to the corner cut, so its valid so we add the new node to the examined positions
                 return examinedPositions.add(newNode.getPosition());
         }
@@ -229,6 +229,13 @@ public class NodeUtil {
                 || nodeQueue.contains(node)
                 || !isWithinWorldBounds(node.getPosition())
                 || !strategy.isValid(node.getPosition(), snapshotManager);
+    }
+    
+    private static boolean isCornerCutInvalid(Node cut,
+                                              SnapshotManager snapshotManager,
+                                              PathfinderStrategy strategy) {
+        return !isWithinWorldBounds(cut.getPosition())
+                || !strategy.isValid(cut.getPosition(), snapshotManager);
     }
 
     /**
