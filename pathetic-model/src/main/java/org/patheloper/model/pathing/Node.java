@@ -31,7 +31,7 @@ public class Node implements Comparable<Node> {
         this.parent = parent;
     }
 
-    public boolean isAtTarget() {
+    public boolean isTarget() {
         return this.position.getBlockX() == target.getBlockX()
                 && this.position.getBlockY() == target.getBlockY()
                 && this.position.getBlockZ() == target.getBlockZ();

@@ -54,7 +54,7 @@ public class AStarPathfinder extends AbstractPathfinder {
                 return finishPathing(PathState.LENGTH_LIMITED, currentNode);
             }
             
-            if (currentNode.isAtTarget()) {
+            if (currentNode.isTarget()) {
                 return finishPathing(PathState.FOUND, currentNode);
             }
             
