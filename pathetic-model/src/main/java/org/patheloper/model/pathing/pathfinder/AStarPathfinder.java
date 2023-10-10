@@ -6,7 +6,6 @@ import org.patheloper.api.pathing.result.PathState;
 import org.patheloper.api.pathing.result.PathfinderResult;
 import org.patheloper.api.pathing.rules.PathingRuleSet;
 import org.patheloper.api.pathing.strategy.PathfinderStrategy;
-import org.patheloper.api.snapshot.SnapshotManager;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.api.wrapper.PathVector;
 import org.patheloper.model.pathing.Node;
@@ -61,9 +60,7 @@ public class AStarPathfinder extends AbstractPathfinder {
             evaluateNewNodes(nodeQueue,
                     examinedPositions,
                     currentNode,
-                    offset,
                     strategy,
-                    snapshotManager,
                     this.pathingRuleSet.isAllowingDiagonal());
             depth++;
         }
@@ -148,24 +145,18 @@ public class AStarPathfinder extends AbstractPathfinder {
      * @param nodeQueue         the node queue to add new nodes to
      * @param examinedPositions a set of examined positions
      * @param currentNode       the current node
-     * @param offset            the offset to apply to the current node's position to find neighbours
      * @param strategy          the pathfinder strategy to use for validating nodes
-     * @param snapshotManager   the snapshot manager to use for validating nodes
      * @param allowingDiagonal  whether diagonal movement is allowed
      */
     private void evaluateNewNodes(Collection<Node> nodeQueue,
                                         Set<PathPosition> examinedPositions,
                                         Node currentNode,
-                                        Offset offset,
                                         PathfinderStrategy strategy,
-                                        SnapshotManager snapshotManager,
                                         boolean allowingDiagonal) {
         nodeQueue.addAll(fetchValidNeighbours(nodeQueue,
                 examinedPositions,
                 currentNode,
-                offset,
                 strategy,
-                snapshotManager,
                 allowingDiagonal));
     }
     
@@ -175,7 +166,6 @@ public class AStarPathfinder extends AbstractPathfinder {
      * @param currentNode       the node we are moving from
      * @param newNode           the node to validate
      * @param nodeQueue         the node queue to check for duplicates
-     * @param snapshotManager   the snapshot manager to use for validating nodes
      * @param examinedPositions a set of examined positions
      * @param strategy          the pathfinder strategy to use for validating nodes
      * @param allowingDiagonal
@@ -184,12 +174,11 @@ public class AStarPathfinder extends AbstractPathfinder {
     private boolean isNodeValid(Node currentNode,
                                       Node newNode,
                                       Collection<Node> nodeQueue,
-                                      SnapshotManager snapshotManager,
                                       Set<PathPosition> examinedPositions,
                                       PathfinderStrategy strategy,
-                                      PathVector[] cornerCuts,
+                                      Offset.CornerCuts cornerCuts,
                                       boolean allowingDiagonal) {
-        if (isNodeInvalid(newNode, nodeQueue, snapshotManager, examinedPositions, strategy))
+        if (isNodeInvalid(newNode, nodeQueue, examinedPositions, strategy))
             return false;
         
         /*
@@ -203,20 +192,28 @@ public class AStarPathfinder extends AbstractPathfinder {
             return examinedPositions.add(newNode.getPosition());
         
         // If there are no corner cuts, we can move to the new node because we are not moving diagonally.
-        if(cornerCuts.length == 0)
+        if(cornerCuts == null)
             return examinedPositions.add(newNode.getPosition());
         
-        for (PathVector cornerCut : cornerCuts) {
-            // Let's create the neighbour node and check if we can move to it
+        if(!areCornerCutsValid(currentNode, cornerCuts, strategy))
+            return false;
+        
+        return examinedPositions.add(newNode.getPosition());
+    }
+    
+    /**
+     * Checks if the corner cuts of this node are valid. Returns false if at least one of the corner cuts is invalid.
+     */
+    private boolean areCornerCutsValid(Node currentNode, Offset.CornerCuts cornerCuts, PathfinderStrategy strategy) {
+        if(cornerCuts == null) return true;
+        
+        for (PathVector cornerCut : cornerCuts.getCornerCuts()) {
             Node cuttingNode = createNeighbourNode(currentNode, cornerCut);
-            // If it's not invalid, we can move to the corner cut which means we can move to the new node
-            if (!isCornerCutInvalid(cuttingNode, snapshotManager, strategy))
-                // We can move to the corner cut, so its valid so we add the new node to the examined positions
-                return examinedPositions.add(newNode.getPosition());
+            if (isCornerCutInvalid(cuttingNode, strategy))
+                return false;
         }
         
-        // None of the corner cuts are valid, so we can't move to the new node
-        return false;
+        return true;
     }
     
     /**
@@ -234,16 +231,13 @@ public class AStarPathfinder extends AbstractPathfinder {
      * Fetches the neighbours of the given node.
      *
      * @param currentNode      the node to fetch neighbours for
-     * @param offset           the offset to apply to the current node's position to find neighbours
      * @param allowingDiagonal
      * @return a collection of neighbour nodes
      */
     private Collection<Node> fetchValidNeighbours(Collection<Node> nodeQueue,
                                                         Set<PathPosition> examinedPositions,
                                                         Node currentNode,
-                                                        Offset offset,
                                                         PathfinderStrategy strategy,
-                                                        SnapshotManager snapshotManager,
                                                         boolean allowingDiagonal) {
         Set<Node> newNodes = new HashSet<>(offset.getEntries().length);
         
@@ -252,7 +246,6 @@ public class AStarPathfinder extends AbstractPathfinder {
             
             if (isNodeValid(currentNode, newNode,
                     nodeQueue,
-                    snapshotManager,
                     examinedPositions,
                     strategy,
                     entry.getCornerCuts(),
@@ -296,7 +289,6 @@ public class AStarPathfinder extends AbstractPathfinder {
      */
     private boolean isNodeInvalid(Node node,
                                          Collection<Node> nodeQueue,
-                                         SnapshotManager snapshotManager,
                                          Set<PathPosition> examinedPositions,
                                          PathfinderStrategy strategy) {
         return examinedPositions.contains(node.getPosition())
@@ -308,11 +300,10 @@ public class AStarPathfinder extends AbstractPathfinder {
     /**
      * This method checks if the given corner cut is valid. Here we explicitly don't check for
      * the already examined positions and the node queue
-     * like in {@link #isNodeInvalid(Node, Collection, SnapshotManager, Set, PathfinderStrategy)}, because
+     * like in {@link #isNodeInvalid(Node, Collection, Set, PathfinderStrategy)}, because
      * this is not a node which is going to end in the node queue.
      */
     private boolean isCornerCutInvalid(Node cut,
-                                              SnapshotManager snapshotManager,
                                               PathfinderStrategy strategy) {
         return !isWithinWorldBounds(cut.getPosition())
                 || !strategy.isValid(cut.getPosition(), snapshotManager);

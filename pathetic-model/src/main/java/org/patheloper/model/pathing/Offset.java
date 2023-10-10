@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.patheloper.api.wrapper.PathVector;
 
+import javax.annotation.Nullable;
 import java.util.stream.Stream;
 
 @Getter
@@ -20,35 +21,28 @@ public enum Offset {
     }),
     
     DIAGONAL(new OffsetEntry[] {
-            new OffsetEntry(new PathVector(-1, 0, -1), new PathVector(-1, 0, 0), new PathVector(0, 0, -1)),
-            new OffsetEntry(new PathVector(-1, 0, 0), new PathVector(-1, 0, 0), new PathVector(0, 0, 0)),
-            new OffsetEntry(new PathVector(-1, 0, 1), new PathVector(0, 0, 1), new PathVector(-1, 0, 0)),
-            new OffsetEntry(new PathVector(0, 0, -1), new PathVector(0, 0, -1), new PathVector(0, 0, 0)),
-            new OffsetEntry(new PathVector(0, 0, 0), new PathVector(0, 0, 0), new PathVector(0, 0, 0)),
-            new OffsetEntry(new PathVector(0, 0, 1), new PathVector(0, 0, 1), new PathVector(0, 0, 0)),
-            new OffsetEntry(new PathVector(1, 0, -1), new PathVector(0, 0, -1), new PathVector(1, 0, 0)),
-            new OffsetEntry(new PathVector(1, 0, 0), new PathVector(1, 0, 0), new PathVector(0, 0, 0)),
-            new OffsetEntry(new PathVector(1, 0, 1), new PathVector(1, 0, 0), new PathVector(0, 0, 1)),
+            new OffsetEntry(new PathVector(-1, 0, -1), new CornerCuts(new PathVector(-1, 0, 0), new PathVector(0, 0, -1))),
+            new OffsetEntry(new PathVector(-1, 0, 1), new CornerCuts(new PathVector(0, 0, 1), new PathVector(-1, 0, 0))),
+            new OffsetEntry(new PathVector(1, 0, -1), new CornerCuts(new PathVector(0, 0, -1), new PathVector(1, 0, 0))),
+            new OffsetEntry(new PathVector(1, 0, 1), new CornerCuts(new PathVector(1, 0, 0), new PathVector(0, 0, 1))),
             
-            new OffsetEntry(new PathVector(-1, 1, -1), new PathVector(-1, 0, 0), new PathVector(0, 1, 0)),
-            new OffsetEntry(new PathVector(-1, 1, 0), new PathVector(0, 1, 0), new PathVector(-1, 0, 0)),
-            new OffsetEntry(new PathVector(-1, 1, 1), new PathVector(0, 1, 0), new PathVector(-1, 0, 0)),
-            new OffsetEntry(new PathVector(0, 1, -1), new PathVector(0, 0, -1), new PathVector(0, 1, 0)),
-            new OffsetEntry(new PathVector(0, 1, 0), new PathVector(0, 1, 0), new PathVector(0, 0, 0)),
-            new OffsetEntry(new PathVector(0, 1, 1), new PathVector(0, 1, 0), new PathVector(0, 0, 0)),
-            new OffsetEntry(new PathVector(1, 1, -1), new PathVector(1, 0, 0), new PathVector(0, 1, 0)),
-            new OffsetEntry(new PathVector(1, 1, 0), new PathVector(1, 0, 0), new PathVector(0, 1, 0)),
-            new OffsetEntry(new PathVector(1, 1, 1), new PathVector(1, 0, 0), new PathVector(0, 1, 0)),
+            new OffsetEntry(new PathVector(-1, 1, -1), new CornerCuts(new PathVector(-1, 0, 0), new PathVector(0, 1, 0))),
+            new OffsetEntry(new PathVector(-1, 1, 0)),
+            new OffsetEntry(new PathVector(-1, 1, 1), new CornerCuts(new PathVector(0, 1, 0), new PathVector(-1, 0, 0))),
+            new OffsetEntry(new PathVector(0, 1, -1)),
+            new OffsetEntry(new PathVector(0, 1, 1)),
+            new OffsetEntry(new PathVector(1, 1, -1), new CornerCuts(new PathVector(1, 0, 0), new PathVector(0, 1, 0))),
+            new OffsetEntry(new PathVector(1, 1, 0)),
+            new OffsetEntry(new PathVector(1, 1, 1), new CornerCuts(new PathVector(1, 0, 0), new PathVector(0, 1, 0))),
             
-            new OffsetEntry(new PathVector(-1, -1, -1), new PathVector(-1, 0, 0), new PathVector(0, -1, 0)),
-            new OffsetEntry(new PathVector(-1, -1, 0), new PathVector(0, -1, 0), new PathVector(-1, 0, 0)),
-            new OffsetEntry(new PathVector(-1, -1, 1), new PathVector(0, -1, 0), new PathVector(-1, 0, 0)),
-            new OffsetEntry(new PathVector(0, -1, -1), new PathVector(0, 0, -1), new PathVector(0, -1, 0)),
-            new OffsetEntry(new PathVector(0, -1, 0), new PathVector(0, -1, 0), new PathVector(0, 0, 0)),
-            new OffsetEntry(new PathVector(0, -1, 1), new PathVector(0, -1, 0), new PathVector(0, 0, 0)),
-            new OffsetEntry(new PathVector(1, -1, -1), new PathVector(1, 0, 0), new PathVector(0, -1, 0)),
-            new OffsetEntry(new PathVector(1, -1, 0), new PathVector(1, 0, 0), new PathVector(0, -1, 0)),
-            new OffsetEntry(new PathVector(1, -1, 1), new PathVector(1, 0, 0), new PathVector(0, -1, 0))
+            new OffsetEntry(new PathVector(-1, -1, -1), new CornerCuts(new PathVector(-1, 0, 0), new PathVector(0, -1, 0))),
+            new OffsetEntry(new PathVector(-1, -1, 0)),
+            new OffsetEntry(new PathVector(-1, -1, 1), new CornerCuts(new PathVector(0, -1, 0), new PathVector(-1, 0, 0))),
+            new OffsetEntry(new PathVector(0, -1, -1)),
+            new OffsetEntry(new PathVector(0, -1, 1)),
+            new OffsetEntry(new PathVector(1, -1, -1), new CornerCuts(new PathVector(1, 0, 0), new PathVector(0, -1, 0))),
+            new OffsetEntry(new PathVector(1, -1, 0)),
+            new OffsetEntry(new PathVector(1, -1, 1), new CornerCuts(new PathVector(1, 0, 0), new PathVector(0, -1, 0)))
     }),
 
     MERGED(Stream.concat(Stream.of(DIAGONAL.getEntries()), Stream.of(VERTICAL_AND_HORIZONTAL.getEntries()))
@@ -60,10 +54,24 @@ public enum Offset {
     public final static class OffsetEntry {
 
         private final PathVector vector;
-        private final PathVector[] cornerCuts;
+        private final CornerCuts cornerCuts;
+        
+        OffsetEntry(PathVector vector) {
+            this(vector, null);
+        }
 
-        OffsetEntry(PathVector vector, PathVector... cornerCuts) {
+        OffsetEntry(PathVector vector, @Nullable CornerCuts cornerCuts) {
             this.vector = vector;
+            this.cornerCuts = cornerCuts;
+        }
+    }
+    
+    @Getter
+    public final static class CornerCuts {
+        
+        private final PathVector[] cornerCuts;
+        
+        CornerCuts(PathVector... cornerCuts) {
             this.cornerCuts = cornerCuts;
         }
     }

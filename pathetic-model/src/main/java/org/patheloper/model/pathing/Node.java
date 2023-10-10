@@ -46,11 +46,9 @@ public class Node implements Comparable<Node> {
         double octileWeight = 0.3;
         double perpendicularWeight = 0.1;
         
-        double totalHeuristic = manhattanDistance * manhattanWeight +
+        return manhattanDistance * manhattanWeight +
                 octileDistance * octileWeight +
                 perpendicularDistance * perpendicularWeight;
-        
-        return totalHeuristic;
     }
 
     private double calculatePerpendicularDistance() {
