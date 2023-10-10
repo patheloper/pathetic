@@ -39,8 +39,18 @@ public class Node implements Comparable<Node> {
     
     private double heuristic() {
         double manhattanDistance = this.position.manhattanDistance(target);
+        double octileDistance = this.position.octileDistance(target);
         double perpendicularDistance = calculatePerpendicularDistance();
-        return manhattanDistance * 0.8 + perpendicularDistance * 0.2;
+        
+        double manhattanWeight = 0.6;
+        double octileWeight = 0.3;
+        double perpendicularWeight = 0.1;
+        
+        double totalHeuristic = manhattanDistance * manhattanWeight +
+                octileDistance * octileWeight +
+                perpendicularDistance * perpendicularWeight;
+        
+        return totalHeuristic;
     }
 
     private double calculatePerpendicularDistance() {
