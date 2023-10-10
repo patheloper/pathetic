@@ -17,7 +17,6 @@ public final class PatheticPlugin extends JavaPlugin {
 
         // Then you can use the PatheticMapper to get your own Pathfinder instance with your own set rules.
         Pathfinder reusablePathfinder = PatheticMapper.newPathfinder(PathingRuleSet.createAsyncRuleSet()
-                .withAllowingDiagonal(true)
                 .withAllowingFailFast(true)
                 .withAllowingFallback(true)
                 .withLoadingChunks(true));
