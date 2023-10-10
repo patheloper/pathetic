@@ -168,7 +168,7 @@ public class AStarPathfinder extends AbstractPathfinder {
      * @param nodeQueue         the node queue to check for duplicates
      * @param examinedPositions a set of examined positions
      * @param strategy          the pathfinder strategy to use for validating nodes
-     * @param allowingDiagonal
+     * @param allowingDiagonal  whether we are allowing diagonal movement
      * @return {@code true} if the node is valid and can be added to the node queue, {@code false} otherwise
      */
     private boolean isNodeValid(Node currentNode,
@@ -176,7 +176,7 @@ public class AStarPathfinder extends AbstractPathfinder {
                                       Collection<Node> nodeQueue,
                                       Set<PathPosition> examinedPositions,
                                       PathfinderStrategy strategy,
-                                      Offset.CornerCuts cornerCuts,
+                                      Offset.CornerCut[] cornerCuts,
                                       boolean allowingDiagonal) {
         if (isNodeInvalid(newNode, nodeQueue, examinedPositions, strategy))
             return false;
@@ -192,7 +192,7 @@ public class AStarPathfinder extends AbstractPathfinder {
             return examinedPositions.add(newNode.getPosition());
         
         // If there are no corner cuts, we can move to the new node because we are not moving diagonally.
-        if(cornerCuts == null)
+        if(cornerCuts == null || cornerCuts.length == 0)
             return examinedPositions.add(newNode.getPosition());
         
         if(!areCornerCutsValid(currentNode, cornerCuts, strategy))
@@ -202,17 +202,30 @@ public class AStarPathfinder extends AbstractPathfinder {
     }
     
     /**
-     * Checks if the corner cuts of this node are valid. Returns false if at least one of the corner cuts is invalid.
+     * Checks if the corner cuts of this node are valid. Returns true if any of the cuts are valid.
      */
-    private boolean areCornerCutsValid(Node currentNode, Offset.CornerCuts cornerCuts, PathfinderStrategy strategy) {
-        if(cornerCuts == null) return true;
+    private boolean areCornerCutsValid(Node currentNode, Offset.CornerCut[] cornerCuts, PathfinderStrategy strategy) {
+        if (cornerCuts == null) return true;
+
+        for (Offset.CornerCut cornerCut : cornerCuts) {
+            // Ok. So we only need one of these to be valid
+            if (this.testCornerCut(currentNode, cornerCut, strategy))
+                return true;
+        }
         
-        for (PathVector cornerCut : cornerCuts.getCornerCuts()) {
-            Node cuttingNode = createNeighbourNode(currentNode, cornerCut);
+        return false;
+    }
+
+    /**
+     * Tests the corner cut for all its vectors.
+     */
+    private boolean testCornerCut(Node currentNode, Offset.CornerCut cornerCut, PathfinderStrategy strategy) {
+        // cornerCut.getVectors() must all be valid
+        for (PathVector vector : cornerCut.getVectors()) {
+            Node cuttingNode = createNeighbourNode(currentNode, vector);
             if (isCornerCutInvalid(cuttingNode, strategy))
                 return false;
         }
-        
         return true;
     }
     
@@ -303,8 +316,7 @@ public class AStarPathfinder extends AbstractPathfinder {
      * like in {@link #isNodeInvalid(Node, Collection, Set, PathfinderStrategy)}, because
      * this is not a node which is going to end in the node queue.
      */
-    private boolean isCornerCutInvalid(Node cut,
-                                              PathfinderStrategy strategy) {
+    private boolean isCornerCutInvalid(Node cut, PathfinderStrategy strategy) {
         return !isWithinWorldBounds(cut.getPosition())
                 || !strategy.isValid(cut.getPosition(), snapshotManager);
     }
