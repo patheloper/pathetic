@@ -195,7 +195,7 @@ public class AStarPathfinder extends AbstractPathfinder {
         if(!isDiagonalMove(currentNode, newNode))
             return examinedPositions.add(newNode.getPosition());
 
-        return isReachable(currentNode, newNode) && examinedPositions.add(newNode.getPosition());
+        return isReachable(currentNode, newNode, strategy) && examinedPositions.add(newNode.getPosition());
     }
     
     /**
