@@ -1,6 +1,7 @@
 package org.patheloper.model.pathing.pathfinder;
 
 import lombok.NonNull;
+import org.patheloper.api.pathing.Pathfinder;
 import org.patheloper.api.pathing.result.Path;
 import org.patheloper.api.pathing.result.PathState;
 import org.patheloper.api.pathing.result.PathfinderResult;
@@ -211,7 +212,7 @@ public class AStarPathfinder extends AbstractPathfinder {
      * Returns whether the diagonal jump is possible by checking if the adjacent nodes are passable or not.
      * With adjacent nodes are the shared overlapping neighbours meant.
      */
-    private boolean isReachable(Node from, Node to) {
+    private boolean isReachable(Node from, Node to, PathfinderStrategy strategy) {
         boolean hasYDifference = from.getPosition().getBlockY() != to.getPosition().getBlockY();
         PathVector[] offsets = Offset.VERTICAL_AND_HORIZONTAL.getVectors();
      
@@ -229,8 +230,7 @@ public class AStarPathfinder extends AbstractPathfinder {
                      *  depending on the Y difference
                      */
                     boolean heightDifferencePassable = isHeightDifferencePassable(from, to, vector1, hasYDifference);
-                    if(snapshotManager.getBlock(neighbour1.getPosition()).isPassable() &&
-                            heightDifferencePassable)
+                    if(strategy.isValid(neighbour1.getPosition(), snapshotManager) && heightDifferencePassable)
                         return true;
                 }
             }
