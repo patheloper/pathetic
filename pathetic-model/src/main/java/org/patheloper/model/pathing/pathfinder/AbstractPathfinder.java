@@ -15,6 +15,7 @@ import org.patheloper.api.pathing.strategy.strategies.DirectPathfinderStrategy;
 import org.patheloper.api.snapshot.SnapshotManager;
 import org.patheloper.api.wrapper.PathBlock;
 import org.patheloper.api.wrapper.PathPosition;
+import org.patheloper.api.wrapper.PathVector;
 import org.patheloper.bukkit.event.EventPublisher;
 import org.patheloper.model.pathing.Offset;
 import org.patheloper.model.pathing.result.PathImpl;
@@ -121,9 +122,9 @@ abstract class AbstractPathfinder implements Pathfinder {
     }
 
     private boolean isBlockUnreachable(PathPosition position) {
-        for(Offset.OffsetEntry offset : offset.getEntries()) {
+        for(PathVector vector : offset.getVectors()) {
             
-            PathPosition offsetPosition = position.add(offset.getVector());
+            PathPosition offsetPosition = position.add(vector);
             PathBlock pathBlock = this.getSnapshotManager().getBlock(offsetPosition);
             
             if (pathBlock == null)

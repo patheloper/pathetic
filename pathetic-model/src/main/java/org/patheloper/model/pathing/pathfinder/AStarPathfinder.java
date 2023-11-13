@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Set;
+import java.util.Vector;
 
 /**
  * A pathfinder that uses the A* algorithm.
@@ -176,7 +177,6 @@ public class AStarPathfinder extends AbstractPathfinder {
                                       Collection<Node> nodeQueue,
                                       Set<PathPosition> examinedPositions,
                                       PathfinderStrategy strategy,
-                                      Offset.CornerCut[] cornerCuts,
                                       boolean allowingDiagonal) {
         if (isNodeInvalid(newNode, nodeQueue, examinedPositions, strategy))
             return false;
@@ -191,42 +191,56 @@ public class AStarPathfinder extends AbstractPathfinder {
         if (!allowingDiagonal)
             return examinedPositions.add(newNode.getPosition());
         
-        // If there are no corner cuts, we can move to the new node because we are not moving diagonally.
-        if(cornerCuts == null || cornerCuts.length == 0)
+        if(!isDiagonalMove(currentNode, newNode))
             return examinedPositions.add(newNode.getPosition());
-        
-        if(!areCornerCutsValid(currentNode, cornerCuts, strategy))
-            return false;
-        
-        return examinedPositions.add(newNode.getPosition());
+
+        return isReachable(currentNode, newNode) && examinedPositions.add(newNode.getPosition());
     }
     
     /**
-     * Checks if the corner cuts of this node are valid. Returns true if any of the cuts are valid.
+     * Returns whether the given nodes are diagonal to each other.
      */
-    private boolean areCornerCutsValid(Node currentNode, Offset.CornerCut[] cornerCuts, PathfinderStrategy strategy) {
-        if (cornerCuts == null) return true;
-
-        for (Offset.CornerCut cornerCut : cornerCuts) {
-            // Ok. So we only need one of these to be valid
-            if (this.testCornerCut(currentNode, cornerCut, strategy))
-                return true;
-        }
+    private boolean isDiagonalMove(Node from, Node to) {
+        int xDifference = Math.abs(from.getPosition().getBlockX() - to.getPosition().getBlockX());
+        int zDifference = Math.abs(from.getPosition().getBlockZ() - to.getPosition().getBlockZ());
         
-        return false;
+        return xDifference != 0 && zDifference != 0;
     }
-
+    
     /**
-     * Tests the corner cut for all its vectors.
+     * Returns whether the diagonal jump is possible by checking if the adjacent nodes are passable or not.
+     * With adjacent nodes are the shared overlapping neighbours meant.
      */
-    private boolean testCornerCut(Node currentNode, Offset.CornerCut cornerCut, PathfinderStrategy strategy) {
-        // cornerCut.getVectors() must all be valid
-        for (PathVector vector : cornerCut.getVectors()) {
-            Node cuttingNode = createNeighbourNode(currentNode, vector);
-            if (isCornerCutInvalid(cuttingNode, strategy))
-                return false;
+    private boolean isReachable(Node from, Node to) {
+        boolean hasYDifference = from.getPosition().getBlockY() != to.getPosition().getBlockY();
+        PathVector[] offsets = Offset.VERTICAL_AND_HORIZONTAL.getVectors();
+     
+        for(PathVector vector1 : offsets) {
+            if(vector1.getY() != 0) continue;
+            
+            Node neighbour1 = createNeighbourNode(from, vector1);
+            for(PathVector vector2 : offsets) {
+                if(vector2.getY() != 0) continue;
+                
+                Node neighbour2 = createNeighbourNode(to, vector2);
+                if(neighbour1.getPosition().equals(neighbour2.getPosition())) {
+                    // if it has a Y difference, we also need to check the nodes above or below, depending on the Y difference
+                    boolean heightDifferencePassable = true;
+                    if(hasYDifference) {
+                        int yDifference = from.getPosition().getBlockY() - to.getPosition().getBlockY();
+                        Node neighbour3 = createNeighbourNode(from, vector1.add(new PathVector(0, yDifference, 0)));
+                        
+                        heightDifferencePassable = snapshotManager.getBlock(neighbour3.getPosition()).isPassable();
+                    }
+                    
+                    if(snapshotManager.getBlock(neighbour1.getPosition()).isPassable() &&
+                            heightDifferencePassable)
+                        return true;
+                }
+            }
         }
-        return true;
+
+        return false;
     }
     
     /**
@@ -252,16 +266,15 @@ public class AStarPathfinder extends AbstractPathfinder {
                                                         Node currentNode,
                                                         PathfinderStrategy strategy,
                                                         boolean allowingDiagonal) {
-        Set<Node> newNodes = new HashSet<>(offset.getEntries().length);
+        Set<Node> newNodes = new HashSet<>(offset.getVectors().length);
         
-        for (Offset.OffsetEntry entry : offset.getEntries()) {
-            Node newNode = createNeighbourNode(currentNode, entry.getVector());
+        for (PathVector vector : offset.getVectors()) {
+            Node newNode = createNeighbourNode(currentNode, vector);
             
             if (isNodeValid(currentNode, newNode,
                     nodeQueue,
                     examinedPositions,
                     strategy,
-                    entry.getCornerCuts(),
                     allowingDiagonal)) {
                 newNodes.add(newNode);
             }
@@ -308,17 +321,6 @@ public class AStarPathfinder extends AbstractPathfinder {
                 || nodeQueue.contains(node)
                 || !isWithinWorldBounds(node.getPosition())
                 || !strategy.isValid(node.getPosition(), snapshotManager);
-    }
-    
-    /**
-     * This method checks if the given corner cut is valid. Here we explicitly don't check for
-     * the already examined positions and the node queue
-     * like in {@link #isNodeInvalid(Node, Collection, Set, PathfinderStrategy)}, because
-     * this is not a node which is going to end in the node queue.
-     */
-    private boolean isCornerCutInvalid(Node cut, PathfinderStrategy strategy) {
-        return !isWithinWorldBounds(cut.getPosition())
-                || !strategy.isValid(cut.getPosition(), snapshotManager);
     }
     
     /**
