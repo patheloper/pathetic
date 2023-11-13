@@ -1,6 +1,7 @@
 # Pathetic
 
-A simple and intuitive 1.8-1.20 A* pathfinding API for Spigot & Paper plugins 
+Pathetic is a simple and intuitive backwards-compatible up-to-date pathfinding API for Spigot and forks.
+See more info here: https://www.spigotmc.org/threads/how-pathetic.578998/#post-4644823
 
 ### How to import
 
@@ -48,7 +49,7 @@ public class PathExample extends JavaPlugin {
     private void goFindSomePath(PathPosition start, PathPosition end) {
 
         Pathfinder pathfinder = PatheticMapper.newPathfinder();
-        pathfinder.findPath(start, end).thenAccept(pathfinderResult ->
+        pathfinder.findPath(start, end, new DirectPathfinderStrategy()).thenAccept(pathfinderResult ->
                 pathfinderResult.getPath().getPositions().forEach(location ->
                         player.sendBlockChange(location, Material.YELLOW_STAINED_GLASS.createBlockData())));
     }
