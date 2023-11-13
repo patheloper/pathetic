@@ -224,15 +224,11 @@ public class AStarPathfinder extends AbstractPathfinder {
                 
                 Node neighbour2 = createNeighbourNode(to, vector2);
                 if(neighbour1.getPosition().equals(neighbour2.getPosition())) {
-                    // if it has a Y difference, we also need to check the nodes above or below, depending on the Y difference
-                    boolean heightDifferencePassable = true;
-                    if(hasYDifference) {
-                        int yDifference = from.getPosition().getBlockY() - to.getPosition().getBlockY();
-                        Node neighbour3 = createNeighbourNode(from, vector1.add(new PathVector(0, yDifference, 0)));
-                        
-                        heightDifferencePassable = snapshotManager.getBlock(neighbour3.getPosition()).isPassable();
-                    }
-                    
+                    /*
+                     * if it has a Y difference, we also need to check the nodes above or below,
+                     *  depending on the Y difference
+                     */
+                    boolean heightDifferencePassable = isHeightDifferencePassable(from, to, vector1, hasYDifference);
                     if(snapshotManager.getBlock(neighbour1.getPosition()).isPassable() &&
                             heightDifferencePassable)
                         return true;
@@ -241,6 +237,19 @@ public class AStarPathfinder extends AbstractPathfinder {
         }
 
         return false;
+    }
+    
+    /**
+     * Return whether the height difference between the given nodes is passable.
+     * If the nodes have no height difference, this will always return true.
+     */
+    private boolean isHeightDifferencePassable(Node from, Node to, PathVector vector1, boolean hasYDifference) {
+        if(!hasYDifference) return true;
+        
+        int yDifference = from.getPosition().getBlockY() - to.getPosition().getBlockY();
+        Node neighbour3 = createNeighbourNode(from, vector1.add(new PathVector(0, yDifference, 0)));
+        
+        return snapshotManager.getBlock(neighbour3.getPosition()).isPassable();
     }
     
     /**
