@@ -32,7 +32,10 @@ public final class PathBlock {
     public boolean isPassable() {
         return isAir() || this.pathBlockType == PathBlockType.OTHER;
     }
-
+    
+    /**
+     * @return Whether the block is solid
+     */
     public boolean isSolid() {
         return this.pathBlockType == PathBlockType.SOLID;
     }
