@@ -1,7 +1,6 @@
 package org.patheloper.model.pathing.pathfinder;
 
 import lombok.NonNull;
-import org.patheloper.api.pathing.Pathfinder;
 import org.patheloper.api.pathing.result.Path;
 import org.patheloper.api.pathing.result.PathState;
 import org.patheloper.api.pathing.result.PathfinderResult;
@@ -24,7 +23,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Set;
-import java.util.Vector;
 
 /**
  * A pathfinder that uses the A* algorithm.

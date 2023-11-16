@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
-import java.util.Objects;
-
 /**
  * A Class to represent a block in the world, except exempt of Bukkit
  */
