@@ -69,8 +69,8 @@ public class FailingSnapshotManager implements SnapshotManager {
                     position.getBlockX() - chunkX * 16,
                     position.getBlockY(),
                     position.getBlockZ() - chunkZ * 16);
-            PathBlockType pathBlockType = PathBlockType.fromMaterial(material);
-            return Optional.of(new PathBlock(position, pathBlockType, material.name()));
+            PathBlockType pathBlockType = new PathBlockType(material);
+            return Optional.of(new PathBlock(position, pathBlockType));
         }
 
         return Optional.empty();
@@ -149,10 +149,9 @@ public class FailingSnapshotManager implements SnapshotManager {
                     pathPosition.getBlockX() - chunkX * 16,
                     pathPosition.getBlockY(),
                     pathPosition.getBlockZ() - chunkZ * 16);
-            PathBlockType pathBlockType = PathBlockType
-                    .fromMaterial(material);
-
-            return new PathBlock(pathPosition, pathBlockType, material.name());
+            
+            PathBlockType pathBlockType = new PathBlockType(material);
+            return new PathBlock(pathPosition, pathBlockType);
         }
 
         @Override

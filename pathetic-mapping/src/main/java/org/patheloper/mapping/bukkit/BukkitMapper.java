@@ -61,8 +61,7 @@ public class BukkitMapper {
                 block.getX(),
                 block.getY(),
                 block.getZ()),
-                PathBlockType.fromMaterial(block.getType()),
-                block.getType().name());
+                new PathBlockType(block.getType()));
     }
 
     public World toWorld(@NonNull PathEnvironment pathEnvironment) {

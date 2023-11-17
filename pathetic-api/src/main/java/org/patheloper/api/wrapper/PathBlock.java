@@ -16,27 +16,26 @@ public final class PathBlock {
 
     private final PathPosition pathPosition;
     private final PathBlockType pathBlockType;
-    private final String blockName;
 
     /**
      * @return Whether the block is air
      */
     public boolean isAir() {
-        return this.pathBlockType == PathBlockType.AIR;
+        return this.pathBlockType.getCondition() == PathBlockType.PathBlockCondition.AIR;
     }
 
     /**
      * @return Whether the block is possible to walk through
      */
     public boolean isPassable() {
-        return isAir() || this.pathBlockType == PathBlockType.OTHER;
+        return isAir() || this.pathBlockType.getCondition() == PathBlockType.PathBlockCondition.OTHER;
     }
     
     /**
      * @return Whether the block is solid
      */
     public boolean isSolid() {
-        return this.pathBlockType == PathBlockType.SOLID;
+        return this.pathBlockType.getCondition() == PathBlockType.PathBlockCondition.SOLID;
     }
 
     /**
