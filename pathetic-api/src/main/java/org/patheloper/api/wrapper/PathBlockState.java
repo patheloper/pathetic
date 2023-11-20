@@ -34,4 +34,8 @@ public class PathBlockState {
     public byte getLightLevel() {
         return this.blockState.getLightLevel();
     }
+
+    public BlockState getBukkitBlockState() {
+        return this.blockState;
+    }
 }
