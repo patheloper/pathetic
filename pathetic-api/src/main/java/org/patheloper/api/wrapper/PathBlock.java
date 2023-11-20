@@ -4,7 +4,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import org.bukkit.block.BlockState;
 
 /**
  * A Class to represent a block in the world, except exempt of Bukkit
@@ -17,7 +16,7 @@ public final class PathBlock {
 
     private final PathPosition pathPosition;
     private final PathBlockType pathBlockType;
-    private final BlockState blockState;
+    private final PathBlockState blockState;
 
     /**
      * @return Whether the block is air
@@ -65,14 +64,5 @@ public final class PathBlock {
      */
     public int getBlockZ() {
         return this.pathPosition.getBlockZ();
-    }
-
-    /**
-     * Gets the Bukkit BlockState of the block. This will return null if the version is 1.12 or below
-     *
-     * @return The Bukkit BlockState of the block
-     */
-    public BlockState getBlockState() {
-        return this.blockState;
     }
 }

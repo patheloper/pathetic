@@ -8,6 +8,7 @@ import org.bukkit.World;
 import org.bukkit.block.BlockState;
 import org.patheloper.api.snapshot.SnapshotManager;
 import org.patheloper.api.wrapper.PathBlock;
+import org.patheloper.api.wrapper.PathBlockState;
 import org.patheloper.api.wrapper.PathBlockType;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.api.wrapper.PathEnvironment;
@@ -73,7 +74,8 @@ public class FailingSnapshotManager implements SnapshotManager {
                     x, position.getBlockY(), z);
             PathBlockType pathBlockType = new PathBlockType(material);
             BlockState blockState = ChunkUtils.getBlockState(chunkSnapshotOptional.get(), x, position.getBlockY(), z);
-            return Optional.of(new PathBlock(position, pathBlockType, blockState));
+            return Optional.of(new PathBlock(position, pathBlockType,
+                    blockState == null ? PathBlockState.EMPTY_PATH_BLOCK_STATE : new PathBlockState(blockState)));
         }
 
         return Optional.empty();
@@ -155,7 +157,8 @@ public class FailingSnapshotManager implements SnapshotManager {
             
             PathBlockType pathBlockType = new PathBlockType(material);
             BlockState blockState = ChunkUtils.getBlockState(chunkSnapshot, x, pathPosition.getBlockY(), z);
-            return new PathBlock(pathPosition, pathBlockType, blockState);
+            return new PathBlock(pathPosition, pathBlockType,
+                    blockState == null ? PathBlockState.EMPTY_PATH_BLOCK_STATE : new PathBlockState(blockState));
         }
 
         @Override
