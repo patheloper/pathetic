@@ -1,6 +1,5 @@
 package org.patheloper.api.wrapper;
 
-import com.google.common.base.Preconditions;
 import lombok.Getter;
 import lombok.Value;
 import org.bukkit.Material;
@@ -20,9 +19,12 @@ public class PathBlockType {
         this.condition = PathBlockCondition.fromMaterial(material);
     }
 
-    public boolean equals(PathBlockType other) {
-        Preconditions.checkArgument(other != null, "Cannot compare to null");
-        return this.material == other.material;
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        if (!(obj instanceof PathBlockType)) return false;
+
+        return this.material == ((PathBlockType) obj).material;
     }
 
     public enum PathBlockCondition {
