@@ -51,7 +51,7 @@ public enum Offset {
             new PathVector(1, -1, 1)
     }),
 
-    MERGED(Stream.concat(Stream.of(DIAGONAL.getVectors()), Stream.of(VERTICAL_AND_HORIZONTAL.getVectors()))
+    MERGED(Stream.concat(Stream.of(DIAGONAL.vectors), Stream.of(VERTICAL_AND_HORIZONTAL.vectors))
             .toArray(PathVector[]::new));
 
     private final PathVector[] vectors;

@@ -16,7 +16,7 @@ public final class PathBlock {
 
     private final PathPosition pathPosition;
     private final PathBlockType pathBlockType;
-    private final PathBlockState blockState;
+    private final PathBlockState pathBlockState;
 
     /**
      * @return Whether the block is air
