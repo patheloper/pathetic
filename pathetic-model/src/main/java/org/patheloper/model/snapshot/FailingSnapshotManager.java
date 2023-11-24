@@ -7,9 +7,8 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
 import org.patheloper.api.snapshot.SnapshotManager;
+import org.patheloper.api.wrapper.BlockInformation;
 import org.patheloper.api.wrapper.PathBlock;
-import org.patheloper.api.wrapper.PathBlockState;
-import org.patheloper.api.wrapper.PathBlockType;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.api.wrapper.PathEnvironment;
 import org.patheloper.model.snapshot.world.WorldDomain;
@@ -70,12 +69,9 @@ public class FailingSnapshotManager implements SnapshotManager {
             int x = position.getBlockX() - chunkX * 16;
             int z = position.getBlockZ() - chunkZ * 16;
 
-            Material material = ChunkUtils.getMaterial(chunkSnapshotOptional.get(),
-                    x, position.getBlockY(), z);
-            PathBlockType pathBlockType = new PathBlockType(material);
+            Material material = ChunkUtils.getMaterial(chunkSnapshotOptional.get(), x, position.getBlockY(), z);
             BlockState blockState = ChunkUtils.getBlockState(chunkSnapshotOptional.get(), x, position.getBlockY(), z);
-            return Optional.of(new PathBlock(position, pathBlockType,
-                    blockState == null ? PathBlockState.EMPTY_PATH_BLOCK_STATE : new PathBlockState(blockState)));
+            return Optional.of(new PathBlock(position, new BlockInformation(material, blockState)));
         }
 
         return Optional.empty();
@@ -152,13 +148,10 @@ public class FailingSnapshotManager implements SnapshotManager {
             ChunkSnapshot chunkSnapshot = retrieveSnapshot(pathPosition);
             int x = pathPosition.getBlockX() - chunkX * 16;
             int z = pathPosition.getBlockZ() - chunkZ * 16;
-            Material material = ChunkUtils.getMaterial(chunkSnapshot,
-                    x, pathPosition.getBlockY(), z);
-            
-            PathBlockType pathBlockType = new PathBlockType(material);
+
+            Material material = ChunkUtils.getMaterial(chunkSnapshot, x, pathPosition.getBlockY(), z);
             BlockState blockState = ChunkUtils.getBlockState(chunkSnapshot, x, pathPosition.getBlockY(), z);
-            return new PathBlock(pathPosition, pathBlockType,
-                    blockState == null ? PathBlockState.EMPTY_PATH_BLOCK_STATE : new PathBlockState(blockState));
+            return new PathBlock(pathPosition, new BlockInformation(material, blockState));
         }
 
         @Override

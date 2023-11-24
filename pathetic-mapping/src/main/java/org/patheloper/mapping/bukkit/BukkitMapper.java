@@ -7,12 +7,11 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
+import org.patheloper.api.wrapper.BlockInformation;
 import org.patheloper.api.wrapper.PathBlock;
-import org.patheloper.api.wrapper.PathBlockState;
-import org.patheloper.api.wrapper.PathBlockType;
+import org.patheloper.api.wrapper.PathEnvironment;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.api.wrapper.PathVector;
-import org.patheloper.api.wrapper.PathEnvironment;
 import org.patheloper.util.ErrorLogger;
 
 import java.util.Arrays;
@@ -62,8 +61,7 @@ public class BukkitMapper {
                 block.getX(),
                 block.getY(),
                 block.getZ()),
-                new PathBlockType(block.getType()),
-                new PathBlockState(block.getState()));
+                new BlockInformation(block.getType(), block.getState()));
     }
 
     public World toWorld(@NonNull PathEnvironment pathEnvironment) {

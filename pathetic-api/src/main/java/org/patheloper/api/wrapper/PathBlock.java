@@ -15,28 +15,27 @@ import lombok.ToString;
 public final class PathBlock {
 
     private final PathPosition pathPosition;
-    private final PathBlockType pathBlockType;
-    private final PathBlockState pathBlockState;
+    private final BlockInformation blockInformation;
 
     /**
      * @return Whether the block is air
      */
     public boolean isAir() {
-        return this.pathBlockType.getCondition() == PathBlockType.PathBlockCondition.AIR;
+        return blockInformation.getMaterial().isAir();
     }
 
     /**
      * @return Whether the block is possible to walk through
      */
     public boolean isPassable() {
-        return isAir() || this.pathBlockType.getCondition() == PathBlockType.PathBlockCondition.OTHER;
+        return !isSolid();
     }
     
     /**
      * @return Whether the block is solid
      */
     public boolean isSolid() {
-        return this.pathBlockType.getCondition() == PathBlockType.PathBlockCondition.SOLID;
+        return blockInformation.getMaterial().isSolid();
     }
 
     /**
