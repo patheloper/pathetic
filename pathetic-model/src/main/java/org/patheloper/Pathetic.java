@@ -4,6 +4,7 @@ import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.patheloper.bukkit.listeners.ChunkInvalidateListener;
+import org.patheloper.util.BukkitVersionUtil;
 import org.patheloper.util.ErrorLogger;
 
 @UtilityClass
@@ -21,6 +22,10 @@ public class Pathetic {
 
         instance = javaPlugin;
         Bukkit.getPluginManager().registerEvents(new ChunkInvalidateListener(), javaPlugin);
+
+        if(BukkitVersionUtil.getVersion().isUnder(13, 0))
+            javaPlugin.getLogger().warning("pathetic is currently running in a version older than 1.13. " +
+                    "Some functionalities might not be accessible, such as accessing the BlockState of certain blocks.");
 
         javaPlugin.getLogger().info("pathetic successfully initialized");
     }

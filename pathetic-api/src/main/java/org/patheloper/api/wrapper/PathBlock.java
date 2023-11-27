@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
-import java.util.Objects;
-
 /**
  * A Class to represent a block in the world, except exempt of Bukkit
  */
@@ -17,24 +15,27 @@ import java.util.Objects;
 public final class PathBlock {
 
     private final PathPosition pathPosition;
-    private final PathBlockType pathBlockType;
+    private final BlockInformation blockInformation;
 
     /**
      * @return Whether the block is air
      */
     public boolean isAir() {
-        return this.pathBlockType == PathBlockType.AIR;
+        return blockInformation.getMaterial().isAir();
     }
 
     /**
      * @return Whether the block is possible to walk through
      */
     public boolean isPassable() {
-        return isAir() || this.pathBlockType == PathBlockType.OTHER;
+        return !isSolid();
     }
-
+    
+    /**
+     * @return Whether the block is solid
+     */
     public boolean isSolid() {
-        return this.pathBlockType == PathBlockType.SOLID;
+        return blockInformation.getMaterial().isSolid();
     }
 
     /**

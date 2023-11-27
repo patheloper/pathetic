@@ -1,7 +1,6 @@
 package org.patheloper.api.pathing.result;
 
 import lombok.NonNull;
-import org.patheloper.api.annotation.Experimental;
 import org.patheloper.api.util.ParameterizedSupplier;
 import org.patheloper.api.wrapper.PathPosition;
 
