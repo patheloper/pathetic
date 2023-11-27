@@ -14,8 +14,17 @@ import javax.annotation.Nullable;
 @EqualsAndHashCode
 public class BlockInformation {
 
+    /**
+     * The material of the represented block
+     */
     @NonNull
     Material material;
-    @Nullable // in case pathetic is used in v. 1.13 or below
+    /**
+     * The block state of the represented block
+     * -- GETTER --
+     * Gets the block state of the represented block
+     * @api.Note This is only available in v. 1.13 or above and therefore nullable
+     */
+    @Nullable
     BlockState blockState;
 }
