@@ -13,19 +13,6 @@ import java.util.concurrent.CompletionStage;
 public interface Pathfinder {
 
     /**
-     * Tries to find a Path between the two {@link PathPosition}'s provided directly.
-     *
-     * @see org.patheloper.api.pathing.strategy.strategies.DirectPathfinderStrategy
-     *
-     * @return An {@link CompletionStage} that will contain a {@link PathfinderResult}.
-     *
-     * @deprecated Use {@link #findPath(PathPosition, PathPosition, PathfinderStrategy)} instead.
-     */
-    @NonNull
-    @Deprecated
-    CompletionStage<PathfinderResult> findPath(@NonNull PathPosition start, @NonNull PathPosition target);
-    
-    /**
      * Tries to find a Path between the two {@link PathPosition}'s provided with the given strategy.
      *
      * @param strategy The {@link PathfinderStrategy} to use
