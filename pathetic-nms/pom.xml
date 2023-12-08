@@ -29,6 +29,13 @@
 
         <dependency>
             <groupId>org.patheloper</groupId>
+            <artifactId>v1_20_R3</artifactId>
+            <version>2.2.1</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.patheloper</groupId>
             <artifactId>v1_20_R2</artifactId>
             <version>2.2.1</version>
             <scope>compile</scope>
