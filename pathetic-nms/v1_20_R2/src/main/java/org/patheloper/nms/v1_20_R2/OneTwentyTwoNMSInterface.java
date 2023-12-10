@@ -1,4 +1,4 @@
-package org.patheloper.nms;
+package org.patheloper.nms.v1_20_R2;
 
 import net.minecraft.server.level.WorldServer;
 import net.minecraft.world.level.block.state.IBlockData;

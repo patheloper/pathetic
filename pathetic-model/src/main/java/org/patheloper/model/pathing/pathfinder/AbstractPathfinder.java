@@ -75,12 +75,6 @@ abstract class AbstractPathfinder implements Pathfinder {
 
     @Override
     public @NonNull CompletionStage<PathfinderResult> findPath(@NonNull PathPosition start,
-                                                               @NonNull PathPosition target) {
-        return findPath(start, target, DEFAULT_STRATEGY);
-    }
-    
-    @Override
-    public @NonNull CompletionStage<PathfinderResult> findPath(@NonNull PathPosition start,
                                                                @NonNull PathPosition target,
                                                                @NonNull PathfinderStrategy strategy) {
         PathingStartFindEvent startEvent = raiseStart(start, target, strategy);

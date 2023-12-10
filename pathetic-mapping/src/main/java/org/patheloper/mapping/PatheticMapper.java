@@ -4,13 +4,10 @@ import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.patheloper.Pathetic;
-import org.patheloper.api.annotation.Experimental;
 import org.patheloper.api.pathing.Pathfinder;
 import org.patheloper.api.pathing.rules.PathingRuleSet;
 import org.patheloper.model.pathing.pathfinder.AStarPathfinder;
 import org.patheloper.util.ErrorLogger;
-
-import java.util.Objects;
 
 /**
  * PatheticMapper is a utility class that maps the Pathetic API to the Pathetic Implementation.
@@ -47,32 +44,9 @@ public class PatheticMapper {
      * @throws IllegalStateException If the lib is not initialized yet
      */
     public @NonNull Pathfinder newPathfinder(PathingRuleSet pathingRuleSet) {
-        return newPathfinder(pathingRuleSet, PathfinderType.ASTAR);
-    }
-    
-    /**
-     * Instantiates a new pathfinder object.
-     *
-     * @param pathingRuleSet - The {@link PathingRuleSet}
-     * @param pathfinderType - The {@link PathfinderType}
-     * @return The {@link Pathfinder} object
-     * @throws IllegalStateException If the lib is not initialized yet
-     */
-    @Deprecated
-    public @NonNull Pathfinder newPathfinder(PathingRuleSet pathingRuleSet, PathfinderType pathfinderType) {
-        if (Pathetic.isInitialized()) {
-            if (Objects.requireNonNull(pathfinderType) == PathfinderType.ASTAR) {
-                return new AStarPathfinder(pathingRuleSet);
-            }
-            throw ErrorLogger.logFatalError("Unknown pathfinder type: " + pathfinderType);
-        }
+        if (Pathetic.isInitialized())
+            return new AStarPathfinder(pathingRuleSet);
+
         throw ErrorLogger.logFatalError("Pathetic is not initialized");
     }
-
-    @Deprecated
-    public enum PathfinderType {
-        
-        ASTAR;
-    }
-
 }

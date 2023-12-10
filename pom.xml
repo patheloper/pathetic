@@ -19,6 +19,7 @@
         <module>pathetic-example</module>
         <module>pathetic-mapping</module>
         <module>pathetic-nms</module>
+        <module>pathetic-nms/v1_20_R3</module>
         <module>pathetic-nms/v1_20_R2</module>
         <module>pathetic-nms/v1_20_R1</module>
         <module>pathetic-nms/v1_19_R3</module>
@@ -37,7 +38,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.6.2</version>
+                <version>3.6.3</version>
                 <configuration>
                     <reportOutputDirectory>${project.reporting.outputDirectory}/myoutput</reportOutputDirectory>
                     <destDir>myapidocs</destDir>
@@ -53,7 +54,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.6.2</version>
+                <version>3.6.3</version>
                 <configuration>
                     <source>8</source>
                     <reportOutputDirectory>../</reportOutputDirectory>
