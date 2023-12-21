@@ -23,6 +23,8 @@ public class Pathetic {
         instance = javaPlugin;
         Bukkit.getPluginManager().registerEvents(new ChunkInvalidateListener(), javaPlugin);
 
+        BStatsHandler.init(javaPlugin);
+
         if(BukkitVersionUtil.getVersion().isUnder(13, 0))
             javaPlugin.getLogger().warning("pathetic is currently running in a version older than 1.13. " +
                     "Some functionalities might not be accessible, such as accessing the BlockState of certain blocks.");

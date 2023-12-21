@@ -3,6 +3,7 @@ package org.patheloper.model.pathing.pathfinder;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.NonNull;
 import org.bukkit.event.Cancellable;
+import org.patheloper.BStatsHandler;
 import org.patheloper.Pathetic;
 import org.patheloper.api.event.PathingFinishedEvent;
 import org.patheloper.api.event.PathingStartFindEvent;
@@ -132,6 +133,8 @@ abstract class AbstractPathfinder implements Pathfinder {
     }
 
     private CompletionStage<PathfinderResult> producePathing(PathPosition start, PathPosition target, PathfinderStrategy strategy) {
+        BStatsHandler.increasePathCount();
+
         if(pathingRuleSet.isAsync())
             return produceAsyncPathing(start, target, strategy);
         
