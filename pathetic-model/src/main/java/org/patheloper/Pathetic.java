@@ -11,6 +11,7 @@ import org.patheloper.util.ErrorLogger;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 @UtilityClass
@@ -53,13 +54,13 @@ public class Pathetic {
     }
 
     private static void loadModelVersion() {
-        try {
+        try (InputStream inputStream = new FileInputStream(PROPERTIES_FILE)) {
             Properties properties = new Properties();
-            properties.load(new FileInputStream(PROPERTIES_FILE));
+            properties.load(inputStream);
 
             modelVersion = properties.getProperty("model.version");
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw ErrorLogger.logFatalError("Error loading model version", e);
         }
     }
 }
