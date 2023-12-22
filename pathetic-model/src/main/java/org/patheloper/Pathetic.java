@@ -8,8 +8,6 @@ import org.patheloper.bukkit.listeners.ChunkInvalidateListener;
 import org.patheloper.util.BukkitVersionUtil;
 import org.patheloper.util.ErrorLogger;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -17,7 +15,7 @@ import java.util.Properties;
 @UtilityClass
 public class Pathetic {
 
-    private static final File PROPERTIES_FILE = new File("pathetic.properties");
+    private static final String PROPERTIES_FILE = "pathetic.properties";
 
     private static JavaPlugin instance;
     @Getter
@@ -54,7 +52,7 @@ public class Pathetic {
     }
 
     private static void loadModelVersion() {
-        try (InputStream inputStream = new FileInputStream(PROPERTIES_FILE)) {
+        try (InputStream inputStream = Pathetic.class.getClassLoader().getResourceAsStream(PROPERTIES_FILE)) {
             Properties properties = new Properties();
             properties.load(inputStream);
 
