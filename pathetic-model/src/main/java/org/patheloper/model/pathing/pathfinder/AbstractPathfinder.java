@@ -42,8 +42,6 @@ abstract class AbstractPathfinder implements Pathfinder {
     protected static final Set<PathPosition> EMPTY_LINKED_HASHSET =
             Collections.unmodifiableSet(new LinkedHashSet<>(0));
     
-    private static final PathfinderStrategy DEFAULT_STRATEGY = new DirectPathfinderStrategy();
-    
     private static final SnapshotManager SIMPLE_SNAPSHOT_MANAGER = new FailingSnapshotManager();
     private static final SnapshotManager LOADING_SNAPSHOT_MANAGER =
             new FailingSnapshotManager.RequestingSnapshotManager();
@@ -135,10 +133,14 @@ abstract class AbstractPathfinder implements Pathfinder {
     private CompletionStage<PathfinderResult> producePathing(PathPosition start, PathPosition target, PathfinderStrategy strategy) {
         BStatsHandler.increasePathCount();
 
+        CompletionStage<PathfinderResult> result;
         if(pathingRuleSet.isAsync())
-            return produceAsyncPathing(start, target, strategy);
-        
-        return produceSyncPathing(start, target, strategy);
+            result = produceAsyncPathing(start, target, strategy);
+        else
+            result = produceSyncPathing(start, target, strategy);
+
+        strategy.cleanup();
+        return result;
     }
     
     private CompletionStage<PathfinderResult> produceAsyncPathing(PathPosition start, PathPosition target, PathfinderStrategy strategy) {
