@@ -6,12 +6,12 @@
     <parent>
         <artifactId>pathetic-main</artifactId>
         <groupId>org.patheloper</groupId>
-        <version>2.2.2</version>
+        <version>2.2.3</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>pathetic-nms</artifactId>
-    <version>2.2.2</version>
+    <version>2.2.3</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -23,84 +23,84 @@
         <dependency>
             <groupId>org.patheloper</groupId>
             <artifactId>pathetic-api</artifactId>
-            <version>2.2.2</version>
+            <version>2.2.3</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.patheloper</groupId>
             <artifactId>v1_20_R3</artifactId>
-            <version>2.2.2</version>
+            <version>2.2.3</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.patheloper</groupId>
             <artifactId>v1_20_R2</artifactId>
-            <version>2.2.2</version>
+            <version>2.2.3</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.patheloper</groupId>
             <artifactId>v1_20_R1</artifactId>
-            <version>2.2.2</version>
+            <version>2.2.3</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.patheloper</groupId>
             <artifactId>v1_19_R3</artifactId>
-            <version>2.2.2</version>
+            <version>2.2.3</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.patheloper</groupId>
             <artifactId>v1_19_R2</artifactId>
-            <version>2.2.2</version>
+            <version>2.2.3</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.patheloper</groupId>
             <artifactId>v1_18</artifactId>
-            <version>2.2.2</version>
+            <version>2.2.3</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.patheloper</groupId>
             <artifactId>v1_17</artifactId>
-            <version>2.2.2</version>
+            <version>2.2.3</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.patheloper</groupId>
             <artifactId>v1_16</artifactId>
-            <version>2.2.2</version>
+            <version>2.2.3</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.patheloper</groupId>
             <artifactId>v1_15</artifactId>
-            <version>2.2.2</version>
+            <version>2.2.3</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.patheloper</groupId>
             <artifactId>v1_12</artifactId>
-            <version>2.2.2</version>
+            <version>2.2.3</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.patheloper</groupId>
             <artifactId>v1_8</artifactId>
-            <version>2.2.2</version>
+            <version>2.2.3</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
