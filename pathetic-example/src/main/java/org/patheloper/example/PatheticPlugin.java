@@ -8,18 +8,21 @@ import org.patheloper.mapping.PatheticMapper;
 
 public final class PatheticPlugin extends JavaPlugin {
 
-    @Override
-    public void onEnable() {
+  @Override
+  public void onEnable() {
 
-        // Before using Pathetic, you need to initialize it.
-        PatheticMapper.initialize(this);
+    // Before using Pathetic, you need to initialize it.
+    PatheticMapper.initialize(this);
 
-        // Then you can use the PatheticMapper to get your own Pathfinder instance with your own set rules.
-        Pathfinder reusablePathfinder = PatheticMapper.newPathfinder(PathingRuleSet.createAsyncRuleSet()
+    // Then you can use the PatheticMapper to get your own Pathfinder instance with your own set
+    // rules.
+    Pathfinder reusablePathfinder =
+        PatheticMapper.newPathfinder(
+            PathingRuleSet.createAsyncRuleSet()
                 .withAllowingFailFast(true)
                 .withAllowingFallback(true)
                 .withLoadingChunks(true));
 
-        getCommand("pathetic").setExecutor(new PatheticCommand(reusablePathfinder));
-    }
+    getCommand("pathetic").setExecutor(new PatheticCommand(reusablePathfinder));
+  }
 }

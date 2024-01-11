@@ -5,16 +5,15 @@ import lombok.NonNull;
 import org.patheloper.api.pathing.result.PathfinderResult;
 
 /**
- * An event called when a pathfinder finishes pathing. Therefor, the result does not matter.
- * Means that the event is called even if the pathing fails.
+ * An event called when a pathfinder finishes pathing. Therefor, the result does not matter. Means
+ * that the event is called even if the pathing fails.
  */
 @AllArgsConstructor
 public class PathingFinishedEvent extends PathingEvent {
 
-    @NonNull
-    private final PathfinderResult pathfinderResult;
+  @NonNull private final PathfinderResult pathfinderResult;
 
-    public @NonNull PathfinderResult getPathfinderResult() {
-        return this.pathfinderResult;
-    }
+  public @NonNull PathfinderResult getPathfinderResult() {
+    return this.pathfinderResult;
+  }
 }

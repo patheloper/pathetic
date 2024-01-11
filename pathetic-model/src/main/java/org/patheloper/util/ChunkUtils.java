@@ -1,61 +1,56 @@
 package org.patheloper.util;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 @UtilityClass
 public class ChunkUtils {
 
-    private static Method materialMethod;
-    private static Method blockTypeMethod;
+  private static Method materialMethod;
+  private static Method blockTypeMethod;
 
-    static {
-        if (BukkitVersionUtil.getVersion().isUnder(13, 0)) {
-            try {
-                materialMethod = Material.class.getDeclaredMethod("getMaterial", int.class);
-                blockTypeMethod = ChunkSnapshot.class.getDeclaredMethod("getBlockTypeId",
-                        int.class, int.class, int.class);
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            }
-        }
+  static {
+    if (BukkitVersionUtil.getVersion().isUnder(13, 0)) {
+      try {
+        materialMethod = Material.class.getDeclaredMethod("getMaterial", int.class);
+        blockTypeMethod =
+            ChunkSnapshot.class.getDeclaredMethod(
+                "getBlockTypeId", int.class, int.class, int.class);
+      } catch (NoSuchMethodException e) {
+        e.printStackTrace();
+      }
     }
+  }
 
-    public long getChunkKey(final int x, final int z) {
-        return x & 0xFFFFFFFFL | (z & 0xFFFFFFFFL) << 32;
+  public long getChunkKey(final int x, final int z) {
+    return x & 0xFFFFFFFFL | (z & 0xFFFFFFFFL) << 32;
+  }
+
+  /** Get the block type from a chunk snapshot at the given coordinates */
+  @SneakyThrows
+  public Material getMaterial(ChunkSnapshot snapshot, int x, int y, int z) {
+    if (BukkitVersionUtil.getVersion().isUnder(13, 0)) {
+      if (materialMethod == null || blockTypeMethod == null)
+        throw ErrorLogger.logFatalError("Reflection Failure");
+      try {
+        return (Material) materialMethod.invoke(null, blockTypeMethod.invoke(snapshot, x, y, z));
+      } catch (IllegalAccessException | InvocationTargetException e) {
+        throw ErrorLogger.logFatalError(e.getMessage(), e);
+      }
     }
+    return snapshot.getBlockType(x, y, z);
+  }
 
-    /**
-     * Get the block type from a chunk snapshot at the given coordinates
-     */
-    @SneakyThrows
-    public Material getMaterial(ChunkSnapshot snapshot, int x, int y, int z) {
-        if (BukkitVersionUtil.getVersion().isUnder(13, 0)) {
-            if (materialMethod == null || blockTypeMethod == null)
-                throw ErrorLogger.logFatalError("Reflection Failure");
-            try {
-                return (Material) materialMethod.invoke(null, blockTypeMethod.invoke(snapshot, x, y, z));
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                throw ErrorLogger.logFatalError(e.getMessage(), e);
-            }
-        }
-        return snapshot.getBlockType(x, y, z);
-    }
+  /** Get the block state from a chunk snapshot at the given coordinates */
+  public BlockState getBlockState(ChunkSnapshot snapshot, int x, int y, int z) {
+    if (BukkitVersionUtil.getVersion().isUnder(13, 0))
+      return null; // This is not supported in 1.12 and below
 
-    /**
-     * Get the block state from a chunk snapshot at the given coordinates
-     */
-    public BlockState getBlockState(ChunkSnapshot snapshot, int x, int y, int z) {
-        if (BukkitVersionUtil.getVersion().isUnder(13, 0))
-            return null; // This is not supported in 1.12 and below
-
-        return snapshot.getBlockData(x, y, z).createBlockState();
-    }
-
+    return snapshot.getBlockData(x, y, z).createBlockState();
+  }
 }
