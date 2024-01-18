@@ -1,13 +1,5 @@
 package org.patheloper.model.pathing.pathfinder;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.PriorityQueue;
-import java.util.Set;
 import lombok.NonNull;
 import org.patheloper.api.pathing.result.Path;
 import org.patheloper.api.pathing.result.PathState;
@@ -22,6 +14,8 @@ import org.patheloper.model.pathing.result.PathImpl;
 import org.patheloper.model.pathing.result.PathfinderResultImpl;
 import org.patheloper.util.ErrorLogger;
 import org.patheloper.util.WatchdogUtil;
+
+import java.util.*;
 
 /** A pathfinder that uses the A* algorithm. */
 public class AStarPathfinder extends AbstractPathfinder {
@@ -128,15 +122,21 @@ public class AStarPathfinder extends AbstractPathfinder {
     return Optional.empty();
   }
 
-  /** Checks if the pathfinder can find a path from the target to the start. */
-  private Optional<PathfinderResult> counterCheck(
-      PathPosition start, PathPosition target, PathfinderStrategy strategy) {
-    if (!pathingRuleSet.isCounterCheck()) return Optional.empty();
+  /**
+   * Checks if the pathfinder can find a path from the target to the start.
+   */
+  private Optional<PathfinderResult> counterCheck(PathPosition start, PathPosition target, PathfinderStrategy strategy) {
+    if (!pathingRuleSet.isCounterCheck()) {
+      return Optional.empty();
+    }
 
-    AStarPathfinder aStarPathfinder = new AStarPathfinder(pathingRuleSet.withCounterCheck(false));
+    AStarPathfinder aStarPathfinder = new AStarPathfinder(
+      PathingRuleSet.deepCopy(pathingRuleSet).withCounterCheck(false));
     PathfinderResult pathfinderResult = aStarPathfinder.resolvePath(target, start, strategy);
 
-    if (pathfinderResult.getPathState() == PathState.FOUND) return Optional.of(pathfinderResult);
+    if (pathfinderResult.getPathState() == PathState.FOUND) {
+      return Optional.of(pathfinderResult);
+    }
 
     return Optional.empty();
   }

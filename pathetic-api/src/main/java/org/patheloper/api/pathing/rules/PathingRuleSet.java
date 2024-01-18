@@ -61,4 +61,26 @@ public class PathingRuleSet {
   public static PathingRuleSet createRuleSet() {
     return builder().build();
   }
+
+  /**
+   * Creates a deep copy of the given {@link PathingRuleSet}.
+   *
+   * <p>This method constructs a new instance of {@link PathingRuleSet} with the same values
+   * as the input. It ensures a deep copy by copying the values of primitive and boolean fields directly.
+   *
+   * @param pathingRuleSet The {@link PathingRuleSet} to copy.
+   * @return A new {@link PathingRuleSet} instance with the same values as the input.
+   */
+  public static PathingRuleSet deepCopy(PathingRuleSet pathingRuleSet) {
+    return builder()
+      .maxIterations(pathingRuleSet.maxIterations)
+      .maxLength(pathingRuleSet.maxLength)
+      .async(pathingRuleSet.async)
+      .allowingDiagonal(pathingRuleSet.allowingDiagonal)
+      .allowingFailFast(pathingRuleSet.allowingFailFast)
+      .allowingFallback(pathingRuleSet.allowingFallback)
+      .loadingChunks(pathingRuleSet.loadingChunks)
+      .counterCheck(pathingRuleSet.counterCheck)
+      .build();
+  }
 }
