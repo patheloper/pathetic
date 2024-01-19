@@ -9,16 +9,16 @@ import org.patheloper.api.snapshot.NMSInterface;
 
 public class OneEightNMSInterface implements NMSInterface {
 
-    @Override
-    public ChunkSnapshot getSnapshot(World world, int chunkX, int chunkZ) {
-        try {
-            WorldServer server = ((CraftWorld) world).getHandle();
-            Chunk chunk = server.chunkProviderServer.getChunkAt(chunkX, chunkZ);
+  @Override
+  public ChunkSnapshot getSnapshot(World world, int chunkX, int chunkZ) {
+    try {
+      WorldServer server = ((CraftWorld) world).getHandle();
+      Chunk chunk = server.chunkProviderServer.getChunkAt(chunkX, chunkZ);
 
-            return chunk.bukkitChunk.getChunkSnapshot();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+      return chunk.bukkitChunk.getChunkSnapshot();
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
     }
+  }
 }

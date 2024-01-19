@@ -10,24 +10,27 @@ import lombok.With;
 /**
  * Configuration options for pathfinding.
  *
- * This class defines a set of rules that guide the behavior of the pathfinding process.
+ * <p>This class defines a set of rules that guide the behavior of the pathfinding process.
  *
- * - `maxIterations`: The maximum number of iterations allowed during pathfinding. Set this to prevent infinite loops.
+ * <p>- `maxIterations`: The maximum number of iterations allowed during pathfinding. Set this to
+ * prevent infinite loops.
  *
- * - `maxLength`: The maximum length of the path. Avoid setting this too high as it can cause performance issues.
+ * <p>- `maxLength`: The maximum length of the path. Avoid setting this too high as it can cause
+ * performance issues.
  *
- * - `async`: Whether to run pathfinding asynchronously or not.
+ * <p>- `async`: Whether to run pathfinding asynchronously or not.
  *
- * - `allowingDiagonal`: Whether to allow diagonal movement when pathfinding.
+ * <p>- `allowingDiagonal`: Whether to allow diagonal movement when pathfinding.
  *
- * - `allowingFailFast`: Whether to fail fast if the target is unreachable from the start.
+ * <p>- `allowingFailFast`: Whether to fail fast if the target is unreachable from the start.
  *
- * - `allowingFallback`: If pathfinding fails, whether to fall back to the previously found path.
+ * <p>- `allowingFallback`: If pathfinding fails, whether to fall back to the previously found path.
  *
- * - `loadingChunks`: Whether to load or generate chunks during pathfinding.
+ * <p>- `loadingChunks`: Whether to load or generate chunks during pathfinding.
  *
- * - `counterCheck`: Whether to run a counter check on the path if it's not found to validate the result.
- *   Note: `counterCheck` is a fallback mechanism that reevaluates the entire path from end to beginning.
+ * <p>- `counterCheck`: Whether to run a counter check on the path if it's not found to validate the
+ * result. Note: `counterCheck` is a fallback mechanism that reevaluates the entire path from end to
+ * beginning.
  */
 @With
 @Value
@@ -36,30 +39,48 @@ import lombok.With;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class PathingRuleSet {
 
-    /**
-     * @return A new {@link PathingRuleSet} with default values but async.
-     */
-    public static PathingRuleSet createAsyncRuleSet() {
-        return builder().async(true).build();
-    }
+  @Builder.Default int maxIterations = 5000; // to avoid freewheeling
+  int maxLength;
+  boolean async;
+  @Builder.Default boolean allowingDiagonal = true;
+  boolean allowingFailFast;
+  boolean allowingFallback;
+  boolean loadingChunks;
+  boolean counterCheck;
 
-    /**
-     * @return A new {@link PathingRuleSet} with default values.
-     */
-    public static PathingRuleSet createRuleSet() {
-        return builder().build();
-    }
+  /**
+   * @return A new {@link PathingRuleSet} with default values but async.
+   */
+  public static PathingRuleSet createAsyncRuleSet() {
+    return builder().async(true).build();
+  }
 
-    @Builder.Default
-    int maxIterations = 5000; // to avoid freewheeling
-    int maxLength;
-    boolean async;
-    @Builder.Default
-    boolean allowingDiagonal = true;
-    boolean allowingFailFast;
-    boolean allowingFallback;
-    boolean loadingChunks;
-    boolean counterCheck;
+  /**
+   * @return A new {@link PathingRuleSet} with default values.
+   */
+  public static PathingRuleSet createRuleSet() {
+    return builder().build();
+  }
+
+  /**
+   * Creates a deep copy of the given {@link PathingRuleSet}.
+   *
+   * <p>This method constructs a new instance of {@link PathingRuleSet} with the same values
+   * as the input. It ensures a deep copy by copying the values of primitive and boolean fields directly.
+   *
+   * @param pathingRuleSet The {@link PathingRuleSet} to copy.
+   * @return A new {@link PathingRuleSet} instance with the same values as the input.
+   */
+  public static PathingRuleSet deepCopy(PathingRuleSet pathingRuleSet) {
+    return builder()
+      .maxIterations(pathingRuleSet.maxIterations)
+      .maxLength(pathingRuleSet.maxLength)
+      .async(pathingRuleSet.async)
+      .allowingDiagonal(pathingRuleSet.allowingDiagonal)
+      .allowingFailFast(pathingRuleSet.allowingFailFast)
+      .allowingFallback(pathingRuleSet.allowingFallback)
+      .loadingChunks(pathingRuleSet.loadingChunks)
+      .counterCheck(pathingRuleSet.counterCheck)
+      .build();
+  }
 }
-
-

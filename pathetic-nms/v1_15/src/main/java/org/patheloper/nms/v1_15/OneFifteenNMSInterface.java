@@ -10,19 +10,18 @@ import org.patheloper.api.snapshot.NMSInterface;
 
 public class OneFifteenNMSInterface implements NMSInterface {
 
-    @Override
-    public ChunkSnapshot getSnapshot(World world, int chunkX, int chunkZ) {
-        try {
-            WorldServer server = ((CraftWorld) world).getHandle();
-            CraftChunk newCraftChunk = ((CraftChunk) world.getChunkAt(chunkX, chunkZ));
+  @Override
+  public ChunkSnapshot getSnapshot(World world, int chunkX, int chunkZ) {
+    try {
+      WorldServer server = ((CraftWorld) world).getHandle();
+      CraftChunk newCraftChunk = ((CraftChunk) world.getChunkAt(chunkX, chunkZ));
 
-            server.getChunkProvider().getChunkAt(chunkX, chunkZ, ChunkStatus.FULL, true);
+      server.getChunkProvider().getChunkAt(chunkX, chunkZ, ChunkStatus.FULL, true);
 
-            return newCraftChunk.getChunkSnapshot();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+      return newCraftChunk.getChunkSnapshot();
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
     }
-
+  }
 }

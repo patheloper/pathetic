@@ -14,38 +14,39 @@ import java.lang.reflect.Field;
 
 public final class OneTwentyThreeNMSInterface implements NMSInterface {
 
-    private static final Field blockIDField;
+  private static final Field blockIDField;
 
-    static {
-        try {
-            blockIDField = CraftChunk.class.getDeclaredField("emptyBlockIDs");
-            blockIDField.setAccessible(true);
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        }
+  static {
+    try {
+      blockIDField = CraftChunk.class.getDeclaredField("emptyBlockIDs");
+      blockIDField.setAccessible(true);
+    } catch (NoSuchFieldException e) {
+      throw new RuntimeException(e);
     }
+  }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public ChunkSnapshot getSnapshot(World world, int chunkX, int chunkZ) {
-        try {
+  @Override
+  @SuppressWarnings("unchecked")
+  public ChunkSnapshot getSnapshot(World world, int chunkX, int chunkZ) {
+    try {
 
-            WorldServer server = ((CraftWorld) world).getHandle();
-            CraftChunk newCraftChunk = new CraftChunk(server, chunkX, chunkZ);
+      WorldServer server = ((CraftWorld) world).getHandle();
+      CraftChunk newCraftChunk = new CraftChunk(server, chunkX, chunkZ);
 
-            server.l().a(chunkX, chunkZ, ChunkStatus.n, true);
-            DataPaletteBlock<IBlockData> dataDataPaletteBlock = (DataPaletteBlock<IBlockData>) blockIDField.get(newCraftChunk);
+      server.l().a(chunkX, chunkZ, ChunkStatus.n, true);
+      DataPaletteBlock<IBlockData> dataDataPaletteBlock =
+          (DataPaletteBlock<IBlockData>) blockIDField.get(newCraftChunk);
 
-            dataDataPaletteBlock.b();
-            dataDataPaletteBlock.a();
-            ChunkSnapshot chunkSnapshot = newCraftChunk.getChunkSnapshot();
-            dataDataPaletteBlock.b();
+      dataDataPaletteBlock.b();
+      dataDataPaletteBlock.a();
+      ChunkSnapshot chunkSnapshot = newCraftChunk.getChunkSnapshot();
+      dataDataPaletteBlock.b();
 
-            return chunkSnapshot;
+      return chunkSnapshot;
 
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            return null;
-        }
+    } catch (IllegalAccessException e) {
+      e.printStackTrace();
+      return null;
     }
+  }
 }

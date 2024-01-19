@@ -10,22 +10,20 @@ import org.patheloper.api.wrapper.PathPosition;
  */
 @FunctionalInterface
 public interface PathfinderStrategy {
-    
-    /**
-     * Returns whether the given {@link PathPosition} is valid.
-     *
-     * @param position        The {@link PathPosition} to check
-     * @param snapshotManager The current {@link SnapshotManager} for getting blocks
-     */
-    boolean isValid(@NonNull PathPosition position, @NonNull SnapshotManager snapshotManager);
 
-    /**
-     * Cleans up the resources used during the pathfinding process.
-     * This method is guaranteed to always be called after pathfinding and should be
-     * overridden to ensure proper disposal of resources. Users can rely on the fact
-     * that this method will be invoked post pathfinding to do necessary clean-ups.
-     */
-    default void cleanup() {
-    }
+  /**
+   * Returns whether the given {@link PathPosition} is valid.
+   *
+   * @param position The {@link PathPosition} to check
+   * @param snapshotManager The current {@link SnapshotManager} for getting blocks
+   */
+  boolean isValid(@NonNull PathValidationContext pathValidationContext);
 
+  /**
+   * Cleans up the resources used during the pathfinding process. This method is guaranteed to
+   * always be called after pathfinding and should be overridden to ensure proper disposal of
+   * resources. Users can rely on the fact that this method will be invoked post pathfinding to do
+   * necessary clean-ups.
+   */
+  default void cleanup() {}
 }

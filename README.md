@@ -38,27 +38,37 @@ See more info here: https://www.spigotmc.org/threads/how-pathetic.578998/#post-4
 ### Example API Usage
 ```java
 public class PathExample extends JavaPlugin {
-    
-    @Override
-    public void onEnable() {
-    
-        PatheticMapper.initialize(this);
-        goFindSomePath(randomLocation(), randomLocation());
-    }
-    
-    private void goFindSomePath(PathPosition start, PathPosition end) {
 
-        Pathfinder pathfinder = PatheticMapper.newPathfinder();
-        pathfinder.findPath(start, end, new DirectPathfinderStrategy()).thenAccept(pathfinderResult ->
-                pathfinderResult.getPath().getPositions().forEach(location ->
-                        player.sendBlockChange(location, Material.YELLOW_STAINED_GLASS.createBlockData())));
-    }
-    
-    private PathPosition randomLocation() {
-        ThreadLocalRandom instance = ThreadLocalRandom.current();
-        return new PathPosition(instance.nextInt(0, 100), instance.nextInt(0, 100), instance.nextInt(0, 100));
-    }
+  @Override
+  public void onEnable() {
+
+    PatheticMapper.initialize(this);
+    goFindSomePath(randomLocation(), randomLocation());
+  }
+
+  private void goFindSomePath(PathPosition start, PathPosition end) {
+
+    Pathfinder pathfinder = PatheticMapper.newPathfinder();
+    pathfinder
+        .findPath(start, end, new DirectPathfinderStrategy())
+        .thenAccept(
+            pathfinderResult ->
+                pathfinderResult
+                    .getPath()
+                    .getPositions()
+                    .forEach(
+                        location ->
+                            player.sendBlockChange(
+                                location, Material.YELLOW_STAINED_GLASS.createBlockData())));
+  }
+
+  private PathPosition randomLocation() {
+    ThreadLocalRandom instance = ThreadLocalRandom.current();
+    return new PathPosition(
+        instance.nextInt(0, 100), instance.nextInt(0, 100), instance.nextInt(0, 100));
+  }
 }
+
 ```
 
 #### See the `pathetic-example` module for a more in-depth example plugin.
