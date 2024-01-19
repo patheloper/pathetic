@@ -1,7 +1,8 @@
 package org.patheloper.api.pathing.strategy.strategies;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import org.patheloper.api.annotation.Experimental;
+import org.patheloper.api.pathing.strategy.PathValidationContext;
 import org.patheloper.api.snapshot.SnapshotManager;
 import org.patheloper.api.wrapper.PathBlock;
 import org.patheloper.api.wrapper.PathPosition;
@@ -35,9 +36,10 @@ public class JumpablePathfinderStrategy extends WalkablePathfinderStrategy {
   }
 
   @Override
-  public boolean isValid(
-      @org.checkerframework.checker.nullness.qual.NonNull PathPosition position,
-      @NonNull SnapshotManager snapshotManager) {
+  public boolean isValid(@NonNull PathValidationContext pathValidationContext) {
+    PathPosition position = pathValidationContext.getPosition();
+    SnapshotManager snapshotManager = pathValidationContext.getSnapshotManager();
+
     if (lastValidPosition == null) lastValidPosition = position;
 
     PathBlock startBlock = snapshotManager.getBlock(position);
@@ -48,6 +50,6 @@ public class JumpablePathfinderStrategy extends WalkablePathfinderStrategy {
 
     if ((position.getBlockY() - lastValidPosition.getBlockY()) > jumpHeight) return false;
 
-    return startBlock.isPassable() && !(position.distance(lastValidPosition) > maxJumpDistance);
+    return startBlock.isPassable() && position.distance(lastValidPosition) <= maxJumpDistance;
   }
 }

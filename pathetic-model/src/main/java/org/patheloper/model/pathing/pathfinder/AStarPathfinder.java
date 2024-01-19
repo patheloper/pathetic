@@ -5,6 +5,7 @@ import org.patheloper.api.pathing.result.Path;
 import org.patheloper.api.pathing.result.PathState;
 import org.patheloper.api.pathing.result.PathfinderResult;
 import org.patheloper.api.pathing.rules.PathingRuleSet;
+import org.patheloper.api.pathing.strategy.PathValidationContext;
 import org.patheloper.api.pathing.strategy.PathfinderStrategy;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.api.wrapper.PathVector;
@@ -15,7 +16,14 @@ import org.patheloper.model.pathing.result.PathfinderResultImpl;
 import org.patheloper.util.ErrorLogger;
 import org.patheloper.util.WatchdogUtil;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.PriorityQueue;
+import java.util.Set;
 
 /** A pathfinder that uses the A* algorithm. */
 public class AStarPathfinder extends AbstractPathfinder {
@@ -122,16 +130,15 @@ public class AStarPathfinder extends AbstractPathfinder {
     return Optional.empty();
   }
 
-  /**
-   * Checks if the pathfinder can find a path from the target to the start.
-   */
-  private Optional<PathfinderResult> counterCheck(PathPosition start, PathPosition target, PathfinderStrategy strategy) {
+  /** Checks if the pathfinder can find a path from the target to the start. */
+  private Optional<PathfinderResult> counterCheck(
+      PathPosition start, PathPosition target, PathfinderStrategy strategy) {
     if (!pathingRuleSet.isCounterCheck()) {
       return Optional.empty();
     }
 
-    AStarPathfinder aStarPathfinder = new AStarPathfinder(
-      PathingRuleSet.deepCopy(pathingRuleSet).withCounterCheck(false));
+    AStarPathfinder aStarPathfinder =
+        new AStarPathfinder(PathingRuleSet.deepCopy(pathingRuleSet).withCounterCheck(false));
     PathfinderResult pathfinderResult = aStarPathfinder.resolvePath(target, start, strategy);
 
     if (pathfinderResult.getPathState() == PathState.FOUND) {
@@ -228,7 +235,11 @@ public class AStarPathfinder extends AbstractPathfinder {
            */
           boolean heightDifferencePassable =
               isHeightDifferencePassable(from, to, vector1, hasYDifference);
-          if (strategy.isValid(neighbour1.getPosition(), snapshotManager)
+          if (strategy.isValid(
+                  new PathValidationContext(
+                      neighbour1.getPosition(),
+                      neighbour1.getParent().getPosition(),
+                      snapshotManager))
               && heightDifferencePassable) return true;
         }
       }
@@ -328,7 +339,9 @@ public class AStarPathfinder extends AbstractPathfinder {
     return examinedPositions.contains(node.getPosition())
         || nodeQueue.contains(node)
         || !isWithinWorldBounds(node.getPosition())
-        || !strategy.isValid(node.getPosition(), snapshotManager);
+        || !strategy.isValid(
+            new PathValidationContext(
+                node.getPosition(), node.getParent().getPosition(), snapshotManager));
   }
 
   /** Traces the path from the given node by retracing the steps from the node's parent. */

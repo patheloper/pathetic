@@ -17,7 +17,7 @@ public interface PathfinderStrategy {
    * @param position The {@link PathPosition} to check
    * @param snapshotManager The current {@link SnapshotManager} for getting blocks
    */
-  boolean isValid(@NonNull PathPosition position, @NonNull SnapshotManager snapshotManager);
+  boolean isValid(@NonNull PathValidationContext pathValidationContext);
 
   /**
    * Cleans up the resources used during the pathfinding process. This method is guaranteed to
