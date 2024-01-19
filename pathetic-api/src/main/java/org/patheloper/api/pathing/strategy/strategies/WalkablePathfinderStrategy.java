@@ -1,6 +1,7 @@
 package org.patheloper.api.pathing.strategy.strategies;
 
 import lombok.NonNull;
+import org.patheloper.api.pathing.strategy.PathValidationContext;
 import org.patheloper.api.pathing.strategy.PathfinderStrategy;
 import org.patheloper.api.snapshot.SnapshotManager;
 import org.patheloper.api.wrapper.PathBlock;
@@ -22,8 +23,9 @@ public class WalkablePathfinderStrategy implements PathfinderStrategy {
   }
 
   @Override
-  public boolean isValid(@NonNull PathPosition position, @NonNull SnapshotManager snapshotManager) {
-    PathBlock block = snapshotManager.getBlock(position);
+  public boolean isValid(@NonNull PathValidationContext pathValidationContext) {
+    SnapshotManager snapshotManager = pathValidationContext.getSnapshotManager();
+    PathBlock block = snapshotManager.getBlock(pathValidationContext.getPosition());
     return canStandOn(block, snapshotManager);
   }
 
