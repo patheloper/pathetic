@@ -2,7 +2,6 @@ package org.patheloper.api.pathing.strategy;
 
 import lombok.NonNull;
 import org.patheloper.api.pathing.Pathfinder;
-import org.patheloper.api.snapshot.SnapshotManager;
 import org.patheloper.api.wrapper.PathPosition;
 
 /**
@@ -14,8 +13,7 @@ public interface PathfinderStrategy {
   /**
    * Returns whether the given {@link PathPosition} is valid.
    *
-   * @param position The {@link PathPosition} to check
-   * @param snapshotManager The current {@link SnapshotManager} for getting blocks
+   * @param pathValidationContext The context providing essentials needed for path validation
    */
   boolean isValid(@NonNull PathValidationContext pathValidationContext);
 
