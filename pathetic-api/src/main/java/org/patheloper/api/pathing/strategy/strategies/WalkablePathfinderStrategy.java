@@ -3,7 +3,7 @@ package org.patheloper.api.pathing.strategy.strategies;
 import lombok.NonNull;
 import org.patheloper.api.pathing.strategy.PathValidationContext;
 import org.patheloper.api.pathing.strategy.PathfinderStrategy;
-import org.patheloper.api.snapshot.SnapshotManager;
+import org.patheloper.api.terrain.TerrainProvider;
 import org.patheloper.api.wrapper.PathBlock;
 import org.patheloper.api.wrapper.PathPosition;
 
@@ -24,19 +24,19 @@ public class WalkablePathfinderStrategy implements PathfinderStrategy {
 
   @Override
   public boolean isValid(@NonNull PathValidationContext pathValidationContext) {
-    SnapshotManager snapshotManager = pathValidationContext.getSnapshotManager();
-    PathBlock block = snapshotManager.getBlock(pathValidationContext.getPosition());
-    return canStandOn(block, snapshotManager);
+    TerrainProvider terrainProvider = pathValidationContext.getTerrainProvider();
+    PathBlock block = terrainProvider.getBlock(pathValidationContext.getPosition());
+    return canStandOn(block, terrainProvider);
   }
 
-  protected boolean canStandOn(PathBlock block, SnapshotManager snapshotManager) {
-    PathBlock below = snapshotManager.getBlock(block.getPathPosition().add(0, -1, 0));
-    return below.isSolid() && areBlocksAbovePassable(block.getPathPosition(), snapshotManager);
+  protected boolean canStandOn(PathBlock block, TerrainProvider terrainProvider) {
+    PathBlock below = terrainProvider.getBlock(block.getPathPosition().add(0, -1, 0));
+    return below.isSolid() && areBlocksAbovePassable(block.getPathPosition(), terrainProvider);
   }
 
-  protected boolean areBlocksAbovePassable(PathPosition position, SnapshotManager snapshotManager) {
+  protected boolean areBlocksAbovePassable(PathPosition position, TerrainProvider terrainProvider) {
     for (int i = 0; i < height; i++) {
-      PathBlock block = snapshotManager.getBlock(position.add(0, i, 0));
+      PathBlock block = terrainProvider.getBlock(position.add(0, i, 0));
       if (!block.isPassable()) {
         return false;
       }

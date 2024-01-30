@@ -7,6 +7,7 @@ import lombok.experimental.UtilityClass;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
+import org.patheloper.api.util.BukkitVersionUtil;
 
 @UtilityClass
 public class ChunkUtils {

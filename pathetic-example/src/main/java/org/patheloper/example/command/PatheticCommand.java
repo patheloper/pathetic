@@ -16,7 +16,7 @@ import org.patheloper.api.pathing.Pathfinder;
 import org.patheloper.api.pathing.result.PathfinderResult;
 import org.patheloper.api.pathing.strategy.strategies.DirectPathfinderStrategy;
 import org.patheloper.api.wrapper.PathPosition;
-import org.patheloper.mapping.bukkit.BukkitMapper;
+import org.patheloper.paper.PatheticPaper;
 
 public class PatheticCommand implements TabExecutor {
 
@@ -57,8 +57,8 @@ public class PatheticCommand implements TabExecutor {
         }
 
         // Here we convert the Bukkit Locations to PathLocations to search with them for a path.
-        PathPosition start = BukkitMapper.toPathPosition(playerSession.getPos1());
-        PathPosition target = BukkitMapper.toPathPosition(playerSession.getPos2());
+        PathPosition start = PatheticPaper.getInstance().toPathPosition(playerSession.getPos1());
+        PathPosition target = PatheticPaper.getInstance().toPathPosition(playerSession.getPos2());
 
         player.sendMessage("Starting pathfinding...");
         CompletionStage<PathfinderResult> pathfindingResult =
@@ -78,7 +78,7 @@ public class PatheticCommand implements TabExecutor {
                     .getPositions()
                     .forEach(
                         position -> {
-                          Location location = BukkitMapper.toLocation(position);
+                          Location location = PatheticPaper.getInstance().toLocation(position);
                           player.sendBlockChange(
                               location, Material.YELLOW_STAINED_GLASS.createBlockData());
                         });

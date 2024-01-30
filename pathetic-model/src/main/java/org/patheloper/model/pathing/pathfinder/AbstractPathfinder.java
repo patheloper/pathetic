@@ -24,7 +24,7 @@ import org.patheloper.api.pathing.result.PathState;
 import org.patheloper.api.pathing.result.PathfinderResult;
 import org.patheloper.api.pathing.rules.PathingRuleSet;
 import org.patheloper.api.pathing.strategy.PathfinderStrategy;
-import org.patheloper.api.snapshot.SnapshotManager;
+import org.patheloper.api.terrain.TerrainProvider;
 import org.patheloper.api.wrapper.PathBlock;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.api.wrapper.PathVector;
@@ -32,17 +32,12 @@ import org.patheloper.bukkit.event.EventPublisher;
 import org.patheloper.model.pathing.Offset;
 import org.patheloper.model.pathing.result.PathImpl;
 import org.patheloper.model.pathing.result.PathfinderResultImpl;
-import org.patheloper.model.snapshot.FailingSnapshotManager;
 import org.patheloper.util.ErrorLogger;
 
 abstract class AbstractPathfinder implements Pathfinder {
 
   protected static final Set<PathPosition> EMPTY_LINKED_HASHSET =
       Collections.unmodifiableSet(new LinkedHashSet<>(0));
-
-  private static final SnapshotManager SIMPLE_SNAPSHOT_MANAGER = new FailingSnapshotManager();
-  private static final SnapshotManager LOADING_SNAPSHOT_MANAGER =
-      new FailingSnapshotManager.RequestingSnapshotManager();
 
   private static final Executor PATHING_EXECUTOR =
       new ThreadPoolExecutor(
@@ -57,15 +52,13 @@ abstract class AbstractPathfinder implements Pathfinder {
   protected final PathingRuleSet pathingRuleSet;
 
   protected final Offset offset;
-  protected final SnapshotManager snapshotManager;
+  protected final TerrainProvider terrainProvider;
 
-  protected AbstractPathfinder(PathingRuleSet pathingRuleSet) {
+  protected AbstractPathfinder(PathingRuleSet pathingRuleSet, TerrainProvider terrainProvider) {
     this.pathingRuleSet = pathingRuleSet;
 
-    this.offset =
-        pathingRuleSet.isAllowingDiagonal() ? Offset.MERGED : Offset.VERTICAL_AND_HORIZONTAL;
-    this.snapshotManager =
-        pathingRuleSet.isLoadingChunks() ? LOADING_SNAPSHOT_MANAGER : SIMPLE_SNAPSHOT_MANAGER;
+    this.offset = pathingRuleSet.isAllowingDiagonal() ? Offset.MERGED : Offset.VERTICAL_AND_HORIZONTAL;
+    this.terrainProvider = terrainProvider;
   }
 
   @Override
@@ -89,8 +82,8 @@ abstract class AbstractPathfinder implements Pathfinder {
     return pathfinderResult;
   }
 
-  protected SnapshotManager getSnapshotManager() {
-    return snapshotManager;
+  protected TerrainProvider getSnapshotManager() {
+    return terrainProvider;
   }
 
   private PathingStartFindEvent raiseStart(

@@ -7,14 +7,12 @@
     <parent>
         <artifactId>pathetic-main</artifactId>
         <groupId>org.patheloper</groupId>
-        <version>2.3</version>
+        <version>3.0.0</version>
     </parent>
 
     <artifactId>pathetic-example</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>3.0.0</version>
     <packaging>jar</packaging>
-
-    <name>PatheticTest</name>
 
     <properties>
         <java.version>1.8</java.version>
@@ -69,11 +67,13 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
+            <version>1.20.4-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.patheloper</groupId>
-            <artifactId>pathetic-mapping</artifactId>
-            <version>2.3</version>
+            <artifactId>pathetic-paper</artifactId>
+            <version>3.0.0</version>
         </dependency>
     </dependencies>
 </project>

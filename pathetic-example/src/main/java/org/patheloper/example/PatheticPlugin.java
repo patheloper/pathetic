@@ -4,7 +4,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.patheloper.api.pathing.Pathfinder;
 import org.patheloper.api.pathing.rules.PathingRuleSet;
 import org.patheloper.example.command.PatheticCommand;
-import org.patheloper.mapping.PatheticMapper;
+import org.patheloper.paper.PatheticPaper;
 
 public final class PatheticPlugin extends JavaPlugin {
 
@@ -12,17 +12,17 @@ public final class PatheticPlugin extends JavaPlugin {
   public void onEnable() {
 
     // Before using Pathetic, you need to initialize it.
-    PatheticMapper.initialize(this);
+    PatheticPaper.getInstance().initialize(this);
 
     // Then you can use the PatheticMapper to get your own Pathfinder instance with your own set
     // rules.
     Pathfinder reusablePathfinder =
-        PatheticMapper.newPathfinder(
+      PatheticPaper.getInstance().newPathfinder(
             PathingRuleSet.createAsyncRuleSet()
                 .withAllowingFailFast(true)
                 .withAllowingFallback(true)
                 .withLoadingChunks(true));
 
-    getCommand("pathetic").setExecutor(new PatheticCommand(reusablePathfinder));
+    this.getCommand("pathetic").setExecutor(new PatheticCommand(reusablePathfinder));
   }
 }

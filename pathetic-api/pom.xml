@@ -7,15 +7,15 @@
     <parent>
         <artifactId>pathetic-main</artifactId>
         <groupId>org.patheloper</groupId>
-        <version>2.3</version>
+        <version>3.0.0</version>
     </parent>
 
     <artifactId>pathetic-api</artifactId>
-    <version>2.3</version>
+    <version>3.0.0</version>
 
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
     </properties>
 
     <dependencies>

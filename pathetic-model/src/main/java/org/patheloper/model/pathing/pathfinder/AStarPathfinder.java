@@ -7,6 +7,7 @@ import org.patheloper.api.pathing.result.PathfinderResult;
 import org.patheloper.api.pathing.rules.PathingRuleSet;
 import org.patheloper.api.pathing.strategy.PathValidationContext;
 import org.patheloper.api.pathing.strategy.PathfinderStrategy;
+import org.patheloper.api.terrain.TerrainProvider;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.api.wrapper.PathVector;
 import org.patheloper.model.pathing.Node;
@@ -28,8 +29,8 @@ import java.util.Set;
 /** A pathfinder that uses the A* algorithm. */
 public class AStarPathfinder extends AbstractPathfinder {
 
-  public AStarPathfinder(PathingRuleSet pathingRuleSet) {
-    super(pathingRuleSet);
+  public AStarPathfinder(PathingRuleSet pathingRuleSet, TerrainProvider terrainProvider) {
+    super(pathingRuleSet, terrainProvider);
   }
 
   @Override
@@ -138,7 +139,7 @@ public class AStarPathfinder extends AbstractPathfinder {
     }
 
     AStarPathfinder aStarPathfinder =
-        new AStarPathfinder(PathingRuleSet.deepCopy(pathingRuleSet).withCounterCheck(false));
+        new AStarPathfinder(PathingRuleSet.deepCopy(pathingRuleSet).withCounterCheck(false), this.terrainProvider);
     PathfinderResult pathfinderResult = aStarPathfinder.resolvePath(target, start, strategy);
 
     if (pathfinderResult.getPathState() == PathState.FOUND) {
@@ -239,7 +240,7 @@ public class AStarPathfinder extends AbstractPathfinder {
                   new PathValidationContext(
                       neighbour1.getPosition(),
                       neighbour1.getParent().getPosition(),
-                      snapshotManager))
+                          terrainProvider))
               && heightDifferencePassable) return true;
         }
       }
@@ -259,7 +260,7 @@ public class AStarPathfinder extends AbstractPathfinder {
     int yDifference = from.getPosition().getBlockY() - to.getPosition().getBlockY();
     Node neighbour3 = createNeighbourNode(from, vector1.add(new PathVector(0, yDifference, 0)));
 
-    return snapshotManager.getBlock(neighbour3.getPosition()).isPassable();
+    return terrainProvider.getBlock(neighbour3.getPosition()).isPassable();
   }
 
   /**
@@ -341,7 +342,7 @@ public class AStarPathfinder extends AbstractPathfinder {
         || !isWithinWorldBounds(node.getPosition())
         || !strategy.isValid(
             new PathValidationContext(
-                node.getPosition(), node.getParent().getPosition(), snapshotManager));
+                node.getPosition(), node.getParent().getPosition(), terrainProvider));
   }
 
   /** Traces the path from the given node by retracing the steps from the node's parent. */

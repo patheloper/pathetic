@@ -8,7 +8,7 @@ import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.patheloper.bukkit.listeners.ChunkInvalidateListener;
-import org.patheloper.util.BukkitVersionUtil;
+import org.patheloper.api.util.BukkitVersionUtil;
 import org.patheloper.util.ErrorLogger;
 
 @UtilityClass

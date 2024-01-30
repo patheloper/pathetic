@@ -26,7 +26,8 @@ import lombok.With;
  *
  * <p>- `allowingFallback`: If pathfinding fails, whether to fall back to the previously found path.
  *
- * <p>- `loadingChunks`: Whether to load or generate chunks during pathfinding.
+ * <p>- `loadingChunks`: Whether to load or generate chunks during pathfinding. This will be ignored on paper
+ * and always load chunks.
  *
  * <p>- `counterCheck`: Whether to run a counter check on the path if it's not found to validate the
  * result. Note: `counterCheck` is a fallback mechanism that reevaluates the entire path from end to

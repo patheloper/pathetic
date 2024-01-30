@@ -13,7 +13,6 @@ import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
-import org.patheloper.model.snapshot.FailingSnapshotManager;
 
 public class ChunkInvalidateListener implements Listener {
 
@@ -68,8 +67,9 @@ public class ChunkInvalidateListener implements Listener {
   }
 
   private void handleEvent(Block... blocks) {
-    for (Block block : blocks)
-      FailingSnapshotManager.invalidateChunk(
-          block.getWorld().getUID(), block.getChunk().getX(), block.getChunk().getZ());
+    //for (Block block : blocks)
+    //  FailingSnapshotManager.invalidateChunk(
+    //      block.getWorld().getUID(), block.getChunk().getX(), block.getChunk().getZ());
+    // TODO: FIX THIS. Static invalidateChunk doesnt exist
   }
 }

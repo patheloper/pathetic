@@ -10,7 +10,7 @@ public class DirectPathfinderStrategy implements PathfinderStrategy {
   @Override
   public boolean isValid(@NonNull PathValidationContext pathValidationContext) {
     return pathValidationContext
-        .getSnapshotManager()
+        .getTerrainProvider()
         .getBlock(pathValidationContext.getPosition())
         .isPassable();
   }
