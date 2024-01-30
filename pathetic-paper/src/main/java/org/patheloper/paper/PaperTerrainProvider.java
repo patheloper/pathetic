@@ -7,6 +7,7 @@ import org.patheloper.api.wrapper.PathPosition;
 public class PaperTerrainProvider implements TerrainProvider {
   @Override
   public PathBlock getBlock(PathPosition position) {
-    return null;
+    PatheticPaper pp = PatheticPaper.getInstance();
+    return pp.toPathBlock(pp.toLocation(position).getBlock());
   }
 }
