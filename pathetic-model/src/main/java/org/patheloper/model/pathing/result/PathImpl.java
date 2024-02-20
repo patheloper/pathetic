@@ -3,9 +3,11 @@ package org.patheloper.model.pathing.result;
 import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.Getter;
@@ -33,6 +35,16 @@ public class PathImpl implements Path {
     this.end = end;
     this.positions = positions;
     this.length = Iterables.size(positions);
+  }
+
+  @Override
+  public @NonNull Iterator<PathPosition> iterator() {
+    return positions.iterator();
+  }
+
+  @Override
+  public void forEach(Consumer<? super PathPosition> action) {
+    positions.forEach(action);
   }
 
   @Override
