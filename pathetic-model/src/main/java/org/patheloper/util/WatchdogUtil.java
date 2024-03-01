@@ -16,7 +16,7 @@ public class WatchdogUtil {
       watchdogClazz = Class.forName("org.spigotmc.WatchdogThread");
       tickMethod = watchdogClazz.getDeclaredMethod("tick");
     } catch (ClassNotFoundException | NoSuchMethodException e) {
-      e.printStackTrace();
+      throw ErrorLogger.logFatalError(e.getMessage(), e);
     }
   }
 
