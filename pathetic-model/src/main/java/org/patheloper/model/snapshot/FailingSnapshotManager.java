@@ -68,7 +68,7 @@ public class FailingSnapshotManager implements SnapshotManager {
       Material material =
           ChunkUtils.getMaterial(chunkSnapshotOptional.get(), x, position.getBlockY(), z);
       BlockState blockState =
-          ChunkUtils.getBlockState(chunkSnapshotOptional.get(), x, position.getBlockY(), z);
+        NMS_UTILS.getNmsInterface().getBlockState(chunkSnapshotOptional.get(), x, position.getBlockY(), z);
       return Optional.of(new PathBlock(position, new BlockInformation(material, blockState)));
     }
 
@@ -159,7 +159,7 @@ public class FailingSnapshotManager implements SnapshotManager {
 
       Material material = ChunkUtils.getMaterial(chunkSnapshot, x, pathPosition.getBlockY(), z);
       BlockState blockState =
-          ChunkUtils.getBlockState(chunkSnapshot, x, pathPosition.getBlockY(), z);
+        NMS_UTILS.getNmsInterface().getBlockState(chunkSnapshot, x, pathPosition.getBlockY(), z);
       return new PathBlock(pathPosition, new BlockInformation(material, blockState));
     }
 

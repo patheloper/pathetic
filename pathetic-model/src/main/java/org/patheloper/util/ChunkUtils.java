@@ -1,12 +1,12 @@
 package org.patheloper.util;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
-import org.bukkit.block.BlockState;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 @UtilityClass
 public class ChunkUtils {
@@ -46,11 +46,4 @@ public class ChunkUtils {
     return snapshot.getBlockType(x, y, z);
   }
 
-  /** Get the block state from a chunk snapshot at the given coordinates */
-  public BlockState getBlockState(ChunkSnapshot snapshot, int x, int y, int z) {
-    if (BukkitVersionUtil.getVersion().isUnder(13, 0))
-      return null; // This is not supported in 1.12 and below
-
-    return snapshot.getBlockData(x, y, z).createBlockState();
-  }
 }
