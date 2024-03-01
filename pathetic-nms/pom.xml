@@ -64,6 +64,13 @@
 
         <dependency>
             <groupId>org.patheloper</groupId>
+            <artifactId>v1_18_R2</artifactId>
+            <version>2.3</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.patheloper</groupId>
             <artifactId>v1_18</artifactId>
             <version>2.4</version>
             <scope>compile</scope>

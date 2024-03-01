@@ -1,6 +1,5 @@
-package org.patheloper.nms.v1_19_R2;
+package org.patheloper.nms.v1_18_R2;
 
-import java.lang.reflect.Field;
 import net.minecraft.server.level.WorldServer;
 import net.minecraft.world.level.block.state.IBlockData;
 import net.minecraft.world.level.chunk.ChunkStatus;
@@ -9,13 +8,15 @@ import org.bukkit.ChunkSnapshot;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.v1_19_R2.CraftChunk;
-import org.bukkit.craftbukkit.v1_19_R2.CraftWorld;
-import org.bukkit.craftbukkit.v1_19_R2.block.CraftBlockStates;
-import org.bukkit.craftbukkit.v1_19_R2.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_18_R2.CraftChunk;
+import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_18_R2.block.CraftBlockStates;
+import org.bukkit.craftbukkit.v1_18_R2.block.data.CraftBlockData;
 import org.patheloper.api.snapshot.NMSInterface;
 
-public class OneNineteenTwoNMSInterface implements NMSInterface {
+import java.lang.reflect.Field;
+
+public class OneEighteenTwoNMSInterface implements NMSInterface {
 
   private static final Field blockIDField;
 
@@ -38,7 +39,7 @@ public class OneNineteenTwoNMSInterface implements NMSInterface {
 
       server.k().a(chunkX, chunkZ, ChunkStatus.o, true);
       DataPaletteBlock<IBlockData> dataDataPaletteBlock =
-          (DataPaletteBlock<IBlockData>) blockIDField.get(newCraftChunk);
+        (DataPaletteBlock<IBlockData>) blockIDField.get(newCraftChunk);
 
       dataDataPaletteBlock.b();
       dataDataPaletteBlock.a();
@@ -53,10 +54,10 @@ public class OneNineteenTwoNMSInterface implements NMSInterface {
     }
   }
 
-    @Override
-    public BlockState getBlockState(ChunkSnapshot snapshot, int x, int y, int z) {
-      BlockData data = snapshot.getBlockData(x, y, z);
-      IBlockData state = ((CraftBlockData) data).getState();
-      return CraftBlockStates.getBlockState(state, null);
-    }
+  @Override
+  public BlockState getBlockState(ChunkSnapshot snapshot, int x, int y, int z) {
+    BlockData data = snapshot.getBlockData(x, y, z);
+    IBlockData state = ((CraftBlockData) data).getState();
+    return CraftBlockStates.getBlockState(state, null);
+  }
 }

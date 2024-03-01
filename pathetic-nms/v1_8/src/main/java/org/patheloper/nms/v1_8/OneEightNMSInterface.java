@@ -4,6 +4,7 @@ import net.minecraft.server.v1_8_R3.Chunk;
 import net.minecraft.server.v1_8_R3.WorldServer;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.World;
+import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.patheloper.api.snapshot.NMSInterface;
 
@@ -21,4 +22,9 @@ public class OneEightNMSInterface implements NMSInterface {
       return null;
     }
   }
+
+    @Override
+    public BlockState getBlockState(ChunkSnapshot snapshot, int x, int y, int z) {
+        return null;
+    }
 }
