@@ -10,9 +10,10 @@ import org.patheloper.util.ComputingCache;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Node implements Comparable<Node> {
 
-  private static final double MANHATTAN_WEIGHT = 0.6;
-  private static final double OCTILE_WEIGHT = 0.3;
-  private static final double PERPENDICULAR_WEIGHT = 0.1;
+  private static final double MANHATTAN_WEIGHT = 0.3;
+  private static final double OCTILE_WEIGHT = 0.15;
+  private static final double PERPENDICULAR_WEIGHT = 0.6;
+  private static final double HEIGHT_WEIGHT = 0.3;
 
   private final Integer depth;
   @EqualsAndHashCode.Include private final PathPosition position;
@@ -42,17 +43,18 @@ public class Node implements Comparable<Node> {
     double manhattanDistance = this.position.manhattanDistance(target);
     double octileDistance = this.position.octileDistance(target);
     double perpendicularDistance = calculatePerpendicularDistance();
+    double heightFactor = Math.abs(this.position.getBlockY() - target.getBlockY()); // Consider height differences
 
-    return manhattanDistance * MANHATTAN_WEIGHT
-        + octileDistance * OCTILE_WEIGHT
-        + perpendicularDistance * PERPENDICULAR_WEIGHT;
+    return (manhattanDistance * MANHATTAN_WEIGHT)
+        + (octileDistance * OCTILE_WEIGHT)
+        + (perpendicularDistance * PERPENDICULAR_WEIGHT)
+        + (heightFactor * HEIGHT_WEIGHT);
   }
 
   private double calculatePerpendicularDistance() {
-    PathVector a = this.position.toVector();
-    PathVector b = this.start.toVector();
-    PathVector c = this.target.toVector();
-    return a.subtract(b).getCrossProduct(c.subtract(b)).length() / c.subtract(b).length();
+    PathVector pathToStart = start.toVector().subtract(position.toVector());
+    PathVector pathToTarget = target.toVector().subtract(position.toVector());
+    return pathToStart.getCrossProduct(pathToTarget).length() / pathToTarget.length();
   }
 
   @Override
