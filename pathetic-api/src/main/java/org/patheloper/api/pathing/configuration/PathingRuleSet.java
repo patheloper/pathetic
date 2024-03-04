@@ -47,6 +47,7 @@ public class PathingRuleSet {
   boolean allowingFallback;
   boolean loadingChunks;
   boolean counterCheck;
+  @Builder.Default HeuristicWeights heuristicWeights = HeuristicWeights.NATUARL_PATH_WEIGHTS;
 
   /**
    * @return A new {@link PathingRuleSet} with default values but async.
@@ -81,6 +82,7 @@ public class PathingRuleSet {
       .allowingFallback(pathingRuleSet.allowingFallback)
       .loadingChunks(pathingRuleSet.loadingChunks)
       .counterCheck(pathingRuleSet.counterCheck)
+      .heuristicWeights(pathingRuleSet.heuristicWeights)
       .build();
   }
 }
