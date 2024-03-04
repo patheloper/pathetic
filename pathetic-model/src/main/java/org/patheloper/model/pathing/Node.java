@@ -48,7 +48,7 @@ public class Node implements Comparable<Node> {
    *
    * @return the estimated total cost (represented by the F-Score)
    */
-  public double getFCost() {
+  private double getFCost() {
     return getGCost() + heuristic.get();
   }
 
