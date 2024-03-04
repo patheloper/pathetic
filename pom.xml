@@ -94,6 +94,11 @@
                             <placement>a</placement>
                             <head>Experimental:</head>
                         </tag>
+                        <tag>
+                            <name>default</name>
+                            <placement>a</placement>
+                            <head>Default:</head>
+                        </tag>
                     </tags>
                 </configuration>
             </plugin>

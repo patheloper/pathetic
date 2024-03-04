@@ -8,29 +8,9 @@ import lombok.Value;
 import lombok.With;
 
 /**
- * Configuration options for pathfinding.
- *
- * <p>This class defines a set of rules that guide the behavior of the pathfinding process.
- *
- * <p>- `maxIterations`: The maximum number of iterations allowed during pathfinding. Set this to
- * prevent infinite loops.
- *
- * <p>- `maxLength`: The maximum length of the path. Avoid setting this too high as it can cause
- * performance issues.
- *
- * <p>- `async`: Whether to run pathfinding asynchronously or not.
- *
- * <p>- `allowingDiagonal`: Whether to allow diagonal movement when pathfinding.
- *
- * <p>- `allowingFailFast`: Whether to fail fast if the target is unreachable from the start.
- *
- * <p>- `allowingFallback`: If pathfinding fails, whether to fall back to the previously found path.
- *
- * <p>- `loadingChunks`: Whether to load or generate chunks during pathfinding.
- *
- * <p>- `counterCheck`: Whether to run a counter check on the path if it's not found to validate the
- * result. Note: `counterCheck` is a fallback mechanism that reevaluates the entire path from end to
- * beginning.
+ *  Defines a set of configurable rules that govern the behavior of the A* pathfinding algorithm.
+ *  By adjusting these settings, you can fine-tune the pathfinding process to suit the specific needs of
+ *  your Minecraft environment.
  */
 @With
 @Value
@@ -39,14 +19,64 @@ import lombok.With;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class PathingRuleSet {
 
-  @Builder.Default int maxIterations = 5000; // to avoid freewheeling
+  /**
+   * The maximum number of iterations allowed for the pathfinding algorithm.
+   * This acts as a safeguard to prevent infinite loops in complex scenarios.
+   *
+   * @default 5000
+   */
+  @Builder.Default int maxIterations = 5000;
+
+  /**
+   * The maximum permissible length of a calculated path (in blocks).
+   * Use this to constrain long searches that could impact performance. A value of 0 indicates no limit.
+   */
   int maxLength;
+
+  /**
+   * Determines whether pathfinding calculations should be executed asynchronously in a separate thread.
+   * This can improve responsiveness in the main thread, but may introduce synchronization complexities.
+   */
   boolean async;
+
+  /**
+   * Controls whether the pathfinding algorithm can take diagonal steps. Enabling this allows for more
+   * flexible and potentially shorter paths but might require a slightly more refined heuristic.
+   *
+   * @default true
+   */
   @Builder.Default boolean allowingDiagonal = true;
+
+  /**
+   * If set to true, the pathfinding process will terminate immediately if  no path is found between the
+   * start and target. This can be helpful for quick validation but prevents fallback strategies.
+   */
   boolean allowingFailFast;
+
+  /**
+   * If pathfinding fails, this setting determines whether the algorithm should fall back to the last
+   * successfully calculated path.  This can help maintain progress, but might use an outdated path.
+   */
   boolean allowingFallback;
+
+  /**
+   *  Controls whether chunks should be loaded or generated as needed during the pathfinding process.
+   *  This is essential for exploring uncharted areas, but may impact performance.
+   */
   boolean loadingChunks;
+
+  /**
+   * If pathfinding fails, determines whether to run a reverse pathfinding check (from target to start)
+   * to verify the result. This is a computationally expensive fallback but can help identify some failure cases.
+   */
   boolean counterCheck;
+
+  /**
+   *  The set of weights used to calculate heuristics within the A* algorithm. These influence the pathfinding
+   *  priority for distance, elevation changes, smoothness, and diagonal movement.
+   *
+   * @default HeuristicWeights.NATURAL_PATH_WEIGHTS
+   */
   @Builder.Default HeuristicWeights heuristicWeights = HeuristicWeights.NATUARL_PATH_WEIGHTS;
 
   /**
