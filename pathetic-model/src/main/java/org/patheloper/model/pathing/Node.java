@@ -24,8 +24,7 @@ public class Node implements Comparable<Node> {
   private final ComputingCache<Double> gCostCache = new ComputingCache<>(this::calculateGCost);
   private final ComputingCache<Double> heuristic = new ComputingCache<>(this::heuristic);
 
-  @Setter
-  private Node parent;
+  @Setter private Node parent;
 
   public boolean isTarget() {
     return this.position.getBlockX() == target.getBlockX()
