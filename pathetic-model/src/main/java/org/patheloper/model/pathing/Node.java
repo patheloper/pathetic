@@ -2,35 +2,27 @@ package org.patheloper.model.pathing;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.patheloper.api.pathing.configuration.HeuristicWeights;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.api.wrapper.PathVector;
 import org.patheloper.util.ComputingCache;
 
 @Getter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@RequiredArgsConstructor
 public class Node implements Comparable<Node> {
 
-  private static final double MANHATTAN_WEIGHT = 0.3;
-  private static final double OCTILE_WEIGHT = 0.15;
-  private static final double PERPENDICULAR_WEIGHT = 0.6;
-  private static final double HEIGHT_WEIGHT = 0.3;
-
-  private final Integer depth;
   @EqualsAndHashCode.Include private final PathPosition position;
-  private final PathPosition target;
   private final PathPosition start;
+  private final PathPosition target;
+  private final HeuristicWeights heuristicWeights;
+  private final Integer depth;
 
   private final ComputingCache<Double> gCostCache = new ComputingCache<>(this::calculateGCost);
   private final ComputingCache<Double> heuristic = new ComputingCache<>(this::heuristic);
 
   private Node parent;
-
-  public Node(PathPosition position, PathPosition start, PathPosition target, Integer depth) {
-    this.position = position;
-    this.target = target;
-    this.start = start;
-    this.depth = depth;
-  }
 
   public void setParent(Node parent) {
     this.parent = parent;
@@ -43,8 +35,8 @@ public class Node implements Comparable<Node> {
   }
 
   /**
-   * Calculates the estimated total cost of the path from the start node to the goal node, passing through
-   * this node.
+   * Calculates the estimated total cost of the path from the start node to the goal node, passing
+   * through this node.
    *
    * @return the estimated total cost (represented by the F-Score)
    */
@@ -53,9 +45,9 @@ public class Node implements Comparable<Node> {
   }
 
   /**
-   * The accumulated cost (also known as G-Score) from the starting node to the current node.
-   * This value represents the actual (known) cost of traversing the path to the current node.
-   * It is typically calculated by summing the movement costs from the start node to the current node.
+   * The accumulated cost (also known as G-Score) from the starting node to the current node. This
+   * value represents the actual (known) cost of traversing the path to the current node. It is
+   * typically calculated by summing the movement costs from the start node to the current node.
    */
   private double getGCost() {
     return gCostCache.get();
@@ -72,12 +64,13 @@ public class Node implements Comparable<Node> {
     double manhattanDistance = this.position.manhattanDistance(target);
     double octileDistance = this.position.octileDistance(target);
     double perpendicularDistance = calculatePerpendicularDistance();
-    double heightFactor = Math.abs(this.position.getBlockY() - target.getBlockY()); // Consider height differences
+    double heightFactor =
+        Math.abs(this.position.getBlockY() - target.getBlockY()); // Consider height differences
 
-    return (manhattanDistance * MANHATTAN_WEIGHT)
-        + (octileDistance * OCTILE_WEIGHT)
-        + (perpendicularDistance * PERPENDICULAR_WEIGHT)
-        + (heightFactor * HEIGHT_WEIGHT);
+    return (manhattanDistance * heuristicWeights.getManhattenWeight())
+        + (octileDistance * heuristicWeights.getOctileWeight())
+        + (perpendicularDistance * heuristicWeights.getPerpendicularWeight())
+        + (heightFactor * heuristicWeights.getHeightWeight());
   }
 
   private double calculatePerpendicularDistance() {
