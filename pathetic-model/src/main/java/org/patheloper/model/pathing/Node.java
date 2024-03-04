@@ -3,6 +3,7 @@ package org.patheloper.model.pathing;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.patheloper.api.pathing.configuration.HeuristicWeights;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.api.wrapper.PathVector;
@@ -23,11 +24,8 @@ public class Node implements Comparable<Node> {
   private final ComputingCache<Double> gCostCache = new ComputingCache<>(this::calculateGCost);
   private final ComputingCache<Double> heuristic = new ComputingCache<>(this::heuristic);
 
+  @Setter
   private Node parent;
-
-  public void setParent(Node parent) {
-    this.parent = parent;
-  }
 
   public boolean isTarget() {
     return this.position.getBlockX() == target.getBlockX()
