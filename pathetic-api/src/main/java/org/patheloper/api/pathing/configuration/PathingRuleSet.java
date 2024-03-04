@@ -77,7 +77,7 @@ public class PathingRuleSet {
    *
    * @default HeuristicWeights.NATURAL_PATH_WEIGHTS
    */
-  @Builder.Default HeuristicWeights heuristicWeights = HeuristicWeights.NATUARL_PATH_WEIGHTS;
+  @Builder.Default HeuristicWeights heuristicWeights = HeuristicWeights.NATURAL_PATH_WEIGHTS;
 
   /**
    * @return A new {@link PathingRuleSet} with default values but async.

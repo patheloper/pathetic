@@ -23,7 +23,7 @@ public class HeuristicWeights {
    * Provides a set of default heuristic weights that may be suitable for natural pathfinding. These
    * values can be adjusted for specific scenarios.
    */
-  public static final HeuristicWeights NATUARL_PATH_WEIGHTS = create(0.3, 0.15, 0.6, 0.3);
+  public static final HeuristicWeights NATURAL_PATH_WEIGHTS = create(0.3, 0.15, 0.6, 0.3);
 
   /**
    * Provides a set of weights strongly prioritizing the shortest direct path, even if diagonally.
