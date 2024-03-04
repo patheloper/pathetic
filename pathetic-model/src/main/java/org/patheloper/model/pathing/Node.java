@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.patheloper.api.pathing.configuration.HeuristicWeights;
+import org.patheloper.api.pathing.configuration.PathingRuleSet;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.api.wrapper.PathVector;
 import org.patheloper.util.ComputingCache;
@@ -13,15 +14,20 @@ import org.patheloper.util.ComputingCache;
 @RequiredArgsConstructor
 public class Node implements Comparable<Node> {
 
+  private static final int NUMBER_OF_ZONES = 4;
+  private static final double MAX_PENALTY = 2.0;
+
   @EqualsAndHashCode.Include private final PathPosition position;
   private final PathPosition start;
   private final PathPosition target;
-  private final HeuristicWeights heuristicWeights;
+  private final PathingRuleSet ruleSet; // we need to find a better solution for this
   private final Integer depth;
 
   private final ComputingCache<Double> fCostCache = new ComputingCache<>(this::calculateFCost);
   private final ComputingCache<Double> gCostCache = new ComputingCache<>(this::calculateGCost);
   private final ComputingCache<Double> heuristic = new ComputingCache<>(this::heuristic);
+
+  private double[] zonePenalties;
 
   private Node parent;
 
@@ -68,14 +74,40 @@ public class Node implements Comparable<Node> {
   private double heuristic() {
     double manhattanDistance = this.position.manhattanDistance(target);
     double octileDistance = this.position.octileDistance(target);
-    double perpendicularDistance = calculatePerpendicularDistance();
+    double perpendicularDistance;
+    if(ruleSet.isApproximatePerpendicularDistance()) {
+      calculateZones();
+      perpendicularDistance = approximatePerpendicularDistance();
+    } else {
+      perpendicularDistance = calculatePerpendicularDistance();
+    }
     double heightFactor =
         Math.abs(this.position.getBlockY() - target.getBlockY()); // Consider height differences
 
+    HeuristicWeights heuristicWeights = ruleSet.getHeuristicWeights();
     return (manhattanDistance * heuristicWeights.getManhattenWeight())
         + (octileDistance * heuristicWeights.getOctileWeight())
         + (perpendicularDistance * heuristicWeights.getPerpendicularWeight())
         + (heightFactor * heuristicWeights.getHeightWeight());
+  }
+
+  private void calculateZones() {
+    zonePenalties = new double[NUMBER_OF_ZONES];
+    double penaltyIncrement = MAX_PENALTY / NUMBER_OF_ZONES;
+
+    for (int i = 0; i < NUMBER_OF_ZONES; i++) {
+      zonePenalties[i] = penaltyIncrement * (i + 1);
+    }
+  }
+
+  private double approximatePerpendicularDistance() {
+    PathVector pathToStart = start.toVector().subtract(position.toVector());
+    PathVector pathToTarget = target.toVector().subtract(position.toVector());
+
+    int zone = (int) Math.abs(pathToStart.getCrossProduct(pathToTarget).length() / 4.0);
+    zone = Math.min(zone, zonePenalties.length - 1);
+
+    return zonePenalties[zone];
   }
 
   private double calculatePerpendicularDistance() {

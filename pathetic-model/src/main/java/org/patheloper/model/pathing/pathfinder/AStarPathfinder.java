@@ -37,7 +37,7 @@ public class AStarPathfinder extends AbstractPathfinder {
       PathPosition start, PathPosition target, PathfinderStrategy strategy) {
     Node startNode =
         new Node(
-            start.floor(), start.floor(), target.floor(), pathingRuleSet.getHeuristicWeights(), 0);
+            start.floor(), start.floor(), target.floor(), pathingRuleSet, 0);
 
     PriorityQueue<Node> nodeQueue = new PriorityQueue<>(Collections.singleton(startNode));
     Set<PathPosition> examinedPositions = new HashSet<>();
@@ -325,7 +325,7 @@ public class AStarPathfinder extends AbstractPathfinder {
             currentNode.getPosition().add(offset),
             currentNode.getStart(),
             currentNode.getTarget(),
-            pathingRuleSet.getHeuristicWeights(),
+            pathingRuleSet,
             currentNode.getDepth() + 1);
     newNode.setParent(currentNode);
     return newNode;

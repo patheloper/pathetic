@@ -85,6 +85,15 @@ public class PathingRuleSet {
   @Builder.Default HeuristicWeights heuristicWeights = HeuristicWeights.NATURAL_PATH_WEIGHTS;
 
   /**
+   * **(Advanced)** Controls whether the A* pathfinding algorithm should use approximated
+   * calculations for the perpendicular distance component of the heuristic. Approximations can
+   * improve pathfinding performance but may potentially lead to slightly less accurate paths. When
+   * 'true', zones around the ideal path are pre-determined, and nodes incur penalties based on
+   * which zone they fall within instead of precise distance calculations.
+   */
+  boolean approximatePerpendicularDistance;
+
+  /**
    * @return A new {@link PathingRuleSet} with default values but async.
    */
   public static PathingRuleSet createAsyncRuleSet() {
@@ -118,6 +127,7 @@ public class PathingRuleSet {
         .loadingChunks(pathingRuleSet.loadingChunks)
         .counterCheck(pathingRuleSet.counterCheck)
         .heuristicWeights(pathingRuleSet.heuristicWeights)
+        .approximatePerpendicularDistance(pathingRuleSet.approximatePerpendicularDistance)
         .build();
   }
 }
