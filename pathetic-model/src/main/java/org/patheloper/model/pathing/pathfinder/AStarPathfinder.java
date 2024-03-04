@@ -4,7 +4,7 @@ import lombok.NonNull;
 import org.patheloper.api.pathing.result.Path;
 import org.patheloper.api.pathing.result.PathState;
 import org.patheloper.api.pathing.result.PathfinderResult;
-import org.patheloper.api.pathing.rules.PathingRuleSet;
+import org.patheloper.api.pathing.configuration.PathingRuleSet;
 import org.patheloper.api.pathing.strategy.PathValidationContext;
 import org.patheloper.api.pathing.strategy.PathfinderStrategy;
 import org.patheloper.api.wrapper.PathPosition;

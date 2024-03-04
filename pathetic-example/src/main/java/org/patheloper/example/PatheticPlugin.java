@@ -2,7 +2,7 @@ package org.patheloper.example;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import org.patheloper.api.pathing.Pathfinder;
-import org.patheloper.api.pathing.rules.PathingRuleSet;
+import org.patheloper.api.pathing.configuration.PathingRuleSet;
 import org.patheloper.example.command.PatheticCommand;
 import org.patheloper.mapping.PatheticMapper;
 

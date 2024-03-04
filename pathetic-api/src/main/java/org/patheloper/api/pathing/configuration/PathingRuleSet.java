@@ -1,4 +1,4 @@
-package org.patheloper.api.pathing.rules;
+package org.patheloper.api.pathing.configuration;
 
 import lombok.AccessLevel;
 import lombok.Builder;

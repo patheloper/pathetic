@@ -5,7 +5,7 @@ import lombok.experimental.UtilityClass;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.patheloper.Pathetic;
 import org.patheloper.api.pathing.Pathfinder;
-import org.patheloper.api.pathing.rules.PathingRuleSet;
+import org.patheloper.api.pathing.configuration.PathingRuleSet;
 import org.patheloper.model.pathing.pathfinder.AStarPathfinder;
 import org.patheloper.util.ErrorLogger;
 
