@@ -2,7 +2,9 @@ package org.patheloper;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
@@ -15,6 +17,8 @@ import org.patheloper.util.ErrorLogger;
 public class Pathetic {
 
   private static final String PROPERTIES_FILE = "pathetic.properties";
+
+  private static final Set<Runnable> SHUTDOWN_LISTENERS = new HashSet<>();
 
   private static JavaPlugin instance;
   @Getter private static String modelVersion;
@@ -43,12 +47,20 @@ public class Pathetic {
     javaPlugin.getLogger().info("pathetic successfully initialized");
   }
 
+  public static void shutdown() {
+    SHUTDOWN_LISTENERS.forEach(Runnable::run);
+  }
+
   public static boolean isInitialized() {
     return instance != null;
   }
 
   public static JavaPlugin getPluginInstance() {
     return instance;
+  }
+
+  public static void addShutdownListener(Runnable listener) {
+    SHUTDOWN_LISTENERS.add(listener);
   }
 
   private static void loadModelVersion() {

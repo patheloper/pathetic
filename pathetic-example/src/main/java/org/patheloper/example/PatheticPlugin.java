@@ -25,4 +25,9 @@ public final class PatheticPlugin extends JavaPlugin {
 
     getCommand("pathetic").setExecutor(new PatheticCommand(reusablePathfinder));
   }
+
+  @Override
+  public void onDisable() {
+    PatheticMapper.shutdown(); // This is very important to clear any resources Pathetic still holds on
+  }
 }

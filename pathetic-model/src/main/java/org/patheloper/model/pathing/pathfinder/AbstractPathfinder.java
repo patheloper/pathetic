@@ -43,6 +43,10 @@ abstract class AbstractPathfinder implements Pathfinder {
 
   private static final ExecutorService PATHING_EXECUTOR = Executors.newWorkStealingPool();
 
+  static {
+    Pathetic.addShutdownListener(PATHING_EXECUTOR::shutdown);
+  }
+
   protected final PathingRuleSet pathingRuleSet;
 
   protected final Offset offset;

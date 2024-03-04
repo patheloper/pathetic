@@ -14,14 +14,22 @@ import org.patheloper.util.ErrorLogger;
 public class PatheticMapper {
 
   /**
-   * Initializes the Lib. If the lib is not initialized yet but is used anyways, this will cause
-   * many things to break.
-   *
+   * @apiNote If Pathetic is not initialized yet but is used anyways, this will cause many things to
+   *     break.
    * @param javaPlugin the JavaPlugin which initializes the lib
-   * @throws IllegalStateException If an attempt is made to initialize more than 1 time
+   * @throws IllegalStateException If an attempt is made to initialize more than once
    */
   public void initialize(JavaPlugin javaPlugin) {
     Pathetic.initialize(javaPlugin);
+  }
+
+  /**
+   * Signals Pathetic to initiate its shutdown process, releasing resources and finalizing
+   * operations. This method should be called when Pathetic is no longer needed or the plugin is
+   * being disabled.
+   */
+  public void shutdown() {
+    Pathetic.shutdown();
   }
 
   /**
@@ -44,6 +52,6 @@ public class PatheticMapper {
   public @NonNull Pathfinder newPathfinder(PathingRuleSet pathingRuleSet) {
     if (Pathetic.isInitialized()) return new AStarPathfinder(pathingRuleSet);
 
-    throw ErrorLogger.logFatalError("Pathetic is not initialized");
+    throw ErrorLogger.logFatalError("Pathetic is not initialized yet.");
   }
 }
