@@ -188,31 +188,6 @@ public class PathVector implements Cloneable {
     return this.z;
   }
 
-  /**
-   * Calculates the projection of this vector onto another vector. The projection represents the
-   * component of this vector that lies along the direction of the other vector.
-   *
-   * @param other The vector onto which to project this vector
-   * @return A new PathVector representing the projection of this vector onto the other vector
-   */
-  public PathVector projectOnto(PathVector other) {
-    double dotProduct = this.dot(other);
-    double otherSquaredLength = other.lengthSquared();
-
-    double scaleFactor = dotProduct / otherSquaredLength;
-    return other.multiply(scaleFactor);
-  }
-
-  /**
-   * Calculates the square of the length (magnitude) of this vector. This is more efficient than
-   * calculating the length directly and then squaring it.
-   *
-   * @return The squared length of this vector
-   */
-  public double lengthSquared() {
-    return dot(this);
-  }
-
   @Override
   public PathVector clone() {
     final PathVector clone;
