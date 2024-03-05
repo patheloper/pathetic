@@ -78,7 +78,11 @@ public class Node implements Comparable<Node> {
   private double calculatePerpendicularDistance() {
     PathVector pathToStart = start.toVector().subtract(position.toVector());
     PathVector pathToTarget = target.toVector().subtract(position.toVector());
-    return pathToStart.getCrossProduct(pathToTarget).length() / pathToTarget.length();
+
+    PathVector projection = pathToStart.projectOnto(pathToTarget);
+    PathVector positionToProjection = position.toVector().subtract(projection);
+
+    return positionToProjection.dot(positionToProjection);
   }
 
   @Override
