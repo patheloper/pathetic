@@ -51,8 +51,8 @@ public final class OneTwentyTwoNMSInterface implements NMSInterface {
     }
   }
 
-    @Override
-    public BlockState getBlockState(ChunkSnapshot snapshot, int x, int y, int z) {
-      return snapshot.getBlockData(x, y, z).createBlockState();
-    }
+  @Override
+  public BlockState getBlockState(ChunkSnapshot snapshot, int x, int y, int z) {
+    return snapshot.getBlockData(x, y, z).createBlockState();
+  }
 }

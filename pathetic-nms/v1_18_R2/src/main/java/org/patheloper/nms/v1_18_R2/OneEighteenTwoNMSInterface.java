@@ -1,5 +1,6 @@
 package org.patheloper.nms.v1_18_R2;
 
+import java.lang.reflect.Field;
 import net.minecraft.server.level.WorldServer;
 import net.minecraft.world.level.block.state.IBlockData;
 import net.minecraft.world.level.chunk.ChunkStatus;
@@ -13,8 +14,6 @@ import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_18_R2.block.CraftBlockStates;
 import org.bukkit.craftbukkit.v1_18_R2.block.data.CraftBlockData;
 import org.patheloper.api.snapshot.NMSInterface;
-
-import java.lang.reflect.Field;
 
 public class OneEighteenTwoNMSInterface implements NMSInterface {
 
@@ -39,7 +38,7 @@ public class OneEighteenTwoNMSInterface implements NMSInterface {
 
       server.k().a(chunkX, chunkZ, ChunkStatus.o, true);
       DataPaletteBlock<IBlockData> dataDataPaletteBlock =
-        (DataPaletteBlock<IBlockData>) blockIDField.get(newCraftChunk);
+          (DataPaletteBlock<IBlockData>) blockIDField.get(newCraftChunk);
 
       dataDataPaletteBlock.b();
       dataDataPaletteBlock.a();

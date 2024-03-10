@@ -27,8 +27,8 @@ public class OneSixteenNMSInterface implements NMSInterface {
     }
   }
 
-    @Override
-    public BlockState getBlockState(ChunkSnapshot snapshot, int x, int y, int z) {
-      return null;
-    }
+  @Override
+  public BlockState getBlockState(ChunkSnapshot snapshot, int x, int y, int z) {
+    return null;
+  }
 }

@@ -1,5 +1,6 @@
 package org.patheloper.nms.v1_20_R1;
 
+import java.lang.reflect.Field;
 import net.minecraft.server.level.WorldServer;
 import net.minecraft.world.level.block.state.IBlockData;
 import net.minecraft.world.level.chunk.ChunkStatus;
@@ -10,8 +11,6 @@ import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.v1_20_R1.CraftChunk;
 import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
 import org.patheloper.api.snapshot.NMSInterface;
-
-import java.lang.reflect.Field;
 
 public class OneTwentyOneNMSInterface implements NMSInterface {
 
@@ -51,8 +50,8 @@ public class OneTwentyOneNMSInterface implements NMSInterface {
     }
   }
 
-    @Override
-    public BlockState getBlockState(ChunkSnapshot snapshot, int x, int y, int z) {
-      return snapshot.getBlockData(x, y, z).createBlockState();
-    }
+  @Override
+  public BlockState getBlockState(ChunkSnapshot snapshot, int x, int y, int z) {
+    return snapshot.getBlockData(x, y, z).createBlockState();
+  }
 }
