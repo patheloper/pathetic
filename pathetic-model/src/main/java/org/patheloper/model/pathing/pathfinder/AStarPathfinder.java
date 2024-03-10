@@ -264,20 +264,30 @@ public class AStarPathfinder extends AbstractPathfinder {
    */
   private boolean isReachable(Node from, Node to, PathfinderStrategy strategy) {
     boolean hasYDifference = from.getPosition().getBlockY() != to.getPosition().getBlockY();
+    PathVector[] offsets = Offset.VERTICAL_AND_HORIZONTAL.getVectors();
 
-    for (PathVector offset : Offset.VERTICAL_AND_HORIZONTAL.getVectors()) {
-      Node neighbor1 = createNeighbourNode(from, offset);
-      Node neighbor2 = createNeighbourNode(to, offset);
+    for (PathVector vector1 : offsets) {
+      if (vector1.getY() != 0) continue;
 
-      if (neighbor1.getPosition().equals(neighbor2.getPosition())) {
+      Node neighbour1 = createNeighbourNode(from, vector1);
+      for (PathVector vector2 : offsets) {
+        if (vector2.getY() != 0) continue;
 
-        if (!strategy.isValid(
-            new PathValidationContext(
-                neighbor1.getPosition(), neighbor1.getParent().getPosition(), snapshotManager))) {
-          return false;
+        Node neighbour2 = createNeighbourNode(to, vector2);
+        if (neighbour1.getPosition().equals(neighbour2.getPosition())) {
+          /*
+           * if it has a Y difference, we also need to check the nodes above or below,
+           *  depending on the Y difference
+           */
+          boolean heightDifferencePassable =
+              isHeightDifferencePassable(from, to, vector1, hasYDifference);
+          if (strategy.isValid(
+                  new PathValidationContext(
+                      neighbour1.getPosition(),
+                      neighbour1.getParent().getPosition(),
+                      snapshotManager))
+              && heightDifferencePassable) return true;
         }
-
-        return !hasYDifference || isHeightDifferencePassable(from, to, offset);
       }
     }
 
@@ -288,7 +298,9 @@ public class AStarPathfinder extends AbstractPathfinder {
    * Return whether the height difference between the given nodes is passable. If the nodes have no
    * height difference, this will always return true.
    */
-  private boolean isHeightDifferencePassable(Node from, Node to, PathVector vector1) {
+  private boolean isHeightDifferencePassable(Node from, Node to, PathVector vector1, boolean hasHeightDifference) {
+    if(!hasHeightDifference) return true;
+
     int yDifference = from.getPosition().getBlockY() - to.getPosition().getBlockY();
     Node neighbour3 = createNeighbourNode(from, vector1.add(new PathVector(0, yDifference, 0)));
 
