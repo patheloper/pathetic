@@ -37,8 +37,7 @@ public class AStarPathfinder extends AbstractPathfinder {
   private static final int DEFAULT_BLOOM_FILTER_SIZE = 1000;
   private static final double DEFAULT_FPP = 0.01; // 1% false positive probability
 
-  private final Map<Tuple3<Integer>, BloomFilter<String>> bloomFilterGrid = new HashMap<>();
-  private final Map<Tuple3<Integer>, Set<PathPosition>> gridStructure = new HashMap<>();
+  private final Map<Tuple3<Integer>, GridRegionData> gridMap = new HashMap<>();
 
   public AStarPathfinder(PathingRuleSet pathingRuleSet) {
     super(pathingRuleSet);
@@ -340,25 +339,13 @@ public class AStarPathfinder extends AbstractPathfinder {
     int gridY = node.getPosition().getBlockY() / DEFAULT_GRID_CELL_SIZE;
     int gridZ = node.getPosition().getBlockZ() / DEFAULT_GRID_CELL_SIZE;
 
-    BloomFilter<String> bloomFilter =
-        bloomFilterGrid.computeIfAbsent(
-            new Tuple3<>(gridX, gridY, gridZ),
-            k ->
-                BloomFilter.create(
-                    Funnels.stringFunnel(Charset.defaultCharset()),
-                    DEFAULT_BLOOM_FILTER_SIZE,
-                    DEFAULT_FPP));
+    GridRegionData regionData =
+        gridMap.computeIfAbsent(new Tuple3<>(gridX, gridY, gridZ), k -> new GridRegionData());
 
-    Set<PathPosition> regionalExaminedPositions =
-        gridStructure.computeIfAbsent(new Tuple3<>(gridX, gridY, gridZ), k -> new HashSet<>());
+    regionData.regionalExaminedPositions.add(node.getPosition());
 
-    gridStructure
-        .computeIfAbsent(new Tuple3<>(gridX, gridY, gridZ), k -> new HashSet<>())
-        .add(node.getPosition());
-
-    // Using Bloom Filter to avoid unnecessary HashSet lookups
-    if (bloomFilter.mightContain(pathPositionToBloomFilterKey(node.getPosition()))) {
-      if (regionalExaminedPositions.contains(node.getPosition())) {
+    if (regionData.bloomFilter.mightContain(pathPositionToBloomFilterKey(node.getPosition()))) {
+      if (regionData.regionalExaminedPositions.contains(node.getPosition())) {
         return true;
       }
     }
@@ -413,6 +400,20 @@ public class AStarPathfinder extends AbstractPathfinder {
     @Override
     public int hashCode() {
       return Objects.hash(x, y, z);
+    }
+  }
+
+  private class GridRegionData {
+    private final BloomFilter<String> bloomFilter;
+    private final Set<PathPosition> regionalExaminedPositions;
+
+    public GridRegionData() {
+      bloomFilter =
+          BloomFilter.create(
+              Funnels.stringFunnel(Charset.defaultCharset()),
+              DEFAULT_BLOOM_FILTER_SIZE,
+              DEFAULT_FPP);
+      regionalExaminedPositions = new HashSet<>();
     }
   }
 }
