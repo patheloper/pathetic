@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Set;
@@ -28,6 +27,7 @@ import org.patheloper.model.pathing.result.PathImpl;
 import org.patheloper.model.pathing.result.PathfinderResultImpl;
 import org.patheloper.util.ErrorLogger;
 import org.patheloper.util.ExpiringHashMap;
+import org.patheloper.util.Tuple3;
 import org.patheloper.util.WatchdogUtil;
 
 /** A pathfinder that uses the A* algorithm. */
@@ -425,34 +425,6 @@ public class AStarPathfinder extends AbstractPathfinder {
 
     Collections.reverse(path); // make it the right order
     return path;
-  }
-
-  /** Simple class to represent a 3D tuple as the HashMap key */
-  private class Tuple3<T> {
-    public final T x;
-    public final T y;
-    public final T z;
-
-    public Tuple3(T x, T y, T z) {
-      this.x = x;
-      this.y = y;
-      this.z = z;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-      Tuple3<?> tuple3 = (Tuple3<?>) o;
-      return Objects.equals(x, tuple3.x)
-          && Objects.equals(y, tuple3.y)
-          && Objects.equals(z, tuple3.z);
-    }
-
-    @Override
-    public int hashCode() {
-      return Objects.hash(x, y, z);
-    }
   }
 
   private class GridRegionData {
