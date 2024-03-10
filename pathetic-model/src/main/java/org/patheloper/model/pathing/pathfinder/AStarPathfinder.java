@@ -1,10 +1,24 @@
 package org.patheloper.model.pathing.pathfinder;
 
+import com.google.common.hash.BloomFilter;
+import com.google.common.hash.Funnels;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.PriorityQueue;
+import java.util.Set;
 import lombok.NonNull;
+import org.patheloper.api.pathing.configuration.PathingRuleSet;
 import org.patheloper.api.pathing.result.Path;
 import org.patheloper.api.pathing.result.PathState;
 import org.patheloper.api.pathing.result.PathfinderResult;
-import org.patheloper.api.pathing.configuration.PathingRuleSet;
 import org.patheloper.api.pathing.strategy.PathValidationContext;
 import org.patheloper.api.pathing.strategy.PathfinderStrategy;
 import org.patheloper.api.wrapper.PathPosition;
@@ -16,17 +30,15 @@ import org.patheloper.model.pathing.result.PathfinderResultImpl;
 import org.patheloper.util.ErrorLogger;
 import org.patheloper.util.WatchdogUtil;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.PriorityQueue;
-import java.util.Set;
-
 /** A pathfinder that uses the A* algorithm. */
 public class AStarPathfinder extends AbstractPathfinder {
+
+  private static final int DEFAULT_GRID_CELL_SIZE = 12;
+  private static final int DEFAULT_BLOOM_FILTER_SIZE = 1000;
+  private static final double DEFAULT_FPP = 0.01; // 1% false positive probability
+
+  private final Map<Tuple3<Integer>, BloomFilter<String>> bloomFilterGrid = new HashMap<>();
+  private final Map<Tuple3<Integer>, Set<PathPosition>> gridStructure = new HashMap<>();
 
   public AStarPathfinder(PathingRuleSet pathingRuleSet) {
     super(pathingRuleSet);
@@ -189,7 +201,7 @@ public class AStarPathfinder extends AbstractPathfinder {
       Set<PathPosition> examinedPositions,
       PathfinderStrategy strategy,
       boolean allowingDiagonal) {
-    if (isNodeInvalid(newNode, nodeQueue, examinedPositions, strategy)) return false;
+    if (isNodeInvalid(newNode, nodeQueue, strategy)) return false;
 
     /*
      * So at this point there is nothing wrong with the node itself, We can move to it technically.
@@ -220,30 +232,20 @@ public class AStarPathfinder extends AbstractPathfinder {
    */
   private boolean isReachable(Node from, Node to, PathfinderStrategy strategy) {
     boolean hasYDifference = from.getPosition().getBlockY() != to.getPosition().getBlockY();
-    PathVector[] offsets = Offset.VERTICAL_AND_HORIZONTAL.getVectors();
 
-    for (PathVector vector1 : offsets) {
-      if (vector1.getY() != 0) continue;
+    for (PathVector offset : Offset.VERTICAL_AND_HORIZONTAL.getVectors()) {
+      Node neighbor1 = createNeighbourNode(from, offset);
+      Node neighbor2 = createNeighbourNode(to, offset);
 
-      Node neighbour1 = createNeighbourNode(from, vector1);
-      for (PathVector vector2 : offsets) {
-        if (vector2.getY() != 0) continue;
+      if (neighbor1.getPosition().equals(neighbor2.getPosition())) {
 
-        Node neighbour2 = createNeighbourNode(to, vector2);
-        if (neighbour1.getPosition().equals(neighbour2.getPosition())) {
-          /*
-           * if it has a Y difference, we also need to check the nodes above or below,
-           *  depending on the Y difference
-           */
-          boolean heightDifferencePassable =
-              isHeightDifferencePassable(from, to, vector1, hasYDifference);
-          if (strategy.isValid(
-                  new PathValidationContext(
-                      neighbour1.getPosition(),
-                      neighbour1.getParent().getPosition(),
-                      snapshotManager))
-              && heightDifferencePassable) return true;
+        if (!strategy.isValid(
+            new PathValidationContext(
+                neighbor1.getPosition(), neighbor1.getParent().getPosition(), snapshotManager))) {
+          return false;
         }
+
+        return !hasYDifference || isHeightDifferencePassable(from, to, offset);
       }
     }
 
@@ -254,10 +256,7 @@ public class AStarPathfinder extends AbstractPathfinder {
    * Return whether the height difference between the given nodes is passable. If the nodes have no
    * height difference, this will always return true.
    */
-  private boolean isHeightDifferencePassable(
-      Node from, Node to, PathVector vector1, boolean hasYDifference) {
-    if (!hasYDifference) return true;
-
+  private boolean isHeightDifferencePassable(Node from, Node to, PathVector vector1) {
     int yDifference = from.getPosition().getBlockY() - to.getPosition().getBlockY();
     Node neighbour3 = createNeighbourNode(from, vector1.add(new PathVector(0, yDifference, 0)));
 
@@ -335,16 +334,44 @@ public class AStarPathfinder extends AbstractPathfinder {
    * @return whether the given node is invalid or not
    */
   private boolean isNodeInvalid(
-      Node node,
-      Collection<Node> nodeQueue,
-      Set<PathPosition> examinedPositions,
-      PathfinderStrategy strategy) {
-    return examinedPositions.contains(node.getPosition())
+      Node node, Collection<Node> nodeQueue, PathfinderStrategy strategy) {
+
+    int gridX = node.getPosition().getBlockX() / DEFAULT_GRID_CELL_SIZE;
+    int gridY = node.getPosition().getBlockY() / DEFAULT_GRID_CELL_SIZE;
+    int gridZ = node.getPosition().getBlockZ() / DEFAULT_GRID_CELL_SIZE;
+
+    BloomFilter<String> bloomFilter =
+        bloomFilterGrid.computeIfAbsent(
+            new Tuple3<>(gridX, gridY, gridZ),
+            k ->
+                BloomFilter.create(
+                    Funnels.stringFunnel(Charset.defaultCharset()),
+                    DEFAULT_BLOOM_FILTER_SIZE,
+                    DEFAULT_FPP));
+
+    Set<PathPosition> regionalExaminedPositions =
+        gridStructure.computeIfAbsent(new Tuple3<>(gridX, gridY, gridZ), k -> new HashSet<>());
+
+    gridStructure
+        .computeIfAbsent(new Tuple3<>(gridX, gridY, gridZ), k -> new HashSet<>())
+        .add(node.getPosition());
+
+    // Using Bloom Filter to avoid unnecessary HashSet lookups
+    if (bloomFilter.mightContain(pathPositionToBloomFilterKey(node.getPosition()))) {
+      if (regionalExaminedPositions.contains(node.getPosition())) {
+        return true;
+      }
+    }
+
+    return !isWithinWorldBounds(node.getPosition())
         || nodeQueue.contains(node)
-        || !isWithinWorldBounds(node.getPosition())
         || !strategy.isValid(
             new PathValidationContext(
                 node.getPosition(), node.getParent().getPosition(), snapshotManager));
+  }
+
+  private String pathPositionToBloomFilterKey(PathPosition position) {
+    return position.getBlockX() + "," + position.getBlockY() + "," + position.getBlockZ();
   }
 
   /** Traces the path from the given node by retracing the steps from the node's parent. */
@@ -359,5 +386,33 @@ public class AStarPathfinder extends AbstractPathfinder {
 
     Collections.reverse(path); // make it the right order
     return path;
+  }
+
+  /** Simple class to represent a 3D tuple as the HashMap key */
+  private class Tuple3<T> {
+    public final T x;
+    public final T y;
+    public final T z;
+
+    public Tuple3(T x, T y, T z) {
+      this.x = x;
+      this.y = y;
+      this.z = z;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      Tuple3<?> tuple3 = (Tuple3<?>) o;
+      return Objects.equals(x, tuple3.x)
+          && Objects.equals(y, tuple3.y)
+          && Objects.equals(z, tuple3.z);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(x, y, z);
+    }
   }
 }
