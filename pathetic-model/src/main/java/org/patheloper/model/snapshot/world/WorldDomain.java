@@ -11,10 +11,9 @@ public class WorldDomain {
       new ExpiringHashMap<>();
 
   public Optional<ChunkSnapshot> getSnapshot(long key) {
-    if (!chunkSnapshotMap.containsKey(key)) {
-      return Optional.empty();
-    }
-    return Optional.ofNullable(chunkSnapshotMap.get(key).getValue());
+    ExpiringHashMap.Entry<ChunkSnapshot> entry = chunkSnapshotMap.get(key);
+    if (entry == null) return Optional.empty();
+    return Optional.ofNullable(entry.getValue());
   }
 
   public void addSnapshot(final long key, final ChunkSnapshot snapshot) {
