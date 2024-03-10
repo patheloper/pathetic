@@ -85,6 +85,6 @@ public class Node implements Comparable<Node> {
   @Override
   public int compareTo(Node o) {
     // This is used in the priority queue to sort the nodes
-    return Double.compare(getFCost(), o.getFCost());
+    return Double.compare(this.heuristic.get(), o.heuristic.get());
   }
 }
