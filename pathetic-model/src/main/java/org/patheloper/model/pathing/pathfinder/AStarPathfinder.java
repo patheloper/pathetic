@@ -69,7 +69,8 @@ public class AStarPathfinder extends AbstractPathfinder {
    *       automatically removed, optimizing memory allocation.
    * </ul>
    */
-  private final Map<Tuple3<Integer>, GridRegionData> gridMap = new ExpiringHashMap<>();
+  private final Map<Tuple3<Integer>, ExpiringHashMap.Entry<GridRegionData>> gridMap =
+      new ExpiringHashMap<>();
 
   public AStarPathfinder(PathingRuleSet pathingRuleSet) {
     super(pathingRuleSet);
@@ -373,7 +374,11 @@ public class AStarPathfinder extends AbstractPathfinder {
     int gridZ = node.getPosition().getBlockZ() / DEFAULT_GRID_CELL_SIZE;
 
     GridRegionData regionData =
-        gridMap.computeIfAbsent(new Tuple3<>(gridX, gridY, gridZ), k -> new GridRegionData());
+        gridMap
+            .computeIfAbsent(
+                new Tuple3<>(gridX, gridY, gridZ),
+                k -> new ExpiringHashMap.Entry<>(new GridRegionData()))
+            .getValue();
 
     regionData.regionalExaminedPositions.add(node.getPosition());
 

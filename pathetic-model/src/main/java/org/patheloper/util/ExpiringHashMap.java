@@ -1,41 +1,57 @@
 package org.patheloper.util;
 
 import java.util.HashMap;
+import lombok.Getter;
 
-public class ExpiringHashMap<K, V> extends HashMap<K, V> {
+public class ExpiringHashMap<K, V> extends HashMap<K, ExpiringHashMap.Entry<V>> {
 
   private static final long EXPIRATION_TIME = 5 * 60 * 1000;
 
-  private final HashMap<K, Long> expirationMap = new HashMap<>();
-
   @Override
-  public V put(K key, V value) {
-    expirationMap.put(key, System.currentTimeMillis() + EXPIRATION_TIME);
+  public Entry<V> put(K key, Entry<V> value) {
     return super.put(key, value);
   }
 
   @Override
-  public V get(Object key) {
-    if (isExpired(key)) {
-      super.remove(key);
-      expirationMap.remove(key);
-      return null;
+  public Entry<V> get(Object key) {
+    Entry<V> entry = super.get(key);
+    if (entry != null) {
+      if (entry.isExpired()) {
+        super.remove(key);
+        return null;
+      } else {
+        return entry;
+      }
     }
-    return super.get(key);
+    return null;
   }
 
   @Override
   public boolean containsKey(Object key) {
-    if (isExpired(key)) {
-      super.remove(key);
-      expirationMap.remove(key);
-      return false;
+    Entry<V> entry = super.get(key);
+    if (entry != null) {
+      if (entry.isExpired()) {
+        super.remove(key);
+        return false;
+      } else {
+        return true;
+      }
     }
-    return super.containsKey(key);
+    return false;
   }
 
-  private boolean isExpired(Object key) {
-    Long expirationTime = expirationMap.get(key);
-    return expirationTime != null && expirationTime < System.currentTimeMillis();
+  public static class Entry<V> {
+
+    @Getter private final V value;
+    private final long expirationTime;
+
+    public Entry(V value) {
+      this.value = value;
+      this.expirationTime = System.currentTimeMillis() + EXPIRATION_TIME;
+    }
+
+    public boolean isExpired() {
+      return System.currentTimeMillis() > expirationTime;
+    }
   }
 }
