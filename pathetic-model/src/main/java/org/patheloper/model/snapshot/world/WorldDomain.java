@@ -1,29 +1,30 @@
 package org.patheloper.model.snapshot.world;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import org.bukkit.ChunkSnapshot;
+import org.patheloper.util.ExpiringHashMap;
 
 public class WorldDomain {
 
-  private final Cache<Long, ChunkSnapshot> chunkSnapshotCache =
-      CacheBuilder.newBuilder().maximumSize(100000).expireAfterAccess(5, TimeUnit.MINUTES).build();
+  private final Map<Long, ExpiringHashMap.Entry<ChunkSnapshot>> chunkSnapshotMap =
+      new ExpiringHashMap<>();
 
   public Optional<ChunkSnapshot> getSnapshot(long key) {
-    return Optional.ofNullable(chunkSnapshotCache.getIfPresent(key));
+    ExpiringHashMap.Entry<ChunkSnapshot> entry = chunkSnapshotMap.get(key);
+    if (entry == null) return Optional.empty();
+    return Optional.ofNullable(entry.getValue());
   }
 
   public void addSnapshot(final long key, final ChunkSnapshot snapshot) {
-    chunkSnapshotCache.put(key, snapshot);
+    chunkSnapshotMap.put(key, new ExpiringHashMap.Entry<>(snapshot));
   }
 
   public void removeSnapshot(final long key) {
-    chunkSnapshotCache.invalidate(key);
+    chunkSnapshotMap.remove(key);
   }
 
   public boolean containsSnapshot(final long key) {
-    return chunkSnapshotCache.getIfPresent(key) != null;
+    return chunkSnapshotMap.get(key) != null;
   }
 }

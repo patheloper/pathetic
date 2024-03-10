@@ -48,8 +48,21 @@ public class JumpablePathfinderStrategy extends WalkablePathfinderStrategy {
       return true;
     }
 
-    if ((position.getBlockY() - lastValidPosition.getBlockY()) > jumpHeight) return false;
+    int heightDiff = position.getBlockY() - lastValidPosition.getBlockY();
+    if (isJumpingDown(position, lastValidPosition)) {
+      heightDiff *= -1;
+    }
+
+    if (heightDiff > jumpHeight) {
+      return false;
+    }
 
     return startBlock.isPassable() && position.distance(lastValidPosition) <= maxJumpDistance;
+  }
+
+  private boolean isJumpingDown(PathPosition position, PathPosition lastValidPosition) {
+    return position.getBlockX() == lastValidPosition.getBlockX()
+        && position.getBlockZ() == lastValidPosition.getBlockZ()
+        && position.getBlockY() < lastValidPosition.getBlockY();
   }
 }

@@ -4,7 +4,9 @@ import lombok.NonNull;
 import org.patheloper.api.util.ParameterizedSupplier;
 import org.patheloper.api.wrapper.PathPosition;
 
-public interface Path {
+import java.util.function.Consumer;
+
+public interface Path extends Iterable<PathPosition> {
 
   /**
    * The length of the Path compiled from the number of positions
@@ -83,7 +85,11 @@ public interface Path {
   @NonNull
   PathPosition getEnd();
 
-  /** Returns the path from the Pathfinder as a {@link Iterable} full of {@link PathPosition} */
+  /**
+   * Returns the path from the Pathfinder as a {@link Iterable} full of {@link PathPosition}
+   * @deprecated Will be removed in future versions {@link #forEach(Consumer)}
+   */
   @NonNull
+  @Deprecated
   Iterable<PathPosition> getPositions();
 }

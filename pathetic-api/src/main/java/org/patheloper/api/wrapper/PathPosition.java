@@ -1,14 +1,13 @@
 package org.patheloper.api.wrapper;
 
+import java.util.Objects;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
 import org.patheloper.api.util.NumberUtils;
 
 @AllArgsConstructor
-@EqualsAndHashCode
 @Getter
 @ToString
 public class PathPosition implements Cloneable {
@@ -251,5 +250,21 @@ public class PathPosition implements Cloneable {
     clone.y = this.y;
     clone.z = this.z;
     return clone;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    PathPosition that = (PathPosition) o;
+    return x == that.x
+        && y == that.y
+        && z == that.z
+        && Objects.equals(pathEnvironment, that.pathEnvironment);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(pathEnvironment, x, y, z);
   }
 }

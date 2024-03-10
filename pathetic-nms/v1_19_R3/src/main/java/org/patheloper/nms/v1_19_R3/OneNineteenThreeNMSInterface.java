@@ -7,8 +7,12 @@ import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.chunk.DataPaletteBlock;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.World;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_19_R3.CraftChunk;
 import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_19_R3.block.CraftBlockStates;
+import org.bukkit.craftbukkit.v1_19_R3.block.data.CraftBlockData;
 import org.patheloper.api.snapshot.NMSInterface;
 
 public class OneNineteenThreeNMSInterface implements NMSInterface {
@@ -47,5 +51,12 @@ public class OneNineteenThreeNMSInterface implements NMSInterface {
       e.printStackTrace();
       return null;
     }
+  }
+
+  @Override
+  public BlockState getBlockState(ChunkSnapshot snapshot, int x, int y, int z) {
+    BlockData data = snapshot.getBlockData(x, y, z);
+    IBlockData state = ((CraftBlockData) data).getState();
+    return CraftBlockStates.getBlockState(state, null);
   }
 }

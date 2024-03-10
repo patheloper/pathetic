@@ -4,7 +4,6 @@ name: Build Pathetic
 on:
   push:
     branches:
-      - stage
       - production
   pull_request:
     types:

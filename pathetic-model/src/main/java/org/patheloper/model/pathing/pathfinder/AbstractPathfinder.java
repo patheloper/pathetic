@@ -1,6 +1,5 @@
 package org.patheloper.model.pathing.pathfinder;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collections;
@@ -8,10 +7,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-import java.util.concurrent.Executor;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 import lombok.NonNull;
 import org.bukkit.event.Cancellable;
@@ -20,9 +17,9 @@ import org.patheloper.Pathetic;
 import org.patheloper.api.event.PathingFinishedEvent;
 import org.patheloper.api.event.PathingStartFindEvent;
 import org.patheloper.api.pathing.Pathfinder;
+import org.patheloper.api.pathing.configuration.PathingRuleSet;
 import org.patheloper.api.pathing.result.PathState;
 import org.patheloper.api.pathing.result.PathfinderResult;
-import org.patheloper.api.pathing.rules.PathingRuleSet;
 import org.patheloper.api.pathing.strategy.PathfinderStrategy;
 import org.patheloper.api.snapshot.SnapshotManager;
 import org.patheloper.api.wrapper.PathBlock;
@@ -44,15 +41,11 @@ abstract class AbstractPathfinder implements Pathfinder {
   private static final SnapshotManager LOADING_SNAPSHOT_MANAGER =
       new FailingSnapshotManager.RequestingSnapshotManager();
 
-  private static final Executor PATHING_EXECUTOR =
-      new ThreadPoolExecutor(
-          Runtime.getRuntime().availableProcessors() / 4,
-          Runtime.getRuntime().availableProcessors(),
-          250L,
-          TimeUnit.MILLISECONDS,
-          new LinkedBlockingQueue<>(10000),
-          new ThreadFactoryBuilder().setDaemon(true).setNameFormat("Pathfinder Task-%d").build(),
-          new ThreadPoolExecutor.AbortPolicy());
+  private static final ExecutorService PATHING_EXECUTOR = Executors.newWorkStealingPool();
+
+  static {
+    Pathetic.addShutdownListener(PATHING_EXECUTOR::shutdown);
+  }
 
   protected final PathingRuleSet pathingRuleSet;
 

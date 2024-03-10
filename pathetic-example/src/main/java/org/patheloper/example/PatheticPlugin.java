@@ -2,7 +2,7 @@ package org.patheloper.example;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import org.patheloper.api.pathing.Pathfinder;
-import org.patheloper.api.pathing.rules.PathingRuleSet;
+import org.patheloper.api.pathing.configuration.PathingRuleSet;
 import org.patheloper.example.command.PatheticCommand;
 import org.patheloper.mapping.PatheticMapper;
 
@@ -24,5 +24,11 @@ public final class PatheticPlugin extends JavaPlugin {
                 .withLoadingChunks(true));
 
     getCommand("pathetic").setExecutor(new PatheticCommand(reusablePathfinder));
+  }
+
+  @Override
+  public void onDisable() {
+    PatheticMapper
+        .shutdown(); // This is very important to clear any resources Pathetic still holds on
   }
 }

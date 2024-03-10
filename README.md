@@ -41,13 +41,16 @@ public class PathExample extends JavaPlugin {
 
   @Override
   public void onEnable() {
-
     PatheticMapper.initialize(this);
     goFindSomePath(randomLocation(), randomLocation());
   }
 
-  private void goFindSomePath(PathPosition start, PathPosition end) {
+  @Override
+  public void onDisable() {
+    PatheticMapper.shutdown();
+  }
 
+  private void goFindSomePath(PathPosition start, PathPosition end) {
     Pathfinder pathfinder = PatheticMapper.newPathfinder();
     pathfinder
         .findPath(start, end, new DirectPathfinderStrategy())
