@@ -37,12 +37,13 @@ public class Pathetic {
 
     loadModelVersion();
 
-    if (BukkitVersionUtil.getVersion().isUnder(13, 0))
+    if (BukkitVersionUtil.getVersion().isUnder(16, 0)
+        || BukkitVersionUtil.getVersion().isEqual(BukkitVersionUtil.Version.of(16, 0)))
       javaPlugin
           .getLogger()
           .warning(
-              "pathetic is currently running in a version older than 1.13. "
-                  + "Some functionalities might not be accessible, such as accessing the BlockState of certain blocks.");
+              "pathetic is currently running in a version older than or equal to 1.16. "
+                  + "Some functionalities might not be accessible, such as accessing the BlockState of blocks.");
 
     javaPlugin.getLogger().info("pathetic successfully initialized");
   }
