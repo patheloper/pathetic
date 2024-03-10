@@ -33,10 +33,42 @@ import org.patheloper.util.WatchdogUtil;
 /** A pathfinder that uses the A* algorithm. */
 public class AStarPathfinder extends AbstractPathfinder {
 
+  /**
+   * Defines the size of a single cell in the pathfinding grid. A smaller value creates a more
+   * granular grid, allowing for more precise pathfinding but potentially increasing memory usage.
+   */
   private static final int DEFAULT_GRID_CELL_SIZE = 12;
+
+  /**
+   * Determines the size of the Bloom filter used within each GridRegionData object. A larger size
+   * reduces the chance of false positives (incorrectly reporting a position as examined) but
+   * increases memory consumption.
+   */
   private static final int DEFAULT_BLOOM_FILTER_SIZE = 1000;
+
+  /**
+   * Sets the false positive probability (FPP) for the Bloom filters. A lower FPP means a smaller
+   * chance of incorrectly reporting a position as examined, but it also requires a larger Bloom
+   * filter size.
+   */
   private static final double DEFAULT_FPP = 0.01; // 1% false positive probability
 
+  /**
+   * Employs a grid-based optimization strategy for efficient pathfinding in the Minecraft world.
+   * This involves dividing the world into smaller cells to improve performance. Key reasons for
+   * adopting gridding include:
+   *
+   * <ul>
+   *   <li>**Spatial Partitioning:** Divides the world into smaller, manageable regions, enabling
+   *       faster retrieval of examined positions and obstacle information.
+   *   <li>**Locality Exploitation:** Encourages the A* algorithm to prioritize exploration of
+   *       neighboring positions, as adjacent nodes often fall within the same or neighboring grid
+   *       cells.
+   *   <li>**Memory Management:** Facilitates efficient memory usage in conjunction with the
+   *       `ExpiringHashMap`. Grid regions that are no longer actively needed for pathfinding are
+   *       automatically removed, optimizing memory allocation.
+   * </ul>
+   */
   private final Map<Tuple3<Integer>, GridRegionData> gridMap = new ExpiringHashMap<>();
 
   public AStarPathfinder(PathingRuleSet pathingRuleSet) {
@@ -330,7 +362,8 @@ public class AStarPathfinder extends AbstractPathfinder {
   }
 
   /**
-   * @return whether the given node is invalid or not
+   * Checks if a node is valid for inclusion in a path. This is where the majority of the
+   * pathfinding logic and world interaction happens.
    */
   private boolean isNodeInvalid(
       Node node, Collection<Node> nodeQueue, PathfinderStrategy strategy) {
@@ -344,9 +377,11 @@ public class AStarPathfinder extends AbstractPathfinder {
 
     regionData.regionalExaminedPositions.add(node.getPosition());
 
+    // Bloom filter for a quick membership test
     if (regionData.bloomFilter.mightContain(pathPositionToBloomFilterKey(node.getPosition()))) {
+      // If potentially in the set, check the definitive HashSet
       if (regionData.regionalExaminedPositions.contains(node.getPosition())) {
-        return true;
+        return true; // Node is already examined, so it's invalid
       }
     }
 

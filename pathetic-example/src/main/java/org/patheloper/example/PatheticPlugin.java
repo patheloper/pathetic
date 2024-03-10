@@ -28,6 +28,7 @@ public final class PatheticPlugin extends JavaPlugin {
 
   @Override
   public void onDisable() {
-    PatheticMapper.shutdown(); // This is very important to clear any resources Pathetic still holds on
+    PatheticMapper
+        .shutdown(); // This is very important to clear any resources Pathetic still holds on
   }
 }
