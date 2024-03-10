@@ -6,7 +6,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +27,7 @@ import org.patheloper.model.pathing.Offset;
 import org.patheloper.model.pathing.result.PathImpl;
 import org.patheloper.model.pathing.result.PathfinderResultImpl;
 import org.patheloper.util.ErrorLogger;
+import org.patheloper.util.ExpiringHashMap;
 import org.patheloper.util.WatchdogUtil;
 
 /** A pathfinder that uses the A* algorithm. */
@@ -37,7 +37,7 @@ public class AStarPathfinder extends AbstractPathfinder {
   private static final int DEFAULT_BLOOM_FILTER_SIZE = 1000;
   private static final double DEFAULT_FPP = 0.01; // 1% false positive probability
 
-  private final Map<Tuple3<Integer>, GridRegionData> gridMap = new HashMap<>();
+  private final Map<Tuple3<Integer>, GridRegionData> gridMap = new ExpiringHashMap<>();
 
   public AStarPathfinder(PathingRuleSet pathingRuleSet) {
     super(pathingRuleSet);
