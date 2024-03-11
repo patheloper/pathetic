@@ -58,7 +58,6 @@ public class PathExample extends JavaPlugin {
             pathfinderResult ->
                 pathfinderResult
                     .getPath()
-                    .getPositions()
                     .forEach(
                         location ->
                             player.sendBlockChange(
