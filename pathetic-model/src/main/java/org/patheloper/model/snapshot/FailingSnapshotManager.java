@@ -2,6 +2,7 @@ package org.patheloper.model.snapshot;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.Map;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.ChunkSnapshot;
