@@ -37,7 +37,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class FailingSnapshotManager implements SnapshotManager {
 
-  private static final ConcurrentMap<UUID, WorldDomain> SNAPSHOTS_MAP = new ConcurrentHashMap<>();
+  private static final Map<UUID, WorldDomain> SNAPSHOTS_MAP = new ConcurrentHashMap<>();
 
   private static final NMSUtils NMS_UTILS;
 
