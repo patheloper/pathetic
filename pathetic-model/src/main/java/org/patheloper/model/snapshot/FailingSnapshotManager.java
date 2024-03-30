@@ -1,9 +1,8 @@
 package org.patheloper.model.snapshot;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.Map;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.ChunkSnapshot;
@@ -21,6 +20,8 @@ import org.patheloper.util.BukkitVersionUtil;
 import org.patheloper.util.ChunkUtils;
 import org.patheloper.util.ErrorLogger;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * The FailingSnapshotManager class implements the SnapshotManager interface and provides a default
  * implementation for retrieving block data snapshots from a Minecraft world. It utilizes chunk
@@ -37,7 +38,7 @@ import org.patheloper.util.ErrorLogger;
  */
 public class FailingSnapshotManager implements SnapshotManager {
 
-  private static final Map<UUID, WorldDomain> SNAPSHOTS_MAP = new HashMap<>();
+  private static final Map<UUID, WorldDomain> SNAPSHOTS_MAP = new ConcurrentHashMap<>();
 
   private static final NMSUtils NMS_UTILS;
 
