@@ -21,7 +21,7 @@ import org.patheloper.util.ChunkUtils;
 import org.patheloper.util.ErrorLogger;
 
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+
 /**
  * The FailingSnapshotManager class implements the SnapshotManager interface and provides a default
  * implementation for retrieving block data snapshots from a Minecraft world. It utilizes chunk
