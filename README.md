@@ -75,5 +75,6 @@ public class PathExample extends JavaPlugin {
 
 #### See the `pathetic-example` module for a more in-depth example plugin.
 
-### Javadocs:
+### Docs:
 Access the Javadocs [here](https://javadocs.pathetic.ollieee.xyz/)
+Access our Docs [here](https://docs.pathetic.ollieee.xyz/)
