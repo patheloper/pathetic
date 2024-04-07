@@ -32,6 +32,11 @@ import org.patheloper.model.pathing.result.PathfinderResultImpl;
 import org.patheloper.model.snapshot.FailingSnapshotManager;
 import org.patheloper.util.ErrorLogger;
 
+/**
+ * The AbstractPathfinder class provides a skeletal implementation of the Pathfinder interface and
+ * defines the common behavior for all pathfinding algorithms. It provides a default implementation
+ * for determining the offset and snapshot manager based on the pathing rule set.
+ */
 abstract class AbstractPathfinder implements Pathfinder {
 
   protected static final Set<PathPosition> EMPTY_LINKED_HASHSET =
@@ -48,17 +53,21 @@ abstract class AbstractPathfinder implements Pathfinder {
   }
 
   protected final PathingRuleSet pathingRuleSet;
-
   protected final Offset offset;
   protected final SnapshotManager snapshotManager;
 
   protected AbstractPathfinder(PathingRuleSet pathingRuleSet) {
     this.pathingRuleSet = pathingRuleSet;
+    this.offset = determineOffset(pathingRuleSet);
+    this.snapshotManager = determineSnapshotManager(pathingRuleSet);
+  }
 
-    this.offset =
-        pathingRuleSet.isAllowingDiagonal() ? Offset.MERGED : Offset.VERTICAL_AND_HORIZONTAL;
-    this.snapshotManager =
-        pathingRuleSet.isLoadingChunks() ? LOADING_SNAPSHOT_MANAGER : SIMPLE_SNAPSHOT_MANAGER;
+  private Offset determineOffset(PathingRuleSet pathingRuleSet) {
+    return pathingRuleSet.isAllowingDiagonal() ? Offset.MERGED : Offset.VERTICAL_AND_HORIZONTAL;
+  }
+
+  private SnapshotManager determineSnapshotManager(PathingRuleSet pathingRuleSet) {
+    return pathingRuleSet.isLoadingChunks() ? LOADING_SNAPSHOT_MANAGER : SIMPLE_SNAPSHOT_MANAGER;
   }
 
   @Override
@@ -66,72 +75,59 @@ abstract class AbstractPathfinder implements Pathfinder {
       @NonNull PathPosition start,
       @NonNull PathPosition target,
       @NonNull PathfinderStrategy strategy) {
-    PathingStartFindEvent startEvent = raiseStart(start, target, strategy);
+    PathingStartFindEvent startEvent = raiseStartEvent(start, target, strategy);
 
-    if (initialChecksFailed(start, target, startEvent))
+    if (shouldSkipPathing(start, target, startEvent)) {
       return CompletableFuture.completedFuture(
           finishPathing(
               new PathfinderResultImpl(
                   PathState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET))));
+    }
 
-    return producePathing(start, target, strategy);
+    return initiatePathing(start, target, strategy);
   }
 
-  protected PathfinderResult finishPathing(PathfinderResult pathfinderResult) {
-    EventPublisher.raiseEvent(new PathingFinishedEvent(pathfinderResult));
-    return pathfinderResult;
-  }
-
-  protected SnapshotManager getSnapshotManager() {
-    return snapshotManager;
-  }
-
-  private PathingStartFindEvent raiseStart(
-      PathPosition start, PathPosition target, PathfinderStrategy strategy) {
-    PathingStartFindEvent startEvent = new PathingStartFindEvent(start, target, strategy);
-    EventPublisher.raiseEvent(startEvent);
-
-    return startEvent;
-  }
-
-  private boolean initialChecksFailed(
+  private boolean shouldSkipPathing(
       PathPosition start, PathPosition target, Cancellable startEvent) {
+    return startEvent.isCancelled()
+        || !isSameEnvironment(start, target)
+        || isSameBlock(start, target)
+        || isFastFailEnabledAndBlockUnreachable(start, target);
+  }
 
-    if (startEvent.isCancelled()
-        || !start.getPathEnvironment().equals(target.getPathEnvironment())
-        || start.isInSameBlock(target)) return true;
+  private boolean isSameEnvironment(PathPosition start, PathPosition target) {
+    return start.getPathEnvironment().equals(target.getPathEnvironment());
+  }
 
-    return this.pathingRuleSet.isAllowingFailFast() && isBlockUnreachable(target)
-        || isBlockUnreachable(start);
+  private boolean isSameBlock(PathPosition start, PathPosition target) {
+    return start.isInSameBlock(target);
+  }
+
+  private boolean isFastFailEnabledAndBlockUnreachable(PathPosition start, PathPosition target) {
+    return this.pathingRuleSet.isAllowingFailFast()
+        && (isBlockUnreachable(target) || isBlockUnreachable(start));
   }
 
   private boolean isBlockUnreachable(PathPosition position) {
     for (PathVector vector : offset.getVectors()) {
-
       PathPosition offsetPosition = position.add(vector);
-      PathBlock pathBlock = this.getSnapshotManager().getBlock(offsetPosition);
-
-      if (pathBlock == null) continue;
-
-      if (pathBlock.isPassable()) return false;
+      PathBlock pathBlock = this.snapshotManager.getBlock(offsetPosition);
+      if (pathBlock != null && pathBlock.isPassable()) {
+        return false;
+      }
     }
-
     return true;
   }
 
-  private CompletionStage<PathfinderResult> producePathing(
+  private CompletionStage<PathfinderResult> initiatePathing(
       PathPosition start, PathPosition target, PathfinderStrategy strategy) {
     BStatsHandler.increasePathCount();
-
-    CompletionStage<PathfinderResult> result;
-    if (pathingRuleSet.isAsync()) result = produceAsyncPathing(start, target, strategy);
-    else result = produceSyncPathing(start, target, strategy);
-
-    strategy.cleanup();
-    return result;
+    return pathingRuleSet.isAsync()
+        ? initiateAsyncPathing(start, target, strategy)
+        : initiateSyncPathing(start, target, strategy);
   }
 
-  private CompletionStage<PathfinderResult> produceAsyncPathing(
+  private CompletionStage<PathfinderResult> initiateAsyncPathing(
       PathPosition start, PathPosition target, PathfinderStrategy strategy) {
     return CompletableFuture.supplyAsync(
             () -> {
@@ -143,10 +139,10 @@ abstract class AbstractPathfinder implements Pathfinder {
             },
             PATHING_EXECUTOR)
         .thenApply(this::finishPathing)
-        .exceptionally(this::exceptionHandler);
+        .exceptionally(this::handleException);
   }
 
-  private CompletionStage<PathfinderResult> produceSyncPathing(
+  private CompletionStage<PathfinderResult> initiateSyncPathing(
       PathPosition start, PathPosition target, PathfinderStrategy strategy) {
     try {
       return CompletableFuture.completedFuture(resolvePath(start, target, strategy));
@@ -155,19 +151,37 @@ abstract class AbstractPathfinder implements Pathfinder {
     }
   }
 
-  private PathfinderResult exceptionHandler(Throwable throwable) {
-    Logger logger = Pathetic.getPluginInstance().getLogger();
-
-    StringWriter sw = new StringWriter();
-    PrintWriter pw = new PrintWriter(sw);
-    throwable.printStackTrace(pw);
-    logger.severe(sw.toString());
-
+  private PathfinderResult handleException(Throwable throwable) {
+    logException(throwable);
     return finishPathing(
         new PathfinderResultImpl(PathState.FAILED, new PathImpl(null, null, EMPTY_LINKED_HASHSET)));
   }
 
-  // name clash with the interface, therefore "resolve" instead of "find"
+  private void logException(Throwable throwable) {
+    Logger logger = Pathetic.getPluginInstance().getLogger();
+    StringWriter sw = new StringWriter();
+    PrintWriter pw = new PrintWriter(sw);
+    throwable.printStackTrace(pw);
+    logger.severe(sw.toString());
+  }
+
+  protected PathfinderResult finishPathing(PathfinderResult pathfinderResult) {
+    raiseFinishedEvent(pathfinderResult);
+    return pathfinderResult;
+  }
+
+  private void raiseFinishedEvent(PathfinderResult pathfinderResult) {
+    PathingFinishedEvent finishedEvent = new PathingFinishedEvent(pathfinderResult);
+    EventPublisher.raiseEvent(finishedEvent);
+  }
+
+  private PathingStartFindEvent raiseStartEvent(
+      PathPosition start, PathPosition target, PathfinderStrategy strategy) {
+    PathingStartFindEvent startEvent = new PathingStartFindEvent(start, target, strategy);
+    EventPublisher.raiseEvent(startEvent);
+    return startEvent;
+  }
+
   protected abstract PathfinderResult resolvePath(
       PathPosition start, PathPosition target, PathfinderStrategy strategy);
 }

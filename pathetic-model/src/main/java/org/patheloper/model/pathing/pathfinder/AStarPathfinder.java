@@ -1,17 +1,6 @@
 package org.patheloper.model.pathing.pathfinder;
 
-import com.google.common.hash.BloomFilter;
-import com.google.common.hash.Funnels;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.PriorityQueue;
-import java.util.Set;
+import java.util.*;
 import lombok.NonNull;
 import org.patheloper.api.pathing.configuration.PathingRuleSet;
 import org.patheloper.api.pathing.result.Path;
@@ -27,47 +16,17 @@ import org.patheloper.model.pathing.result.PathImpl;
 import org.patheloper.model.pathing.result.PathfinderResultImpl;
 import org.patheloper.util.ErrorLogger;
 import org.patheloper.util.ExpiringHashMap;
+import org.patheloper.util.GridRegionData;
 import org.patheloper.util.Tuple3;
 import org.patheloper.util.WatchdogUtil;
 
-/** A pathfinder that uses the A* algorithm. */
 public class AStarPathfinder extends AbstractPathfinder {
 
-  /**
-   * Defines the size of a single cell in the pathfinding grid. A smaller value creates a more
-   * granular grid, allowing for more precise pathfinding but potentially increasing memory usage.
-   */
   private static final int DEFAULT_GRID_CELL_SIZE = 12;
 
   /**
-   * Determines the size of the Bloom filter used within each GridRegionData object. A larger size
-   * reduces the chance of false positives (incorrectly reporting a position as examined) but
-   * increases memory consumption.
-   */
-  private static final int DEFAULT_BLOOM_FILTER_SIZE = 1000;
-
-  /**
-   * Sets the false positive probability (FPP) for the Bloom filters. A lower FPP means a smaller
-   * chance of incorrectly reporting a position as examined, but it also requires a larger Bloom
-   * filter size.
-   */
-  private static final double DEFAULT_FPP = 0.01; // 1% false positive probability
-
-  /**
-   * Employs a grid-based optimization strategy for efficient pathfinding in the Minecraft world.
-   * This involves dividing the world into smaller cells to improve performance. Key reasons for
-   * adopting gridding include:
-   *
-   * <ul>
-   *   <li>**Spatial Partitioning:** Divides the world into smaller, manageable regions, enabling
-   *       faster retrieval of examined positions and obstacle information.
-   *   <li>**Locality Exploitation:** Encourages the A* algorithm to prioritize exploration of
-   *       neighboring positions, as adjacent nodes often fall within the same or neighboring grid
-   *       cells.
-   *   <li>**Memory Management:** Facilitates efficient memory usage in conjunction with the
-   *       `ExpiringHashMap`. Grid regions that are no longer actively needed for pathfinding are
-   *       automatically removed, optimizing memory allocation.
-   * </ul>
+   * The grid map used to store the regional examined positions and Bloom filters for each grid
+   * region.
    */
   private final Map<Tuple3<Integer>, ExpiringHashMap.Entry<GridRegionData>> gridMap =
       new ExpiringHashMap<>();
@@ -79,19 +38,14 @@ public class AStarPathfinder extends AbstractPathfinder {
   @Override
   protected PathfinderResult resolvePath(
       PathPosition start, PathPosition target, PathfinderStrategy strategy) {
-    Node startNode =
-        new Node(
-            start.floor(), start.floor(), target.floor(), pathingRuleSet.getHeuristicWeights(), 0);
-
+    Node startNode = createStartNode(start, target);
     PriorityQueue<Node> nodeQueue = new PriorityQueue<>(Collections.singleton(startNode));
     Set<PathPosition> examinedPositions = new HashSet<>();
-
     int depth = 1;
     Node fallbackNode = startNode;
 
     while (!nodeQueue.isEmpty() && depth <= pathingRuleSet.getMaxIterations()) {
       tickWatchdogIfNeeded(depth);
-
       Node currentNode = getNextNodeFromQueue(nodeQueue);
       fallbackNode = currentNode;
 
@@ -113,6 +67,11 @@ public class AStarPathfinder extends AbstractPathfinder {
     }
 
     return backupPathfindingOrFailure(depth, start, target, strategy, fallbackNode);
+  }
+
+  private Node createStartNode(PathPosition start, PathPosition target) {
+    return new Node(
+        start.floor(), start.floor(), target.floor(), pathingRuleSet.getHeuristicWeights(), 0);
   }
 
   private void tickWatchdogIfNeeded(int depth) {
@@ -145,7 +104,7 @@ public class AStarPathfinder extends AbstractPathfinder {
       PathPosition target,
       PathfinderStrategy strategy,
       Node fallbackNode) {
-    return maxIterations(depth, fallbackNode)
+    return maxIterationsReached(depth, fallbackNode)
         .or(() -> counterCheck(start, target, strategy))
         .or(() -> fallback(fallbackNode))
         .orElse(
@@ -154,8 +113,7 @@ public class AStarPathfinder extends AbstractPathfinder {
                     PathState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET))));
   }
 
-  /** Checks if the pathfinder has reached the maximum number of iterations. */
-  private Optional<PathfinderResult> maxIterations(int depth, Node fallbackNode) {
+  private Optional<PathfinderResult> maxIterationsReached(int depth, Node fallbackNode) {
     if (depth > pathingRuleSet.getMaxIterations())
       return Optional.of(
           finishPathing(
@@ -164,10 +122,6 @@ public class AStarPathfinder extends AbstractPathfinder {
     return Optional.empty();
   }
 
-  /**
-   * Checks if the pathfinder is allowed to fallback to the last node it examined and retraces the
-   * path from there.
-   */
   private Optional<PathfinderResult> fallback(Node fallbackNode) {
     if (pathingRuleSet.isAllowingFallback())
       return Optional.of(
@@ -176,7 +130,6 @@ public class AStarPathfinder extends AbstractPathfinder {
     return Optional.empty();
   }
 
-  /** Checks if the pathfinder can find a path from the target to the start. */
   private Optional<PathfinderResult> counterCheck(
       PathPosition start, PathPosition target, PathfinderStrategy strategy) {
     if (!pathingRuleSet.isCounterCheck()) {
@@ -194,15 +147,6 @@ public class AStarPathfinder extends AbstractPathfinder {
     return Optional.empty();
   }
 
-  /**
-   * Evaluates new nodes and adds them to the given node queue if they are valid.
-   *
-   * @param nodeQueue the node queue to add new nodes to
-   * @param examinedPositions a set of examined positions
-   * @param currentNode the current node
-   * @param strategy the pathfinder strategy to use for validating nodes
-   * @param allowingDiagonal whether diagonal movement is allowed
-   */
   private void evaluateNewNodes(
       Collection<Node> nodeQueue,
       Set<PathPosition> examinedPositions,
@@ -214,18 +158,6 @@ public class AStarPathfinder extends AbstractPathfinder {
             nodeQueue, examinedPositions, currentNode, strategy, allowingDiagonal));
   }
 
-  /**
-   * Determines whether the given node is valid and can be added to the node queue.
-   *
-   * @param currentNode the node we are moving from
-   * @param newNode the node to validate
-   * @param nodeQueue the node queue to check for duplicates
-   * @param examinedPositions a set of examined positions
-   * @param strategy the pathfinder strategy to use for validating nodes
-   * @param allowingDiagonal whether we are allowing diagonal movement
-   * @return {@code true} if the node is valid and can be added to the node queue, {@code false}
-   *     otherwise
-   */
   private boolean isNodeValid(
       Node currentNode,
       Node newNode,
@@ -235,13 +167,6 @@ public class AStarPathfinder extends AbstractPathfinder {
       boolean allowingDiagonal) {
     if (isNodeInvalid(newNode, nodeQueue, strategy)) return false;
 
-    /*
-     * So at this point there is nothing wrong with the node itself, We can move to it technically.
-     * But we need to check if we can move to it from the current node. If we are moving diagonally, we need to check
-     * if we can move to the adjacent nodes as well. The cornerCuts represent the offsets from the current node to the
-     * adjacent nodes. If we can't move to any of the adjacent nodes, we can't move to the current node either.
-     */
-
     if (!allowingDiagonal) return examinedPositions.add(newNode.getPosition());
 
     if (!isDiagonalMove(currentNode, newNode)) return examinedPositions.add(newNode.getPosition());
@@ -250,7 +175,6 @@ public class AStarPathfinder extends AbstractPathfinder {
         && examinedPositions.add(newNode.getPosition());
   }
 
-  /** Returns whether the given nodes are diagonal to each other. */
   private boolean isDiagonalMove(Node from, Node to) {
     int xDifference = Math.abs(from.getPosition().getBlockX() - to.getPosition().getBlockX());
     int zDifference = Math.abs(from.getPosition().getBlockZ() - to.getPosition().getBlockZ());
@@ -275,12 +199,14 @@ public class AStarPathfinder extends AbstractPathfinder {
 
         Node neighbour2 = createNeighbourNode(to, vector2);
         if (neighbour1.getPosition().equals(neighbour2.getPosition())) {
+
           /*
            * if it has a Y difference, we also need to check the nodes above or below,
            *  depending on the Y difference
            */
           boolean heightDifferencePassable =
               isHeightDifferencePassable(from, to, vector1, hasYDifference);
+
           if (strategy.isValid(
                   new PathValidationContext(
                       neighbour1.getPosition(),
@@ -294,12 +220,9 @@ public class AStarPathfinder extends AbstractPathfinder {
     return false;
   }
 
-  /**
-   * Return whether the height difference between the given nodes is passable. If the nodes have no
-   * height difference, this will always return true.
-   */
-  private boolean isHeightDifferencePassable(Node from, Node to, PathVector vector1, boolean hasHeightDifference) {
-    if(!hasHeightDifference) return true;
+  private boolean isHeightDifferencePassable(
+      Node from, Node to, PathVector vector1, boolean hasHeightDifference) {
+    if (!hasHeightDifference) return true;
 
     int yDifference = from.getPosition().getBlockY() - to.getPosition().getBlockY();
     Node neighbour3 = createNeighbourNode(from, vector1.add(new PathVector(0, yDifference, 0)));
@@ -307,24 +230,6 @@ public class AStarPathfinder extends AbstractPathfinder {
     return snapshotManager.getBlock(neighbour3.getPosition()).isPassable();
   }
 
-  /**
-   * Determines whether the given position is within the bounds of the world.
-   *
-   * @param position the position to check
-   * @return {@code true} if the position is within the bounds of the world, {@code false} otherwise
-   */
-  private boolean isWithinWorldBounds(PathPosition position) {
-    return position.getPathEnvironment().getMinHeight() < position.getBlockY()
-        && position.getBlockY() < position.getPathEnvironment().getMaxHeight();
-  }
-
-  /**
-   * Fetches the neighbours of the given node.
-   *
-   * @param currentNode the node to fetch neighbours for
-   * @param allowingDiagonal
-   * @return a collection of neighbour nodes
-   */
   private Collection<Node> fetchValidNeighbours(
       Collection<Node> nodeQueue,
       Set<PathPosition> examinedPositions,
@@ -345,14 +250,7 @@ public class AStarPathfinder extends AbstractPathfinder {
     return newNodes;
   }
 
-  /**
-   * Fetches the path represented by the given node by retracing the steps from the node's parent.
-   *
-   * @param node the node to fetch the path for
-   * @return the path represented by the given node
-   */
   private Path fetchRetracedPath(@NonNull Node node) {
-
     if (node.getParent() == null)
       return new PathImpl(
           node.getStart(), node.getTarget(), Collections.singletonList(node.getPosition()));
@@ -361,7 +259,6 @@ public class AStarPathfinder extends AbstractPathfinder {
     return new PathImpl(node.getStart(), node.getTarget(), path);
   }
 
-  /** Creates a new node based on the given node and offset. */
   private Node createNeighbourNode(Node currentNode, PathVector offset) {
     Node newNode =
         new Node(
@@ -375,12 +272,11 @@ public class AStarPathfinder extends AbstractPathfinder {
   }
 
   /**
-   * Checks if a node is valid for inclusion in a path. This is where the majority of the
-   * pathfinding logic and world interaction happens.
+   * Checks if the node is invalid. A node is invalid if it is outside the world bounds, is already
+   * in the queue, or is not valid according to the strategy.
    */
   private boolean isNodeInvalid(
       Node node, Collection<Node> nodeQueue, PathfinderStrategy strategy) {
-
     int gridX = node.getPosition().getBlockX() / DEFAULT_GRID_CELL_SIZE;
     int gridY = node.getPosition().getBlockY() / DEFAULT_GRID_CELL_SIZE;
     int gridZ = node.getPosition().getBlockZ() / DEFAULT_GRID_CELL_SIZE;
@@ -392,13 +288,13 @@ public class AStarPathfinder extends AbstractPathfinder {
                 k -> new ExpiringHashMap.Entry<>(new GridRegionData()))
             .getValue();
 
-    regionData.regionalExaminedPositions.add(node.getPosition());
+    regionData.getRegionalExaminedPositions().add(node.getPosition());
 
-    // Bloom filter for a quick membership test
-    if (regionData.bloomFilter.mightContain(pathPositionToBloomFilterKey(node.getPosition()))) {
-      // If potentially in the set, check the definitive HashSet
-      if (regionData.regionalExaminedPositions.contains(node.getPosition())) {
-        return true; // Node is already examined, so it's invalid
+    if (regionData
+        .getBloomFilter()
+        .mightContain(pathPositionToBloomFilterKey(node.getPosition()))) {
+      if (regionData.getRegionalExaminedPositions().contains(node.getPosition())) {
+        return true;
       }
     }
 
@@ -409,11 +305,15 @@ public class AStarPathfinder extends AbstractPathfinder {
                 node.getPosition(), node.getParent().getPosition(), snapshotManager));
   }
 
+  private boolean isWithinWorldBounds(PathPosition position) {
+    return position.getPathEnvironment().getMinHeight() < position.getBlockY()
+        && position.getBlockY() < position.getPathEnvironment().getMaxHeight();
+  }
+
   private String pathPositionToBloomFilterKey(PathPosition position) {
     return position.getBlockX() + "," + position.getBlockY() + "," + position.getBlockZ();
   }
 
-  /** Traces the path from the given node by retracing the steps from the node's parent. */
   private List<PathPosition> tracePathFromNode(Node endNode) {
     List<PathPosition> path = new ArrayList<>();
     Node currentNode = endNode;
@@ -423,21 +323,7 @@ public class AStarPathfinder extends AbstractPathfinder {
       currentNode = currentNode.getParent();
     }
 
-    Collections.reverse(path); // make it the right order
+    Collections.reverse(path); // Reverse the path to get the correct order
     return path;
-  }
-
-  private class GridRegionData {
-    private final BloomFilter<String> bloomFilter;
-    private final Set<PathPosition> regionalExaminedPositions;
-
-    public GridRegionData() {
-      bloomFilter =
-          BloomFilter.create(
-              Funnels.stringFunnel(Charset.defaultCharset()),
-              DEFAULT_BLOOM_FILTER_SIZE,
-              DEFAULT_FPP);
-      regionalExaminedPositions = new HashSet<>();
-    }
   }
 }
