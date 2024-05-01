@@ -21,7 +21,7 @@ import org.patheloper.util.ErrorLogger;
 @Log4j2
 public class PathImpl implements Path {
 
-  @NonNull @Getter private final Iterable<PathPosition> positions;
+  @NonNull private final Iterable<PathPosition> positions;
   @NonNull @Getter private final PathPosition start;
   @NonNull @Getter private final PathPosition end;
 
@@ -115,7 +115,7 @@ public class PathImpl implements Path {
 
   @Override
   public Path join(Path path) {
-    return new PathImpl(start, path.getEnd(), Iterables.concat(positions, path.getPositions()));
+    return new PathImpl(start, path.getEnd(), Iterables.concat(positions, path));
   }
 
   @Override

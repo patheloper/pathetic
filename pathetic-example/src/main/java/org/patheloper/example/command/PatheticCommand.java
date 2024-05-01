@@ -75,7 +75,6 @@ public class PatheticCommand implements TabExecutor {
 
                 result
                     .getPath()
-                    .getPositions()
                     .forEach(
                         position -> {
                           Location location = BukkitMapper.toLocation(position);

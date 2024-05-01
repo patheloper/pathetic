@@ -84,12 +84,4 @@ public interface Path extends Iterable<PathPosition> {
    */
   @NonNull
   PathPosition getEnd();
-
-  /**
-   * Returns the path from the Pathfinder as a {@link Iterable} full of {@link PathPosition}
-   * @deprecated Will be removed in future versions {@link #forEach(Consumer)}
-   */
-  @NonNull
-  @Deprecated
-  Iterable<PathPosition> getPositions();
 }
