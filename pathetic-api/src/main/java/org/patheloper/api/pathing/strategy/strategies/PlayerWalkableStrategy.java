@@ -13,7 +13,7 @@ public class PlayerWalkableStrategy extends WalkablePathfinderStrategy {
     SnapshotManager snapshotManager = pathValidationContext.getSnapshotManager();
 
     if (snapshotManager.getBlock(pathPosition).isPassable()
-        && canStandOn(snapshotManager.getBlock(pathPosition.subtract(0, 1, 0)), snapshotManager)) {
+        && canStandOn(snapshotManager.getBlock(pathPosition), snapshotManager)) {
       return true;
     }
 
