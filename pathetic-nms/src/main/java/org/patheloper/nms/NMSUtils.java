@@ -22,7 +22,7 @@ public class NMSUtils {
   public NMSUtils(int major, int minor) {
     switch (major) {
       case 20:
-        if (minor == 5) {
+        if (minor == 5 || minor == 6) {
           nmsInterface = new OneTwentyFourNMSInterface();
           break;
         } else if (minor == 3 || minor == 4) {
