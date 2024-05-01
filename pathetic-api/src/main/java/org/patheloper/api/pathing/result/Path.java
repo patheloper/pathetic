@@ -4,8 +4,6 @@ import lombok.NonNull;
 import org.patheloper.api.util.ParameterizedSupplier;
 import org.patheloper.api.wrapper.PathPosition;
 
-import java.util.function.Consumer;
-
 public interface Path extends Iterable<PathPosition> {
 
   /**
@@ -28,7 +26,6 @@ public interface Path extends Iterable<PathPosition> {
    *     also increase the number of positions in the resulting path and possibly reduce
    *     performance.
    * @return a newly created Path with interpolated positions.
-   * @see #getPositions
    */
   Path interpolate(double resolution);
 
