@@ -1,3 +1,5 @@
+![pathetic](https://github.com/patheloper/pathetic/assets/50031457/2af0e918-dd57-48aa-b8e1-87356271ac1d)
+
 # Pathetic
 
 Pathetic is a simple and intuitive backwards-compatible up-to-date pathfinding API for Spigot and forks.
