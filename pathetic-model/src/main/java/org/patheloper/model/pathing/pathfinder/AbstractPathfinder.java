@@ -152,17 +152,8 @@ abstract class AbstractPathfinder implements Pathfinder {
   }
 
   private PathfinderResult handleException(Throwable throwable) {
-    logException(throwable);
     return finishPathing(
         new PathfinderResultImpl(PathState.FAILED, new PathImpl(null, null, EMPTY_LINKED_HASHSET)));
-  }
-
-  private void logException(Throwable throwable) {
-    Logger logger = Pathetic.getPluginInstance().getLogger();
-    StringWriter sw = new StringWriter();
-    PrintWriter pw = new PrintWriter(sw);
-    throwable.printStackTrace(pw);
-    logger.severe(sw.toString());
   }
 
   protected PathfinderResult finishPathing(PathfinderResult pathfinderResult) {
