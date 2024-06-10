@@ -8,27 +8,30 @@ import org.patheloper.mapping.PatheticMapper;
 
 public final class PatheticPlugin extends JavaPlugin {
 
+  // Called when the plugin is enabled
   @Override
   public void onEnable() {
 
-    // Before using Pathetic, you need to initialize it.
+    // Initialize the PatheticMapper with this plugin instance
     PatheticMapper.initialize(this);
 
-    // Then you can use the PatheticMapper to get your own Pathfinder instance with your own set
-    // rules.
+    // Create a new Pathfinder instance with a custom set of pathing rules
     Pathfinder reusablePathfinder =
         PatheticMapper.newPathfinder(
             PathingRuleSet.createAsyncRuleSet()
-                .withAllowingFailFast(true)
-                .withAllowingFallback(true)
-                .withLoadingChunks(true));
+                .withAllowingFailFast(true) // Allow pathfinding to fail fast if necessary
+                .withAllowingFallback(true) // Allow fallback strategies if the primary fails
+                .withLoadingChunks(true) // Allow chunks to be loaded during pathfinding
+            );
 
+    // Register the command executor for the "pathetic" command
     getCommand("pathetic").setExecutor(new PatheticCommand(reusablePathfinder));
   }
 
+  // Called when the plugin is disabled
   @Override
   public void onDisable() {
-    PatheticMapper
-        .shutdown(); // This is very important to clear any resources Pathetic still holds on
+    // Shutdown the PatheticMapper to clear any resources it holds
+    PatheticMapper.shutdown();
   }
 }

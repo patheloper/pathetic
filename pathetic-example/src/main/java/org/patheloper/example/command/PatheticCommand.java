@@ -20,59 +20,74 @@ import org.patheloper.mapping.bukkit.BukkitMapper;
 
 public class PatheticCommand implements TabExecutor {
 
+  // Map to store player sessions using their unique IDs
   private static final Map<UUID, PlayerSession> SESSION_MAP = new HashMap<>();
 
+  // Pathfinder instance to handle pathfinding logic
   private final Pathfinder pathfinder;
 
+  // Constructor to initialize the pathfinder
   public PatheticCommand(Pathfinder pathfinder) {
     this.pathfinder = pathfinder;
   }
 
+  // Handle command execution
   @Override
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
+    // Ensure the sender is a player
     if (!(sender instanceof Player)) return false;
 
+    // Ensure the command has exactly one argument
     if (args.length != 1) return false;
 
+    // Cast sender to Player
     Player player = (Player) sender;
+
+    // Retrieve or create a new player session
     PlayerSession playerSession =
         SESSION_MAP.computeIfAbsent(player.getUniqueId(), k -> new PlayerSession());
 
+    // Handle different commands
     switch (args[0]) {
       case "pos1":
+        // Set position 1 to the player's current location
         playerSession.setPos1(player.getLocation());
         player.sendMessage("Position 1 set to " + player.getLocation());
-
         break;
+
       case "pos2":
+        // Set position 2 to the player's current location
         playerSession.setPos2(player.getLocation());
         player.sendMessage("Position 2 set to " + player.getLocation());
-
         break;
+
       case "start":
+        // Ensure both positions are set before starting pathfinding
         if (!playerSession.isComplete()) {
           player.sendMessage("Set both positions first!");
           return false;
         }
 
-        // Here we convert the Bukkit Locations to PathLocations to search with them for a path.
+        // Convert Bukkit locations to pathfinding positions
         PathPosition start = BukkitMapper.toPathPosition(playerSession.getPos1());
         PathPosition target = BukkitMapper.toPathPosition(playerSession.getPos2());
 
+        // Inform the player that pathfinding is starting
         player.sendMessage("Starting pathfinding...");
-        CompletionStage<PathfinderResult> pathfindingResult =
-            pathfinder.findPath(
-                start, target, new DirectPathfinderStrategy()); // This is the actual pathfinding.
 
-        // This is just a simple way to display the pathfinding result.
+        // Start pathfinding asynchronously
+        CompletionStage<PathfinderResult> pathfindingResult =
+            pathfinder.findPath(start, target, new DirectPathfinderStrategy());
+
+        // Handle the pathfinding result
         pathfindingResult.thenAccept(
             result -> {
               player.sendMessage("State: " + result.getPathState().name());
               player.sendMessage("Path length: " + result.getPath().length());
 
+              // If pathfinding is successful, show the path to the player
               if (result.successful() || result.hasFallenBack()) {
-
                 result
                     .getPath()
                     .forEach(
@@ -85,17 +100,20 @@ public class PatheticCommand implements TabExecutor {
                 player.sendMessage("Path not found!");
               }
             });
+        break;
     }
 
     return false;
   }
 
+  // Provide tab completion for the command
   @Override
   public List<String> onTabComplete(
       CommandSender sender, Command command, String label, String[] args) {
     return Arrays.asList("pos1", "pos2", "start");
   }
 
+  // Class to manage player session data
   private static class PlayerSession {
 
     private Location pos1;
@@ -109,6 +127,7 @@ public class PatheticCommand implements TabExecutor {
       this.pos2 = pos2;
     }
 
+    // Check if both positions are set
     public boolean isComplete() {
       return pos1 != null && pos2 != null;
     }
