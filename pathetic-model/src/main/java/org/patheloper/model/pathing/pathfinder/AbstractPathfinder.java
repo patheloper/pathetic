@@ -1,7 +1,5 @@
 package org.patheloper.model.pathing.pathfinder;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -9,7 +7,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Logger;
 import lombok.NonNull;
 import org.bukkit.event.Cancellable;
 import org.patheloper.BStatsHandler;
