@@ -136,7 +136,7 @@ abstract class AbstractPathfinder implements Pathfinder {
             },
             PATHING_EXECUTOR)
         .thenApply(this::finishPathing)
-        .exceptionally(this::handleException);
+        .exceptionally(throwable -> handleException(start, target));
   }
 
   private CompletionStage<PathfinderResult> initiateSyncPathing(
@@ -148,9 +148,10 @@ abstract class AbstractPathfinder implements Pathfinder {
     }
   }
 
-  private PathfinderResult handleException(Throwable throwable) {
+  private PathfinderResult handleException(PathPosition start, PathPosition target) {
     return finishPathing(
-        new PathfinderResultImpl(PathState.FAILED, new PathImpl(null, null, EMPTY_LINKED_HASHSET)));
+        new PathfinderResultImpl(
+            PathState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
   }
 
   protected PathfinderResult finishPathing(PathfinderResult pathfinderResult) {
