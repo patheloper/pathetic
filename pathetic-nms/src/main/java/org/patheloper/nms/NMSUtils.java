@@ -14,12 +14,23 @@ import org.patheloper.nms.v1_20_R2.OneTwentyTwoNMSInterface;
 import org.patheloper.nms.v1_20_R3.OneTwentyThreeNMSInterface;
 import org.patheloper.nms.v1_20_R4.OneTwentyFourNMSInterface;
 import org.patheloper.nms.v1_8.OneEightNMSInterface;
+import org.patheloper.paper.PaperNMSInterface;
 
 public class NMSUtils {
-
+  
   private final NMSInterface nmsInterface;
-
+  
   public NMSUtils(int major, int minor) {
+    if(isPaper()) {
+      nmsInterface = new PaperNMSInterface();
+      return;
+    }
+    
+    nmsInterface = determineNMSInterface(major, minor);
+  }
+  
+  private NMSInterface determineNMSInterface(int major, int minor) {
+    final NMSInterface nmsInterface;
     switch (major) {
       case 20:
         if (minor == 5 || minor == 6) {
@@ -71,8 +82,18 @@ public class NMSUtils {
       default:
         throw new IllegalArgumentException("Unsupported version: " + major + "." + minor);
     }
+    return nmsInterface;
   }
-
+  
+  private boolean isPaper() {
+    try {
+      Class.forName("com.destroystokyo.paper.ParticleBuilder");
+      return true;
+    } catch (ClassNotFoundException e) {
+      return false;
+    }
+  }
+  
   public NMSInterface getNmsInterface() {
     return this.nmsInterface;
   }

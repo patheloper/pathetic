@@ -33,6 +33,7 @@
         <module>pathetic-nms/v1_12</module>
         <module>pathetic-nms/v1_8</module>
         <module>pathetic-model</module>
+        <module>pathetic-nms/paper</module>
     </modules>
 
     <reporting>

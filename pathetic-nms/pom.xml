@@ -29,6 +29,13 @@
 
         <dependency>
             <groupId>org.patheloper</groupId>
+            <artifactId>paper</artifactId>
+            <version>2.4.3</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.patheloper</groupId>
             <artifactId>v1_20_R4</artifactId>
             <version>2.4.3</version>
             <scope>compile</scope>
