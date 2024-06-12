@@ -1,5 +1,7 @@
 package org.patheloper.nms;
 
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.patheloper.api.snapshot.NMSInterface;
 import org.patheloper.nms.v1_12.OneTwelveNMSInterface;
 import org.patheloper.nms.v1_15.OneFifteenNMSInterface;
@@ -16,19 +18,25 @@ import org.patheloper.nms.v1_20_R4.OneTwentyFourNMSInterface;
 import org.patheloper.nms.v1_8.OneEightNMSInterface;
 import org.patheloper.paper.PaperNMSInterface;
 
+@Getter
+@Slf4j
 public class NMSUtils {
-  
+
   private final NMSInterface nmsInterface;
-  
+
   public NMSUtils(int major, int minor) {
-    if(isPaper()) {
+    String version = "1." + major + "." + minor;
+
+    if (isPaper()) {
       nmsInterface = new PaperNMSInterface();
+      log.info("Detected Paper v{}, using PaperNMSInterface", version);
       return;
     }
-    
+
     nmsInterface = determineNMSInterface(major, minor);
+    log.info("Using {}", version, nmsInterface.getClass().getSimpleName());
   }
-  
+
   private NMSInterface determineNMSInterface(int major, int minor) {
     final NMSInterface nmsInterface;
     switch (major) {
@@ -84,7 +92,7 @@ public class NMSUtils {
     }
     return nmsInterface;
   }
-  
+
   private boolean isPaper() {
     try {
       Class.forName("io.papermc.paper.configuration.GlobalConfiguration");
@@ -92,9 +100,5 @@ public class NMSUtils {
     } catch (ClassNotFoundException e) {
       return false;
     }
-  }
-  
-  public NMSInterface getNmsInterface() {
-    return this.nmsInterface;
   }
 }
