@@ -87,7 +87,7 @@ public class NMSUtils {
   
   private boolean isPaper() {
     try {
-      Class.forName("com.destroystokyo.paper.ParticleBuilder");
+      Class.forName("io.papermc.paper.configuration.GlobalConfiguration");
       return true;
     } catch (ClassNotFoundException e) {
       return false;
