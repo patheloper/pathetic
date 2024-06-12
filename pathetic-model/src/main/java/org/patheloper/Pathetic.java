@@ -7,6 +7,7 @@ import java.util.Properties;
 import java.util.Set;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.patheloper.bukkit.listeners.ChunkInvalidateListener;
@@ -14,6 +15,7 @@ import org.patheloper.util.BukkitVersionUtil;
 import org.patheloper.util.ErrorLogger;
 
 @UtilityClass
+@Slf4j
 public class Pathetic {
 
   private static final String PROPERTIES_FILE = "pathetic.properties";
@@ -38,14 +40,13 @@ public class Pathetic {
     loadModelVersion();
 
     if (BukkitVersionUtil.getVersion().isUnder(16, 0)
-        || BukkitVersionUtil.getVersion().isEqual(BukkitVersionUtil.Version.of(16, 0)))
-      javaPlugin
-          .getLogger()
-          .warning(
-              "pathetic is currently running in a version older than or equal to 1.16. "
-                  + "Some functionalities might not be accessible, such as accessing the BlockState of blocks.");
+        || BukkitVersionUtil.getVersion().isEqual(BukkitVersionUtil.Version.of(16, 0))) {
+      log.warn(
+          "pathetic is currently running in a version older than or equal to 1.16. "
+              + "Some functionalities might not be accessible, such as accessing the BlockState of blocks.");
+    }
 
-    javaPlugin.getLogger().info("pathetic successfully initialized");
+    log.info("Pathetic initialized");
   }
 
   public static void shutdown() {
