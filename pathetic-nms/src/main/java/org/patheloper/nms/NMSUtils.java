@@ -34,7 +34,7 @@ public class NMSUtils {
     }
 
     nmsInterface = determineNMSInterface(major, minor);
-    log.info("Using {}", version, nmsInterface.getClass().getSimpleName());
+    log.info("Detected version v{}, using {}", version, nmsInterface.getClass().getSimpleName());
   }
 
   private NMSInterface determineNMSInterface(int major, int minor) {
