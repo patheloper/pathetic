@@ -290,9 +290,7 @@ public class AStarPathfinder extends AbstractPathfinder {
 
     regionData.getRegionalExaminedPositions().add(node.getPosition());
 
-    if (regionData
-        .getBloomFilter()
-        .mightContain(pathPositionToBloomFilterKey(node.getPosition()))) {
+    if (regionData.getBloomFilter().mightContain(node.getPosition())) {
       if (regionData.getRegionalExaminedPositions().contains(node.getPosition())) {
         return true;
       }
@@ -308,10 +306,6 @@ public class AStarPathfinder extends AbstractPathfinder {
   private boolean isWithinWorldBounds(PathPosition position) {
     return position.getPathEnvironment().getMinHeight() < position.getBlockY()
         && position.getBlockY() < position.getPathEnvironment().getMaxHeight();
-  }
-
-  private String pathPositionToBloomFilterKey(PathPosition position) {
-    return position.getBlockX() + "," + position.getBlockY() + "," + position.getBlockZ();
   }
 
   private List<PathPosition> tracePathFromNode(Node endNode) {

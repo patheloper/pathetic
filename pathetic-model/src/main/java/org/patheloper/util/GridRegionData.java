@@ -1,10 +1,10 @@
 package org.patheloper.util;
 
 import com.google.common.hash.BloomFilter;
-import com.google.common.hash.Funnels;
-import java.nio.charset.Charset;
+import com.google.common.hash.Funnel;
 import java.util.HashSet;
 import java.util.Set;
+
 import org.patheloper.api.wrapper.PathPosition;
 
 /**
@@ -32,7 +32,7 @@ public class GridRegionData {
    * check if a position is within the region without having to iterate over all the positions in
    * the region.
    */
-  private final BloomFilter<String> bloomFilter;
+  private final BloomFilter<PathPosition> bloomFilter;
 
   /**
    * The set of positions that have been examined by the pathfinder. This set is used to track the
@@ -42,13 +42,17 @@ public class GridRegionData {
   private final Set<PathPosition> regionalExaminedPositions;
 
   public GridRegionData() {
-    bloomFilter =
-        BloomFilter.create(
-            Funnels.stringFunnel(Charset.defaultCharset()), DEFAULT_BLOOM_FILTER_SIZE, DEFAULT_FPP);
+    Funnel<PathPosition> pathPositionFunnel =
+        (pathPosition, into) ->
+            into.putInt(pathPosition.getBlockX())
+                .putInt(pathPosition.getBlockY())
+                .putInt(pathPosition.getBlockZ());
+
+    bloomFilter = BloomFilter.create(pathPositionFunnel, DEFAULT_BLOOM_FILTER_SIZE, DEFAULT_FPP);
     regionalExaminedPositions = new HashSet<>();
   }
 
-  public BloomFilter<String> getBloomFilter() {
+  public BloomFilter<PathPosition> getBloomFilter() {
     return bloomFilter;
   }
 
