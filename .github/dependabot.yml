@@ -7,6 +7,3 @@ updates:
     target-branch: "trunk"
     labels:
       - "maven dependencies"
-    ignore:
-      - dependency-name: 'org.apache.maven.plugins:maven-shade-plugin'
-        versions: ['>=3.5.1']
