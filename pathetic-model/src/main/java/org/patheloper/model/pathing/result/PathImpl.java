@@ -12,13 +12,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.extern.log4j.Log4j2;
 import org.patheloper.api.pathing.result.Path;
 import org.patheloper.api.util.ParameterizedSupplier;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.util.ErrorLogger;
 
-@Log4j2
 public class PathImpl implements Path {
 
   @NonNull private final Iterable<PathPosition> positions;
