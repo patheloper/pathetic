@@ -15,7 +15,7 @@ import org.patheloper.api.wrapper.PathBlock;
 import org.patheloper.api.wrapper.PathEnvironment;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.model.snapshot.world.WorldDomain;
-import org.patheloper.nms.NMSUtils;
+import org.patheloper.provider.ChunkDataProviderResolver;
 import org.patheloper.util.BukkitVersionUtil;
 import org.patheloper.util.ChunkUtils;
 import org.patheloper.util.ErrorLogger;
@@ -40,11 +40,12 @@ public class FailingSnapshotManager implements SnapshotManager {
 
   private static final Map<UUID, WorldDomain> SNAPSHOTS_MAP = new ConcurrentHashMap<>();
 
-  private static final NMSUtils NMS_UTILS;
+  private static final ChunkDataProviderResolver CHUNK_DATA_PROVIDER_RESOLVER;
 
   static {
     BukkitVersionUtil.Version version = BukkitVersionUtil.getVersion();
-    NMS_UTILS = new NMSUtils((int) version.major(), (int) version.minor());
+    CHUNK_DATA_PROVIDER_RESOLVER =
+        new ChunkDataProviderResolver((int) version.major(), (int) version.minor());
   }
 
   public static void invalidateChunk(UUID worldUUID, int chunkX, int chunkZ) {
@@ -69,7 +70,9 @@ public class FailingSnapshotManager implements SnapshotManager {
       Material material =
           ChunkUtils.getMaterial(chunkSnapshotOptional.get(), x, position.getBlockY(), z);
       BlockState blockState =
-        NMS_UTILS.getNmsInterface().getBlockState(chunkSnapshotOptional.get(), x, position.getBlockY(), z);
+          CHUNK_DATA_PROVIDER_RESOLVER
+              .getChunkDataProvider()
+              .getBlockState(chunkSnapshotOptional.get(), x, position.getBlockY(), z);
       return Optional.of(new PathBlock(position, new BlockInformation(material, blockState)));
     }
 
@@ -98,7 +101,9 @@ public class FailingSnapshotManager implements SnapshotManager {
               position,
               chunkX,
               chunkZ,
-              NMS_UTILS.getNmsInterface().getSnapshot(world, chunkX, chunkZ)));
+              CHUNK_DATA_PROVIDER_RESOLVER
+                  .getChunkDataProvider()
+                  .getSnapshot(world, chunkX, chunkZ)));
 
     return Optional.empty();
   }
@@ -128,7 +133,9 @@ public class FailingSnapshotManager implements SnapshotManager {
     private static ChunkSnapshot retrieveChunkSnapshot(
         PathEnvironment world, int chunkX, int chunkZ) {
       World bukkitWorld = Bukkit.getWorld(world.getUuid());
-      return NMS_UTILS.getNmsInterface().getSnapshot(bukkitWorld, chunkX, chunkZ);
+      return CHUNK_DATA_PROVIDER_RESOLVER
+          .getChunkDataProvider()
+          .getSnapshot(bukkitWorld, chunkX, chunkZ);
     }
 
     private static ChunkSnapshot retrieveSnapshot(PathPosition position) {
@@ -160,7 +167,9 @@ public class FailingSnapshotManager implements SnapshotManager {
 
       Material material = ChunkUtils.getMaterial(chunkSnapshot, x, pathPosition.getBlockY(), z);
       BlockState blockState =
-        NMS_UTILS.getNmsInterface().getBlockState(chunkSnapshot, x, pathPosition.getBlockY(), z);
+          CHUNK_DATA_PROVIDER_RESOLVER
+              .getChunkDataProvider()
+              .getBlockState(chunkSnapshot, x, pathPosition.getBlockY(), z);
       return new PathBlock(pathPosition, new BlockInformation(material, blockState));
     }
 
