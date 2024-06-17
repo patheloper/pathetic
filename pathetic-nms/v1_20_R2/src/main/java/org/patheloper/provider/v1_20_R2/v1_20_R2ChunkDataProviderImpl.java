@@ -1,6 +1,5 @@
-package org.patheloper.provider.v1_18_R2;
+package org.patheloper.provider.v1_20_R2;
 
-import java.lang.reflect.Field;
 import net.minecraft.server.level.WorldServer;
 import net.minecraft.world.level.block.state.IBlockData;
 import net.minecraft.world.level.chunk.ChunkStatus;
@@ -8,14 +7,13 @@ import net.minecraft.world.level.chunk.DataPaletteBlock;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
-import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.v1_18_R2.CraftChunk;
-import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
-import org.bukkit.craftbukkit.v1_18_R2.block.CraftBlockStates;
-import org.bukkit.craftbukkit.v1_18_R2.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_20_R2.CraftChunk;
+import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
 import org.patheloper.api.snapshot.ChunkDataProvider;
 
-public class OneEighteenTwoChunkDataProviderImpl implements ChunkDataProvider {
+import java.lang.reflect.Field;
+
+public final class v1_20_R2ChunkDataProviderImpl implements ChunkDataProvider {
 
   private static final Field blockIDField;
 
@@ -36,7 +34,7 @@ public class OneEighteenTwoChunkDataProviderImpl implements ChunkDataProvider {
       WorldServer server = ((CraftWorld) world).getHandle();
       CraftChunk newCraftChunk = new CraftChunk(server, chunkX, chunkZ);
 
-      server.k().a(chunkX, chunkZ, ChunkStatus.o, true);
+      server.k().a(chunkX, chunkZ, ChunkStatus.n, true);
       DataPaletteBlock<IBlockData> dataDataPaletteBlock =
           (DataPaletteBlock<IBlockData>) blockIDField.get(newCraftChunk);
 
@@ -55,8 +53,6 @@ public class OneEighteenTwoChunkDataProviderImpl implements ChunkDataProvider {
 
   @Override
   public BlockState getBlockState(ChunkSnapshot snapshot, int x, int y, int z) {
-    BlockData data = snapshot.getBlockData(x, y, z);
-    IBlockData state = ((CraftBlockData) data).getState();
-    return CraftBlockStates.getBlockState(state, null);
+    return snapshot.getBlockData(x, y, z).createBlockState();
   }
 }

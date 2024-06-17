@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.patheloper</groupId>
         <artifactId>pathetic-main</artifactId>
-        <version>2.4.4</version>
+        <version>2.4.5</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -29,14 +29,14 @@
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.20.6-R0.1-SNAPSHOT</version>
+            <version>1.21-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.patheloper</groupId>
             <artifactId>pathetic-api</artifactId>
-            <version>2.4.4</version>
+            <version>2.4.5</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

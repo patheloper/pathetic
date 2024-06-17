@@ -51,6 +51,10 @@ public class Pathetic {
 
   public static void shutdown() {
     SHUTDOWN_LISTENERS.forEach(Runnable::run);
+    SHUTDOWN_LISTENERS.clear();
+
+    instance = null;
+    log.info("Pathetic shutdown");
   }
 
   public static boolean isInitialized() {

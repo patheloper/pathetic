@@ -78,7 +78,7 @@ abstract class AbstractPathfinder implements Pathfinder {
       return CompletableFuture.completedFuture(
           finishPathing(
               new PathfinderResultImpl(
-                  PathState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET))));
+                  PathState.INITIALLY_FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET))));
     }
 
     return initiatePathing(start, target, strategy);

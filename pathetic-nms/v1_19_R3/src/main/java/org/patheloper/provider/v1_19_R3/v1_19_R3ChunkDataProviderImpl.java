@@ -1,4 +1,4 @@
-package org.patheloper.provider.v1_20_R1;
+package org.patheloper.provider.v1_19_R3;
 
 import java.lang.reflect.Field;
 import net.minecraft.server.level.WorldServer;
@@ -8,11 +8,14 @@ import net.minecraft.world.level.chunk.DataPaletteBlock;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
-import org.bukkit.craftbukkit.v1_20_R1.CraftChunk;
-import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.craftbukkit.v1_19_R3.CraftChunk;
+import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_19_R3.block.CraftBlockStates;
+import org.bukkit.craftbukkit.v1_19_R3.block.data.CraftBlockData;
 import org.patheloper.api.snapshot.ChunkDataProvider;
 
-public class OneTwentyOneChunkDataProviderImpl implements ChunkDataProvider {
+public class v1_19_R3ChunkDataProviderImpl implements ChunkDataProvider {
 
   private static final Field blockIDField;
 
@@ -33,7 +36,7 @@ public class OneTwentyOneChunkDataProviderImpl implements ChunkDataProvider {
       WorldServer server = ((CraftWorld) world).getHandle();
       CraftChunk newCraftChunk = new CraftChunk(server, chunkX, chunkZ);
 
-      server.k().a(chunkX, chunkZ, ChunkStatus.n, true);
+      server.k().a(chunkX, chunkZ, ChunkStatus.o, true);
       DataPaletteBlock<IBlockData> dataDataPaletteBlock =
           (DataPaletteBlock<IBlockData>) blockIDField.get(newCraftChunk);
 
@@ -52,6 +55,8 @@ public class OneTwentyOneChunkDataProviderImpl implements ChunkDataProvider {
 
   @Override
   public BlockState getBlockState(ChunkSnapshot snapshot, int x, int y, int z) {
-    return snapshot.getBlockData(x, y, z).createBlockState();
+    BlockData data = snapshot.getBlockData(x, y, z);
+    IBlockData state = ((CraftBlockData) data).getState();
+    return CraftBlockStates.getBlockState(state, null);
   }
 }
