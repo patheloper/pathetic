@@ -13,7 +13,7 @@ import org.bukkit.craftbukkit.v1_17_R1.block.CraftBlockStates;
 import org.bukkit.craftbukkit.v1_17_R1.block.data.CraftBlockData;
 import org.patheloper.api.snapshot.ChunkDataProvider;
 
-public class OneSeventeenChunkDataProviderImpl implements ChunkDataProvider {
+public class v1_17ChunkDataProviderImpl implements ChunkDataProvider {
 
   @Override
   public ChunkSnapshot getSnapshot(World world, int chunkX, int chunkZ) {

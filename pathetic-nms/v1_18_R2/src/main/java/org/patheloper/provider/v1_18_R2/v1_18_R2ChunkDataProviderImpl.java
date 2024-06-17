@@ -1,4 +1,4 @@
-package org.patheloper.provider.v1_19_R3;
+package org.patheloper.provider.v1_18_R2;
 
 import java.lang.reflect.Field;
 import net.minecraft.server.level.WorldServer;
@@ -9,13 +9,13 @@ import org.bukkit.ChunkSnapshot;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.v1_19_R3.CraftChunk;
-import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_19_R3.block.CraftBlockStates;
-import org.bukkit.craftbukkit.v1_19_R3.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_18_R2.CraftChunk;
+import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_18_R2.block.CraftBlockStates;
+import org.bukkit.craftbukkit.v1_18_R2.block.data.CraftBlockData;
 import org.patheloper.api.snapshot.ChunkDataProvider;
 
-public class OneNineteenThreeChunkDataProviderImpl implements ChunkDataProvider {
+public class v1_18_R2ChunkDataProviderImpl implements ChunkDataProvider {
 
   private static final Field blockIDField;
 

@@ -1,18 +1,19 @@
-package org.patheloper.provider.v1_20_R3;
+package org.patheloper.provider.v1_20_R4;
 
-import java.lang.reflect.Field;
 import net.minecraft.server.level.WorldServer;
 import net.minecraft.world.level.block.state.IBlockData;
-import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.chunk.DataPaletteBlock;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
-import org.bukkit.craftbukkit.v1_20_R3.CraftChunk;
-import org.bukkit.craftbukkit.v1_20_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_20_R4.CraftChunk;
+import org.bukkit.craftbukkit.v1_20_R4.CraftWorld;
 import org.patheloper.api.snapshot.ChunkDataProvider;
 
-public final class OneTwentyThreeChunkDataProviderImpl implements ChunkDataProvider {
+import java.lang.reflect.Field;
+
+public class v1_20_R4ChunkDataProviderImpl implements ChunkDataProvider {
 
   private static final Field blockIDField;
 

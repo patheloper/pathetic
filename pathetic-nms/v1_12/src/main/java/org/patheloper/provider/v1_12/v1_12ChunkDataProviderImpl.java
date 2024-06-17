@@ -1,20 +1,20 @@
-package org.patheloper.provider.v1_8;
+package org.patheloper.provider.v1_12;
 
-import net.minecraft.server.v1_8_R3.Chunk;
-import net.minecraft.server.v1_8_R3.WorldServer;
+import net.minecraft.server.v1_12_R1.Chunk;
+import net.minecraft.server.v1_12_R1.WorldServer;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
 import org.patheloper.api.snapshot.ChunkDataProvider;
 
-public class OneEightChunkDataProviderImpl implements ChunkDataProvider {
+public class v1_12ChunkDataProviderImpl implements ChunkDataProvider {
 
   @Override
   public ChunkSnapshot getSnapshot(World world, int chunkX, int chunkZ) {
     try {
       WorldServer server = ((CraftWorld) world).getHandle();
-      Chunk chunk = server.chunkProviderServer.getChunkAt(chunkX, chunkZ);
+      Chunk chunk = server.getChunkProvider().getChunkAt(chunkX, chunkZ);
 
       return chunk.bukkitChunk.getChunkSnapshot();
     } catch (Exception e) {

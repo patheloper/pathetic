@@ -13,7 +13,7 @@ import org.patheloper.api.snapshot.ChunkDataProvider;
 
 import java.lang.reflect.Field;
 
-public class OneTwentyOneChunkDataProviderImpl implements ChunkDataProvider {
+public class v1_21ChunkDataProviderImpl implements ChunkDataProvider {
 
   private static final Field blockIDField;
 
