@@ -2,6 +2,8 @@ package org.patheloper.api.pathing.result;
 
 public enum PathState {
 
+  /** Pathing failed to start, typically due to an invalid start or end position. */
+  INITIALLY_FAILED,
   /** The Path was successfully found for a given strategy */
   FOUND,
   /**
