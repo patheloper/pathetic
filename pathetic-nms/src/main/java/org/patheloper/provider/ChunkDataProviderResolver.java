@@ -40,6 +40,9 @@ public class ChunkDataProviderResolver {
   private ChunkDataProvider determineChunkDataProvider(int major, int minor) {
     final ChunkDataProvider chunkDataProvider;
     switch (major) {
+      case 21:
+        chunkDataProvider = new OneTwentyFourChunkDataProviderImpl();
+        break;
       case 20:
         if (minor == 5 || minor == 6) {
           chunkDataProvider = new OneTwentyFourChunkDataProviderImpl();
