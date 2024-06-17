@@ -58,7 +58,6 @@ public class ChunkDataProviderResolver {
           chunkDataProvider = new v1_20_R1ChunkDataProviderImpl();
           break;
         }
-        throw new IllegalArgumentException("Unsupported version: " + major + "." + minor);
       case 19:
         if (minor == 2 || minor == 3) {
           chunkDataProvider = new v1_19_R2_ChunkDataProviderImpl();
@@ -68,7 +67,6 @@ public class ChunkDataProviderResolver {
           chunkDataProvider = new v1_19_R3ChunkDataProviderImpl();
           break;
         }
-        throw new IllegalArgumentException("Unsupported version: " + major + "." + minor);
       case 18:
         if (minor == 2) {
           chunkDataProvider = new v1_18_R2ChunkDataProviderImpl();
