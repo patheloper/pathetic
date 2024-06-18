@@ -2,7 +2,7 @@
 
 # Pathetic
 
-Pathetic is a simple and intuitive backwards-compatible up-to-date pathfinding API for Spigot and forks.
+Pathetic is a simple and intuitive backwards-compatible up-to-date pathfinding API for Spigot, Paper and forks.
 See more info here: https://www.spigotmc.org/threads/how-pathetic.578998/#post-4644823
 
 ### How to import
