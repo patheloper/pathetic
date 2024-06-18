@@ -2,28 +2,28 @@ package org.patheloper.api.pathing.strategy.strategies;
 
 import lombok.NonNull;
 import org.patheloper.api.pathing.strategy.PathValidationContext;
-import org.patheloper.api.pathing.strategy.PathfinderStrategy;
+import org.patheloper.api.pathing.strategy.PathFilter;
 import org.patheloper.api.snapshot.SnapshotManager;
 import org.patheloper.api.wrapper.PathBlock;
 import org.patheloper.api.wrapper.PathPosition;
 
-/** A {@link PathfinderStrategy} to find the best walkable path. */
-public class WalkablePathfinderStrategy implements PathfinderStrategy {
+/** A {@link PathFilter} to find the best walkable path. */
+public class WalkablePathFilter implements PathFilter {
 
   private final int height;
 
-  public WalkablePathfinderStrategy() {
+  public WalkablePathFilter() {
     this(2);
   }
 
-  public WalkablePathfinderStrategy(int height) {
+  public WalkablePathFilter(int height) {
     if (height <= 0) throw new IllegalArgumentException("Height must be greater than 0");
 
     this.height = height;
   }
 
   @Override
-  public boolean isValid(@NonNull PathValidationContext pathValidationContext) {
+  public boolean filter(@NonNull PathValidationContext pathValidationContext) {
     SnapshotManager snapshotManager = pathValidationContext.getSnapshotManager();
     PathBlock block = snapshotManager.getBlock(pathValidationContext.getPosition());
     return canStandOn(block, snapshotManager);

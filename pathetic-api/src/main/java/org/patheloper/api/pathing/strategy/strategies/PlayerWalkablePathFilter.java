@@ -5,10 +5,10 @@ import org.patheloper.api.pathing.strategy.PathValidationContext;
 import org.patheloper.api.snapshot.SnapshotManager;
 import org.patheloper.api.wrapper.PathPosition;
 
-public class PlayerWalkableStrategy extends WalkablePathfinderStrategy {
+public class PlayerWalkablePathFilter extends WalkablePathFilter {
 
   @Override
-  public boolean isValid(PathValidationContext pathValidationContext) {
+  public boolean filter(PathValidationContext pathValidationContext) {
     PathPosition pathPosition = pathValidationContext.getPosition();
     SnapshotManager snapshotManager = pathValidationContext.getSnapshotManager();
 

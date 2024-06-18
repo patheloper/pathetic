@@ -2,13 +2,13 @@ package org.patheloper.api.pathing.strategy.strategies;
 
 import lombok.NonNull;
 import org.patheloper.api.pathing.strategy.PathValidationContext;
-import org.patheloper.api.pathing.strategy.PathfinderStrategy;
+import org.patheloper.api.pathing.strategy.PathFilter;
 
-/** A {@link PathfinderStrategy} to find the direct path to a given endpoint */
-public class DirectPathfinderStrategy implements PathfinderStrategy {
+/** A {@link PathFilter} to find the direct path to a given endpoint */
+public class DirectPathFilter implements PathFilter {
 
   @Override
-  public boolean isValid(@NonNull PathValidationContext pathValidationContext) {
+  public boolean filter(@NonNull PathValidationContext pathValidationContext) {
     return pathValidationContext
         .getSnapshotManager()
         .getBlock(pathValidationContext.getPosition())

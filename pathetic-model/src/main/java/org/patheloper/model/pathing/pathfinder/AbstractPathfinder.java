@@ -17,7 +17,7 @@ import org.patheloper.api.pathing.Pathfinder;
 import org.patheloper.api.pathing.configuration.PathfinderConfiguration;
 import org.patheloper.api.pathing.result.PathState;
 import org.patheloper.api.pathing.result.PathfinderResult;
-import org.patheloper.api.pathing.strategy.PathfinderStrategy;
+import org.patheloper.api.pathing.strategy.PathFilter;
 import org.patheloper.api.snapshot.SnapshotManager;
 import org.patheloper.api.wrapper.PathBlock;
 import org.patheloper.api.wrapper.PathPosition;
@@ -71,8 +71,8 @@ abstract class AbstractPathfinder implements Pathfinder {
   public @NonNull CompletionStage<PathfinderResult> findPath(
       @NonNull PathPosition start,
       @NonNull PathPosition target,
-      @NonNull PathfinderStrategy strategy) {
-    PathingStartFindEvent startEvent = raiseStartEvent(start, target, strategy);
+      @NonNull PathFilter filter) {
+    PathingStartFindEvent startEvent = raiseStartEvent(start, target, filter);
 
     if (shouldSkipPathing(start, target, startEvent)) {
       return CompletableFuture.completedFuture(
@@ -81,7 +81,7 @@ abstract class AbstractPathfinder implements Pathfinder {
                   PathState.INITIALLY_FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET))));
     }
 
-    return initiatePathing(start, target, strategy);
+    return initiatePathing(start, target, filter);
   }
 
   private boolean shouldSkipPathing(
@@ -117,7 +117,7 @@ abstract class AbstractPathfinder implements Pathfinder {
   }
 
   private CompletionStage<PathfinderResult> initiatePathing(
-      PathPosition start, PathPosition target, PathfinderStrategy strategy) {
+      PathPosition start, PathPosition target, PathFilter strategy) {
     BStatsHandler.increasePathCount();
     return pathfinderConfiguration.isAsync()
         ? initiateAsyncPathing(start, target, strategy)
@@ -125,7 +125,7 @@ abstract class AbstractPathfinder implements Pathfinder {
   }
 
   private CompletionStage<PathfinderResult> initiateAsyncPathing(
-      PathPosition start, PathPosition target, PathfinderStrategy strategy) {
+      PathPosition start, PathPosition target, PathFilter strategy) {
     return CompletableFuture.supplyAsync(
             () -> {
               try {
@@ -140,7 +140,7 @@ abstract class AbstractPathfinder implements Pathfinder {
   }
 
   private CompletionStage<PathfinderResult> initiateSyncPathing(
-      PathPosition start, PathPosition target, PathfinderStrategy strategy) {
+      PathPosition start, PathPosition target, PathFilter strategy) {
     try {
       return CompletableFuture.completedFuture(resolvePath(start, target, strategy));
     } catch (Exception e) {
@@ -165,12 +165,12 @@ abstract class AbstractPathfinder implements Pathfinder {
   }
 
   private PathingStartFindEvent raiseStartEvent(
-      PathPosition start, PathPosition target, PathfinderStrategy strategy) {
+      PathPosition start, PathPosition target, PathFilter strategy) {
     PathingStartFindEvent startEvent = new PathingStartFindEvent(start, target, strategy);
     EventPublisher.raiseEvent(startEvent);
     return startEvent;
   }
 
   protected abstract PathfinderResult resolvePath(
-      PathPosition start, PathPosition target, PathfinderStrategy strategy);
+      PathPosition start, PathPosition target, PathFilter strategy);
 }

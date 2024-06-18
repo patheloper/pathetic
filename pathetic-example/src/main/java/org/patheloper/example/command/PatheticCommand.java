@@ -14,7 +14,7 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.patheloper.api.pathing.Pathfinder;
 import org.patheloper.api.pathing.result.PathfinderResult;
-import org.patheloper.api.pathing.strategy.strategies.DirectPathfinderStrategy;
+import org.patheloper.api.pathing.strategy.strategies.DirectPathFilter;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.mapping.bukkit.BukkitMapper;
 
@@ -76,9 +76,9 @@ public class PatheticCommand implements TabExecutor {
         // Inform the player that pathfinding is starting
         player.sendMessage("Starting pathfinding...");
 
-        // Start pathfinding asynchronously
+        // Start pathfinding asynchronously with a direct path filter
         CompletionStage<PathfinderResult> pathfindingResult =
-            pathfinder.findPath(start, target, new DirectPathfinderStrategy());
+            pathfinder.findPath(start, target, new DirectPathFilter());
 
         // Handle the pathfinding result
         pathfindingResult.thenAccept(

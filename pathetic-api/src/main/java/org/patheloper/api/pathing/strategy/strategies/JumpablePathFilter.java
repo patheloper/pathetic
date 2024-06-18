@@ -8,23 +8,23 @@ import org.patheloper.api.wrapper.PathBlock;
 import org.patheloper.api.wrapper.PathPosition;
 
 /**
- * A {@link WalkablePathfinderStrategy} that allows jumping.
+ * A {@link WalkablePathFilter} that allows jumping.
  *
  * @experimental This class is experimental and may be change a lot in the future
  */
 @Experimental
-public class JumpablePathfinderStrategy extends WalkablePathfinderStrategy {
+public class JumpablePathFilter extends WalkablePathFilter {
 
   private final int jumpHeight;
   private final int maxJumpDistance;
 
   private PathPosition lastValidPosition = null;
 
-  public JumpablePathfinderStrategy() {
+  public JumpablePathFilter() {
     this(2, 1, 4);
   }
 
-  public JumpablePathfinderStrategy(int height, int jumpHeight, int maxJumpDistance) {
+  public JumpablePathFilter(int height, int jumpHeight, int maxJumpDistance) {
     super(height);
 
     if (jumpHeight <= 0) throw new IllegalArgumentException("Jump height must be greater than 0");
@@ -36,7 +36,7 @@ public class JumpablePathfinderStrategy extends WalkablePathfinderStrategy {
   }
 
   @Override
-  public boolean isValid(@NonNull PathValidationContext pathValidationContext) {
+  public boolean filter(@NonNull PathValidationContext pathValidationContext) {
     PathPosition position = pathValidationContext.getPosition();
     SnapshotManager snapshotManager = pathValidationContext.getSnapshotManager();
 

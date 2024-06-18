@@ -7,7 +7,7 @@ import org.patheloper.api.pathing.result.Path;
 import org.patheloper.api.pathing.result.PathState;
 import org.patheloper.api.pathing.result.PathfinderResult;
 import org.patheloper.api.pathing.strategy.PathValidationContext;
-import org.patheloper.api.pathing.strategy.PathfinderStrategy;
+import org.patheloper.api.pathing.strategy.PathFilter;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.api.wrapper.PathVector;
 import org.patheloper.model.pathing.Node;
@@ -37,7 +37,7 @@ public class AStarPathfinder extends AbstractPathfinder {
 
   @Override
   protected PathfinderResult resolvePath(
-      PathPosition start, PathPosition target, PathfinderStrategy strategy) {
+      PathPosition start, PathPosition target, PathFilter strategy) {
     Node startNode = createStartNode(start, target);
     PriorityQueue<Node> nodeQueue = new PriorityQueue<>(Collections.singleton(startNode));
     Set<PathPosition> examinedPositions = new HashSet<>();
@@ -102,7 +102,7 @@ public class AStarPathfinder extends AbstractPathfinder {
       int depth,
       PathPosition start,
       PathPosition target,
-      PathfinderStrategy strategy,
+      PathFilter strategy,
       Node fallbackNode) {
     return maxIterationsReached(depth, fallbackNode)
         .or(() -> counterCheck(start, target, strategy))
@@ -131,7 +131,7 @@ public class AStarPathfinder extends AbstractPathfinder {
   }
 
   private Optional<PathfinderResult> counterCheck(
-      PathPosition start, PathPosition target, PathfinderStrategy strategy) {
+      PathPosition start, PathPosition target, PathFilter strategy) {
     if (!pathfinderConfiguration.isCounterCheck()) {
       return Optional.empty();
     }
@@ -151,7 +151,7 @@ public class AStarPathfinder extends AbstractPathfinder {
       Collection<Node> nodeQueue,
       Set<PathPosition> examinedPositions,
       Node currentNode,
-      PathfinderStrategy strategy,
+      PathFilter strategy,
       boolean allowingDiagonal) {
     nodeQueue.addAll(
         fetchValidNeighbours(
@@ -163,7 +163,7 @@ public class AStarPathfinder extends AbstractPathfinder {
       Node newNode,
       Collection<Node> nodeQueue,
       Set<PathPosition> examinedPositions,
-      PathfinderStrategy strategy,
+      PathFilter strategy,
       boolean allowingDiagonal) {
     if (isNodeInvalid(newNode, nodeQueue, strategy)) return false;
 
@@ -186,7 +186,7 @@ public class AStarPathfinder extends AbstractPathfinder {
    * Returns whether the diagonal jump is possible by checking if the adjacent nodes are passable or
    * not. With adjacent nodes are the shared overlapping neighbours meant.
    */
-  private boolean isReachable(Node from, Node to, PathfinderStrategy strategy) {
+  private boolean isReachable(Node from, Node to, PathFilter strategy) {
     boolean hasYDifference = from.getPosition().getBlockY() != to.getPosition().getBlockY();
     PathVector[] offsets = Offset.VERTICAL_AND_HORIZONTAL.getVectors();
 
@@ -207,7 +207,7 @@ public class AStarPathfinder extends AbstractPathfinder {
           boolean heightDifferencePassable =
               isHeightDifferencePassable(from, to, vector1, hasYDifference);
 
-          if (strategy.isValid(
+          if (strategy.filter(
                   new PathValidationContext(
                       neighbour1.getPosition(),
                       neighbour1.getParent().getPosition(),
@@ -234,7 +234,7 @@ public class AStarPathfinder extends AbstractPathfinder {
       Collection<Node> nodeQueue,
       Set<PathPosition> examinedPositions,
       Node currentNode,
-      PathfinderStrategy strategy,
+      PathFilter strategy,
       boolean allowingDiagonal) {
     Set<Node> newNodes = new HashSet<>(offset.getVectors().length);
 
@@ -276,7 +276,7 @@ public class AStarPathfinder extends AbstractPathfinder {
    * in the queue, or is not valid according to the strategy.
    */
   private boolean isNodeInvalid(
-      Node node, Collection<Node> nodeQueue, PathfinderStrategy strategy) {
+      Node node, Collection<Node> nodeQueue, PathFilter strategy) {
     int gridX = node.getPosition().getBlockX() / DEFAULT_GRID_CELL_SIZE;
     int gridY = node.getPosition().getBlockY() / DEFAULT_GRID_CELL_SIZE;
     int gridZ = node.getPosition().getBlockZ() / DEFAULT_GRID_CELL_SIZE;
@@ -298,7 +298,7 @@ public class AStarPathfinder extends AbstractPathfinder {
 
     return !isWithinWorldBounds(node.getPosition())
         || nodeQueue.contains(node)
-        || !strategy.isValid(
+        || !strategy.filter(
             new PathValidationContext(
                 node.getPosition(), node.getParent().getPosition(), snapshotManager));
   }
