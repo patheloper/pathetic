@@ -37,7 +37,7 @@ public class AStarPathfinder extends AbstractPathfinder {
 
   @Override
   protected PathfinderResult resolvePath(
-      PathPosition start, PathPosition target, PathFilter strategy) {
+      PathPosition start, PathPosition target, List<PathFilter> filters) {
     Node startNode = createStartNode(start, target);
     PriorityQueue<Node> nodeQueue = new PriorityQueue<>(Collections.singleton(startNode));
     Set<PathPosition> examinedPositions = new HashSet<>();
@@ -61,17 +61,21 @@ public class AStarPathfinder extends AbstractPathfinder {
           nodeQueue,
           examinedPositions,
           currentNode,
-          strategy,
+          filters,
           this.pathfinderConfiguration.isAllowingDiagonal());
       depth++;
     }
 
-    return backupPathfindingOrFailure(depth, start, target, strategy, fallbackNode);
+    return backupPathfindingOrFailure(depth, start, target, filters, fallbackNode);
   }
 
   private Node createStartNode(PathPosition start, PathPosition target) {
     return new Node(
-        start.floor(), start.floor(), target.floor(), pathfinderConfiguration.getHeuristicWeights(), 0);
+        start.floor(),
+        start.floor(),
+        target.floor(),
+        pathfinderConfiguration.getHeuristicWeights(),
+        0);
   }
 
   private void tickWatchdogIfNeeded(int depth) {
@@ -102,10 +106,10 @@ public class AStarPathfinder extends AbstractPathfinder {
       int depth,
       PathPosition start,
       PathPosition target,
-      PathFilter strategy,
+      List<PathFilter> filters,
       Node fallbackNode) {
     return maxIterationsReached(depth, fallbackNode)
-        .or(() -> counterCheck(start, target, strategy))
+        .or(() -> counterCheck(start, target, filters))
         .or(() -> fallback(fallbackNode))
         .orElse(
             finishPathing(
@@ -131,14 +135,15 @@ public class AStarPathfinder extends AbstractPathfinder {
   }
 
   private Optional<PathfinderResult> counterCheck(
-      PathPosition start, PathPosition target, PathFilter strategy) {
+      PathPosition start, PathPosition target, List<PathFilter> filters) {
     if (!pathfinderConfiguration.isCounterCheck()) {
       return Optional.empty();
     }
 
     AStarPathfinder aStarPathfinder =
-        new AStarPathfinder(PathfinderConfiguration.deepCopy(pathfinderConfiguration).withCounterCheck(false));
-    PathfinderResult pathfinderResult = aStarPathfinder.resolvePath(target, start, strategy);
+        new AStarPathfinder(
+            PathfinderConfiguration.deepCopy(pathfinderConfiguration).withCounterCheck(false));
+    PathfinderResult pathfinderResult = aStarPathfinder.resolvePath(target, start, filters);
 
     if (pathfinderResult.getPathState() == PathState.FOUND) {
       return Optional.of(pathfinderResult);
@@ -151,11 +156,10 @@ public class AStarPathfinder extends AbstractPathfinder {
       Collection<Node> nodeQueue,
       Set<PathPosition> examinedPositions,
       Node currentNode,
-      PathFilter strategy,
+      List<PathFilter> filters,
       boolean allowingDiagonal) {
     nodeQueue.addAll(
-        fetchValidNeighbours(
-            nodeQueue, examinedPositions, currentNode, strategy, allowingDiagonal));
+        fetchValidNeighbours(nodeQueue, examinedPositions, currentNode, filters, allowingDiagonal));
   }
 
   private boolean isNodeValid(
@@ -163,15 +167,15 @@ public class AStarPathfinder extends AbstractPathfinder {
       Node newNode,
       Collection<Node> nodeQueue,
       Set<PathPosition> examinedPositions,
-      PathFilter strategy,
+      List<PathFilter> filters,
       boolean allowingDiagonal) {
-    if (isNodeInvalid(newNode, nodeQueue, strategy)) return false;
+    if (isNodeInvalid(newNode, nodeQueue, filters)) return false;
 
     if (!allowingDiagonal) return examinedPositions.add(newNode.getPosition());
 
     if (!isDiagonalMove(currentNode, newNode)) return examinedPositions.add(newNode.getPosition());
 
-    return isReachable(currentNode, newNode, strategy)
+    return isReachable(currentNode, newNode, filters)
         && examinedPositions.add(newNode.getPosition());
   }
 
@@ -186,7 +190,7 @@ public class AStarPathfinder extends AbstractPathfinder {
    * Returns whether the diagonal jump is possible by checking if the adjacent nodes are passable or
    * not. With adjacent nodes are the shared overlapping neighbours meant.
    */
-  private boolean isReachable(Node from, Node to, PathFilter strategy) {
+  private boolean isReachable(Node from, Node to, List<PathFilter> filters) {
     boolean hasYDifference = from.getPosition().getBlockY() != to.getPosition().getBlockY();
     PathVector[] offsets = Offset.VERTICAL_AND_HORIZONTAL.getVectors();
 
@@ -207,12 +211,7 @@ public class AStarPathfinder extends AbstractPathfinder {
           boolean heightDifferencePassable =
               isHeightDifferencePassable(from, to, vector1, hasYDifference);
 
-          if (strategy.filter(
-                  new PathValidationContext(
-                      neighbour1.getPosition(),
-                      neighbour1.getParent().getPosition(),
-                      snapshotManager))
-              && heightDifferencePassable) return true;
+          if (areAllFiltersPassed(filters, neighbour1) && heightDifferencePassable) return true;
         }
       }
     }
@@ -234,7 +233,7 @@ public class AStarPathfinder extends AbstractPathfinder {
       Collection<Node> nodeQueue,
       Set<PathPosition> examinedPositions,
       Node currentNode,
-      PathFilter strategy,
+      List<PathFilter> filters,
       boolean allowingDiagonal) {
     Set<Node> newNodes = new HashSet<>(offset.getVectors().length);
 
@@ -242,7 +241,7 @@ public class AStarPathfinder extends AbstractPathfinder {
       Node newNode = createNeighbourNode(currentNode, vector);
 
       if (isNodeValid(
-          currentNode, newNode, nodeQueue, examinedPositions, strategy, allowingDiagonal)) {
+          currentNode, newNode, nodeQueue, examinedPositions, filters, allowingDiagonal)) {
         newNodes.add(newNode);
       }
     }
@@ -275,8 +274,7 @@ public class AStarPathfinder extends AbstractPathfinder {
    * Checks if the node is invalid. A node is invalid if it is outside the world bounds, is already
    * in the queue, or is not valid according to the strategy.
    */
-  private boolean isNodeInvalid(
-      Node node, Collection<Node> nodeQueue, PathFilter strategy) {
+  private boolean isNodeInvalid(Node node, Collection<Node> nodeQueue, List<PathFilter> filters) {
     int gridX = node.getPosition().getBlockX() / DEFAULT_GRID_CELL_SIZE;
     int gridY = node.getPosition().getBlockY() / DEFAULT_GRID_CELL_SIZE;
     int gridZ = node.getPosition().getBlockZ() / DEFAULT_GRID_CELL_SIZE;
@@ -298,9 +296,18 @@ public class AStarPathfinder extends AbstractPathfinder {
 
     return !isWithinWorldBounds(node.getPosition())
         || nodeQueue.contains(node)
-        || !strategy.filter(
-            new PathValidationContext(
-                node.getPosition(), node.getParent().getPosition(), snapshotManager));
+        || !areAllFiltersPassed(filters, node);
+  }
+
+  private boolean areAllFiltersPassed(List<PathFilter> filters, Node node) {
+    for (PathFilter filter : filters) {
+      if (!filter.filter(
+          new PathValidationContext(
+              node.getPosition(), node.getParent().getPosition(), snapshotManager))) {
+        return false;
+      }
+    }
+    return true;
   }
 
   private boolean isWithinWorldBounds(PathPosition position) {

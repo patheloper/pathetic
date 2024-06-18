@@ -78,7 +78,7 @@ public class PatheticCommand implements TabExecutor {
 
         // Start pathfinding asynchronously with a direct path filter
         CompletionStage<PathfinderResult> pathfindingResult =
-            pathfinder.findPath(start, target, new DirectPathFilter());
+            pathfinder.findPath(start, target, List.of(new DirectPathFilter()));
 
         // Handle the pathfinding result
         pathfindingResult.thenAccept(
