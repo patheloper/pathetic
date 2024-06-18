@@ -2,6 +2,7 @@ package org.patheloper.model.pathing;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.patheloper.api.pathing.configuration.HeuristicWeights;
@@ -18,7 +19,7 @@ public class Node implements Comparable<Node> {
   private final PathPosition start;
   private final PathPosition target;
   private final HeuristicWeights heuristicWeights;
-  private final Integer depth;
+  private final int depth;
 
   private final ComputingCache<Double> fCostCache = new ComputingCache<>(this::calculateFCost);
   private final ComputingCache<Double> gCostCache = new ComputingCache<>(this::calculateGCost);
@@ -83,8 +84,11 @@ public class Node implements Comparable<Node> {
   }
 
   @Override
-  public int compareTo(Node o) {
-    // This is used in the priority queue to sort the nodes
-    return Double.compare(this.heuristic.get(), o.heuristic.get());
+  public int compareTo(@NonNull Node o) {
+    int heuristicComparison = Double.compare(this.heuristic.get(), o.heuristic.get());
+    if (heuristicComparison != 0) {
+      return heuristicComparison;
+    }
+    return Integer.compare(this.depth, o.depth);
   }
 }
