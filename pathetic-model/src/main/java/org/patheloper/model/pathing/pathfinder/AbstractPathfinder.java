@@ -14,7 +14,7 @@ import org.patheloper.Pathetic;
 import org.patheloper.api.event.PathingFinishedEvent;
 import org.patheloper.api.event.PathingStartFindEvent;
 import org.patheloper.api.pathing.Pathfinder;
-import org.patheloper.api.pathing.configuration.PathingRuleSet;
+import org.patheloper.api.pathing.configuration.PathfinderConfiguration;
 import org.patheloper.api.pathing.result.PathState;
 import org.patheloper.api.pathing.result.PathfinderResult;
 import org.patheloper.api.pathing.strategy.PathfinderStrategy;
@@ -49,22 +49,22 @@ abstract class AbstractPathfinder implements Pathfinder {
     Pathetic.addShutdownListener(PATHING_EXECUTOR::shutdown);
   }
 
-  protected final PathingRuleSet pathingRuleSet;
+  protected final PathfinderConfiguration pathfinderConfiguration;
   protected final Offset offset;
   protected final SnapshotManager snapshotManager;
 
-  protected AbstractPathfinder(PathingRuleSet pathingRuleSet) {
-    this.pathingRuleSet = pathingRuleSet;
-    this.offset = determineOffset(pathingRuleSet);
-    this.snapshotManager = determineSnapshotManager(pathingRuleSet);
+  protected AbstractPathfinder(PathfinderConfiguration pathfinderConfiguration) {
+    this.pathfinderConfiguration = pathfinderConfiguration;
+    this.offset = determineOffset(pathfinderConfiguration);
+    this.snapshotManager = determineSnapshotManager(pathfinderConfiguration);
   }
 
-  private Offset determineOffset(PathingRuleSet pathingRuleSet) {
-    return pathingRuleSet.isAllowingDiagonal() ? Offset.MERGED : Offset.VERTICAL_AND_HORIZONTAL;
+  private Offset determineOffset(PathfinderConfiguration pathfinderConfiguration) {
+    return pathfinderConfiguration.isAllowingDiagonal() ? Offset.MERGED : Offset.VERTICAL_AND_HORIZONTAL;
   }
 
-  private SnapshotManager determineSnapshotManager(PathingRuleSet pathingRuleSet) {
-    return pathingRuleSet.isLoadingChunks() ? LOADING_SNAPSHOT_MANAGER : SIMPLE_SNAPSHOT_MANAGER;
+  private SnapshotManager determineSnapshotManager(PathfinderConfiguration pathfinderConfiguration) {
+    return pathfinderConfiguration.isLoadingChunks() ? LOADING_SNAPSHOT_MANAGER : SIMPLE_SNAPSHOT_MANAGER;
   }
 
   @Override
@@ -101,7 +101,7 @@ abstract class AbstractPathfinder implements Pathfinder {
   }
 
   private boolean isFastFailEnabledAndBlockUnreachable(PathPosition start, PathPosition target) {
-    return this.pathingRuleSet.isAllowingFailFast()
+    return this.pathfinderConfiguration.isAllowingFailFast()
         && (isBlockUnreachable(target) || isBlockUnreachable(start));
   }
 
@@ -119,7 +119,7 @@ abstract class AbstractPathfinder implements Pathfinder {
   private CompletionStage<PathfinderResult> initiatePathing(
       PathPosition start, PathPosition target, PathfinderStrategy strategy) {
     BStatsHandler.increasePathCount();
-    return pathingRuleSet.isAsync()
+    return pathfinderConfiguration.isAsync()
         ? initiateAsyncPathing(start, target, strategy)
         : initiateSyncPathing(start, target, strategy);
   }

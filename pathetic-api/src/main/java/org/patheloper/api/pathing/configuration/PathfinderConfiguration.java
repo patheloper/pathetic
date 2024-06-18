@@ -8,16 +8,16 @@ import lombok.Value;
 import lombok.With;
 
 /**
- * Defines a set of configurable rules that govern the behavior of the A* pathfinding algorithm. By
- * adjusting these settings, you can fine-tune the pathfinding process to suit the specific needs of
- * your Minecraft environment.
+ * Defines a set of configurable parameters that govern the behavior of the A* pathfinding
+ * algorithm. By adjusting these parameters, you can fine-tune the pathfinding process to suit the
+ * specific needs of your Minecraft environment.
  */
 @With
 @Value
 @Getter
 @Builder(toBuilder = true, access = AccessLevel.PRIVATE)
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class PathingRuleSet {
+public class PathfinderConfiguration {
 
   /**
    * The maximum number of iterations allowed for the pathfinding algorithm. This acts as a
@@ -57,7 +57,7 @@ public class PathingRuleSet {
   boolean allowingFailFast;
 
   /**
-   * If pathfinding fails, this setting determines whether the algorithm should fall back to the
+   * If pathfinding fails, this parameter determines whether the algorithm should fall back to the
    * last successfully calculated path. This can help maintain progress, but might use an outdated
    * path.
    */
@@ -85,39 +85,40 @@ public class PathingRuleSet {
   @Builder.Default HeuristicWeights heuristicWeights = HeuristicWeights.NATURAL_PATH_WEIGHTS;
 
   /**
-   * @return A new {@link PathingRuleSet} with default values but async.
+   * @return A new {@link PathfinderConfiguration} with default parameters but async.
    */
-  public static PathingRuleSet createAsyncRuleSet() {
+  public static PathfinderConfiguration createAsyncConfiguration() {
     return builder().async(true).build();
   }
 
   /**
-   * @return A new {@link PathingRuleSet} with default values.
+   * @return A new {@link PathfinderConfiguration} with default parameters.
    */
-  public static PathingRuleSet createRuleSet() {
+  public static PathfinderConfiguration createConfiguration() {
     return builder().build();
   }
 
   /**
-   * Creates a deep copy of the given {@link PathingRuleSet}.
+   * Creates a deep copy of the given {@link PathfinderConfiguration}.
    *
-   * <p>This method constructs a new instance of {@link PathingRuleSet} with the same values as the
-   * input. It ensures a deep copy by copying the values of primitive and boolean fields directly.
+   * <p>This method constructs a new instance of {@link PathfinderConfiguration} with the same
+   * values as the input. It ensures a deep copy by copying the values of primitive and boolean
+   * fields directly.
    *
-   * @param pathingRuleSet The {@link PathingRuleSet} to copy.
-   * @return A new {@link PathingRuleSet} instance with the same values as the input.
+   * @param pathfinderConfiguration The {@link PathfinderConfiguration} to copy.
+   * @return A new {@link PathfinderConfiguration} instance with the same values as the input.
    */
-  public static PathingRuleSet deepCopy(PathingRuleSet pathingRuleSet) {
+  public static PathfinderConfiguration deepCopy(PathfinderConfiguration pathfinderConfiguration) {
     return builder()
-        .maxIterations(pathingRuleSet.maxIterations)
-        .maxLength(pathingRuleSet.maxLength)
-        .async(pathingRuleSet.async)
-        .allowingDiagonal(pathingRuleSet.allowingDiagonal)
-        .allowingFailFast(pathingRuleSet.allowingFailFast)
-        .allowingFallback(pathingRuleSet.allowingFallback)
-        .loadingChunks(pathingRuleSet.loadingChunks)
-        .counterCheck(pathingRuleSet.counterCheck)
-        .heuristicWeights(pathingRuleSet.heuristicWeights)
+        .maxIterations(pathfinderConfiguration.maxIterations)
+        .maxLength(pathfinderConfiguration.maxLength)
+        .async(pathfinderConfiguration.async)
+        .allowingDiagonal(pathfinderConfiguration.allowingDiagonal)
+        .allowingFailFast(pathfinderConfiguration.allowingFailFast)
+        .allowingFallback(pathfinderConfiguration.allowingFallback)
+        .loadingChunks(pathfinderConfiguration.loadingChunks)
+        .counterCheck(pathfinderConfiguration.counterCheck)
+        .heuristicWeights(pathfinderConfiguration.heuristicWeights)
         .build();
   }
 }

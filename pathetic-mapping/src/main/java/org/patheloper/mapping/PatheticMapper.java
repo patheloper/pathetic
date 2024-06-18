@@ -5,7 +5,7 @@ import lombok.experimental.UtilityClass;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.patheloper.Pathetic;
 import org.patheloper.api.pathing.Pathfinder;
-import org.patheloper.api.pathing.configuration.PathingRuleSet;
+import org.patheloper.api.pathing.configuration.PathfinderConfiguration;
 import org.patheloper.model.pathing.pathfinder.AStarPathfinder;
 import org.patheloper.util.ErrorLogger;
 
@@ -39,18 +39,18 @@ public class PatheticMapper {
    * @throws IllegalStateException If the lib is not initialized yet
    */
   public @NonNull Pathfinder newPathfinder() {
-    return newPathfinder(PathingRuleSet.createAsyncRuleSet());
+    return newPathfinder(PathfinderConfiguration.createAsyncConfiguration());
   }
 
   /**
    * Instantiates a new A*-pathfinder.
    *
-   * @param pathingRuleSet - The {@link PathingRuleSet}
+   * @param pathfinderConfiguration - The {@link PathfinderConfiguration}
    * @return The {@link Pathfinder}
    * @throws IllegalStateException If the lib is not initialized yet
    */
-  public @NonNull Pathfinder newPathfinder(PathingRuleSet pathingRuleSet) {
-    if (Pathetic.isInitialized()) return new AStarPathfinder(pathingRuleSet);
+  public @NonNull Pathfinder newPathfinder(PathfinderConfiguration pathfinderConfiguration) {
+    if (Pathetic.isInitialized()) return new AStarPathfinder(pathfinderConfiguration);
 
     throw ErrorLogger.logFatalError("Pathetic is not initialized yet.");
   }

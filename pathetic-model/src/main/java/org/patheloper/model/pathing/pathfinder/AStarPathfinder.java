@@ -2,7 +2,7 @@ package org.patheloper.model.pathing.pathfinder;
 
 import java.util.*;
 import lombok.NonNull;
-import org.patheloper.api.pathing.configuration.PathingRuleSet;
+import org.patheloper.api.pathing.configuration.PathfinderConfiguration;
 import org.patheloper.api.pathing.result.Path;
 import org.patheloper.api.pathing.result.PathState;
 import org.patheloper.api.pathing.result.PathfinderResult;
@@ -31,8 +31,8 @@ public class AStarPathfinder extends AbstractPathfinder {
   private final Map<Tuple3<Integer>, ExpiringHashMap.Entry<GridRegionData>> gridMap =
       new ExpiringHashMap<>();
 
-  public AStarPathfinder(PathingRuleSet pathingRuleSet) {
-    super(pathingRuleSet);
+  public AStarPathfinder(PathfinderConfiguration pathfinderConfiguration) {
+    super(pathfinderConfiguration);
   }
 
   @Override
@@ -44,7 +44,7 @@ public class AStarPathfinder extends AbstractPathfinder {
     int depth = 1;
     Node fallbackNode = startNode;
 
-    while (!nodeQueue.isEmpty() && depth <= pathingRuleSet.getMaxIterations()) {
+    while (!nodeQueue.isEmpty() && depth <= pathfinderConfiguration.getMaxIterations()) {
       tickWatchdogIfNeeded(depth);
       Node currentNode = getNextNodeFromQueue(nodeQueue);
       fallbackNode = currentNode;
@@ -62,7 +62,7 @@ public class AStarPathfinder extends AbstractPathfinder {
           examinedPositions,
           currentNode,
           strategy,
-          this.pathingRuleSet.isAllowingDiagonal());
+          this.pathfinderConfiguration.isAllowingDiagonal());
       depth++;
     }
 
@@ -71,7 +71,7 @@ public class AStarPathfinder extends AbstractPathfinder {
 
   private Node createStartNode(PathPosition start, PathPosition target) {
     return new Node(
-        start.floor(), start.floor(), target.floor(), pathingRuleSet.getHeuristicWeights(), 0);
+        start.floor(), start.floor(), target.floor(), pathfinderConfiguration.getHeuristicWeights(), 0);
   }
 
   private void tickWatchdogIfNeeded(int depth) {
@@ -89,8 +89,8 @@ public class AStarPathfinder extends AbstractPathfinder {
   }
 
   private boolean hasReachedLengthLimit(Node currentNode) {
-    return pathingRuleSet.getMaxLength() != 0
-        && currentNode.getDepth() > pathingRuleSet.getMaxLength();
+    return pathfinderConfiguration.getMaxLength() != 0
+        && currentNode.getDepth() > pathfinderConfiguration.getMaxLength();
   }
 
   private PathfinderResult finishPathing(PathState pathState, Node currentNode) {
@@ -114,7 +114,7 @@ public class AStarPathfinder extends AbstractPathfinder {
   }
 
   private Optional<PathfinderResult> maxIterationsReached(int depth, Node fallbackNode) {
-    if (depth > pathingRuleSet.getMaxIterations())
+    if (depth > pathfinderConfiguration.getMaxIterations())
       return Optional.of(
           finishPathing(
               new PathfinderResultImpl(
@@ -123,7 +123,7 @@ public class AStarPathfinder extends AbstractPathfinder {
   }
 
   private Optional<PathfinderResult> fallback(Node fallbackNode) {
-    if (pathingRuleSet.isAllowingFallback())
+    if (pathfinderConfiguration.isAllowingFallback())
       return Optional.of(
           finishPathing(
               new PathfinderResultImpl(PathState.FALLBACK, fetchRetracedPath(fallbackNode))));
@@ -132,12 +132,12 @@ public class AStarPathfinder extends AbstractPathfinder {
 
   private Optional<PathfinderResult> counterCheck(
       PathPosition start, PathPosition target, PathfinderStrategy strategy) {
-    if (!pathingRuleSet.isCounterCheck()) {
+    if (!pathfinderConfiguration.isCounterCheck()) {
       return Optional.empty();
     }
 
     AStarPathfinder aStarPathfinder =
-        new AStarPathfinder(PathingRuleSet.deepCopy(pathingRuleSet).withCounterCheck(false));
+        new AStarPathfinder(PathfinderConfiguration.deepCopy(pathfinderConfiguration).withCounterCheck(false));
     PathfinderResult pathfinderResult = aStarPathfinder.resolvePath(target, start, strategy);
 
     if (pathfinderResult.getPathState() == PathState.FOUND) {
@@ -265,7 +265,7 @@ public class AStarPathfinder extends AbstractPathfinder {
             currentNode.getPosition().add(offset),
             currentNode.getStart(),
             currentNode.getTarget(),
-            pathingRuleSet.getHeuristicWeights(),
+            pathfinderConfiguration.getHeuristicWeights(),
             currentNode.getDepth() + 1);
     newNode.setParent(currentNode);
     return newNode;
