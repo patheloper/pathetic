@@ -42,11 +42,11 @@ public class Pathetic {
     if (BukkitVersionUtil.getVersion().isUnder(16, 0)
         || BukkitVersionUtil.getVersion().isEqual(BukkitVersionUtil.Version.of(16, 0))) {
       log.warn(
-          "pathetic is currently running in a version older than or equal to 1.16. "
+          "Pathetic is currently running in a version older than or equal to 1.16. "
               + "Some functionalities might not be accessible, such as accessing the BlockState of blocks.");
     }
 
-    log.info("Pathetic initialized");
+    log.info("Pathetic v{} initialized", modelVersion);
   }
 
   public static void shutdown() {
