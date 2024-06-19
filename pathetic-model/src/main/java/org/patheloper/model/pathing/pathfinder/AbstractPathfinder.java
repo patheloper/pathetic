@@ -23,7 +23,7 @@ import org.patheloper.api.snapshot.SnapshotManager;
 import org.patheloper.api.wrapper.PathBlock;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.api.wrapper.PathVector;
-import org.patheloper.bukkit.event.EventPublisher;
+import org.patheloper.api.event.EventPublisher;
 import org.patheloper.model.pathing.Offset;
 import org.patheloper.model.pathing.result.PathImpl;
 import org.patheloper.model.pathing.result.PathfinderResultImpl;
@@ -78,9 +78,9 @@ abstract class AbstractPathfinder implements Pathfinder {
       @NonNull PathPosition start,
       @NonNull PathPosition target,
       @NonNull List<PathFilter> filters) {
-    PathingStartFindEvent startEvent = raiseStartEvent(start, target, filters);
+    raiseStartEvent(start, target, filters);
 
-    if (shouldSkipPathing(start, target, startEvent)) {
+    if (shouldSkipPathing(start, target)) {
       return CompletableFuture.completedFuture(
           finishPathing(
               new PathfinderResultImpl(
@@ -90,10 +90,8 @@ abstract class AbstractPathfinder implements Pathfinder {
     return initiatePathing(start, target, filters);
   }
 
-  private boolean shouldSkipPathing(
-      PathPosition start, PathPosition target, Cancellable startEvent) {
-    return startEvent.isCancelled()
-        || !isSameEnvironment(start, target)
+  private boolean shouldSkipPathing(PathPosition start, PathPosition target) {
+    return !isSameEnvironment(start, target)
         || isSameBlock(start, target)
         || isFastFailEnabledAndBlockUnreachable(start, target);
   }
@@ -170,11 +168,9 @@ abstract class AbstractPathfinder implements Pathfinder {
     EventPublisher.raiseEvent(finishedEvent);
   }
 
-  private PathingStartFindEvent raiseStartEvent(
-      PathPosition start, PathPosition target, List<PathFilter> filters) {
+  private void raiseStartEvent(PathPosition start, PathPosition target, List<PathFilter> filters) {
     PathingStartFindEvent startEvent = new PathingStartFindEvent(start, target, filters);
     EventPublisher.raiseEvent(startEvent);
-    return startEvent;
   }
 
   protected abstract PathfinderResult resolvePath(
