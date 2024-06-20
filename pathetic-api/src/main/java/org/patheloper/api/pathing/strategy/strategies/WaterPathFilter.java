@@ -1,5 +1,6 @@
 package org.patheloper.api.pathing.strategy.strategies;
 
+import lombok.NonNull;
 import org.bukkit.Material;
 import org.patheloper.api.pathing.strategy.PathValidationContext;
 import org.patheloper.api.pathing.strategy.PathFilter;
@@ -10,7 +11,7 @@ import org.patheloper.api.wrapper.PathPosition;
 public class WaterPathFilter implements PathFilter {
 
   @Override
-  public boolean filter(PathValidationContext pathValidationContext) {
+  public boolean filter(@NonNull PathValidationContext pathValidationContext) {
     SnapshotManager snapshotManager = pathValidationContext.getSnapshotManager();
     PathPosition pathPosition = pathValidationContext.getPosition();
 
