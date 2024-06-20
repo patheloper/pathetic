@@ -3,8 +3,13 @@ package org.patheloper.api.pathing.strategy.strategies;
 import lombok.NonNull;
 import org.patheloper.api.pathing.strategy.PathValidationContext;
 import org.patheloper.api.pathing.strategy.PathFilter;
+import org.patheloper.api.wrapper.PathBlock;
 
-/** A {@link PathFilter} to find the direct path to a given endpoint */
+/**
+ * A PathFilter implementation that determines if a path is passable.
+ *
+ * @see PathBlock#isPassable()
+ */
 public class PassablePathFilter implements PathFilter {
 
   @Override
