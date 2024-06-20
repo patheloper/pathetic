@@ -5,7 +5,7 @@ import org.patheloper.api.pathing.strategy.PathValidationContext;
 import org.patheloper.api.snapshot.SnapshotManager;
 import org.patheloper.api.wrapper.PathPosition;
 
-public class PlayerWalkablePathFilter extends WalkablePathFilter {
+public class PlayerSolidGroundPathFilter extends SolidGroundPathFilter {
 
   @Override
   public boolean filter(PathValidationContext pathValidationContext) {

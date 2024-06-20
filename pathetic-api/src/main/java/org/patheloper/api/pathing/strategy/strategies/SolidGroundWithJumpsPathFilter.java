@@ -8,23 +8,23 @@ import org.patheloper.api.wrapper.PathBlock;
 import org.patheloper.api.wrapper.PathPosition;
 
 /**
- * A {@link WalkablePathFilter} that allows jumping.
+ * A {@link SolidGroundPathFilter} that allows jumping.
  *
  * @experimental This class is experimental and may be change a lot in the future
  */
 @Experimental
-public class JumpablePathFilter extends WalkablePathFilter {
+public class SolidGroundWithJumpsPathFilter extends SolidGroundPathFilter {
 
   private final int jumpHeight;
   private final int maxJumpDistance;
 
   private PathPosition lastValidPosition = null;
 
-  public JumpablePathFilter() {
+  public SolidGroundWithJumpsPathFilter() {
     this(2, 1, 4);
   }
 
-  public JumpablePathFilter(int height, int jumpHeight, int maxJumpDistance) {
+  public SolidGroundWithJumpsPathFilter(int height, int jumpHeight, int maxJumpDistance) {
     super(height);
 
     if (jumpHeight <= 0) throw new IllegalArgumentException("Jump height must be greater than 0");

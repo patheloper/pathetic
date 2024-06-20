@@ -6,7 +6,7 @@ import org.patheloper.api.pathing.strategy.PathFilter;
 import org.patheloper.api.snapshot.SnapshotManager;
 import org.patheloper.api.wrapper.PathPosition;
 
-public class BoatPathFilter implements PathFilter {
+public class WaterPathFilter implements PathFilter {
 
   @Override
   public boolean filter(PathValidationContext pathValidationContext) {

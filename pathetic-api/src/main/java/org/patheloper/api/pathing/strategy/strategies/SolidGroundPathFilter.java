@@ -8,15 +8,15 @@ import org.patheloper.api.wrapper.PathBlock;
 import org.patheloper.api.wrapper.PathPosition;
 
 /** A {@link PathFilter} to find the best walkable path. */
-public class WalkablePathFilter implements PathFilter {
+public class SolidGroundPathFilter implements PathFilter {
 
   private final int height;
 
-  public WalkablePathFilter() {
+  public SolidGroundPathFilter() {
     this(2);
   }
 
-  public WalkablePathFilter(int height) {
+  public SolidGroundPathFilter(int height) {
     if (height <= 0) throw new IllegalArgumentException("Height must be greater than 0");
 
     this.height = height;
