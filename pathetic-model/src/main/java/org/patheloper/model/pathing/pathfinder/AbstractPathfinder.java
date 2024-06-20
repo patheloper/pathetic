@@ -9,7 +9,6 @@ import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import lombok.NonNull;
-import org.bukkit.event.Cancellable;
 import org.patheloper.BStatsHandler;
 import org.patheloper.Pathetic;
 import org.patheloper.api.event.PathingFinishedEvent;

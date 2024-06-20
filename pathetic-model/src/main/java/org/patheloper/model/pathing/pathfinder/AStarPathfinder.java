@@ -211,7 +211,7 @@ public class AStarPathfinder extends AbstractPathfinder {
           boolean heightDifferencePassable =
               isHeightDifferencePassable(from, to, vector1, hasYDifference);
 
-          if (areAllFiltersPassed(filters, neighbour1) && heightDifferencePassable) return true;
+          if (doesAnyFilterPass(filters, neighbour1) && heightDifferencePassable) return true;
         }
       }
     }
@@ -296,18 +296,18 @@ public class AStarPathfinder extends AbstractPathfinder {
 
     return !isWithinWorldBounds(node.getPosition())
         || nodeQueue.contains(node)
-        || !areAllFiltersPassed(filters, node);
+        || !doesAnyFilterPass(filters, node);
   }
 
-  private boolean areAllFiltersPassed(List<PathFilter> filters, Node node) {
+  private boolean doesAnyFilterPass(List<PathFilter> filters, Node node) {
     for (PathFilter filter : filters) {
-      if (!filter.filter(
+      if (filter.filter(
           new PathValidationContext(
               node.getPosition(), node.getParent().getPosition(), snapshotManager))) {
-        return false;
+        return true;
       }
     }
-    return true;
+    return false;
   }
 
   private boolean isWithinWorldBounds(PathPosition position) {
