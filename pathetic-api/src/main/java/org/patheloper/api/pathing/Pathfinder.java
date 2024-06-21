@@ -7,6 +7,8 @@ import org.patheloper.api.pathing.result.PathfinderResult;
 import org.patheloper.api.pathing.filter.PathFilter;
 import org.patheloper.api.wrapper.PathPosition;
 
+import javax.annotation.Nullable;
+
 /**
  * A Pathfinder is a class that can find a path between two positions while following a given set of
  * rules.
@@ -21,5 +23,5 @@ public interface Pathfinder {
    */
   @NonNull
   CompletionStage<PathfinderResult> findPath(
-      @NonNull PathPosition start, @NonNull PathPosition target, @NonNull List<PathFilter> filters);
+      @NonNull PathPosition start, @NonNull PathPosition target, @Nullable List<@NonNull PathFilter> filters);
 }

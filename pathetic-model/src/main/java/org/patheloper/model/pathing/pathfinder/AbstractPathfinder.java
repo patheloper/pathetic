@@ -28,6 +28,7 @@ import org.patheloper.model.pathing.result.PathImpl;
 import org.patheloper.model.pathing.result.PathfinderResultImpl;
 import org.patheloper.model.snapshot.FailingSnapshotManager;
 import org.patheloper.util.ErrorLogger;
+import javax.annotation.Nullable;
 
 /**
  * The AbstractPathfinder class provides a skeletal implementation of the Pathfinder interface and
@@ -76,7 +77,11 @@ abstract class AbstractPathfinder implements Pathfinder {
   public @NonNull CompletionStage<PathfinderResult> findPath(
       @NonNull PathPosition start,
       @NonNull PathPosition target,
-      @NonNull List<PathFilter> filters) {
+      @Nullable List<PathFilter> filters) {
+
+    if (filters == null)
+      filters = Collections.emptyList();
+
     raiseStartEvent(start, target, filters);
 
     if (shouldSkipPathing(start, target)) {

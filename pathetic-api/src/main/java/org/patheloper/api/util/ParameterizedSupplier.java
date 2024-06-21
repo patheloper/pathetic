@@ -1,7 +1,9 @@
 package org.patheloper.api.util;
 
+/**
+ * Represents a supplier that accepts a parameter.
+ */
 @FunctionalInterface
-/** Represents a supplier that accepts a parameter */
 public interface ParameterizedSupplier<T> {
 
   T accept(T value);

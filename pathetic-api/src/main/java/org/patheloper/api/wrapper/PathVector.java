@@ -2,9 +2,11 @@ package org.patheloper.api.wrapper;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NonNull;
 import org.patheloper.api.util.NumberUtils;
 
+@Getter
 @AllArgsConstructor
 @EqualsAndHashCode
 public class PathVector implements Cloneable {
@@ -159,33 +161,6 @@ public class PathVector implements Cloneable {
     double y = this.z * o.getX() - o.getZ() * this.x;
     double z = this.x * o.getY() - o.getX() * this.y;
     return new PathVector(x, y, z);
-  }
-
-  /**
-   * Gets the x component of the vector
-   *
-   * @return The x component
-   */
-  public double getX() {
-    return this.x;
-  }
-
-  /**
-   * Gets the y component of the vector
-   *
-   * @return The y component
-   */
-  public double getY() {
-    return this.y;
-  }
-
-  /**
-   * Gets the z component of the vector
-   *
-   * @return The z component
-   */
-  public double getZ() {
-    return this.z;
   }
 
   @Override
