@@ -104,10 +104,20 @@ public class AStarPathfinder extends AbstractPathfinder {
       PathPosition target,
       PathfinderStrategy strategy,
       Node fallbackNode) {
-    return maxIterationsReached(depth, fallbackNode)
-        .or(() -> counterCheck(start, target, strategy))
-        .or(() -> fallback(fallbackNode))
-        .orElse(
+
+    Optional<PathfinderResult> maxIterationsResult = maxIterationsReached(depth, fallbackNode);
+    if (maxIterationsResult.isPresent()) {
+      return maxIterationsResult.get();
+    }
+
+    Optional<PathfinderResult> counterCheckResult = counterCheck(start, target, strategy);
+    if (counterCheckResult.isPresent()) {
+      return counterCheckResult.get();
+    }
+
+    Optional<PathfinderResult> fallbackResult = fallback(fallbackNode);
+    return fallbackResult.orElseGet(
+        () ->
             finishPathing(
                 new PathfinderResultImpl(
                     PathState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET))));
