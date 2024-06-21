@@ -19,10 +19,18 @@ public class BukkitVersionUtil {
     return new Version(CURRENT_MAJOR, CURRENT_MINOR);
   }
 
-  public record Version(double major, double minor) {
+  public static class Version {
+
+    private final double major;
+    private final double minor;
 
     public static Version of(double major, double minor) {
       return new Version(major, minor);
+    }
+
+    public Version(double major, double minor) {
+      this.major = major;
+      this.minor = minor;
     }
 
     public boolean isUnder(double major, double minor) {
