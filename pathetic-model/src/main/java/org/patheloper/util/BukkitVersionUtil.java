@@ -1,5 +1,6 @@
 package org.patheloper.util;
 
+import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 
@@ -19,6 +20,7 @@ public class BukkitVersionUtil {
     return new Version(CURRENT_MAJOR, CURRENT_MINOR);
   }
 
+  @Getter
   public static class Version {
 
     private final double major;

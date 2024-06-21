@@ -45,7 +45,7 @@ public class FailingSnapshotManager implements SnapshotManager {
   static {
     BukkitVersionUtil.Version version = BukkitVersionUtil.getVersion();
     CHUNK_DATA_PROVIDER_RESOLVER =
-        new ChunkDataProviderResolver((int) version.major(), (int) version.minor());
+        new ChunkDataProviderResolver((int) version.getMajor(), (int) version.getMinor());
   }
 
   public static void invalidateChunk(UUID worldUUID, int chunkX, int chunkZ) {
