@@ -4,6 +4,7 @@ import net.minecraft.server.level.WorldServer;
 import net.minecraft.world.level.block.state.IBlockData;
 import net.minecraft.world.level.chunk.DataPaletteBlock;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
+import org.bukkit.Bukkit;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
@@ -21,8 +22,7 @@ public class v1_18UpChunkDataProviderImpl implements ChunkDataProvider {
 
   static {
     try {
-      String version = org.bukkit.Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-      craftChunkClass = Class.forName("org.bukkit.craftbukkit." + version + ".CraftChunk");
+      craftChunkClass = Class.forName(Bukkit.getServer().getClass().getPackage().getName() + ".CraftChunk");
       blockIDField = craftChunkClass.getDeclaredField("emptyBlockIDs");
       blockIDField.setAccessible(true);
     } catch (Exception e) {
