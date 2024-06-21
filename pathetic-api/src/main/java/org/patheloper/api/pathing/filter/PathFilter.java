@@ -1,9 +1,7 @@
-package org.patheloper.api.pathing.strategy;
+package org.patheloper.api.pathing.filter;
 
 import lombok.NonNull;
 import org.patheloper.api.pathing.Pathfinder;
-import org.patheloper.api.snapshot.SnapshotManager;
-import org.patheloper.api.wrapper.PathPosition;
 
 /**
  * A PathFilter is a functional interface that allows customization of the pathfinding process

@@ -1,8 +1,8 @@
-package org.patheloper.api.pathing.strategy.strategies;
+package org.patheloper.api.pathing.filter.filters;
 
 import lombok.NonNull;
-import org.patheloper.api.pathing.strategy.PathValidationContext;
-import org.patheloper.api.pathing.strategy.PathFilter;
+import org.patheloper.api.pathing.filter.PathValidationContext;
+import org.patheloper.api.pathing.filter.PathFilter;
 import org.patheloper.api.wrapper.PathBlock;
 
 /**

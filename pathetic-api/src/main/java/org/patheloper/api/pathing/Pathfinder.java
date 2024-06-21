@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.concurrent.CompletionStage;
 import lombok.NonNull;
 import org.patheloper.api.pathing.result.PathfinderResult;
-import org.patheloper.api.pathing.strategy.PathFilter;
+import org.patheloper.api.pathing.filter.PathFilter;
 import org.patheloper.api.wrapper.PathPosition;
 
 /**

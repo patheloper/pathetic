@@ -14,9 +14,9 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.patheloper.api.pathing.Pathfinder;
 import org.patheloper.api.pathing.result.PathfinderResult;
-import org.patheloper.api.pathing.strategy.strategies.PassablePathFilter;
-import org.patheloper.api.pathing.strategy.strategies.SolidGroundPathFilter;
-import org.patheloper.api.pathing.strategy.strategies.WaterPathFilter;
+import org.patheloper.api.pathing.filter.filters.PassablePathFilter;
+import org.patheloper.api.pathing.filter.filters.SolidGroundPathFilter;
+import org.patheloper.api.pathing.filter.filters.WaterPathFilter;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.mapping.bukkit.BukkitMapper;
 

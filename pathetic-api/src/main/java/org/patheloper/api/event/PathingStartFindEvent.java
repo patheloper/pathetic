@@ -3,7 +3,7 @@ package org.patheloper.api.event;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.patheloper.api.pathing.strategy.PathFilter;
+import org.patheloper.api.pathing.filter.PathFilter;
 import org.patheloper.api.wrapper.PathPosition;
 
 import java.util.List;
