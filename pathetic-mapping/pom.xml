@@ -12,11 +12,6 @@
     <artifactId>pathetic-mapping</artifactId>
     <version>2.4.5</version>
 
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-    </properties>
-
     <build>
         <plugins>
             <plugin>
