@@ -70,7 +70,7 @@ public class Node implements Comparable<Node> {
     double heightFactor =
         Math.abs(this.position.getBlockY() - target.getBlockY()); // Consider height differences
 
-    return (manhattanDistance * heuristicWeights.getManhattenWeight())
+    return (manhattanDistance * heuristicWeights.getManhattanWeight())
         + (octileDistance * heuristicWeights.getOctileWeight())
         + (perpendicularDistance * heuristicWeights.getPerpendicularWeight())
         + (heightFactor * heuristicWeights.getHeightWeight());
