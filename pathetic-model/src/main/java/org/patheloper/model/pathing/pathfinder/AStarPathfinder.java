@@ -282,7 +282,7 @@ public class AStarPathfinder extends AbstractPathfinder {
 
   /**
    * Checks if the node is invalid. A node is invalid if it is outside the world bounds, is already
-   * in the queue, or is not valid according to the strategy.
+   * in the queue, or is not valid according to the filters.
    */
   private boolean isNodeInvalid(Node node, Collection<Node> nodeQueue, List<PathFilter> filters) {
     int gridX = node.getPosition().getBlockX() / DEFAULT_GRID_CELL_SIZE;

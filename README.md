@@ -55,7 +55,7 @@ public class PathExample extends JavaPlugin {
   private void goFindSomePath(PathPosition start, PathPosition end) {
     Pathfinder pathfinder = PatheticMapper.newPathfinder();
     pathfinder
-        .findPath(start, end, new DirectPathfinderStrategy())
+        .findPath(start, end, List.of(new PassablePathFilter()))
         .thenAccept(
             pathfinderResult ->
                 pathfinderResult
