@@ -305,6 +305,8 @@ public class AStarPathfinder extends AbstractPathfinder {
   }
 
   private boolean doesAnyFilterPass(List<PathFilter> filters, Node node) {
+    Map<Class<? extends PathFilter>, Boolean> cache = new HashMap<>();
+
     for (PathFilter filter : filters) {
       PathValidationContext context =
           new PathValidationContext(
@@ -312,11 +314,11 @@ public class AStarPathfinder extends AbstractPathfinder {
               node.getParent() != null ? node.getParent().getPosition() : null,
               snapshotManager);
 
-      if (!FilterDependencyValidator.validateDependencies(filter, context, filters)) {
+      if (!FilterDependencyValidator.validateDependencies(filter, context, filters, cache)) {
         continue;
       }
 
-      if (filter.filter(context)) {
+      if (cache.computeIfAbsent(filter.getClass(), k -> filter.filter(context))) {
         return true;
       }
     }
