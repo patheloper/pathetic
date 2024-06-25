@@ -2,6 +2,7 @@ package org.patheloper.model.pathing.pathfinder;
 
 import java.util.*;
 import lombok.NonNull;
+import org.jheaps.tree.FibonacciHeap;
 import org.patheloper.api.pathing.configuration.PathfinderConfiguration;
 import org.patheloper.api.pathing.result.Path;
 import org.patheloper.api.pathing.result.PathState;
@@ -14,7 +15,6 @@ import org.patheloper.model.pathing.Node;
 import org.patheloper.model.pathing.Offset;
 import org.patheloper.model.pathing.result.PathImpl;
 import org.patheloper.model.pathing.result.PathfinderResultImpl;
-import org.patheloper.util.ErrorLogger;
 import org.patheloper.util.ExpiringHashMap;
 import org.patheloper.util.GridRegionData;
 import org.patheloper.util.Tuple3;
@@ -39,14 +39,17 @@ public class AStarPathfinder extends AbstractPathfinder {
   protected PathfinderResult resolvePath(
       PathPosition start, PathPosition target, List<PathFilter> filters) {
     Node startNode = createStartNode(start, target);
-    PriorityQueue<Node> nodeQueue = new PriorityQueue<>(Collections.singleton(startNode));
+    FibonacciHeap<Double, Node> nodeQueue = new FibonacciHeap<>();
+    nodeQueue.insert(
+        startNode.getHeuristic().get(), startNode); // TODO: 25.06.2024 Rename to getCost()
+
     Set<PathPosition> examinedPositions = new HashSet<>();
     int depth = 1;
     Node fallbackNode = startNode;
 
     while (!nodeQueue.isEmpty() && depth <= pathfinderConfiguration.getMaxIterations()) {
       tickWatchdogIfNeeded(depth);
-      Node currentNode = getNextNodeFromQueue(nodeQueue);
+      Node currentNode = nodeQueue.deleteMin().getValue();
       fallbackNode = currentNode;
 
       if (hasReachedLengthLimit(currentNode)) {
@@ -82,14 +85,6 @@ public class AStarPathfinder extends AbstractPathfinder {
     if (depth % 500 == 0) {
       WatchdogUtil.tickWatchdog();
     }
-  }
-
-  private Node getNextNodeFromQueue(PriorityQueue<Node> nodeQueue) {
-    Node currentNode = nodeQueue.poll();
-    if (currentNode == null) {
-      throw ErrorLogger.logFatalError("A node was null when it shouldn't have been");
-    }
-    return currentNode;
   }
 
   private boolean hasReachedLengthLimit(Node currentNode) {
@@ -163,23 +158,25 @@ public class AStarPathfinder extends AbstractPathfinder {
   }
 
   private void evaluateNewNodes(
-      Collection<Node> nodeQueue,
+      FibonacciHeap<Double, Node> nodeQueue,
       Set<PathPosition> examinedPositions,
       Node currentNode,
       List<PathFilter> filters,
       boolean allowingDiagonal) {
-    nodeQueue.addAll(
-        fetchValidNeighbours(nodeQueue, examinedPositions, currentNode, filters, allowingDiagonal));
+    Collection<Node> newNodes =
+        fetchValidNeighbours(examinedPositions, currentNode, filters, allowingDiagonal);
+    for (Node newNode : newNodes) {
+      nodeQueue.insert(newNode.getHeuristic().get(), newNode);
+    }
   }
 
   private boolean isNodeValid(
       Node currentNode,
       Node newNode,
-      Collection<Node> nodeQueue,
       Set<PathPosition> examinedPositions,
       List<PathFilter> filters,
       boolean allowingDiagonal) {
-    if (isNodeInvalid(newNode, nodeQueue, filters)) return false;
+    if (isNodeInvalid(newNode, filters)) return false;
 
     if (!allowingDiagonal) return examinedPositions.add(newNode.getPosition());
 
@@ -240,7 +237,6 @@ public class AStarPathfinder extends AbstractPathfinder {
   }
 
   private Collection<Node> fetchValidNeighbours(
-      Collection<Node> nodeQueue,
       Set<PathPosition> examinedPositions,
       Node currentNode,
       List<PathFilter> filters,
@@ -250,8 +246,7 @@ public class AStarPathfinder extends AbstractPathfinder {
     for (PathVector vector : offset.getVectors()) {
       Node newNode = createNeighbourNode(currentNode, vector);
 
-      if (isNodeValid(
-          currentNode, newNode, nodeQueue, examinedPositions, filters, allowingDiagonal)) {
+      if (isNodeValid(currentNode, newNode, examinedPositions, filters, allowingDiagonal)) {
         newNodes.add(newNode);
       }
     }
@@ -281,10 +276,10 @@ public class AStarPathfinder extends AbstractPathfinder {
   }
 
   /**
-   * Checks if the node is invalid. A node is invalid if it is outside the world bounds, is already
-   * in the queue, or is not valid according to the filters.
+   * Checks if the node is invalid. A node is invalid if it is outside the world bounds or is not
+   * valid according to the filters.
    */
-  private boolean isNodeInvalid(Node node, Collection<Node> nodeQueue, List<PathFilter> filters) {
+  private boolean isNodeInvalid(Node node, List<PathFilter> filters) {
     int gridX = node.getPosition().getBlockX() / DEFAULT_GRID_CELL_SIZE;
     int gridY = node.getPosition().getBlockY() / DEFAULT_GRID_CELL_SIZE;
     int gridZ = node.getPosition().getBlockZ() / DEFAULT_GRID_CELL_SIZE;
@@ -304,9 +299,7 @@ public class AStarPathfinder extends AbstractPathfinder {
       }
     }
 
-    return !isWithinWorldBounds(node.getPosition())
-        || nodeQueue.contains(node)
-        || !doesAnyFilterPass(filters, node);
+    return !isWithinWorldBounds(node.getPosition()) || !doesAnyFilterPass(filters, node);
   }
 
   private boolean doesAnyFilterPass(List<PathFilter> filters, Node node) {
