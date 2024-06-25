@@ -1,6 +1,7 @@
 package org.patheloper.model.pathing.pathfinder;
 
 import java.util.*;
+
 import lombok.NonNull;
 import org.jheaps.tree.FibonacciHeap;
 import org.patheloper.api.pathing.configuration.PathfinderConfiguration;
@@ -16,6 +17,7 @@ import org.patheloper.model.pathing.Offset;
 import org.patheloper.model.pathing.result.PathImpl;
 import org.patheloper.model.pathing.result.PathfinderResultImpl;
 import org.patheloper.util.ExpiringHashMap;
+import org.patheloper.util.FilterDependencyValidator;
 import org.patheloper.util.GridRegionData;
 import org.patheloper.util.Tuple3;
 import org.patheloper.util.WatchdogUtil;
@@ -304,9 +306,17 @@ public class AStarPathfinder extends AbstractPathfinder {
 
   private boolean doesAnyFilterPass(List<PathFilter> filters, Node node) {
     for (PathFilter filter : filters) {
-      if (filter.filter(
+      PathValidationContext context =
           new PathValidationContext(
-              node.getPosition(), node.getParent().getPosition(), snapshotManager))) {
+              node.getPosition(),
+              node.getParent() != null ? node.getParent().getPosition() : null,
+              snapshotManager);
+
+      if (!FilterDependencyValidator.validateDependencies(filter, context, filters)) {
+        continue;
+      }
+
+      if (filter.filter(context)) {
         return true;
       }
     }

@@ -3,6 +3,8 @@ package org.patheloper.api.pathing.filter;
 import lombok.NonNull;
 import org.patheloper.api.pathing.Pathfinder;
 
+import java.util.List;
+
 /**
  * A PathFilter is a functional interface that allows customization of the pathfinding process
  * within the {@link Pathfinder}. It provides a mechanism to influence the selection of paths during
