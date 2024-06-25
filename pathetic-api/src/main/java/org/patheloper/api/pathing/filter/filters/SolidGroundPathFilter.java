@@ -7,7 +7,11 @@ import org.patheloper.api.pathing.filter.PathFilter;
 import org.patheloper.api.snapshot.SnapshotManager;
 import org.patheloper.api.wrapper.PathBlock;
 
-/** A PathFilter implementation that determines if a path is on solid ground. */
+/**
+ * A PathFilter implementation that determines if a path is on solid ground.
+ *
+ * @depending {@link PassablePathFilter}
+ */
 @Depending(PassablePathFilter.class)
 public class SolidGroundPathFilter implements PathFilter {
 

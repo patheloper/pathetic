@@ -108,6 +108,11 @@
                             <placement>a</placement>
                             <head>Default:</head>
                         </tag>
+                        <tag>
+                            <name>depending</name>
+                            <placement>a</placement>
+                            <head>Depends on:</head>
+                        </tag>
                     </tags>
                 </configuration>
             </plugin>
