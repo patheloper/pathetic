@@ -27,28 +27,42 @@ public class FilterDependencyValidator {
       PathValidationContext context,
       List<PathFilter> allFilters,
       Map<Class<? extends PathFilter>, Boolean> cache) {
+
     Depending depending = filter.getClass().getAnnotation(Depending.class);
-    if (depending != null) {
-      for (Class<? extends PathFilter> dependency : depending.value()) {
-        boolean dependencyFound = false;
-        for (PathFilter f : allFilters) {
-          if (f.getClass().equals(dependency)) {
-            dependencyFound = true;
-            if (!cache.computeIfAbsent(f.getClass(), k -> f.filter(context))) {
-              return false;
-            }
-          }
-        }
-        if (!dependencyFound) {
-          throw ErrorLogger.logFatalError(
-              "Dependency "
-                  + dependency.getName()
-                  + " for filter "
-                  + filter.getClass().getName()
-                  + " is not present in the filter chain.");
-        }
+    if (depending == null) {
+      return true;
+    }
+
+    for (Class<? extends PathFilter> dependency : depending.value()) {
+      if (!validateSingleDependency(dependency, context, allFilters, cache)) {
+        return false;
       }
     }
     return true;
+  }
+
+  private static boolean validateSingleDependency(
+      Class<? extends PathFilter> dependency,
+      PathValidationContext context,
+      List<PathFilter> allFilters,
+      Map<Class<? extends PathFilter>, Boolean> cache) {
+
+    PathFilter dependencyFilter = findFilterByClass(dependency, allFilters);
+    if (dependencyFilter == null) {
+      throw ErrorLogger.logFatalError(
+          "Dependency " + dependency.getName() + " for filter is not present in the filter chain.");
+    }
+    return cache.computeIfAbsent(dependency, k -> dependencyFilter.filter(context));
+  }
+
+  private static PathFilter findFilterByClass(
+      Class<? extends PathFilter> filterClass, List<PathFilter> allFilters) {
+
+    for (PathFilter filter : allFilters) {
+      if (filter.getClass().equals(filterClass)) {
+        return filter;
+      }
+    }
+    return null;
   }
 }
