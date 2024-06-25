@@ -4,6 +4,9 @@ import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 @UtilityClass
 public class BukkitVersionUtil {
 
@@ -11,9 +14,25 @@ public class BukkitVersionUtil {
   private static final double CURRENT_MINOR;
 
   static {
-    String[] versionParts = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
-    CURRENT_MAJOR = Double.parseDouble(versionParts[1]);
-    CURRENT_MINOR = versionParts.length >= 3 ? Double.parseDouble(versionParts[2]) : 0;
+    Pattern pattern = Pattern.compile(".*\\(.*MC.\\s*([a-zA-z0-9\\-.]+)\\s*\\)");
+    Matcher matcher = pattern.matcher(Bukkit.getVersion());
+
+    if (!matcher.matches() || matcher.group(1) == null) {
+      throw new IllegalStateException("Cannot parse version String '" + Bukkit.getVersion() + "'");
+    }
+
+    String[] elements = matcher.group(1).split("\\.");
+    if (elements.length < 1) {
+      throw new IllegalStateException("Invalid server version '" + matcher.group(1) + "'");
+    }
+
+    int[] values = new int[3];
+    for (int i = 0; i < Math.min(values.length, elements.length); i++) {
+      values[i] = Integer.parseInt(elements[i].trim());
+    }
+
+    CURRENT_MAJOR = values[1];
+    CURRENT_MINOR = values[2];
   }
 
   public static Version getVersion() {
