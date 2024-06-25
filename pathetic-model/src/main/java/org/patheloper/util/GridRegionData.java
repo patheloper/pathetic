@@ -5,6 +5,7 @@ import com.google.common.hash.Funnel;
 import java.util.HashSet;
 import java.util.Set;
 
+import lombok.Getter;
 import org.patheloper.api.wrapper.PathPosition;
 
 /**
@@ -12,6 +13,7 @@ import org.patheloper.api.wrapper.PathPosition;
  * Bloom filter used to quickly check if a position is within the region and a set of positions that
  * have been examined by the pathfinder.
  */
+@Getter
 public class GridRegionData {
 
   /**
@@ -50,13 +52,5 @@ public class GridRegionData {
 
     bloomFilter = BloomFilter.create(pathPositionFunnel, DEFAULT_BLOOM_FILTER_SIZE, DEFAULT_FPP);
     regionalExaminedPositions = new HashSet<>();
-  }
-
-  public BloomFilter<PathPosition> getBloomFilter() {
-    return bloomFilter;
-  }
-
-  public Set<PathPosition> getRegionalExaminedPositions() {
-    return regionalExaminedPositions;
   }
 }
