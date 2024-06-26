@@ -89,7 +89,10 @@ public class PatheticCommand implements TabExecutor {
                 start,
                 target,
                 List.of(
-                    new PassablePathFilter(), new SolidGroundPathFilter(), new WaterPathFilter()));
+                    new PassablePathFilter(),
+                    new SolidGroundPathFilter(),
+                    new WaterPathFilter())); // Passable and SolidGround have to be used together,
+                                             // because SolidGround depends on Passable
 
         // Handle the pathfinding result
         pathfindingResult.thenAccept(
