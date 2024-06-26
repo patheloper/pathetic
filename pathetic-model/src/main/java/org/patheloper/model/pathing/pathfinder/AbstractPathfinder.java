@@ -79,8 +79,7 @@ abstract class AbstractPathfinder implements Pathfinder {
       @NonNull PathPosition target,
       @Nullable List<PathFilter> filters) {
 
-    if (filters == null)
-      filters = Collections.emptyList();
+    if (filters == null) filters = Collections.emptyList();
 
     raiseStartEvent(start, target, filters);
 
@@ -139,7 +138,7 @@ abstract class AbstractPathfinder implements Pathfinder {
               try {
                 return resolvePath(start, target, filters);
               } catch (Exception e) {
-                throw ErrorLogger.logFatalError("Failed to find path async", e);
+                throw ErrorLogger.logFatalErrorWithStacktrace("Failed to find path async", e);
               }
             },
             PATHING_EXECUTOR)

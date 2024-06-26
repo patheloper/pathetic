@@ -20,7 +20,12 @@ public class ErrorLogger {
     log.error("OS: {}", System.getProperty("os.name"));
     log.error("OS Architecture: {}", System.getProperty("os.arch"));
     log.error("===============================");
-    log.error("Stacktrace:", cause);
     return new IllegalStateException(message, cause);
+  }
+
+  public static IllegalStateException logFatalErrorWithStacktrace(String message, Throwable cause) {
+    IllegalStateException exception = logFatalError(message, cause);
+    log.error("Stacktrace:", cause);
+    return exception;
   }
 }
