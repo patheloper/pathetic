@@ -1,9 +1,10 @@
 package org.patheloper.util;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
+
 import lombok.Getter;
 
-public class ExpiringHashMap<K, V> extends HashMap<K, ExpiringHashMap.Entry<V>> {
+public class ExpiringHashMap<K, V> extends ConcurrentHashMap<K, ExpiringHashMap.Entry<V>> {
 
   private static final long EXPIRATION_TIME = 5 * 60 * 1000;
 
