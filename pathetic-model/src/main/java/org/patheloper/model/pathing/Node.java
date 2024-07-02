@@ -39,7 +39,7 @@ public class Node implements Comparable<Node> {
    *
    * @return the estimated total cost (represented by the F-Score)
    */
-  private double getFCost() {
+  public double getFCost() {
     return fCostCache.get();
   }
 

@@ -42,8 +42,7 @@ public class AStarPathfinder extends AbstractPathfinder {
       PathPosition start, PathPosition target, List<PathFilter> filters) {
     Node startNode = createStartNode(start, target);
     FibonacciHeap<Double, Node> nodeQueue = new FibonacciHeap<>();
-    nodeQueue.insert(
-        startNode.getHeuristic().get(), startNode); // TODO: 25.06.2024 Rename to getCost()
+    nodeQueue.insert(startNode.getFCost(), startNode);
 
     Set<PathPosition> examinedPositions = new HashSet<>();
     int depth = 1;
