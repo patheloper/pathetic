@@ -76,7 +76,7 @@ public class PatheticCommand implements TabExecutor {
         PathPosition target = BukkitMapper.toPathPosition(playerSession.getPos2());
 
         // Inform the player that pathfinding is starting
-        player.sendMessage("Starting pathfinding...");
+        player.sendMessage("Starting pathfinding... [Distance: " + start.distance(target) + "]");
 
         /*
          * Initiate pathfinding with the start and target positions, and a list of path filters.
@@ -92,7 +92,7 @@ public class PatheticCommand implements TabExecutor {
                     new PassablePathFilter(),
                     new SolidGroundPathFilter(),
                     new WaterPathFilter())); // Passable and SolidGround have to be used together,
-                                             // because SolidGround depends on Passable
+        // because SolidGround depends on Passable
 
         // Handle the pathfinding result
         pathfindingResult.thenAccept(
