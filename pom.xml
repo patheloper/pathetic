@@ -7,7 +7,7 @@
     <groupId>org.patheloper</groupId>
     <artifactId>pathetic-main</artifactId>
     <packaging>pom</packaging>
-    <version>2.4.5</version>
+    <version>2.4.6</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -62,7 +62,7 @@
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
-                <version>1.18.32</version>
+                <version>1.18.34</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -74,7 +74,7 @@
             <dependency>
                 <groupId>org.patheloper</groupId>
                 <artifactId>pathetic-api</artifactId>
-                <version>2.4.5</version>
+                <version>2.4.6</version>
                 <scope>provided</scope>
             </dependency>
         </dependencies>
