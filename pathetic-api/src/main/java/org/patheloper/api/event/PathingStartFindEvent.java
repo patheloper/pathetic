@@ -13,10 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PathingStartFindEvent implements PathingEvent {
 
-  @NonNull
-  private final PathPosition start;
-  @NonNull
-  private final PathPosition target;
-  @NonNull
-  private final List<PathFilter> filters;
+  @NonNull private final PathPosition start;
+  @NonNull private final PathPosition target;
+  @NonNull private final List<PathFilter> filters;
 }

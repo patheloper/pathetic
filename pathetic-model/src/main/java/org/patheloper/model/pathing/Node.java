@@ -15,8 +15,7 @@ import org.patheloper.util.ComputingCache;
 @RequiredArgsConstructor
 public class Node implements Comparable<Node> {
 
-  @EqualsAndHashCode.Include
-  private final PathPosition position;
+  @EqualsAndHashCode.Include private final PathPosition position;
   private final PathPosition start;
   private final PathPosition target;
   private final HeuristicWeights heuristicWeights;
@@ -26,88 +25,38 @@ public class Node implements Comparable<Node> {
   private final ComputingCache<Double> gCostCache = new ComputingCache<>(this::calculateGCost);
   private final ComputingCache<Double> heuristic = new ComputingCache<>(this::heuristic);
 
-  @Setter
-  private Node parent;
+  @Setter private Node parent;
 
   public boolean isTarget() {
-
-
-
-
-
-
-
-
-
-
     return this.position.getBlockX() == target.getBlockX()
-      && this.position.getBlockY() == target.getBlockY()
-      && this.position.getBlockZ() == target.getBlockZ();
+        && this.position.getBlockY() == target.getBlockY()
+        && this.position.getBlockZ() == target.getBlockZ();
   }
 
   /**
-   * Calculates the estimated total cost of the path from the start node to the goal node, passing through this node.
+   * Calculates the estimated total cost of the path from the start node to the goal node, passing
+   * through this node.
    *
    * @return the estimated total cost (represented by the F-Score)
    */
   public double getFCost() {
-
-
-
-
-
-
-
-
-
-
     return fCostCache.get();
   }
 
   /**
-   * The accumulated cost (also known as G-Score) from the starting node to the current node. This value represents the
-   * actual (known) cost of traversing the path to the current node. It is typically calculated by summing the movement
-   * costs from the start node to the current node.
+   * The accumulated cost (also known as G-Score) from the starting node to the current node. This
+   * value represents the actual (known) cost of traversing the path to the current node. It is
+   * typically calculated by summing the movement costs from the start node to the current node.
    */
   private double getGCost() {
-
-
-
-
-
-
-
-
-
-
     return gCostCache.get();
   }
 
   private double calculateFCost() {
-
-
-
-
-
-
-
-
-
-
     return getGCost() + heuristic.get();
   }
 
   private double calculateGCost() {
-
-
-
-
-
-
-
-
-
-
     if (parent == null) {
       return 0;
     }
@@ -115,16 +64,6 @@ public class Node implements Comparable<Node> {
   }
 
   private double heuristic() {
-
-
-
-
-
-
-
-
-
-
     double manhattanDistance = this.position.manhattanDistance(target);
     double octileDistance = this.position.octileDistance(target);
     double perpendicularDistance = calculatePerpendicularDistance();
@@ -137,23 +76,13 @@ public class Node implements Comparable<Node> {
 
     // Ensure the combined heuristic is consistent
     return Math.max(
-      manhattanDistance * manhattanWeight,
-      octileDistance * octileWeight
-        + perpendicularDistance * perpendicularWeight
-        + heightDifference * heightWeight);
+        manhattanDistance * manhattanWeight,
+        octileDistance * octileWeight
+            + perpendicularDistance * perpendicularWeight
+            + heightDifference * heightWeight);
   }
 
   private double calculatePerpendicularDistance() {
-
-
-
-
-
-
-
-
-
-
     PathVector a = this.position.toVector();
     PathVector b = this.start.toVector();
     PathVector c = this.target.toVector();
@@ -162,16 +91,6 @@ public class Node implements Comparable<Node> {
 
   @Override
   public int compareTo(@NonNull Node o) {
-
-
-
-
-
-
-
-
-
-
     int fCostComparison = Double.compare(this.getFCost(), o.getFCost());
     if (fCostComparison != 0) {
       return fCostComparison;

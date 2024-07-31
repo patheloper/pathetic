@@ -3,12 +3,12 @@ package org.patheloper.provider;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.patheloper.api.snapshot.ChunkDataProvider;
-import org.patheloper.provider.paper.PaperChunkDataProvider;
+import org.patheloper.provider.v1_16.v1_16ChunkDataProviderImpl;
 import org.patheloper.provider.v1_12.v1_12ChunkDataProviderImpl;
 import org.patheloper.provider.v1_15.v1_15ChunkDataProviderImpl;
-import org.patheloper.provider.v1_16.v1_16ChunkDataProviderImpl;
 import org.patheloper.provider.v1_17.v1_17ChunkDataProviderImpl;
 import org.patheloper.provider.v1_8.v1_8ChunkDataProviderImpl;
+import org.patheloper.provider.paper.PaperChunkDataProvider;
 
 @Getter
 @Slf4j
@@ -17,16 +17,6 @@ public class ChunkDataProviderResolver {
   private final ChunkDataProvider chunkDataProvider;
 
   public ChunkDataProviderResolver(int major, int minor) {
-
-
-
-
-
-
-
-
-
-
     String version = "1." + major + "." + minor;
 
     if (isPaper()) {
@@ -36,20 +26,10 @@ public class ChunkDataProviderResolver {
     }
 
     log.info(
-      "Detected version v{}, using {}", version, chunkDataProvider.getClass().getSimpleName());
+        "Detected version v{}, using {}", version, chunkDataProvider.getClass().getSimpleName());
   }
 
   private ChunkDataProvider determineChunkDataProvider(int major, int minor) {
-
-
-
-
-
-
-
-
-
-
     final ChunkDataProvider chunkDataProvider;
     switch (major) {
       case 21:
@@ -80,16 +60,6 @@ public class ChunkDataProviderResolver {
   }
 
   private boolean isPaper() {
-
-
-
-
-
-
-
-
-
-
     try {
       Class.forName("io.papermc.paper.configuration.GlobalConfiguration");
       return true;

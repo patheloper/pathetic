@@ -19,16 +19,6 @@ public final class PathBlock {
    * @return Whether the block is air
    */
   public boolean isAir() {
-
-
-
-
-
-
-
-
-
-
     return blockInformation.getMaterial().isAir();
   }
 
@@ -36,16 +26,6 @@ public final class PathBlock {
    * @return Whether the block is possible to walk through
    */
   public boolean isPassable() {
-
-
-
-
-
-
-
-
-
-
     return !isSolid();
   }
 
@@ -53,16 +33,6 @@ public final class PathBlock {
    * @return Whether the block is solid
    */
   public boolean isSolid() {
-
-
-
-
-
-
-
-
-
-
     return blockInformation.getMaterial().isSolid();
   }
 
@@ -72,16 +42,6 @@ public final class PathBlock {
    * @return The X coordinate of the block
    */
   public int getBlockX() {
-
-
-
-
-
-
-
-
-
-
     return this.pathPosition.getBlockX();
   }
 
@@ -91,16 +51,6 @@ public final class PathBlock {
    * @return The Y coordinate of the block
    */
   public int getBlockY() {
-
-
-
-
-
-
-
-
-
-
     return this.pathPosition.getBlockY();
   }
 
@@ -110,16 +60,6 @@ public final class PathBlock {
    * @return The Z coordinate of the block
    */
   public int getBlockZ() {
-
-
-
-
-
-
-
-
-
-
     return this.pathPosition.getBlockZ();
   }
 }

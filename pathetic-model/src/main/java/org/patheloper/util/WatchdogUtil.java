@@ -1,10 +1,9 @@
 package org.patheloper.util;
 
-import lombok.experimental.UtilityClass;
-import org.bukkit.Bukkit;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import lombok.experimental.UtilityClass;
+import org.bukkit.Bukkit;
 
 @UtilityClass
 public class WatchdogUtil {
@@ -22,16 +21,6 @@ public class WatchdogUtil {
   }
 
   public void tickWatchdog() {
-
-
-
-
-
-
-
-
-
-
     if (Bukkit.isPrimaryThread())
       if (tickMethod != null && watchdogClazz != null) {
         try {

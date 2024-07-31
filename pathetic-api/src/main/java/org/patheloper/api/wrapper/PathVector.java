@@ -21,19 +21,9 @@ public class PathVector implements Cloneable {
    * @param A The point
    * @param B The first point of the line
    * @param C The second point of the line
-   *
    * @return The distance
    */
   public static double computeDistance(PathVector A, PathVector B, PathVector C) {
-
-
-
-
-
-
-
-
-
 
     PathVector d = C.subtract(B).divide(C.distance(B));
     PathVector v = A.subtract(B);
@@ -48,20 +38,9 @@ public class PathVector implements Cloneable {
    * Calculates the dot product of two vectors
    *
    * @param otherVector The other vector
-   *
    * @return The dot product
    */
   public double dot(PathVector otherVector) {
-
-
-
-
-
-
-
-
-
-
     return this.x * otherVector.x + this.y * otherVector.y + this.z * otherVector.z;
   }
 
@@ -71,62 +50,30 @@ public class PathVector implements Cloneable {
    * @return The length
    */
   public double length() {
-
-
-
-
-
-
-
-
-
-
     return Math.sqrt(
-      NumberUtils.square(this.x) + NumberUtils.square(this.y) + NumberUtils.square(this.z));
+        NumberUtils.square(this.x) + NumberUtils.square(this.y) + NumberUtils.square(this.z));
   }
 
   /**
    * Gets the distance between this vector and another vector
    *
    * @param otherVector The other vector
-   *
    * @return The distance
    */
   public double distance(PathVector otherVector) {
-
-
-
-
-
-
-
-
-
-
     return Math.sqrt(
-      NumberUtils.square(this.x - otherVector.x)
-        + NumberUtils.square(this.y - otherVector.y)
-        + NumberUtils.square(this.z - otherVector.z));
+        NumberUtils.square(this.x - otherVector.x)
+            + NumberUtils.square(this.y - otherVector.y)
+            + NumberUtils.square(this.z - otherVector.z));
   }
 
   /**
    * Sets the x component of the vector
    *
    * @param x The x component
-   *
    * @return A new {@link PathVector}
    */
   public PathVector setX(double x) {
-
-
-
-
-
-
-
-
-
-
     return new PathVector(x, this.y, this.z);
   }
 
@@ -134,20 +81,9 @@ public class PathVector implements Cloneable {
    * Sets the y component of the vector
    *
    * @param y The y component
-   *
    * @return A new {@link PathVector}
    */
   public PathVector setY(double y) {
-
-
-
-
-
-
-
-
-
-
     return new PathVector(this.x, y, this.z);
   }
 
@@ -155,20 +91,9 @@ public class PathVector implements Cloneable {
    * Sets the z component of the vector
    *
    * @param z The z component
-   *
    * @return A new {@link PathVector}
    */
   public PathVector setZ(double z) {
-
-
-
-
-
-
-
-
-
-
     return new PathVector(this.x, this.y, z);
   }
 
@@ -176,21 +101,10 @@ public class PathVector implements Cloneable {
    * Subtracts one vector from another
    *
    * @param otherVector {@link PathVector} to vector to subtract from the current Vector
-   *
    * @return A new {@link PathVector}
    */
   @NonNull
   public PathVector subtract(PathVector otherVector) {
-
-
-
-
-
-
-
-
-
-
     return new PathVector(this.x - otherVector.x, this.y - otherVector.y, this.z - otherVector.z);
   }
 
@@ -198,21 +112,10 @@ public class PathVector implements Cloneable {
    * Multiplies itself by a scalar constant
    *
    * @param value The constant to multiply by
-   *
    * @return A new {@link PathVector}
    */
   @NonNull
   public PathVector multiply(double value) {
-
-
-
-
-
-
-
-
-
-
     return new PathVector(this.x * value, this.y * value, this.z * value);
   }
 
@@ -223,16 +126,6 @@ public class PathVector implements Cloneable {
    */
   @NonNull
   public PathVector normalize() {
-
-
-
-
-
-
-
-
-
-
     double magnitude = this.length();
     return new PathVector(this.x / magnitude, this.y / magnitude, this.z / magnitude);
   }
@@ -241,20 +134,9 @@ public class PathVector implements Cloneable {
    * Divide the vector by a scalar constant
    *
    * @param value The constant to divide by
-   *
    * @return A new {@link PathVector}
    */
   public PathVector divide(double value) {
-
-
-
-
-
-
-
-
-
-
     return new PathVector(this.x / value, this.y / value, this.z / value);
   }
 
@@ -262,20 +144,9 @@ public class PathVector implements Cloneable {
    * Adds two vectors together
    *
    * @param otherVector The other vector
-   *
    * @return A new {@link PathVector}
    */
   public PathVector add(PathVector otherVector) {
-
-
-
-
-
-
-
-
-
-
     return new PathVector(this.x + otherVector.x, this.y + otherVector.y, this.z + otherVector.z);
   }
 
@@ -283,20 +154,9 @@ public class PathVector implements Cloneable {
    * Calculates the cross product of two vectors
    *
    * @param o The other vector
-   *
    * @return The cross product vector
    */
   public PathVector getCrossProduct(PathVector o) {
-
-
-
-
-
-
-
-
-
-
     double x = this.y * o.getZ() - o.getY() * this.z;
     double y = this.z * o.getX() - o.getZ() * this.x;
     double z = this.x * o.getY() - o.getX() * this.y;
@@ -305,16 +165,6 @@ public class PathVector implements Cloneable {
 
   @Override
   public PathVector clone() {
-
-
-
-
-
-
-
-
-
-
     final PathVector clone;
     try {
       clone = (PathVector) super.clone();

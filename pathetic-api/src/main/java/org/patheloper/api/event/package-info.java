@@ -2,12 +2,12 @@
  * This package contains classes related to the event system of pathetic.
  *
  * <p>The event system is built around the Guava EventBus. It provides a way to define, raise, and
- * handle custom events within the application. The main class in this package is the EventPublisher, which provides
- * static methods to raise events and register/unregister listeners.
+ * handle custom events within the application. The main class in this package is the
+ * EventPublisher, which provides static methods to raise events and register/unregister listeners.
  *
  * <p>To create a new event, you would extend the PathingEvent class. To handle an event, you would
- * create a method in your listener class that is annotated with @Subscribe and takes a single argument of your event
- * type.
+ * create a method in your listener class that is annotated with @Subscribe and takes a single
+ * argument of your event type.
  *
  * <p>For example:
  *

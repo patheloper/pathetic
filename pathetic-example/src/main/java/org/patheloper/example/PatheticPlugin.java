@@ -17,12 +17,12 @@ public final class PatheticPlugin extends JavaPlugin {
 
     // Create a new Pathfinder instance with a custom configuration
     Pathfinder reusablePathfinder =
-      PatheticMapper.newPathfinder(
-        PathfinderConfiguration.createAsyncConfiguration()
-          .withAllowingFailFast(true) // Allow pathfinding to fail fast if necessary
-          .withAllowingFallback(true) // Allow fallback strategies if the primary fails
-          .withLoadingChunks(true) // Allow chunks to be loaded during pathfinding
-      );
+        PatheticMapper.newPathfinder(
+            PathfinderConfiguration.createAsyncConfiguration()
+                .withAllowingFailFast(true) // Allow pathfinding to fail fast if necessary
+                .withAllowingFallback(true) // Allow fallback strategies if the primary fails
+                .withLoadingChunks(true) // Allow chunks to be loaded during pathfinding
+            );
 
     // Register the command executor for the "pathetic" command
     getCommand("pathetic").setExecutor(new PatheticCommand(reusablePathfinder));

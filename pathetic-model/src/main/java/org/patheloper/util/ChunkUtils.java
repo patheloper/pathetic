@@ -19,8 +19,8 @@ public class ChunkUtils {
       try {
         materialMethod = Material.class.getDeclaredMethod("getMaterial", int.class);
         blockTypeMethod =
-          ChunkSnapshot.class.getDeclaredMethod(
-            "getBlockTypeId", int.class, int.class, int.class);
+            ChunkSnapshot.class.getDeclaredMethod(
+                "getBlockTypeId", int.class, int.class, int.class);
       } catch (NoSuchMethodException e) {
         e.printStackTrace();
       }
@@ -28,32 +28,12 @@ public class ChunkUtils {
   }
 
   public long getChunkKey(final int x, final int z) {
-
-
-
-
-
-
-
-
-
-
     return x & 0xFFFFFFFFL | (z & 0xFFFFFFFFL) << 32;
   }
 
   /** Get the block type from a chunk snapshot at the given coordinates */
   @SneakyThrows
   public Material getMaterial(ChunkSnapshot snapshot, int x, int y, int z) {
-
-
-
-
-
-
-
-
-
-
     if (BukkitVersionUtil.getVersion().isUnder(13, 0)) {
       if (materialMethod == null || blockTypeMethod == null)
         throw ErrorLogger.logFatalError("Reflection Failure");

@@ -13,16 +13,6 @@ public class v1_16ChunkDataProviderImpl implements ChunkDataProvider {
 
   @Override
   public ChunkSnapshot getSnapshot(World world, int chunkX, int chunkZ) {
-
-
-
-
-
-
-
-
-
-
     try {
 
       WorldServer server = ((CraftWorld) world).getHandle();
@@ -39,16 +29,6 @@ public class v1_16ChunkDataProviderImpl implements ChunkDataProvider {
 
   @Override
   public BlockState getBlockState(ChunkSnapshot snapshot, int x, int y, int z) {
-
-
-
-
-
-
-
-
-
-
     return null;
   }
 }

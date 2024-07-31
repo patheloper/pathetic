@@ -7,30 +7,10 @@ import org.patheloper.Pathetic;
 public class ErrorLogger {
 
   public static IllegalStateException logFatalError(String message) {
-
-
-
-
-
-
-
-
-
-
     return logFatalError(message, null);
   }
 
   public static IllegalStateException logFatalError(String message, Throwable cause) {
-
-
-
-
-
-
-
-
-
-
     log.error("===============================");
     log.error("A fatal error has occurred: {}", message);
     log.error("Please open an issue on the Pathetic GitHub page with all this information:");
@@ -44,16 +24,6 @@ public class ErrorLogger {
   }
 
   public static IllegalStateException logFatalErrorWithStacktrace(String message, Throwable cause) {
-
-
-
-
-
-
-
-
-
-
     IllegalStateException exception = logFatalError(message, cause);
     log.error("Stacktrace:", cause);
     return exception;
