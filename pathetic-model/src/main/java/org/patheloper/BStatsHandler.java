@@ -12,19 +12,39 @@ public class BStatsHandler {
   private int paths;
 
   public void init(JavaPlugin javaPlugin) {
+
+
+
+
+
+
+
+
+
+
     Metrics metrics = new Metrics(javaPlugin, 20529);
     metrics.addCustomChart(
-        new SingleLineChart(
-            "total_paths",
-            () -> {
-              int totalPaths = paths;
-              paths = 0;
-              return totalPaths;
-            }));
+      new SingleLineChart(
+        "total_paths",
+        () -> {
+          int totalPaths = paths;
+          paths = 0;
+          return totalPaths;
+        }));
     metrics.addCustomChart(new SimplePie("pathetic-model_version", Pathetic::getModelVersion));
   }
 
   public synchronized void increasePathCount() {
+
+
+
+
+
+
+
+
+
+
     paths++;
   }
 }

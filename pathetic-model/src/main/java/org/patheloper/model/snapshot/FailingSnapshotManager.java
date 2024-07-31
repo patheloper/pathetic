@@ -1,8 +1,5 @@
 package org.patheloper.model.snapshot;
 
-import java.util.Optional;
-import java.util.UUID;
-import java.util.Map;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.ChunkSnapshot;
@@ -20,21 +17,23 @@ import org.patheloper.util.BukkitVersionUtil;
 import org.patheloper.util.ChunkUtils;
 import org.patheloper.util.ErrorLogger;
 
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * The FailingSnapshotManager class implements the SnapshotManager interface and provides a default
- * implementation for retrieving block data snapshots from a Minecraft world. It utilizes chunk
- * snapshots to efficiently access block information, even in asynchronous contexts.
+ * The FailingSnapshotManager class implements the SnapshotManager interface and provides a default implementation for
+ * retrieving block data snapshots from a Minecraft world. It utilizes chunk snapshots to efficiently access block
+ * information, even in asynchronous contexts.
  *
  * <p>FailingSnapshotManager also uses NMS (net.minecraft.server) utilities to bypass the Spigot
- * AsyncCatcher and fetch snapshots natively from an asynchronous context. This allows for more
- * flexible and efficient access to world data.
+ * AsyncCatcher and fetch snapshots natively from an asynchronous context. This allows for more flexible and efficient
+ * access to world data.
  *
  * <p>Note: While this manager is designed to efficiently retrieve block data snapshots, it may
- * encounter failures or null results if the pathfinder is not permitted to load chunks or if chunks
- * are not loaded in the world. Developers using this manager should handle potential failures
- * gracefully.
+ * encounter failures or null results if the pathfinder is not permitted to load chunks or if chunks are not loaded in
+ * the world. Developers using this manager should handle potential failures gracefully.
  */
 public class FailingSnapshotManager implements SnapshotManager {
 
@@ -45,10 +44,20 @@ public class FailingSnapshotManager implements SnapshotManager {
   static {
     BukkitVersionUtil.Version version = BukkitVersionUtil.getVersion();
     CHUNK_DATA_PROVIDER_RESOLVER =
-        new ChunkDataProviderResolver((int) version.getMajor(), (int) version.getMinor());
+      new ChunkDataProviderResolver((int) version.getMajor(), (int) version.getMinor());
   }
 
   public static void invalidateChunk(UUID worldUUID, int chunkX, int chunkZ) {
+
+
+
+
+
+
+
+
+
+
     if (SNAPSHOTS_MAP.containsKey(worldUUID)) {
       WorldDomain worldDomain = SNAPSHOTS_MAP.get(worldUUID);
       long chunkKey = ChunkUtils.getChunkKey(chunkX, chunkZ);
@@ -58,6 +67,16 @@ public class FailingSnapshotManager implements SnapshotManager {
   }
 
   private static Optional<PathBlock> fetchBlock(PathPosition position) {
+
+
+
+
+
+
+
+
+
+
     Optional<ChunkSnapshot> chunkSnapshotOptional = getChunkSnapshot(position);
 
     int chunkX = position.getBlockX() >> 4;
@@ -68,11 +87,11 @@ public class FailingSnapshotManager implements SnapshotManager {
       int z = position.getBlockZ() - chunkZ * 16;
 
       Material material =
-          ChunkUtils.getMaterial(chunkSnapshotOptional.get(), x, position.getBlockY(), z);
+        ChunkUtils.getMaterial(chunkSnapshotOptional.get(), x, position.getBlockY(), z);
       BlockState blockState =
-          CHUNK_DATA_PROVIDER_RESOLVER
-              .getChunkDataProvider()
-              .getBlockState(chunkSnapshotOptional.get(), x, position.getBlockY(), z);
+        CHUNK_DATA_PROVIDER_RESOLVER
+          .getChunkDataProvider()
+          .getBlockState(chunkSnapshotOptional.get(), x, position.getBlockY(), z);
       return Optional.of(new PathBlock(position, new BlockInformation(material, blockState)));
     }
 
@@ -80,6 +99,16 @@ public class FailingSnapshotManager implements SnapshotManager {
   }
 
   private static Optional<ChunkSnapshot> getChunkSnapshot(PathPosition position) {
+
+
+
+
+
+
+
+
+
+
     int chunkX = position.getBlockX() >> 4;
     int chunkZ = position.getBlockZ() >> 4;
 
@@ -97,67 +126,116 @@ public class FailingSnapshotManager implements SnapshotManager {
 
     if (world.isChunkLoaded(chunkX, chunkZ))
       return Optional.ofNullable(
-          processChunkSnapshot(
-              position,
-              chunkX,
-              chunkZ,
-              CHUNK_DATA_PROVIDER_RESOLVER
-                  .getChunkDataProvider()
-                  .getSnapshot(world, chunkX, chunkZ)));
+        processChunkSnapshot(
+          position,
+          chunkX,
+          chunkZ,
+          CHUNK_DATA_PROVIDER_RESOLVER
+            .getChunkDataProvider()
+            .getSnapshot(world, chunkX, chunkZ)));
 
     return Optional.empty();
   }
 
   private static ChunkSnapshot processChunkSnapshot(
-      PathPosition position, int chunkX, int chunkZ, ChunkSnapshot chunkSnapshot) {
+    PathPosition position, int chunkX, int chunkZ, ChunkSnapshot chunkSnapshot) {
+
+
+
+
+
+
+
+
+
+
     WorldDomain worldDomain =
-        SNAPSHOTS_MAP.computeIfAbsent(
-            position.getPathEnvironment().getUuid(), uuid -> new WorldDomain());
+      SNAPSHOTS_MAP.computeIfAbsent(
+        position.getPathEnvironment().getUuid(), uuid -> new WorldDomain());
     worldDomain.addSnapshot(ChunkUtils.getChunkKey(chunkX, chunkZ), chunkSnapshot);
     return chunkSnapshot;
   }
 
   @Override
   public PathBlock getBlock(@NonNull PathPosition position) {
+
+
+
+
+
+
+
+
+
+
     Optional<PathBlock> block = fetchBlock(position);
     return block.orElse(null);
   }
 
   /**
-   * The RequestingSnapshotManager is an inner class of FailingSnapshotManager, extending it. This
-   * class provides additional functionality for ensuring that block data snapshots are available,
-   * even if not initially loaded.
+   * The RequestingSnapshotManager is an inner class of FailingSnapshotManager, extending it. This class provides
+   * additional functionality for ensuring that block data snapshots are available, even if not initially loaded.
    */
   public static class RequestingSnapshotManager extends FailingSnapshotManager {
 
     private static ChunkSnapshot retrieveChunkSnapshot(
-        PathEnvironment world, int chunkX, int chunkZ) {
+      PathEnvironment world, int chunkX, int chunkZ) {
+
+
+
+
+
+
+
+
+
+
       World bukkitWorld = Bukkit.getWorld(world.getUuid());
       return CHUNK_DATA_PROVIDER_RESOLVER
-          .getChunkDataProvider()
-          .getSnapshot(bukkitWorld, chunkX, chunkZ);
+        .getChunkDataProvider()
+        .getSnapshot(bukkitWorld, chunkX, chunkZ);
     }
 
     private static ChunkSnapshot retrieveSnapshot(PathPosition position) {
+
+
+
+
+
+
+
+
+
+
       int chunkX = position.getBlockX() >> 4;
       int chunkZ = position.getBlockZ() >> 4;
 
       Optional<ChunkSnapshot> chunkSnapshotOptional = getChunkSnapshot(position);
 
       return chunkSnapshotOptional.orElseGet(
-          () -> {
-            ChunkSnapshot chunkSnapshot =
-                retrieveChunkSnapshot(position.getPathEnvironment(), chunkX, chunkZ);
+        () -> {
+          ChunkSnapshot chunkSnapshot =
+            retrieveChunkSnapshot(position.getPathEnvironment(), chunkX, chunkZ);
 
-            if (chunkSnapshot == null)
-              throw ErrorLogger.logFatalError("Could not retrieve chunk snapshot --> BOOM!");
+          if (chunkSnapshot == null)
+            throw ErrorLogger.logFatalError("Could not retrieve chunk snapshot --> BOOM!");
 
-            processChunkSnapshot(position, chunkX, chunkZ, chunkSnapshot);
-            return chunkSnapshot;
-          });
+          processChunkSnapshot(position, chunkX, chunkZ, chunkSnapshot);
+          return chunkSnapshot;
+        });
     }
 
     private static PathBlock ensureBlock(PathPosition pathPosition) {
+
+
+
+
+
+
+
+
+
+
       int chunkX = pathPosition.getBlockX() >> 4;
       int chunkZ = pathPosition.getBlockZ() >> 4;
 
@@ -167,14 +245,24 @@ public class FailingSnapshotManager implements SnapshotManager {
 
       Material material = ChunkUtils.getMaterial(chunkSnapshot, x, pathPosition.getBlockY(), z);
       BlockState blockState =
-          CHUNK_DATA_PROVIDER_RESOLVER
-              .getChunkDataProvider()
-              .getBlockState(chunkSnapshot, x, pathPosition.getBlockY(), z);
+        CHUNK_DATA_PROVIDER_RESOLVER
+          .getChunkDataProvider()
+          .getBlockState(chunkSnapshot, x, pathPosition.getBlockY(), z);
       return new PathBlock(pathPosition, new BlockInformation(material, blockState));
     }
 
     @Override
     public PathBlock getBlock(@NonNull PathPosition position) {
+
+
+
+
+
+
+
+
+
+
       PathBlock block = super.getBlock(position);
       return block == null ? ensureBlock(position) : block;
     }

@@ -7,9 +7,8 @@ import java.lang.annotation.RetentionPolicy;
  * Annotation to specify dependencies between PathFilters.
  *
  * <p>This annotation should be applied to {@link PathFilter} implementations to indicate that the
- * annotated filter depends on one or more other filters. When a filter is annotated
- * with @Depending, the specified dependent filters must also pass their validation for the
- * annotated filter to be considered valid.
+ * annotated filter depends on one or more other filters. When a filter is annotated with @Depending, the specified
+ * dependent filters must also pass their validation for the annotated filter to be considered valid.
  *
  * <p>Example usage:
  *
@@ -25,8 +24,8 @@ import java.lang.annotation.RetentionPolicy;
  * }</pre>
  *
  * <p>In the above example, the {@code SolidGroundPathFilter} depends on the {@code
- * PassablePathFilter}. This means that for {@code SolidGroundPathFilter} to pass, {@code
- * PassablePathFilter} must also pass.
+ * PassablePathFilter}. This means that for {@code SolidGroundPathFilter} to pass, {@code PassablePathFilter} must also
+ * pass.
  *
  * <p>If a dependent filter is not included in the filter chain, an {@link IllegalStateException}
  * will be thrown during validation.

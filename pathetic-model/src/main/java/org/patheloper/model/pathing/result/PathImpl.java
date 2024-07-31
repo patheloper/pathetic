@@ -1,6 +1,13 @@
 package org.patheloper.model.pathing.result;
 
 import com.google.common.collect.Iterables;
+import lombok.Getter;
+import lombok.NonNull;
+import org.patheloper.api.pathing.result.Path;
+import org.patheloper.api.util.ParameterizedSupplier;
+import org.patheloper.api.wrapper.PathPosition;
+import org.patheloper.util.ErrorLogger;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -10,25 +17,34 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import lombok.Getter;
-import lombok.NonNull;
-import org.patheloper.api.pathing.result.Path;
-import org.patheloper.api.util.ParameterizedSupplier;
-import org.patheloper.api.wrapper.PathPosition;
-import org.patheloper.util.ErrorLogger;
 
 public class PathImpl implements Path {
 
-  @NonNull private final Iterable<PathPosition> positions;
-  @NonNull @Getter private final PathPosition start;
-  @NonNull @Getter private final PathPosition end;
+  @NonNull
+  private final Iterable<PathPosition> positions;
+  @NonNull
+  @Getter
+  private final PathPosition start;
+  @NonNull
+  @Getter
+  private final PathPosition end;
 
   private final int length;
 
   public PathImpl(
-      @NonNull PathPosition start,
-      @NonNull PathPosition end,
-      @NonNull Iterable<@NonNull PathPosition> positions) {
+    @NonNull PathPosition start,
+    @NonNull PathPosition end,
+    @NonNull Iterable<@NonNull PathPosition> positions) {
+
+
+
+
+
+
+
+
+
+
     this.start = start;
     this.end = end;
     this.positions = positions;
@@ -37,16 +53,46 @@ public class PathImpl implements Path {
 
   @Override
   public @NonNull Iterator<PathPosition> iterator() {
+
+
+
+
+
+
+
+
+
+
     return positions.iterator();
   }
 
   @Override
   public void forEach(Consumer<? super PathPosition> action) {
+
+
+
+
+
+
+
+
+
+
     positions.forEach(action);
   }
 
   @Override
   public Path interpolate(double resolution) {
+
+
+
+
+
+
+
+
+
+
     List<PathPosition> enlargedPositions = new ArrayList<>();
 
     PathPosition previousPosition = null;
@@ -62,10 +108,20 @@ public class PathImpl implements Path {
   }
 
   private void interpolateBetweenPositions(
-      PathPosition startPosition,
-      PathPosition endPosition,
-      double resolution,
-      List<PathPosition> result) {
+    PathPosition startPosition,
+    PathPosition endPosition,
+    double resolution,
+    List<PathPosition> result) {
+
+
+
+
+
+
+
+
+
+
     double distance = startPosition.distance(endPosition);
     int steps = (int) Math.ceil(distance / resolution);
 
@@ -79,6 +135,16 @@ public class PathImpl implements Path {
 
   @Override
   public Path simplify(double epsilon) {
+
+
+
+
+
+
+
+
+
+
     try {
       validateEpsilon(epsilon);
 
@@ -92,6 +158,16 @@ public class PathImpl implements Path {
   }
 
   private Set<PathPosition> filterPositionsByEpsilon(double epsilon) {
+
+
+
+
+
+
+
+
+
+
     Set<PathPosition> filteredPositions = new HashSet<>();
 
     int index = 0;
@@ -106,6 +182,16 @@ public class PathImpl implements Path {
   }
 
   private void validateEpsilon(double epsilon) {
+
+
+
+
+
+
+
+
+
+
     if (epsilon <= 0.0 || epsilon > 1.0) {
       throw ErrorLogger.logFatalError("Epsilon must be in the range of 0.0 to 1.0, inclusive");
     }
@@ -113,11 +199,31 @@ public class PathImpl implements Path {
 
   @Override
   public Path join(Path path) {
+
+
+
+
+
+
+
+
+
+
     return new PathImpl(start, path.getEnd(), Iterables.concat(positions, path));
   }
 
   @Override
   public Path trim(int length) {
+
+
+
+
+
+
+
+
+
+
     Iterable<PathPosition> limitedPositions = Iterables.limit(positions, length);
     return new PathImpl(start, Iterables.getLast(limitedPositions), limitedPositions);
   }
@@ -125,19 +231,49 @@ public class PathImpl implements Path {
   @NonNull
   @Override
   public Path mutatePositions(ParameterizedSupplier<PathPosition> mutator) {
+
+
+
+
+
+
+
+
+
+
     List<PathPosition> positionList = new LinkedList<>();
     applyMutator(mutator, positionList);
     return new PathImpl(
-        positionList.get(0), positionList.get(positionList.size() - 1), positionList);
+      positionList.get(0), positionList.get(positionList.size() - 1), positionList);
   }
 
   @Override
   public int length() {
+
+
+
+
+
+
+
+
+
+
     return length;
   }
 
   private void applyMutator(
-      ParameterizedSupplier<PathPosition> mutator, List<PathPosition> positionList) {
+    ParameterizedSupplier<PathPosition> mutator, List<PathPosition> positionList) {
+
+
+
+
+
+
+
+
+
+
     for (PathPosition position : this.positions) positionList.add(mutator.accept(position));
   }
 }

@@ -14,30 +14,80 @@ public class PathfinderResultImpl implements PathfinderResult {
 
   @Override
   public boolean successful() {
+
+
+
+
+
+
+
+
+
+
     return pathState == PathState.FOUND;
   }
 
   @Override
   public boolean hasFailed() {
+
+
+
+
+
+
+
+
+
+
     return pathState == PathState.FAILED
-        || pathState == PathState.LENGTH_LIMITED
-        || pathState == PathState.MAX_ITERATIONS_REACHED;
+      || pathState == PathState.LENGTH_LIMITED
+      || pathState == PathState.MAX_ITERATIONS_REACHED;
   }
 
   @Override
   public boolean hasFallenBack() {
+
+
+
+
+
+
+
+
+
+
     return pathState == PathState.FALLBACK;
   }
 
   @Override
   @NonNull
   public PathState getPathState() {
+
+
+
+
+
+
+
+
+
+
     return this.pathState;
   }
 
   @NonNull
   @Override
   public Path getPath() {
+
+
+
+
+
+
+
+
+
+
     return this.path;
   }
 }

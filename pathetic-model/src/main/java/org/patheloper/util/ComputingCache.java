@@ -8,10 +8,30 @@ public class ComputingCache<T> {
   private T value;
 
   public ComputingCache(Supplier<T> supplier) {
+
+
+
+
+
+
+
+
+
+
     this.supplier = supplier;
   }
 
   public T get() {
+
+
+
+
+
+
+
+
+
+
     if (this.value == null) {
       this.value = this.supplier.get();
     }

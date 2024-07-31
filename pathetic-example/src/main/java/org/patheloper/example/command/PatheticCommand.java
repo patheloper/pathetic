@@ -1,11 +1,5 @@
 package org.patheloper.example.command;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.CompletionStage;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -13,12 +7,19 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.patheloper.api.pathing.Pathfinder;
-import org.patheloper.api.pathing.result.PathfinderResult;
 import org.patheloper.api.pathing.filter.filters.PassablePathFilter;
 import org.patheloper.api.pathing.filter.filters.SolidGroundPathFilter;
 import org.patheloper.api.pathing.filter.filters.WaterPathFilter;
+import org.patheloper.api.pathing.result.PathfinderResult;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.mapping.bukkit.BukkitMapper;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.CompletionStage;
 
 public class PatheticCommand implements TabExecutor {
 
@@ -30,6 +31,16 @@ public class PatheticCommand implements TabExecutor {
 
   // Constructor to initialize the pathfinder
   public PatheticCommand(Pathfinder pathfinder) {
+
+
+
+
+
+
+
+
+
+
     this.pathfinder = pathfinder;
   }
 
@@ -38,17 +49,16 @@ public class PatheticCommand implements TabExecutor {
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
     // Ensure the sender is a player
-    if (!(sender instanceof Player)) return false;
+    if (!(sender instanceof Player player)) return false;
 
     // Ensure the command has exactly one argument
     if (args.length != 1) return false;
 
     // Cast sender to Player
-    Player player = (Player) sender;
 
     // Retrieve or create a new player session
     PlayerSession playerSession =
-        SESSION_MAP.computeIfAbsent(player.getUniqueId(), k -> new PlayerSession());
+      SESSION_MAP.computeIfAbsent(player.getUniqueId(), k -> new PlayerSession());
 
     // Handle different commands
     switch (args[0]) {
@@ -85,35 +95,35 @@ public class PatheticCommand implements TabExecutor {
          * These filters make perfect sense for player paths.
          */
         CompletionStage<PathfinderResult> pathfindingResult =
-            pathfinder.findPath(
-                start,
-                target,
-                List.of(
-                    new PassablePathFilter(),
-                    new SolidGroundPathFilter(),
-                    new WaterPathFilter())); // Passable and SolidGround have to be used together,
+          pathfinder.findPath(
+            start,
+            target,
+            List.of(
+              new PassablePathFilter(),
+              new SolidGroundPathFilter(),
+              new WaterPathFilter())); // Passable and SolidGround have to be used together,
         // because SolidGround depends on Passable
 
         // Handle the pathfinding result
         pathfindingResult.thenAccept(
-            result -> {
-              player.sendMessage("State: " + result.getPathState().name());
-              player.sendMessage("Path length: " + result.getPath().length());
+          result -> {
+            player.sendMessage("State: " + result.getPathState().name());
+            player.sendMessage("Path length: " + result.getPath().length());
 
-              // If pathfinding is successful, show the path to the player
-              if (result.successful() || result.hasFallenBack()) {
-                result
-                    .getPath()
-                    .forEach(
-                        position -> {
-                          Location location = BukkitMapper.toLocation(position);
-                          player.sendBlockChange(
-                              location, Material.YELLOW_STAINED_GLASS.createBlockData());
-                        });
-              } else {
-                player.sendMessage("Path not found!");
-              }
-            });
+            // If pathfinding is successful, show the path to the player
+            if (result.successful() || result.hasFallenBack()) {
+              result
+                .getPath()
+                .forEach(
+                  position -> {
+                    Location location = BukkitMapper.toLocation(position);
+                    player.sendBlockChange(
+                      location, Material.YELLOW_STAINED_GLASS.createBlockData());
+                  });
+            } else {
+              player.sendMessage("Path not found!");
+            }
+          });
         break;
     }
 
@@ -123,7 +133,17 @@ public class PatheticCommand implements TabExecutor {
   // Provide tab completion for the command
   @Override
   public List<String> onTabComplete(
-      CommandSender sender, Command command, String label, String[] args) {
+    CommandSender sender, Command command, String label, String[] args) {
+
+
+
+
+
+
+
+
+
+
     return Arrays.asList("pos1", "pos2", "start");
   }
 
@@ -134,23 +154,73 @@ public class PatheticCommand implements TabExecutor {
     private Location pos2;
 
     public void setPos1(Location pos1) {
+
+
+
+
+
+
+
+
+
+
       this.pos1 = pos1;
     }
 
     public void setPos2(Location pos2) {
+
+
+
+
+
+
+
+
+
+
       this.pos2 = pos2;
     }
 
     // Check if both positions are set
     public boolean isComplete() {
+
+
+
+
+
+
+
+
+
+
       return pos1 != null && pos2 != null;
     }
 
     public Location getPos1() {
+
+
+
+
+
+
+
+
+
+
       return pos1;
     }
 
     public Location getPos2() {
+
+
+
+
+
+
+
+
+
+
       return pos2;
     }
   }

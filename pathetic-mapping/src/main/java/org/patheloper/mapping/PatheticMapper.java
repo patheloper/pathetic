@@ -14,21 +14,40 @@ import org.patheloper.util.ErrorLogger;
 public class PatheticMapper {
 
   /**
-   * @apiNote If Pathetic is not initialized yet but is used anyways, this will cause many things to
-   *     break.
    * @param javaPlugin the JavaPlugin which initializes the lib
+   *
    * @throws IllegalStateException If an attempt is made to initialize more than once
+   * @apiNote If Pathetic is not initialized yet but is used anyways, this will cause many things to break.
    */
   public void initialize(JavaPlugin javaPlugin) {
+
+
+
+
+
+
+
+
+
+
     Pathetic.initialize(javaPlugin);
   }
 
   /**
-   * Signals Pathetic to initiate its shutdown process, releasing resources and finalizing
-   * operations. This method should be called when Pathetic is no longer needed or the plugin is
-   * being disabled.
+   * Signals Pathetic to initiate its shutdown process, releasing resources and finalizing operations. This method
+   * should be called when Pathetic is no longer needed or the plugin is being disabled.
    */
   public void shutdown() {
+
+
+
+
+
+
+
+
+
+
     Pathetic.shutdown();
   }
 
@@ -36,9 +55,20 @@ public class PatheticMapper {
    * Instantiates a new pathfinder object.
    *
    * @return The {@link Pathfinder} object
+   *
    * @throws IllegalStateException If the lib is not initialized yet
    */
   public @NonNull Pathfinder newPathfinder() {
+
+
+
+
+
+
+
+
+
+
     return newPathfinder(PathfinderConfiguration.createAsyncConfiguration());
   }
 
@@ -46,10 +76,22 @@ public class PatheticMapper {
    * Instantiates a new A*-pathfinder.
    *
    * @param pathfinderConfiguration - The {@link PathfinderConfiguration}
+   *
    * @return The {@link Pathfinder}
+   *
    * @throws IllegalStateException If the lib is not initialized yet
    */
   public @NonNull Pathfinder newPathfinder(PathfinderConfiguration pathfinderConfiguration) {
+
+
+
+
+
+
+
+
+
+
     if (Pathetic.isInitialized()) return new AStarPathfinder(pathfinderConfiguration);
 
     throw ErrorLogger.logFatalError("Pathetic is not initialized yet.");

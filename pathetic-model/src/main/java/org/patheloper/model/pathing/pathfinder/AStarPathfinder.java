@@ -1,15 +1,14 @@
 package org.patheloper.model.pathing.pathfinder;
 
 import java.util.*;
-
 import lombok.NonNull;
 import org.jheaps.tree.FibonacciHeap;
 import org.patheloper.api.pathing.configuration.PathfinderConfiguration;
+import org.patheloper.api.pathing.filter.PathFilter;
+import org.patheloper.api.pathing.filter.PathValidationContext;
 import org.patheloper.api.pathing.result.Path;
 import org.patheloper.api.pathing.result.PathState;
 import org.patheloper.api.pathing.result.PathfinderResult;
-import org.patheloper.api.pathing.filter.PathValidationContext;
-import org.patheloper.api.pathing.filter.PathFilter;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.api.wrapper.PathVector;
 import org.patheloper.model.pathing.Node;

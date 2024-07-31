@@ -13,8 +13,7 @@ public interface PathfinderResult {
 
   /**
    * Whether the pathfinder has failed to reach its target. This includes {@link PathState#FAILED},
-   * {@link PathState#LENGTH_LIMITED}, {@link PathState#MAX_ITERATIONS_REACHED} and {@link
-   * PathState#FALLBACK}
+   * {@link PathState#LENGTH_LIMITED}, {@link PathState#MAX_ITERATIONS_REACHED} and {@link PathState#FALLBACK}
    *
    * @return Whether the pathfinder has failed to reach its target
    */
@@ -36,8 +35,7 @@ public interface PathfinderResult {
   PathState getPathState();
 
   /**
-   * Returns the found {@link Path} regardless if successful or not. The path is empty if the
-   * pathfinding failed.
+   * Returns the found {@link Path} regardless if successful or not. The path is empty if the pathfinding failed.
    *
    * @return The found {@link Path}
    */

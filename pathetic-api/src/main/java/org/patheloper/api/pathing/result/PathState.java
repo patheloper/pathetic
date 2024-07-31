@@ -7,8 +7,7 @@ public enum PathState {
   /** The Path was successfully found */
   FOUND,
   /**
-   * The Path wasn't found, either it reached its max search depth or it couldn't find more
-   * positions
+   * The Path wasn't found, either it reached its max search depth or it couldn't find more positions
    */
   FAILED,
   /** Signifies that the pathfinder fell back during the pathfinding attempt */
