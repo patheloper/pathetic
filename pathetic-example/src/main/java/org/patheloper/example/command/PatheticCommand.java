@@ -80,8 +80,8 @@ public class PatheticCommand implements TabExecutor {
         /*
          * Initiate pathfinding with the start and target positions, and a list of path filters.
          * The path filters are used to customize the pathfinding process. In this case, we use
-         * filters to allow only passable paths, with a solid ground and/or and water paths.
-         * These filters make perfect sense for player paths.
+         * filters to allow only passable paths, with a solid ground and/or water paths.
+         * These filters make perfect sense for player paths. The order is mandatory for prioritizing.
          */
         CompletionStage<PathfinderResult> pathfindingResult =
             pathfinder.findPath(
@@ -89,8 +89,7 @@ public class PatheticCommand implements TabExecutor {
                 target,
                 List.of(
                     new SolidGroundPathFilter(),
-                    new WaterPathFilter())); // Passable and SolidGround have to be used together,
-        // because SolidGround depends on Passable
+                    new WaterPathFilter())); // SolidGround depends on Passable
 
         // Handle the pathfinding result
         pathfindingResult.thenAccept(
