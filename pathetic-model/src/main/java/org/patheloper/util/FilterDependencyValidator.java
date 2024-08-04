@@ -1,7 +1,9 @@
 package org.patheloper.util;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.patheloper.api.pathing.filter.Depending;
 import org.patheloper.api.pathing.filter.PathFilter;
 import org.patheloper.api.pathing.filter.PathValidationContext;
@@ -27,13 +29,29 @@ public class FilterDependencyValidator {
       List<PathFilter> allFilters,
       Map<Class<? extends PathFilter>, Boolean> cache) {
 
+    return validateDependenciesRecursive(filter, context, allFilters, cache, new HashSet<>());
+  }
+
+  private static boolean validateDependenciesRecursive(
+      PathFilter filter,
+      PathValidationContext context,
+      List<PathFilter> allFilters,
+      Map<Class<? extends PathFilter>, Boolean> cache,
+      Set<Class<? extends PathFilter>> seen) {
+
+    if (seen.contains(filter.getClass())) {
+      return true; // Avoid circular dependencies
+    }
+
     Depending depending = filter.getClass().getAnnotation(Depending.class);
     if (depending == null) {
       return true;
     }
 
+    seen.add(filter.getClass());
+
     for (Class<? extends PathFilter> dependency : depending.value()) {
-      if (!validateSingleDependency(dependency, context, allFilters, cache)) {
+      if (!validateSingleDependency(dependency, context, allFilters, cache, seen)) {
         return false;
       }
     }
@@ -44,12 +62,16 @@ public class FilterDependencyValidator {
       Class<? extends PathFilter> dependency,
       PathValidationContext context,
       List<PathFilter> allFilters,
-      Map<Class<? extends PathFilter>, Boolean> cache) {
+      Map<Class<? extends PathFilter>, Boolean> cache,
+      Set<Class<? extends PathFilter>> seen) {
 
     PathFilter dependencyFilter = findFilterByClass(dependency, allFilters);
-
     if (dependencyFilter == null) {
       dependencyFilter = createFilterInstance(dependency);
+    }
+
+    if (!validateDependenciesRecursive(dependencyFilter, context, allFilters, cache, seen)) {
+      return false;
     }
 
     PathFilter finalDependencyFilter = dependencyFilter;
