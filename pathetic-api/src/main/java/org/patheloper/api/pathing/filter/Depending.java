@@ -4,32 +4,33 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * Annotation to specify dependencies between PathFilters.
+ * Annotation to specify dependencies between {@link PathFilter} implementations.
  *
- * <p>This annotation should be applied to {@link PathFilter} implementations to indicate that the
- * annotated filter depends on one or more other filters. When a filter is annotated
- * with @Depending, the specified dependent filters must also pass their validation for the
- * annotated filter to be considered valid.
+ * <p>This annotation should be applied to a {@link PathFilter} to indicate that it depends on one
+ * or more other filters. When a filter is annotated with {@code @Depending}, all specified
+ * dependencies are dynamically created and validated for the annotated filter to be considered
+ * valid.
  *
- * <p>Example usage:
+ * <p>Usage Example:
  *
  * <pre>{@code
- * @Depending(PassablePathFilter.class)
+ * @Depending({PassablePathFilter.class})
  * public class SolidGroundPathFilter implements PathFilter {
  *     @Override
  *     public boolean filter(PathValidationContext context) {
  *         // Filtering logic here
- *         return false;
+ *         return true;
  *     }
  * }
  * }</pre>
  *
- * <p>In the above example, the {@code SolidGroundPathFilter} depends on the {@code
- * PassablePathFilter}. This means that for {@code SolidGroundPathFilter} to pass, {@code
- * PassablePathFilter} must also pass.
+ * <p>In the example above, the {@code SolidGroundPathFilter} depends on the {@code
+ * PassablePathFilter}. This means that {@code PassablePathFilter} will be dynamically created and
+ * validated whenever {@code SolidGroundPathFilter} is used.
  *
- * <p>If a dependent filter is not included in the filter chain, an {@link IllegalStateException}
- * will be thrown during validation.
+ * <p>Dependencies are generated and validated at runtime, regardless of their presence in the
+ * filter chain. If a dependent filter cannot be instantiated, an {@link IllegalStateException} will
+ * be thrown.
  *
  * @see PathFilter
  * @see PathValidationContext
@@ -38,7 +39,7 @@ import java.lang.annotation.RetentionPolicy;
 public @interface Depending {
 
   /**
-   * Specifies the dependent filters that must pass for the annotated filter to be considered valid.
+   * Specifies the dependent filters required for validation.
    *
    * @return An array of {@link PathFilter} classes that the annotated filter depends on.
    */

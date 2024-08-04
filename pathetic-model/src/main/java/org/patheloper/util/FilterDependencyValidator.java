@@ -1,11 +1,10 @@
 package org.patheloper.util;
 
+import java.util.List;
+import java.util.Map;
 import org.patheloper.api.pathing.filter.Depending;
 import org.patheloper.api.pathing.filter.PathFilter;
 import org.patheloper.api.pathing.filter.PathValidationContext;
-
-import java.util.List;
-import java.util.Map;
 
 public class FilterDependencyValidator {
 
@@ -20,7 +19,7 @@ public class FilterDependencyValidator {
    * @param cache A map to cache filter results to avoid double execution.
    * @return true if all the dependencies pass their validation, or if there are no dependencies;
    *     false otherwise.
-   * @throws IllegalStateException if a required dependency is not found in the filter chain.
+   * @throws IllegalStateException if a required dependency cannot be instantiated.
    */
   public static boolean validateDependencies(
       PathFilter filter,
@@ -48,11 +47,13 @@ public class FilterDependencyValidator {
       Map<Class<? extends PathFilter>, Boolean> cache) {
 
     PathFilter dependencyFilter = findFilterByClass(dependency, allFilters);
+
     if (dependencyFilter == null) {
-      throw ErrorLogger.logFatalError(
-          "Dependency " + dependency.getName() + " for filter is not present in the filter chain.");
+      dependencyFilter = createFilterInstance(dependency);
     }
-    return cache.computeIfAbsent(dependency, k -> dependencyFilter.filter(context));
+
+    PathFilter finalDependencyFilter = dependencyFilter;
+    return cache.computeIfAbsent(dependency, k -> finalDependencyFilter.filter(context));
   }
 
   private static PathFilter findFilterByClass(
@@ -64,5 +65,13 @@ public class FilterDependencyValidator {
       }
     }
     return null;
+  }
+
+  private static PathFilter createFilterInstance(Class<? extends PathFilter> filterClass) {
+    try {
+      return filterClass.getDeclaredConstructor().newInstance();
+    } catch (ReflectiveOperationException e) {
+      throw new IllegalStateException("Cannot instantiate filter: " + filterClass.getName(), e);
+    }
   }
 }
