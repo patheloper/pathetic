@@ -13,8 +13,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.patheloper.api.pathing.Pathfinder;
+import org.patheloper.api.pathing.filter.filters.SolidGroundPathFilter;
+import org.patheloper.api.pathing.filter.filters.WaterPathFilter;
 import org.patheloper.api.pathing.result.PathfinderResult;
-import org.patheloper.api.pathing.strategy.strategies.DirectPathfinderStrategy;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.mapping.bukkit.BukkitMapper;
 
@@ -74,11 +75,21 @@ public class PatheticCommand implements TabExecutor {
         PathPosition target = BukkitMapper.toPathPosition(playerSession.getPos2());
 
         // Inform the player that pathfinding is starting
-        player.sendMessage("Starting pathfinding...");
+        player.sendMessage("Starting pathfinding... [Distance: " + start.distance(target) + "]");
 
-        // Start pathfinding asynchronously
+        /*
+         * Initiate pathfinding with the start and target positions, and a list of path filters.
+         * The path filters are used to customize the pathfinding process. In this case, we use
+         * filters to allow only passable paths, with a solid ground and/or water paths.
+         * These filters make perfect sense for player paths. The order is mandatory for prioritizing.
+         */
         CompletionStage<PathfinderResult> pathfindingResult =
-            pathfinder.findPath(start, target, new DirectPathfinderStrategy());
+            pathfinder.findPath(
+                start,
+                target,
+                List.of(
+                    new SolidGroundPathFilter(),
+                    new WaterPathFilter())); // SolidGround depends on Passable
 
         // Handle the pathfinding result
         pathfindingResult.thenAccept(

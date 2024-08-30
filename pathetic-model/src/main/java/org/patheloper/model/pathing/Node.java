@@ -39,7 +39,7 @@ public class Node implements Comparable<Node> {
    *
    * @return the estimated total cost (represented by the F-Score)
    */
-  private double getFCost() {
+  public double getFCost() {
     return fCostCache.get();
   }
 
@@ -67,13 +67,19 @@ public class Node implements Comparable<Node> {
     double manhattanDistance = this.position.manhattanDistance(target);
     double octileDistance = this.position.octileDistance(target);
     double perpendicularDistance = calculatePerpendicularDistance();
-    double heightFactor =
-        Math.abs(this.position.getBlockY() - target.getBlockY()); // Consider height differences
+    double heightDifference = Math.abs(this.position.getBlockY() - target.getBlockY());
 
-    return (manhattanDistance * heuristicWeights.getManhattenWeight())
-        + (octileDistance * heuristicWeights.getOctileWeight())
-        + (perpendicularDistance * heuristicWeights.getPerpendicularWeight())
-        + (heightFactor * heuristicWeights.getHeightWeight());
+    double manhattanWeight = heuristicWeights.getManhattanWeight();
+    double octileWeight = heuristicWeights.getOctileWeight();
+    double perpendicularWeight = heuristicWeights.getPerpendicularWeight();
+    double heightWeight = heuristicWeights.getHeightWeight();
+
+    // Ensure the combined heuristic is consistent
+    return Math.max(
+        manhattanDistance * manhattanWeight,
+        octileDistance * octileWeight
+            + perpendicularDistance * perpendicularWeight
+            + heightDifference * heightWeight);
   }
 
   private double calculatePerpendicularDistance() {
@@ -85,6 +91,10 @@ public class Node implements Comparable<Node> {
 
   @Override
   public int compareTo(@NonNull Node o) {
+    int fCostComparison = Double.compare(this.getFCost(), o.getFCost());
+    if (fCostComparison != 0) {
+      return fCostComparison;
+    }
     int heuristicComparison = Double.compare(this.heuristic.get(), o.heuristic.get());
     if (heuristicComparison != 0) {
       return heuristicComparison;

@@ -1,21 +1,23 @@
 package org.patheloper.model.pathing.pathfinder;
 
 import java.util.*;
+
 import lombok.NonNull;
-import org.patheloper.api.pathing.configuration.PathingRuleSet;
+import org.jheaps.tree.FibonacciHeap;
+import org.patheloper.api.pathing.configuration.PathfinderConfiguration;
 import org.patheloper.api.pathing.result.Path;
 import org.patheloper.api.pathing.result.PathState;
 import org.patheloper.api.pathing.result.PathfinderResult;
-import org.patheloper.api.pathing.strategy.PathValidationContext;
-import org.patheloper.api.pathing.strategy.PathfinderStrategy;
+import org.patheloper.api.pathing.filter.PathValidationContext;
+import org.patheloper.api.pathing.filter.PathFilter;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.api.wrapper.PathVector;
 import org.patheloper.model.pathing.Node;
 import org.patheloper.model.pathing.Offset;
 import org.patheloper.model.pathing.result.PathImpl;
 import org.patheloper.model.pathing.result.PathfinderResultImpl;
-import org.patheloper.util.ErrorLogger;
 import org.patheloper.util.ExpiringHashMap;
+import org.patheloper.util.FilterDependencyValidator;
 import org.patheloper.util.GridRegionData;
 import org.patheloper.util.Tuple3;
 import org.patheloper.util.WatchdogUtil;
@@ -31,22 +33,24 @@ public class AStarPathfinder extends AbstractPathfinder {
   private final Map<Tuple3<Integer>, ExpiringHashMap.Entry<GridRegionData>> gridMap =
       new ExpiringHashMap<>();
 
-  public AStarPathfinder(PathingRuleSet pathingRuleSet) {
-    super(pathingRuleSet);
+  public AStarPathfinder(PathfinderConfiguration pathfinderConfiguration) {
+    super(pathfinderConfiguration);
   }
 
   @Override
   protected PathfinderResult resolvePath(
-      PathPosition start, PathPosition target, PathfinderStrategy strategy) {
+      PathPosition start, PathPosition target, List<PathFilter> filters) {
     Node startNode = createStartNode(start, target);
-    PriorityQueue<Node> nodeQueue = new PriorityQueue<>(Collections.singleton(startNode));
+    FibonacciHeap<Double, Node> nodeQueue = new FibonacciHeap<>();
+    nodeQueue.insert(startNode.getFCost(), startNode);
+
     Set<PathPosition> examinedPositions = new HashSet<>();
     int depth = 1;
     Node fallbackNode = startNode;
 
-    while (!nodeQueue.isEmpty() && depth <= pathingRuleSet.getMaxIterations()) {
+    while (!nodeQueue.isEmpty() && depth <= pathfinderConfiguration.getMaxIterations()) {
       tickWatchdogIfNeeded(depth);
-      Node currentNode = getNextNodeFromQueue(nodeQueue);
+      Node currentNode = nodeQueue.deleteMin().getValue();
       fallbackNode = currentNode;
 
       if (hasReachedLengthLimit(currentNode)) {
@@ -61,17 +65,21 @@ public class AStarPathfinder extends AbstractPathfinder {
           nodeQueue,
           examinedPositions,
           currentNode,
-          strategy,
-          this.pathingRuleSet.isAllowingDiagonal());
+          filters,
+          this.pathfinderConfiguration.isAllowingDiagonal());
       depth++;
     }
 
-    return backupPathfindingOrFailure(depth, start, target, strategy, fallbackNode);
+    return backupPathfindingOrFailure(depth, start, target, filters, fallbackNode);
   }
 
   private Node createStartNode(PathPosition start, PathPosition target) {
     return new Node(
-        start.floor(), start.floor(), target.floor(), pathingRuleSet.getHeuristicWeights(), 0);
+        start.floor(),
+        start.floor(),
+        target.floor(),
+        pathfinderConfiguration.getHeuristicWeights(),
+        0);
   }
 
   private void tickWatchdogIfNeeded(int depth) {
@@ -80,17 +88,9 @@ public class AStarPathfinder extends AbstractPathfinder {
     }
   }
 
-  private Node getNextNodeFromQueue(PriorityQueue<Node> nodeQueue) {
-    Node currentNode = nodeQueue.poll();
-    if (currentNode == null) {
-      throw ErrorLogger.logFatalError("A node was null when it shouldn't have been");
-    }
-    return currentNode;
-  }
-
   private boolean hasReachedLengthLimit(Node currentNode) {
-    return pathingRuleSet.getMaxLength() != 0
-        && currentNode.getDepth() > pathingRuleSet.getMaxLength();
+    return pathfinderConfiguration.getMaxLength() != 0
+        && currentNode.getDepth() > pathfinderConfiguration.getMaxLength();
   }
 
   private PathfinderResult finishPathing(PathState pathState, Node currentNode) {
@@ -102,7 +102,7 @@ public class AStarPathfinder extends AbstractPathfinder {
       int depth,
       PathPosition start,
       PathPosition target,
-      PathfinderStrategy strategy,
+      List<PathFilter> filters,
       Node fallbackNode) {
 
     Optional<PathfinderResult> maxIterationsResult = maxIterationsReached(depth, fallbackNode);
@@ -110,7 +110,7 @@ public class AStarPathfinder extends AbstractPathfinder {
       return maxIterationsResult.get();
     }
 
-    Optional<PathfinderResult> counterCheckResult = counterCheck(start, target, strategy);
+    Optional<PathfinderResult> counterCheckResult = counterCheck(start, target, filters);
     if (counterCheckResult.isPresent()) {
       return counterCheckResult.get();
     }
@@ -124,7 +124,7 @@ public class AStarPathfinder extends AbstractPathfinder {
   }
 
   private Optional<PathfinderResult> maxIterationsReached(int depth, Node fallbackNode) {
-    if (depth > pathingRuleSet.getMaxIterations())
+    if (depth > pathfinderConfiguration.getMaxIterations())
       return Optional.of(
           finishPathing(
               new PathfinderResultImpl(
@@ -133,7 +133,7 @@ public class AStarPathfinder extends AbstractPathfinder {
   }
 
   private Optional<PathfinderResult> fallback(Node fallbackNode) {
-    if (pathingRuleSet.isAllowingFallback())
+    if (pathfinderConfiguration.isAllowingFallback())
       return Optional.of(
           finishPathing(
               new PathfinderResultImpl(PathState.FALLBACK, fetchRetracedPath(fallbackNode))));
@@ -141,14 +141,15 @@ public class AStarPathfinder extends AbstractPathfinder {
   }
 
   private Optional<PathfinderResult> counterCheck(
-      PathPosition start, PathPosition target, PathfinderStrategy strategy) {
-    if (!pathingRuleSet.isCounterCheck()) {
+      PathPosition start, PathPosition target, List<PathFilter> filters) {
+    if (!pathfinderConfiguration.isCounterCheck()) {
       return Optional.empty();
     }
 
     AStarPathfinder aStarPathfinder =
-        new AStarPathfinder(PathingRuleSet.deepCopy(pathingRuleSet).withCounterCheck(false));
-    PathfinderResult pathfinderResult = aStarPathfinder.resolvePath(target, start, strategy);
+        new AStarPathfinder(
+            PathfinderConfiguration.deepCopy(pathfinderConfiguration).withCounterCheck(false));
+    PathfinderResult pathfinderResult = aStarPathfinder.resolvePath(target, start, filters);
 
     if (pathfinderResult.getPathState() == PathState.FOUND) {
       return Optional.of(pathfinderResult);
@@ -158,30 +159,31 @@ public class AStarPathfinder extends AbstractPathfinder {
   }
 
   private void evaluateNewNodes(
-      Collection<Node> nodeQueue,
+      FibonacciHeap<Double, Node> nodeQueue,
       Set<PathPosition> examinedPositions,
       Node currentNode,
-      PathfinderStrategy strategy,
+      List<PathFilter> filters,
       boolean allowingDiagonal) {
-    nodeQueue.addAll(
-        fetchValidNeighbours(
-            nodeQueue, examinedPositions, currentNode, strategy, allowingDiagonal));
+    Collection<Node> newNodes =
+        fetchValidNeighbours(examinedPositions, currentNode, filters, allowingDiagonal);
+    for (Node newNode : newNodes) {
+      nodeQueue.insert(newNode.getHeuristic().get(), newNode);
+    }
   }
 
   private boolean isNodeValid(
       Node currentNode,
       Node newNode,
-      Collection<Node> nodeQueue,
       Set<PathPosition> examinedPositions,
-      PathfinderStrategy strategy,
+      List<PathFilter> filters,
       boolean allowingDiagonal) {
-    if (isNodeInvalid(newNode, nodeQueue, strategy)) return false;
+    if (isNodeInvalid(newNode, filters)) return false;
 
     if (!allowingDiagonal) return examinedPositions.add(newNode.getPosition());
 
     if (!isDiagonalMove(currentNode, newNode)) return examinedPositions.add(newNode.getPosition());
 
-    return isReachable(currentNode, newNode, strategy)
+    return isReachable(currentNode, newNode, filters)
         && examinedPositions.add(newNode.getPosition());
   }
 
@@ -196,7 +198,7 @@ public class AStarPathfinder extends AbstractPathfinder {
    * Returns whether the diagonal jump is possible by checking if the adjacent nodes are passable or
    * not. With adjacent nodes are the shared overlapping neighbours meant.
    */
-  private boolean isReachable(Node from, Node to, PathfinderStrategy strategy) {
+  private boolean isReachable(Node from, Node to, List<PathFilter> filters) {
     boolean hasYDifference = from.getPosition().getBlockY() != to.getPosition().getBlockY();
     PathVector[] offsets = Offset.VERTICAL_AND_HORIZONTAL.getVectors();
 
@@ -217,12 +219,7 @@ public class AStarPathfinder extends AbstractPathfinder {
           boolean heightDifferencePassable =
               isHeightDifferencePassable(from, to, vector1, hasYDifference);
 
-          if (strategy.isValid(
-                  new PathValidationContext(
-                      neighbour1.getPosition(),
-                      neighbour1.getParent().getPosition(),
-                      snapshotManager))
-              && heightDifferencePassable) return true;
+          if (doesAnyFilterPass(filters, neighbour1) && heightDifferencePassable) return true;
         }
       }
     }
@@ -241,18 +238,16 @@ public class AStarPathfinder extends AbstractPathfinder {
   }
 
   private Collection<Node> fetchValidNeighbours(
-      Collection<Node> nodeQueue,
       Set<PathPosition> examinedPositions,
       Node currentNode,
-      PathfinderStrategy strategy,
+      List<PathFilter> filters,
       boolean allowingDiagonal) {
     Set<Node> newNodes = new HashSet<>(offset.getVectors().length);
 
     for (PathVector vector : offset.getVectors()) {
       Node newNode = createNeighbourNode(currentNode, vector);
 
-      if (isNodeValid(
-          currentNode, newNode, nodeQueue, examinedPositions, strategy, allowingDiagonal)) {
+      if (isNodeValid(currentNode, newNode, examinedPositions, filters, allowingDiagonal)) {
         newNodes.add(newNode);
       }
     }
@@ -275,18 +270,17 @@ public class AStarPathfinder extends AbstractPathfinder {
             currentNode.getPosition().add(offset),
             currentNode.getStart(),
             currentNode.getTarget(),
-            pathingRuleSet.getHeuristicWeights(),
+            pathfinderConfiguration.getHeuristicWeights(),
             currentNode.getDepth() + 1);
     newNode.setParent(currentNode);
     return newNode;
   }
 
   /**
-   * Checks if the node is invalid. A node is invalid if it is outside the world bounds, is already
-   * in the queue, or is not valid according to the strategy.
+   * Checks if the node is invalid. A node is invalid if it is outside the world bounds or is not
+   * valid according to the filters.
    */
-  private boolean isNodeInvalid(
-      Node node, Collection<Node> nodeQueue, PathfinderStrategy strategy) {
+  private boolean isNodeInvalid(Node node, List<PathFilter> filters) {
     int gridX = node.getPosition().getBlockX() / DEFAULT_GRID_CELL_SIZE;
     int gridY = node.getPosition().getBlockY() / DEFAULT_GRID_CELL_SIZE;
     int gridZ = node.getPosition().getBlockZ() / DEFAULT_GRID_CELL_SIZE;
@@ -306,11 +300,28 @@ public class AStarPathfinder extends AbstractPathfinder {
       }
     }
 
-    return !isWithinWorldBounds(node.getPosition())
-        || nodeQueue.contains(node)
-        || !strategy.isValid(
-            new PathValidationContext(
-                node.getPosition(), node.getParent().getPosition(), snapshotManager));
+    return !isWithinWorldBounds(node.getPosition()) || !doesAnyFilterPass(filters, node);
+  }
+
+  private boolean doesAnyFilterPass(List<PathFilter> filters, Node node) {
+    Map<Class<? extends PathFilter>, Boolean> cache = new HashMap<>();
+
+    for (PathFilter filter : filters) {
+      PathValidationContext context =
+          new PathValidationContext(
+              node.getPosition(),
+              node.getParent() != null ? node.getParent().getPosition() : null,
+              snapshotManager);
+
+      if (!FilterDependencyValidator.validateDependencies(filter, context, filters, cache)) {
+        continue;
+      }
+
+      if (cache.computeIfAbsent(filter.getClass(), k -> filter.filter(context))) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private boolean isWithinWorldBounds(PathPosition position) {
