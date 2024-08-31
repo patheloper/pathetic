@@ -34,7 +34,7 @@ public class HeuristicWeights {
    * The weight applied to the Manhattan distance component of the heuristic. A higher weight
    * favours paths with a greater emphasis on direct, axis-aligned movement.
    */
-  double manhattenWeight;
+  double manhattanWeight;
 
   /**
    * The weight applied to the Octile distance component of the heuristic. A higher weight allows

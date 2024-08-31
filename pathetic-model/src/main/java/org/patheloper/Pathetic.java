@@ -46,7 +46,7 @@ public class Pathetic {
               + "Some functionalities might not be accessible, such as accessing the BlockState of blocks.");
     }
 
-    log.info("Pathetic v{} initialized", modelVersion);
+    log.debug("Pathetic v{} initialized", modelVersion);
   }
 
   public static void shutdown() {
@@ -54,7 +54,7 @@ public class Pathetic {
     SHUTDOWN_LISTENERS.clear();
 
     instance = null;
-    log.info("Pathetic shutdown");
+    log.debug("Pathetic shutdown");
   }
 
   public static boolean isInitialized() {

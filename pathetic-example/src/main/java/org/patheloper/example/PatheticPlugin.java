@@ -2,7 +2,7 @@ package org.patheloper.example;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import org.patheloper.api.pathing.Pathfinder;
-import org.patheloper.api.pathing.configuration.PathingRuleSet;
+import org.patheloper.api.pathing.configuration.PathfinderConfiguration;
 import org.patheloper.example.command.PatheticCommand;
 import org.patheloper.mapping.PatheticMapper;
 
@@ -15,10 +15,10 @@ public final class PatheticPlugin extends JavaPlugin {
     // Initialize the PatheticMapper with this plugin instance
     PatheticMapper.initialize(this);
 
-    // Create a new Pathfinder instance with a custom set of pathing rules
+    // Create a new Pathfinder instance with a custom configuration
     Pathfinder reusablePathfinder =
         PatheticMapper.newPathfinder(
-            PathingRuleSet.createAsyncRuleSet()
+            PathfinderConfiguration.createAsyncConfiguration()
                 .withAllowingFailFast(true) // Allow pathfinding to fail fast if necessary
                 .withAllowingFallback(true) // Allow fallback strategies if the primary fails
                 .withLoadingChunks(true) // Allow chunks to be loaded during pathfinding
