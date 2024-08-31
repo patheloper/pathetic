@@ -1,26 +1,20 @@
 package org.patheloper.model.pathing.pathfinder;
 
 import java.util.*;
-
-import lombok.NonNull;
 import org.jheaps.tree.FibonacciHeap;
 import org.patheloper.api.pathing.configuration.PathfinderConfiguration;
-import org.patheloper.api.pathing.result.Path;
-import org.patheloper.api.pathing.result.PathState;
-import org.patheloper.api.pathing.result.PathfinderResult;
-import org.patheloper.api.pathing.filter.PathValidationContext;
 import org.patheloper.api.pathing.filter.PathFilter;
+import org.patheloper.api.pathing.filter.PathValidationContext;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.api.wrapper.PathVector;
 import org.patheloper.model.pathing.Node;
 import org.patheloper.model.pathing.Offset;
-import org.patheloper.model.pathing.result.PathImpl;
-import org.patheloper.model.pathing.result.PathfinderResultImpl;
 import org.patheloper.util.ExpiringHashMap;
 import org.patheloper.util.FilterDependencyValidator;
 import org.patheloper.util.GridRegionData;
 import org.patheloper.util.Tuple3;
 import org.patheloper.util.WatchdogUtil;
+
 
 public class AStarPathfinder extends AbstractPathfinder {
 
@@ -38,124 +32,30 @@ public class AStarPathfinder extends AbstractPathfinder {
   }
 
   @Override
-  protected PathfinderResult resolvePath(
-      PathPosition start, PathPosition target, List<PathFilter> filters) {
-    Node startNode = createStartNode(start, target);
-    FibonacciHeap<Double, Node> nodeQueue = new FibonacciHeap<>();
-    nodeQueue.insert(startNode.getFCost(), startNode);
-
-    Set<PathPosition> examinedPositions = new HashSet<>();
-    int depth = 1;
-    Node fallbackNode = startNode;
-
-    while (!nodeQueue.isEmpty() && depth <= pathfinderConfiguration.getMaxIterations()) {
-      tickWatchdogIfNeeded(depth);
-      Node currentNode = nodeQueue.deleteMin().getValue();
-      fallbackNode = currentNode;
-
-      if (hasReachedLengthLimit(currentNode)) {
-        return finishPathing(PathState.LENGTH_LIMITED, currentNode);
-      }
-
-      if (currentNode.isTarget()) {
-        return finishPathing(PathState.FOUND, currentNode);
-      }
-
-      evaluateNewNodes(
-          nodeQueue,
-          examinedPositions,
-          currentNode,
-          filters,
-          this.pathfinderConfiguration.isAllowingDiagonal());
-      depth++;
-    }
-
-    return backupPathfindingOrFailure(depth, start, target, filters, fallbackNode);
-  }
-
-  private Node createStartNode(PathPosition start, PathPosition target) {
-    return new Node(
-        start.floor(),
-        start.floor(),
-        target.floor(),
-        pathfinderConfiguration.getHeuristicWeights(),
-        0);
-  }
-
-  private void tickWatchdogIfNeeded(int depth) {
-    if (depth % 500 == 0) {
-      WatchdogUtil.tickWatchdog();
-    }
-  }
-
-  private boolean hasReachedLengthLimit(Node currentNode) {
-    return pathfinderConfiguration.getMaxLength() != 0
-        && currentNode.getDepth() > pathfinderConfiguration.getMaxLength();
-  }
-
-  private PathfinderResult finishPathing(PathState pathState, Node currentNode) {
-    return finishPathing(new PathfinderResultImpl(pathState, fetchRetracedPath(currentNode)));
-  }
-
-  /** If the pathfinder has failed to find a path, it will try to still give a result. */
-  private PathfinderResult backupPathfindingOrFailure(
-      int depth,
+  protected void tick(
       PathPosition start,
       PathPosition target,
-      List<PathFilter> filters,
-      Node fallbackNode) {
+      Node currentNode,
+      Depth depth,
+      FibonacciHeap<Double, Node> nodeQueue,
+      Set<PathPosition> examinedPositions,
+      List<PathFilter> filters) {
 
-    Optional<PathfinderResult> maxIterationsResult = maxIterationsReached(depth, fallbackNode);
-    if (maxIterationsResult.isPresent()) {
-      return maxIterationsResult.get();
-    }
+    tickWatchdogIfNeeded(depth);
 
-    Optional<PathfinderResult> counterCheckResult = counterCheck(start, target, filters);
-    if (counterCheckResult.isPresent()) {
-      return counterCheckResult.get();
-    }
-
-    Optional<PathfinderResult> fallbackResult = fallback(fallbackNode);
-    return fallbackResult.orElseGet(
-        () ->
-            finishPathing(
-                new PathfinderResultImpl(
-                    PathState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET))));
+    evaluateNewNodes(
+        nodeQueue,
+        examinedPositions,
+        currentNode,
+        filters,
+        this.pathfinderConfiguration.isAllowingDiagonal());
+    depth.increment();
   }
 
-  private Optional<PathfinderResult> maxIterationsReached(int depth, Node fallbackNode) {
-    if (depth > pathfinderConfiguration.getMaxIterations())
-      return Optional.of(
-          finishPathing(
-              new PathfinderResultImpl(
-                  PathState.MAX_ITERATIONS_REACHED, fetchRetracedPath(fallbackNode))));
-    return Optional.empty();
-  }
-
-  private Optional<PathfinderResult> fallback(Node fallbackNode) {
-    if (pathfinderConfiguration.isAllowingFallback())
-      return Optional.of(
-          finishPathing(
-              new PathfinderResultImpl(PathState.FALLBACK, fetchRetracedPath(fallbackNode))));
-    return Optional.empty();
-  }
-
-  private Optional<PathfinderResult> counterCheck(
-      PathPosition start, PathPosition target, List<PathFilter> filters) {
-    if (!pathfinderConfiguration.isCounterCheck()) {
-      return Optional.empty();
+  private void tickWatchdogIfNeeded(Depth depth) {
+    if (depth.getDepth() % 500 == 0) {
+      WatchdogUtil.tickWatchdog();
     }
-
-    AStarPathfinder aStarPathfinder =
-        new AStarPathfinder(
-            PathfinderConfiguration.deepCopy(pathfinderConfiguration).withCounterCheck(false));
-    PathfinderResult pathfinderResult = aStarPathfinder.resolvePath(target, start, filters);
-
-    if (pathfinderResult.getPathState() == PathState.FOUND) {
-      return Optional.of(pathfinderResult);
-    }
-
-    return Optional.empty();
   }
 
   private void evaluateNewNodes(
@@ -255,15 +155,6 @@ public class AStarPathfinder extends AbstractPathfinder {
     return newNodes;
   }
 
-  private Path fetchRetracedPath(@NonNull Node node) {
-    if (node.getParent() == null)
-      return new PathImpl(
-          node.getStart(), node.getTarget(), Collections.singletonList(node.getPosition()));
-
-    List<PathPosition> path = tracePathFromNode(node);
-    return new PathImpl(node.getStart(), node.getTarget(), path);
-  }
-
   private Node createNeighbourNode(Node currentNode, PathVector offset) {
     Node newNode =
         new Node(
@@ -327,18 +218,5 @@ public class AStarPathfinder extends AbstractPathfinder {
   private boolean isWithinWorldBounds(PathPosition position) {
     return position.getPathEnvironment().getMinHeight() < position.getBlockY()
         && position.getBlockY() < position.getPathEnvironment().getMaxHeight();
-  }
-
-  private List<PathPosition> tracePathFromNode(Node endNode) {
-    List<PathPosition> path = new ArrayList<>();
-    Node currentNode = endNode;
-
-    while (currentNode != null) {
-      path.add(currentNode.getPosition());
-      currentNode = currentNode.getParent();
-    }
-
-    Collections.reverse(path); // Reverse the path to get the correct order
-    return path;
   }
 }

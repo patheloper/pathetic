@@ -24,4 +24,12 @@ public interface Pathfinder {
   @NonNull
   CompletionStage<PathfinderResult> findPath(
       @NonNull PathPosition start, @NonNull PathPosition target, @Nullable List<@NonNull PathFilter> filters);
+
+  /**
+   * Aborts the running pathfinding process.
+   * <p>
+   * In this context aborts means that the pathfinding process will be stopped and the result will
+   * be {@link org.patheloper.api.pathing.result.PathState#ABORTED}.
+   */
+  void abort();
 }
