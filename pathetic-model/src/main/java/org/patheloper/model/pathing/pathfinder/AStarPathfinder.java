@@ -10,7 +10,6 @@ import org.patheloper.api.wrapper.PathVector;
 import org.patheloper.model.pathing.Node;
 import org.patheloper.model.pathing.Offset;
 import org.patheloper.util.ExpiringHashMap;
-import org.patheloper.util.FilterDependencyValidator;
 import org.patheloper.util.GridRegionData;
 import org.patheloper.util.Tuple3;
 import org.patheloper.util.WatchdogUtil;
@@ -119,7 +118,7 @@ public class AStarPathfinder extends AbstractPathfinder {
           boolean heightDifferencePassable =
               isHeightDifferencePassable(from, to, vector1, hasYDifference);
 
-          if (doesAnyFilterPass(filters, neighbour1) && heightDifferencePassable) return true;
+          if (doAllFiltersPass(filters, neighbour1) && heightDifferencePassable) return true;
         }
       }
     }
@@ -191,10 +190,10 @@ public class AStarPathfinder extends AbstractPathfinder {
       }
     }
 
-    return !isWithinWorldBounds(node.getPosition()) || !doesAnyFilterPass(filters, node);
+    return !isWithinWorldBounds(node.getPosition()) || !doAllFiltersPass(filters, node);
   }
 
-  private boolean doesAnyFilterPass(List<PathFilter> filters, Node node) {
+  private boolean doAllFiltersPass(List<PathFilter> filters, Node node) {
     Map<Class<? extends PathFilter>, Boolean> cache = new HashMap<>();
 
     for (PathFilter filter : filters) {
@@ -204,15 +203,11 @@ public class AStarPathfinder extends AbstractPathfinder {
               node.getParent() != null ? node.getParent().getPosition() : null,
               snapshotManager);
 
-      if (!FilterDependencyValidator.validateDependencies(filter, context, filters, cache)) {
-        continue;
-      }
-
-      if (cache.computeIfAbsent(filter.getClass(), k -> filter.filter(context))) {
-        return true;
+      if (!cache.computeIfAbsent(filter.getClass(), k -> filter.filter(context))) {
+        return false;
       }
     }
-    return false;
+    return true;
   }
 
   private boolean isWithinWorldBounds(PathPosition position) {

@@ -1,6 +1,7 @@
 package org.patheloper.example.command;
 
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,10 +14,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.patheloper.api.pathing.Pathfinder;
-import org.patheloper.api.pathing.filter.filters.SolidGroundPathFilter;
-import org.patheloper.api.pathing.filter.filters.WaterPathFilter;
+import org.patheloper.api.pathing.filter.filters.PassablePathFilter;
 import org.patheloper.api.pathing.result.PathfinderResult;
 import org.patheloper.api.wrapper.PathPosition;
+import org.patheloper.example.filter.DangerousMaterialsFilter;
+import org.patheloper.example.filter.MinimumHeightFilter;
 import org.patheloper.mapping.bukkit.BukkitMapper;
 
 public class PatheticCommand implements TabExecutor {
@@ -47,7 +49,7 @@ public class PatheticCommand implements TabExecutor {
 
     // Retrieve or create a new player session
     PlayerSession playerSession =
-        SESSION_MAP.computeIfAbsent(player.getUniqueId(), k -> new PlayerSession());
+      SESSION_MAP.computeIfAbsent(player.getUniqueId(), k -> new PlayerSession());
 
     // Handle different commands
     switch (args[0]) {
@@ -79,38 +81,39 @@ public class PatheticCommand implements TabExecutor {
 
         /*
          * Initiate pathfinding with the start and target positions, and a list of path filters.
-         * The path filters are used to customize the pathfinding process. In this case, we use
-         * filters to allow only passable paths, with a solid ground and/or water paths.
-         * These filters make perfect sense for player paths. The order is mandatory for prioritizing.
+         * The path filters are used to customize the pathfinding process. In this example, we use
+         * the PassablePathFilter, MinimumHeightFilter, and DangerousMaterialsFilter to filter out
+         * invalid paths.
          */
         CompletionStage<PathfinderResult> pathfindingResult =
-            pathfinder.findPath(
-                start,
-                target,
-                List.of(
-                    new SolidGroundPathFilter(),
-                    new WaterPathFilter())); // SolidGround depends on Passable
+          pathfinder.findPath(
+            start,
+            target,
+            List.of(
+              new PassablePathFilter(),
+              new MinimumHeightFilter(10),
+              new DangerousMaterialsFilter(EnumSet.of(Material.CACTUS, Material.LAVA), 5)));
 
         // Handle the pathfinding result
         pathfindingResult.thenAccept(
-            result -> {
-              player.sendMessage("State: " + result.getPathState().name());
-              player.sendMessage("Path length: " + result.getPath().length());
+          result -> {
+            player.sendMessage("State: " + result.getPathState().name());
+            player.sendMessage("Path length: " + result.getPath().length());
 
-              // If pathfinding is successful, show the path to the player
-              if (result.successful() || result.hasFallenBack()) {
-                result
-                    .getPath()
-                    .forEach(
-                        position -> {
-                          Location location = BukkitMapper.toLocation(position);
-                          player.sendBlockChange(
-                              location, Material.YELLOW_STAINED_GLASS.createBlockData());
-                        });
-              } else {
-                player.sendMessage("Path not found!");
-              }
-            });
+            // If pathfinding is successful, show the path to the player
+            if (result.successful() || result.hasFallenBack()) {
+              result
+                .getPath()
+                .forEach(
+                  position -> {
+                    Location location = BukkitMapper.toLocation(position);
+                    player.sendBlockChange(
+                      location, Material.YELLOW_STAINED_GLASS.createBlockData());
+                  });
+            } else {
+              player.sendMessage("Path not found!");
+            }
+          });
         break;
     }
 
@@ -120,7 +123,7 @@ public class PatheticCommand implements TabExecutor {
   // Provide tab completion for the command
   @Override
   public List<String> onTabComplete(
-      CommandSender sender, Command command, String label, String[] args) {
+    CommandSender sender, Command command, String label, String[] args) {
     return Arrays.asList("pos1", "pos2", "start");
   }
 
