@@ -25,7 +25,7 @@ public class ChunkDataProviderResolver {
       chunkDataProvider = determineChunkDataProvider(major, minor);
     }
 
-    log.info(
+    log.debug(
         "Detected version v{}, using {}", version, chunkDataProvider.getClass().getSimpleName());
   }
 
