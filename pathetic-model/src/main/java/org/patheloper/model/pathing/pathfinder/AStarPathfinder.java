@@ -4,6 +4,7 @@ import java.util.*;
 import org.jheaps.tree.FibonacciHeap;
 import org.patheloper.api.pathing.configuration.PathfinderConfiguration;
 import org.patheloper.api.pathing.filter.PathFilter;
+import org.patheloper.api.pathing.filter.PathFilterContainer;
 import org.patheloper.api.pathing.filter.PathValidationContext;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.api.wrapper.PathVector;
@@ -37,7 +38,8 @@ public class AStarPathfinder extends AbstractPathfinder {
       Depth depth,
       FibonacciHeap<Double, Node> nodeQueue,
       Set<PathPosition> examinedPositions,
-      List<PathFilter> filters) {
+      List<PathFilter> filters,
+      List<PathFilterContainer> filterContainers) {
 
     tickWatchdogIfNeeded(depth);
 
@@ -46,6 +48,7 @@ public class AStarPathfinder extends AbstractPathfinder {
         examinedPositions,
         currentNode,
         filters,
+        filterContainers,
         this.pathfinderConfiguration.isAllowingDiagonal());
     depth.increment();
   }
@@ -61,9 +64,11 @@ public class AStarPathfinder extends AbstractPathfinder {
       Set<PathPosition> examinedPositions,
       Node currentNode,
       List<PathFilter> filters,
+      List<PathFilterContainer> filterContainers,
       boolean allowingDiagonal) {
     Collection<Node> newNodes =
-        fetchValidNeighbours(examinedPositions, currentNode, filters, allowingDiagonal);
+        fetchValidNeighbours(
+            examinedPositions, currentNode, filters, filterContainers, allowingDiagonal);
     for (Node newNode : newNodes) {
       nodeQueue.insert(newNode.getHeuristic().get(), newNode);
     }
@@ -74,14 +79,15 @@ public class AStarPathfinder extends AbstractPathfinder {
       Node newNode,
       Set<PathPosition> examinedPositions,
       List<PathFilter> filters,
+      List<PathFilterContainer> filterContainers,
       boolean allowingDiagonal) {
-    if (isNodeInvalid(newNode, filters)) return false;
+    if (isNodeInvalid(newNode, filters, filterContainers)) return false;
 
     if (!allowingDiagonal) return examinedPositions.add(newNode.getPosition());
 
     if (!isDiagonalMove(currentNode, newNode)) return examinedPositions.add(newNode.getPosition());
 
-    return isReachable(currentNode, newNode, filters)
+    return isReachable(currentNode, newNode, filters, filterContainers)
         && examinedPositions.add(newNode.getPosition());
   }
 
@@ -96,7 +102,8 @@ public class AStarPathfinder extends AbstractPathfinder {
    * Returns whether the diagonal jump is possible by checking if the adjacent nodes are passable or
    * not. With adjacent nodes are the shared overlapping neighbours meant.
    */
-  private boolean isReachable(Node from, Node to, List<PathFilter> filters) {
+  private boolean isReachable(
+      Node from, Node to, List<PathFilter> filters, List<PathFilterContainer> filterContainers) {
     boolean hasYDifference = from.getPosition().getBlockY() != to.getPosition().getBlockY();
     PathVector[] offsets = Offset.VERTICAL_AND_HORIZONTAL.getVectors();
 
@@ -117,7 +124,9 @@ public class AStarPathfinder extends AbstractPathfinder {
           boolean heightDifferencePassable =
               isHeightDifferencePassable(from, to, vector1, hasYDifference);
 
-          if (doAllFiltersPass(filters, neighbour1) && heightDifferencePassable) return true;
+          if (doAllFiltersPass(filters, neighbour1)
+              && doAnyFilterContainerPass(filterContainers, neighbour1)
+              && heightDifferencePassable) return true;
         }
       }
     }
@@ -139,13 +148,15 @@ public class AStarPathfinder extends AbstractPathfinder {
       Set<PathPosition> examinedPositions,
       Node currentNode,
       List<PathFilter> filters,
+      List<PathFilterContainer> filterContainers,
       boolean allowingDiagonal) {
     Set<Node> newNodes = new HashSet<>(offset.getVectors().length);
 
     for (PathVector vector : offset.getVectors()) {
       Node newNode = createNeighbourNode(currentNode, vector);
 
-      if (isNodeValid(currentNode, newNode, examinedPositions, filters, allowingDiagonal)) {
+      if (isNodeValid(
+          currentNode, newNode, examinedPositions, filters, filterContainers, allowingDiagonal)) {
         newNodes.add(newNode);
       }
     }
@@ -169,7 +180,8 @@ public class AStarPathfinder extends AbstractPathfinder {
    * Checks if the node is invalid. A node is invalid if it is outside the world bounds or is not
    * valid according to the filters.
    */
-  private boolean isNodeInvalid(Node node, List<PathFilter> filters) {
+  private boolean isNodeInvalid(
+      Node node, List<PathFilter> filters, List<PathFilterContainer> filterContainers) {
     int gridX = node.getPosition().getBlockX() / DEFAULT_GRID_CELL_SIZE;
     int gridY = node.getPosition().getBlockY() / DEFAULT_GRID_CELL_SIZE;
     int gridZ = node.getPosition().getBlockZ() / DEFAULT_GRID_CELL_SIZE;
@@ -189,7 +201,9 @@ public class AStarPathfinder extends AbstractPathfinder {
       }
     }
 
-    return !isWithinWorldBounds(node.getPosition()) || !doAllFiltersPass(filters, node);
+    return !isWithinWorldBounds(node.getPosition())
+        || !doAllFiltersPass(filters, node)
+        || !doAnyFilterContainerPass(filterContainers, node);
   }
 
   private boolean doAllFiltersPass(List<PathFilter> filters, Node node) {
@@ -205,6 +219,21 @@ public class AStarPathfinder extends AbstractPathfinder {
       }
     }
     return true;
+  }
+
+  private boolean doAnyFilterContainerPass(List<PathFilterContainer> filterContainers, Node node) {
+    if (filterContainers.isEmpty()) return true;
+
+    for (PathFilterContainer filterContainer : filterContainers) {
+      if (filterContainer.filter(
+          new PathValidationContext(
+              node.getPosition(),
+              node.getParent() != null ? node.getParent().getPosition() : null,
+              snapshotManager))) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private boolean isWithinWorldBounds(PathPosition position) {
