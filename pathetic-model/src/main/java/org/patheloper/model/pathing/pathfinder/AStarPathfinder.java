@@ -18,6 +18,7 @@ import org.patheloper.util.WatchdogUtil;
 public class AStarPathfinder extends AbstractPathfinder {
 
   private static final int DEFAULT_GRID_CELL_SIZE = 12;
+  private static final int PRIORITY_BOOST = 1000;
 
   /**
    * The grid map used to store the regional examined positions and Bloom filters for each grid
@@ -66,12 +67,32 @@ public class AStarPathfinder extends AbstractPathfinder {
       List<PathFilter> filters,
       List<PathFilterContainer> filterContainers,
       boolean allowingDiagonal) {
+
     Collection<Node> newNodes =
         fetchValidNeighbours(
             examinedPositions, currentNode, filters, filterContainers, allowingDiagonal);
+
     for (Node newNode : newNodes) {
-      nodeQueue.insert(newNode.getHeuristic().get(), newNode);
+      double priorityAdjustment = calculatePriorityAdjustment(newNode, filterContainers);
+      double adjustedCost = newNode.getHeuristic().get() - priorityAdjustment;
+      nodeQueue.insert(adjustedCost, newNode);
     }
+  }
+
+  private double calculatePriorityAdjustment(
+      Node node, List<PathFilterContainer> filterContainers) {
+    if (!pathfinderConfiguration.isPrioritizing()) return 0.0;
+
+    for (PathFilterContainer filterContainer : filterContainers) {
+      if (filterContainer.filter(
+          new PathValidationContext(
+              node.getPosition(),
+              node.getParent() != null ? node.getParent().getPosition() : null,
+              snapshotManager))) {
+        return PRIORITY_BOOST;
+      }
+    }
+    return 0.0;
   }
 
   private boolean isNodeValid(
@@ -81,6 +102,7 @@ public class AStarPathfinder extends AbstractPathfinder {
       List<PathFilter> filters,
       List<PathFilterContainer> filterContainers,
       boolean allowingDiagonal) {
+
     if (isNodeInvalid(newNode, filters, filterContainers)) return false;
 
     if (!allowingDiagonal) return examinedPositions.add(newNode.getPosition());
@@ -202,8 +224,7 @@ public class AStarPathfinder extends AbstractPathfinder {
     }
 
     return !isWithinWorldBounds(node.getPosition())
-        || !doAllFiltersPass(filters, node)
-        || !doAnyFilterContainerPass(filterContainers, node);
+        || !doAllFiltersPass(filters, node) && !doAnyFilterContainerPass(filterContainers, node);
   }
 
   private boolean doAllFiltersPass(List<PathFilter> filters, Node node) {
@@ -233,7 +254,7 @@ public class AStarPathfinder extends AbstractPathfinder {
         return true;
       }
     }
-    return false;
+    return pathfinderConfiguration.isPrioritizing();
   }
 
   private boolean isWithinWorldBounds(PathPosition position) {

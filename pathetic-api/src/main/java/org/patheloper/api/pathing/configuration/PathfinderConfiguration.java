@@ -77,6 +77,16 @@ public class PathfinderConfiguration {
   boolean counterCheck;
 
   /**
+   * Determines whether the pathfinding algorithm should see PathFilterContainers as prioritization,
+   * instead of filtering. This means that the pathfinding algorithm will prioritize paths that pass
+   * the filters over paths that do not.
+   *
+   * <p>Setting this to true will no longer take the PathFilterContainers into the validation
+   * process.
+   */
+  @Builder.Default boolean prioritizing = false;
+
+  /**
    * The set of weights used to calculate heuristics within the A* algorithm. These influence the
    * pathfinding priority for distance, elevation changes, smoothness, and diagonal movement.
    *
