@@ -23,7 +23,7 @@ import org.patheloper.api.event.PathingStartFindEvent;
 import org.patheloper.api.pathing.Pathfinder;
 import org.patheloper.api.pathing.configuration.PathfinderConfiguration;
 import org.patheloper.api.pathing.filter.PathFilter;
-import org.patheloper.api.pathing.filter.PathFilterContainer;
+import org.patheloper.api.pathing.filter.PathFilterStage;
 import org.patheloper.api.pathing.result.Path;
 import org.patheloper.api.pathing.result.PathState;
 import org.patheloper.api.pathing.result.PathfinderResult;
@@ -101,11 +101,11 @@ abstract class AbstractPathfinder implements Pathfinder {
       @NonNull PathPosition start,
       @NonNull PathPosition target,
       @Nullable List<PathFilter> sharedFilters,
-      @Nullable List<@NonNull PathFilterContainer> filterContainers) {
+      @Nullable List<@NonNull PathFilterStage> filterStages) {
     if (sharedFilters == null) sharedFilters = Collections.emptyList();
-    if (filterContainers == null) filterContainers = Collections.emptyList();
+    if (filterStages == null) filterStages = Collections.emptyList();
 
-    raiseStartEvent(start, target, sharedFilters, filterContainers);
+    raiseStartEvent(start, target, sharedFilters, filterStages);
 
     if (shouldSkipPathing(start, target)) {
       return CompletableFuture.completedFuture(
@@ -114,7 +114,7 @@ abstract class AbstractPathfinder implements Pathfinder {
                   PathState.INITIALLY_FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET))));
     }
 
-    return initiatePathing(start, target, sharedFilters, filterContainers);
+    return initiatePathing(start, target, sharedFilters, filterStages);
   }
 
   /** Give the pathfinder the final shot */
@@ -157,21 +157,21 @@ abstract class AbstractPathfinder implements Pathfinder {
       PathPosition start,
       PathPosition target,
       List<PathFilter> filters,
-      List<PathFilterContainer> filterContainers) {
+      List<PathFilterStage> filterStages) {
     BStatsHandler.increasePathCount();
     return pathfinderConfiguration.isAsync()
         ? CompletableFuture.supplyAsync(
-                () -> executePathing(start, target, filters, filterContainers), PATHING_EXECUTOR)
+                () -> executePathing(start, target, filters, filterStages), PATHING_EXECUTOR)
             .thenApply(this::finishPathing)
             .exceptionally(throwable -> handleException(start, target))
-        : initiateSyncPathing(start, target, filters, filterContainers);
+        : initiateSyncPathing(start, target, filters, filterStages);
   }
 
   private PathfinderResult executePathing(
       PathPosition start,
       PathPosition target,
       List<PathFilter> filters,
-      List<PathFilterContainer> filterContainers) {
+      List<PathFilterStage> filterStages) {
     try {
       Node startNode = createStartNode(start, target);
       FibonacciHeap<Double, Node> nodeQueue = new FibonacciHeap<>();
@@ -207,7 +207,7 @@ abstract class AbstractPathfinder implements Pathfinder {
             nodeQueue,
             examinedPositions,
             filters,
-            filterContainers);
+            filterStages);
       }
 
       aborted = false;
@@ -226,10 +226,10 @@ abstract class AbstractPathfinder implements Pathfinder {
       PathPosition start,
       PathPosition target,
       List<PathFilter> filters,
-      List<PathFilterContainer> filterContainers) {
+      List<PathFilterStage> filterStages) {
     try {
       return CompletableFuture.completedFuture(
-          executePathing(start, target, filters, filterContainers));
+          executePathing(start, target, filters, filterStages));
     } catch (Exception e) {
       throw ErrorLogger.logFatalError("Failed to find path sync", e);
     }
@@ -255,9 +255,9 @@ abstract class AbstractPathfinder implements Pathfinder {
       PathPosition start,
       PathPosition target,
       List<PathFilter> filters,
-      List<PathFilterContainer> filterContainers) {
+      List<PathFilterStage> filterStages) {
     PathingStartFindEvent startEvent =
-        new PathingStartFindEvent(start, target, filters, filterContainers);
+        new PathingStartFindEvent(start, target, filters, filterStages);
     EventPublisher.raiseEvent(startEvent);
   }
 
@@ -376,5 +376,5 @@ abstract class AbstractPathfinder implements Pathfinder {
       FibonacciHeap<Double, Node> nodeQueue,
       Set<PathPosition> examinedPositions,
       List<PathFilter> filters,
-      List<PathFilterContainer> filterContainers);
+      List<PathFilterStage> filterStages);
 }

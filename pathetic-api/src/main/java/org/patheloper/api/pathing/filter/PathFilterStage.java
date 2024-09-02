@@ -5,15 +5,15 @@ import lombok.Value;
 import java.util.Set;
 
 /**
- * A container for multiple path filters.
+ * A stage for multiple PathFilters.
  */
 @Value
-public class PathFilterContainer {
+public class PathFilterStage {
 
   Set<PathFilter> filters;
 
   /**
-   * Filters the given context with all filters in the container.
+   * Filters the given context with all filters in the stage.
    * @param context The context to filter.
    * @return true if the context passes all filters, false otherwise.
    */

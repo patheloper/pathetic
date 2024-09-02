@@ -80,11 +80,11 @@ public class PathfinderConfiguration {
   boolean counterCheck;
 
   /**
-   * Determines whether the pathfinding algorithm should see PathFilterContainers as prioritization,
+   * Determines whether the pathfinding algorithm should see PathFilterStages as prioritization,
    * instead of filtering. This means that the pathfinding algorithm will prioritize paths that pass
    * the filters over paths that do not.
    *
-   * <p>Setting this to true will no longer take the PathFilterContainers into the validation
+   * <p>Setting this to true will no longer take the {@link org.patheloper.api.pathing.filter.PathFilterStage}s into the validation
    * process. Shared filters must still be passed.
    *
    * <p>{@link Pathfinder#findPath(PathPosition, PathPosition, List, List)}

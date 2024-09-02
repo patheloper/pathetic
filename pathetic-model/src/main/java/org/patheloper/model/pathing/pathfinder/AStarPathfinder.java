@@ -4,7 +4,7 @@ import java.util.*;
 import org.jheaps.tree.FibonacciHeap;
 import org.patheloper.api.pathing.configuration.PathfinderConfiguration;
 import org.patheloper.api.pathing.filter.PathFilter;
-import org.patheloper.api.pathing.filter.PathFilterContainer;
+import org.patheloper.api.pathing.filter.PathFilterStage;
 import org.patheloper.api.pathing.filter.PathValidationContext;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.api.wrapper.PathVector;
@@ -40,7 +40,7 @@ public class AStarPathfinder extends AbstractPathfinder {
       FibonacciHeap<Double, Node> nodeQueue,
       Set<PathPosition> examinedPositions,
       List<PathFilter> filters,
-      List<PathFilterContainer> filterContainers) {
+      List<PathFilterStage> filterStages) {
 
     tickWatchdogIfNeeded(depth);
 
@@ -49,7 +49,7 @@ public class AStarPathfinder extends AbstractPathfinder {
         examinedPositions,
         currentNode,
         filters,
-        filterContainers,
+        filterStages,
         this.pathfinderConfiguration.isAllowingDiagonal());
     depth.increment();
   }
@@ -65,25 +65,25 @@ public class AStarPathfinder extends AbstractPathfinder {
       Set<PathPosition> examinedPositions,
       Node currentNode,
       List<PathFilter> filters,
-      List<PathFilterContainer> filterContainers,
+      List<PathFilterStage> filterStages,
       boolean allowingDiagonal) {
 
     Collection<Node> newNodes =
         fetchValidNeighbours(
-            examinedPositions, currentNode, filters, filterContainers, allowingDiagonal);
+            examinedPositions, currentNode, filters, filterStages, allowingDiagonal);
 
     for (Node newNode : newNodes) {
-      double priorityAdjustment = calculatePriorityAdjustment(newNode, filterContainers);
+      double priorityAdjustment = calculatePriorityAdjustment(newNode, filterStages);
       double adjustedCost = newNode.getHeuristic().get() - priorityAdjustment;
       nodeQueue.insert(adjustedCost, newNode);
     }
   }
 
   private double calculatePriorityAdjustment(
-      Node node, List<PathFilterContainer> filterContainers) {
+      Node node, List<PathFilterStage> filterStages) {
     if (!pathfinderConfiguration.isPrioritizing()) return 0.0;
 
-    for (PathFilterContainer filterContainer : filterContainers) {
+    for (PathFilterStage filterContainer : filterStages) {
       if (filterContainer.filter(
           new PathValidationContext(
               node.getPosition(),
@@ -100,16 +100,16 @@ public class AStarPathfinder extends AbstractPathfinder {
       Node newNode,
       Set<PathPosition> examinedPositions,
       List<PathFilter> filters,
-      List<PathFilterContainer> filterContainers,
+      List<PathFilterStage> filterStages,
       boolean allowingDiagonal) {
 
-    if (isNodeInvalid(newNode, filters, filterContainers)) return false;
+    if (isNodeInvalid(newNode, filters, filterStages)) return false;
 
     if (!allowingDiagonal) return examinedPositions.add(newNode.getPosition());
 
     if (!isDiagonalMove(currentNode, newNode)) return examinedPositions.add(newNode.getPosition());
 
-    return isReachable(currentNode, newNode, filters, filterContainers)
+    return isReachable(currentNode, newNode, filters, filterStages)
         && examinedPositions.add(newNode.getPosition());
   }
 
@@ -125,7 +125,7 @@ public class AStarPathfinder extends AbstractPathfinder {
    * not. With adjacent nodes are the shared overlapping neighbours meant.
    */
   private boolean isReachable(
-      Node from, Node to, List<PathFilter> filters, List<PathFilterContainer> filterContainers) {
+      Node from, Node to, List<PathFilter> filters, List<PathFilterStage> filterStages) {
     boolean hasYDifference = from.getPosition().getBlockY() != to.getPosition().getBlockY();
     PathVector[] offsets = Offset.VERTICAL_AND_HORIZONTAL.getVectors();
 
@@ -147,7 +147,7 @@ public class AStarPathfinder extends AbstractPathfinder {
               isHeightDifferencePassable(from, to, vector1, hasYDifference);
 
           if (doAllFiltersPass(filters, neighbour1)
-              && doAnyFilterContainerPass(filterContainers, neighbour1)
+              && doAnyFilterStagePass(filterStages, neighbour1)
               && heightDifferencePassable) return true;
         }
       }
@@ -170,7 +170,7 @@ public class AStarPathfinder extends AbstractPathfinder {
       Set<PathPosition> examinedPositions,
       Node currentNode,
       List<PathFilter> filters,
-      List<PathFilterContainer> filterContainers,
+      List<PathFilterStage> filterStages,
       boolean allowingDiagonal) {
     Set<Node> newNodes = new HashSet<>(offset.getVectors().length);
 
@@ -178,7 +178,7 @@ public class AStarPathfinder extends AbstractPathfinder {
       Node newNode = createNeighbourNode(currentNode, vector);
 
       if (isNodeValid(
-          currentNode, newNode, examinedPositions, filters, filterContainers, allowingDiagonal)) {
+          currentNode, newNode, examinedPositions, filters, filterStages, allowingDiagonal)) {
         newNodes.add(newNode);
       }
     }
@@ -203,7 +203,7 @@ public class AStarPathfinder extends AbstractPathfinder {
    * valid according to the filters.
    */
   private boolean isNodeInvalid(
-      Node node, List<PathFilter> filters, List<PathFilterContainer> filterContainers) {
+      Node node, List<PathFilter> filters, List<PathFilterStage> filterStages) {
     int gridX = node.getPosition().getBlockX() / DEFAULT_GRID_CELL_SIZE;
     int gridY = node.getPosition().getBlockY() / DEFAULT_GRID_CELL_SIZE;
     int gridZ = node.getPosition().getBlockZ() / DEFAULT_GRID_CELL_SIZE;
@@ -224,7 +224,7 @@ public class AStarPathfinder extends AbstractPathfinder {
     }
 
     return !isWithinWorldBounds(node.getPosition())
-        || !doAllFiltersPass(filters, node) && !doAnyFilterContainerPass(filterContainers, node);
+        || !doAllFiltersPass(filters, node) && !doAnyFilterStagePass(filterStages, node);
   }
 
   private boolean doAllFiltersPass(List<PathFilter> filters, Node node) {
@@ -242,11 +242,11 @@ public class AStarPathfinder extends AbstractPathfinder {
     return true;
   }
 
-  private boolean doAnyFilterContainerPass(List<PathFilterContainer> filterContainers, Node node) {
-    if (filterContainers.isEmpty()) return true;
+  private boolean doAnyFilterStagePass(List<PathFilterStage> filterStages, Node node) {
+    if (filterStages.isEmpty()) return true;
 
-    for (PathFilterContainer filterContainer : filterContainers) {
-      if (filterContainer.filter(
+    for (PathFilterStage filterStage : filterStages) {
+      if (filterStage.filter(
           new PathValidationContext(
               node.getPosition(),
               node.getParent() != null ? node.getParent().getPosition() : null,
