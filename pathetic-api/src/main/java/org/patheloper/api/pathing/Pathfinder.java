@@ -38,7 +38,8 @@ public interface Pathfinder {
    * a container returns false, the next container will be checked. Only one container needs to
    * return true for the path to be considered valid.
    *
-   * @api.Note The containers will be checked in the order they are provided.
+   * @api.Note The containers will be checked in the order they are provided. The sharedFilters will
+   *     be applied before the filterContainers.
    * @param start The start position of the path.
    * @param target The target position of the path.
    * @param sharedFilters A list of {@link PathFilter}'s, which will be applied to all containers.
