@@ -41,13 +41,15 @@ public interface Pathfinder {
    * @api.Note The containers will be checked in the order they are provided.
    * @param start The start position of the path.
    * @param target The target position of the path.
+   * @param sharedFilters A list of {@link PathFilter}'s, which will be applied to all containers.
    * @param filterContainers A list of {@link PathFilterContainer}'s to apply to the pathfinding
    * @return An {@link CompletionStage} that will contain a {@link PathfinderResult}.
    */
   @NonNull
-  CompletionStage<PathfinderResult> findPreferredPath(
+  CompletionStage<PathfinderResult> findPath(
       @NonNull PathPosition start,
       @NonNull PathPosition target,
+      @Nullable List<PathFilter> sharedFilters,
       @Nullable List<@NonNull PathFilterContainer> filterContainers);
 
   /**
