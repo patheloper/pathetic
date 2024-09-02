@@ -22,7 +22,7 @@ public class ChunkUtils {
             ChunkSnapshot.class.getDeclaredMethod(
                 "getBlockTypeId", int.class, int.class, int.class);
       } catch (NoSuchMethodException e) {
-        e.printStackTrace();
+        throw ErrorLogger.logFatalError(e.getMessage(), e);
       }
     }
   }

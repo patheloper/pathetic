@@ -10,20 +10,23 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.Value;
 import org.patheloper.api.pathing.result.Path;
 import org.patheloper.api.util.ParameterizedSupplier;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.util.ErrorLogger;
 
+@Value
 public class PathImpl implements Path {
 
-  @NonNull private final Iterable<PathPosition> positions;
-  @NonNull @Getter private final PathPosition start;
-  @NonNull @Getter private final PathPosition end;
+  @NonNull @Getter(AccessLevel.NONE) Iterable<PathPosition> positions;
+  @NonNull PathPosition start;
+  @NonNull PathPosition end;
 
-  private final int length;
+  int length;
 
   public PathImpl(
       @NonNull PathPosition start,
