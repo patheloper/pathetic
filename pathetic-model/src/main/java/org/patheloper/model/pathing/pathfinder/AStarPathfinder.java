@@ -14,7 +14,6 @@ import org.patheloper.util.GridRegionData;
 import org.patheloper.util.Tuple3;
 import org.patheloper.util.WatchdogUtil;
 
-
 public class AStarPathfinder extends AbstractPathfinder {
 
   private static final int DEFAULT_GRID_CELL_SIZE = 12;
@@ -194,8 +193,6 @@ public class AStarPathfinder extends AbstractPathfinder {
   }
 
   private boolean doAllFiltersPass(List<PathFilter> filters, Node node) {
-    Map<Class<? extends PathFilter>, Boolean> cache = new HashMap<>();
-
     for (PathFilter filter : filters) {
       PathValidationContext context =
           new PathValidationContext(
@@ -203,7 +200,7 @@ public class AStarPathfinder extends AbstractPathfinder {
               node.getParent() != null ? node.getParent().getPosition() : null,
               snapshotManager);
 
-      if (!cache.computeIfAbsent(filter.getClass(), k -> filter.filter(context))) {
+      if (!filter.filter(context)) {
         return false;
       }
     }
