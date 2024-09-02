@@ -1,11 +1,14 @@
 package org.patheloper.api.pathing.configuration;
 
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.With;
+import org.patheloper.api.pathing.Pathfinder;
+import org.patheloper.api.wrapper.PathPosition;
 
 /**
  * Defines a set of configurable parameters that govern the behavior of the A* pathfinding
@@ -75,6 +78,18 @@ public class PathfinderConfiguration {
    * some failure cases.
    */
   boolean counterCheck;
+
+  /**
+   * Determines whether the pathfinding algorithm should see PathFilterContainers as prioritization,
+   * instead of filtering. This means that the pathfinding algorithm will prioritize paths that pass
+   * the filters over paths that do not.
+   *
+   * <p>Setting this to true will no longer take the PathFilterContainers into the validation
+   * process. Shared filters must still be passed.
+   *
+   * <p>{@link Pathfinder#findPath(PathPosition, PathPosition, List, List)}
+   */
+  @Builder.Default boolean prioritizing = false;
 
   /**
    * The set of weights used to calculate heuristics within the A* algorithm. These influence the
