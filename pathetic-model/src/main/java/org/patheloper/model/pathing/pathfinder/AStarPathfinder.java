@@ -18,7 +18,7 @@ import org.patheloper.util.WatchdogUtil;
 public class AStarPathfinder extends AbstractPathfinder {
 
   private static final int DEFAULT_GRID_CELL_SIZE = 12;
-  private static final int PRIORITY_BOOST = 1000;
+  private static final int PRIORITY_BOOST_IN_PERCENTAGE = 20;
 
   /**
    * The grid map used to store the regional examined positions and Bloom filters for each grid
@@ -89,7 +89,7 @@ public class AStarPathfinder extends AbstractPathfinder {
               node.getPosition(),
               node.getParent() != null ? node.getParent().getPosition() : null,
               snapshotManager))) {
-        return PRIORITY_BOOST;
+        return node.getHeuristic().get() * (PRIORITY_BOOST_IN_PERCENTAGE / 100.0);
       }
     }
     return 0.0;
