@@ -92,6 +92,13 @@ public class PathfinderConfiguration {
   @Builder.Default boolean prioritizing = false;
 
   /**
+   * If set to true, the pathfinding algorithm will attempt to backtrack to the last known valid
+   * position when it encounters an obstacle. This can help avoid dead ends but may lead to
+   * suboptimal paths.
+   */
+  boolean backtrace;
+
+  /**
    * The set of weights used to calculate heuristics within the A* algorithm. These influence the
    * pathfinding priority for distance, elevation changes, smoothness, and diagonal movement.
    *

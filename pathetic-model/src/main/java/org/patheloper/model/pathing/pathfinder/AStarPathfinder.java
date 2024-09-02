@@ -27,6 +27,12 @@ public class AStarPathfinder extends AbstractPathfinder {
   private final Map<Tuple3<Integer>, ExpiringHashMap.Entry<GridRegionData>> gridMap =
       new ExpiringHashMap<>();
 
+  /**
+   * The stack used to store the decision points. A decision point is a node that has multiple valid
+   * neighbours.
+   */
+  private final Deque<Node> decisionPointStack = new ArrayDeque<>();
+
   public AStarPathfinder(PathfinderConfiguration pathfinderConfiguration) {
     super(pathfinderConfiguration);
   }
@@ -72,11 +78,55 @@ public class AStarPathfinder extends AbstractPathfinder {
         fetchValidNeighbours(
             examinedPositions, currentNode, filters, filterContainers, allowingDiagonal);
 
+    if (pathfinderConfiguration.isBacktrace()) {
+      if (newNodes.isEmpty()) {
+        backtrack(nodeQueue, examinedPositions, filters, filterContainers, allowingDiagonal);
+        return;
+      } else {
+        if (newNodes.size() > 1) {
+          decisionPointStack.push(currentNode);
+        }
+      }
+    }
+
     for (Node newNode : newNodes) {
       double priorityAdjustment = calculatePriorityAdjustment(newNode, filterContainers);
       double adjustedCost = newNode.getHeuristic().get() - priorityAdjustment;
       nodeQueue.insert(adjustedCost, newNode);
     }
+  }
+
+  private void backtrack(
+      FibonacciHeap<Double, Node> nodeQueue,
+      Set<PathPosition> examinedPositions,
+      List<PathFilter> filters,
+      List<PathFilterContainer> filterContainers,
+      boolean allowingDiagonal) {
+
+    while (!decisionPointStack.isEmpty()) {
+      Node lastDecisionPoint = decisionPointStack.pop();
+
+      // Fetch valid neighbors for the decision point that haven't been examined yet
+      Collection<Node> newNodes =
+          fetchValidNeighbours(
+              examinedPositions, lastDecisionPoint, filters, filterContainers, allowingDiagonal);
+
+      // If new nodes are found, reintegrate the decision point back into the process
+      if (!newNodes.isEmpty()) {
+        decisionPointStack.push(lastDecisionPoint); // Push it back to the stack
+
+        for (Node newNode : newNodes) {
+          double priorityAdjustment = calculatePriorityAdjustment(newNode, filterContainers);
+          double adjustedCost = newNode.getHeuristic().get() - priorityAdjustment;
+          nodeQueue.insert(adjustedCost, newNode);
+        }
+
+        // We've found a valid decision point to continue from
+        return;
+      }
+    }
+
+    // If the decision point stack is exhausted, it means the pathfinding has failed
   }
 
   private double calculatePriorityAdjustment(
