@@ -23,6 +23,7 @@ import org.patheloper.api.event.PathingStartFindEvent;
 import org.patheloper.api.pathing.Pathfinder;
 import org.patheloper.api.pathing.configuration.PathfinderConfiguration;
 import org.patheloper.api.pathing.filter.PathFilter;
+import org.patheloper.api.pathing.filter.PathFilterContainer;
 import org.patheloper.api.pathing.result.Path;
 import org.patheloper.api.pathing.result.PathState;
 import org.patheloper.api.pathing.result.PathfinderResult;
