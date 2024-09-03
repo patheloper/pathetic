@@ -83,8 +83,8 @@ public class AStarPathfinder extends AbstractPathfinder {
       Node node, List<PathFilterStage> filterStages) {
     if (!pathfinderConfiguration.isPrioritizing()) return 0.0;
 
-    for (PathFilterStage filterContainer : filterStages) {
-      if (filterContainer.filter(
+    for (PathFilterStage filterStage : filterStages) {
+      if (filterStage.filter(
           new PathValidationContext(
               node.getPosition(),
               node.getParent() != null ? node.getParent().getPosition() : null,

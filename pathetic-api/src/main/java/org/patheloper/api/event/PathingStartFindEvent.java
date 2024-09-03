@@ -16,5 +16,5 @@ public class PathingStartFindEvent implements PathingEvent {
   @NonNull private final PathPosition start;
   @NonNull private final PathPosition target;
   @NonNull private final List<PathFilter> filters;
-  @NonNull private final List<PathFilterStage> filterContainers;
+  @NonNull private final List<PathFilterStage> filterStages;
 }
