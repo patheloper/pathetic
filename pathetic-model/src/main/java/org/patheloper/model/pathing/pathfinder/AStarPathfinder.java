@@ -73,16 +73,16 @@ public class AStarPathfinder extends AbstractPathfinder {
             examinedPositions, currentNode, filters, filterStages, allowingDiagonal);
 
     for (Node newNode : newNodes) {
-      double priorityAdjustment = calculatePriorityAdjustment(newNode, filterStages);
-      double adjustedCost = newNode.getHeuristic().get() - priorityAdjustment;
-      nodeQueue.insert(adjustedCost, newNode);
+      double nodeCost = newNode.getHeuristic().get();
+      if (pathfinderConfiguration.isPrioritizing()) {
+        double priorityAdjustment = calculatePriorityAdjustment(newNode, filterStages);
+        nodeCost += priorityAdjustment;
+      }
+      nodeQueue.insert(nodeCost, newNode);
     }
   }
 
-  private double calculatePriorityAdjustment(
-      Node node, List<PathFilterStage> filterStages) {
-    if (!pathfinderConfiguration.isPrioritizing()) return 0.0;
-
+  private double calculatePriorityAdjustment(Node node, List<PathFilterStage> filterStages) {
     for (PathFilterStage filterStage : filterStages) {
       if (filterStage.filter(
           new PathValidationContext(
@@ -224,7 +224,9 @@ public class AStarPathfinder extends AbstractPathfinder {
     }
 
     return !isWithinWorldBounds(node.getPosition())
-        || !doAllFiltersPass(filters, node) && !doAnyFilterStagePass(filterStages, node);
+        || !doAllFiltersPass(filters, node)
+            && (!pathfinderConfiguration.isPrioritizing()
+                && !doAnyFilterStagePass(filterStages, node));
   }
 
   private boolean doAllFiltersPass(List<PathFilter> filters, Node node) {
@@ -254,7 +256,7 @@ public class AStarPathfinder extends AbstractPathfinder {
         return true;
       }
     }
-    return pathfinderConfiguration.isPrioritizing();
+    return false;
   }
 
   private boolean isWithinWorldBounds(PathPosition position) {
