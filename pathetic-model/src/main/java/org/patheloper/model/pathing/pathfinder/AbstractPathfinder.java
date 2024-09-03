@@ -190,7 +190,13 @@ abstract class AbstractPathfinder implements Pathfinder {
 
         tick(start, target, currentNode, depth, nodeQueue, examinedPositions, filters);
       }
-      return backupPathfindingOrFailure(depth, start, target, filters, fallbackNode);
+
+      Optional<PathfinderResult> maxIterationsResult = maxIterationsReached(depth, fallbackNode);
+      if (maxIterationsResult.isPresent()) {
+        return maxIterationsResult.get();
+      }
+
+      return backupPathfindingOrFailure(start, target, filters, fallbackNode);
     } catch (Exception e) {
       throw ErrorLogger.logFatalErrorWithStacktrace("Failed to find path", e);
     }
@@ -259,16 +265,7 @@ abstract class AbstractPathfinder implements Pathfinder {
 
   /** If the pathfinder has failed to find a path, it will try to still give a result. */
   private PathfinderResult backupPathfindingOrFailure(
-      Depth depth,
-      PathPosition start,
-      PathPosition target,
-      List<PathFilter> filters,
-      Node fallbackNode) {
-
-    Optional<PathfinderResult> maxIterationsResult = maxIterationsReached(depth, fallbackNode);
-    if (maxIterationsResult.isPresent()) {
-      return maxIterationsResult.get();
-    }
+      PathPosition start, PathPosition target, List<PathFilter> filters, Node fallbackNode) {
 
     Optional<PathfinderResult> counterCheckResult = counterCheck(start, target, filters);
     if (counterCheckResult.isPresent()) {
