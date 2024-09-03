@@ -114,6 +114,10 @@ abstract class AbstractPathfinder implements Pathfinder {
     this.aborted = true;
   }
 
+  private void cleanupFilters(List<PathFilter> filters) {
+    filters.forEach(PathFilter::cleanup);
+  }
+
   private boolean shouldSkipPathing(PathPosition start, PathPosition target) {
     return !isSameEnvironment(start, target)
         || isSameBlock(start, target)
@@ -149,7 +153,7 @@ abstract class AbstractPathfinder implements Pathfinder {
     BStatsHandler.increasePathCount();
     return pathfinderConfiguration.isAsync()
         ? CompletableFuture.supplyAsync(
-                () -> executePathing(start, target, filters), PATHING_EXECUTOR)
+                () -> executePathingAndCallCleanup(start, target, filters), PATHING_EXECUTOR)
             .thenApply(this::finishPathing)
             .exceptionally(throwable -> handleException(start, target))
         : initiateSyncPathing(start, target, filters);
@@ -199,10 +203,18 @@ abstract class AbstractPathfinder implements Pathfinder {
   private CompletionStage<PathfinderResult> initiateSyncPathing(
       PathPosition start, PathPosition target, List<PathFilter> filters) {
     try {
-      return CompletableFuture.completedFuture(executePathing(start, target, filters));
+      return CompletableFuture.completedFuture(
+          executePathingAndCallCleanup(start, target, filters));
     } catch (Exception e) {
       throw ErrorLogger.logFatalError("Failed to find path sync", e);
     }
+  }
+
+  private PathfinderResult executePathingAndCallCleanup(
+      PathPosition start, PathPosition target, List<PathFilter> filters) {
+    PathfinderResult result = executePathing(start, target, filters);
+    cleanupFilters(filters);
+    return result;
   }
 
   private PathfinderResult handleException(PathPosition start, PathPosition target) {
