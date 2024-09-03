@@ -76,7 +76,7 @@ public class AStarPathfinder extends AbstractPathfinder {
       double nodeCost = newNode.getHeuristic().get();
       if (pathfinderConfiguration.isPrioritizing()) {
         double priorityAdjustment = calculatePriorityAdjustment(newNode, filterStages);
-        nodeCost += priorityAdjustment;
+        nodeCost -= priorityAdjustment;
       }
       nodeQueue.insert(nodeCost, newNode);
     }
