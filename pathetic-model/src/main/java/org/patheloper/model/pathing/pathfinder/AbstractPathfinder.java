@@ -1,5 +1,6 @@
 package org.patheloper.model.pathing.pathfinder;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -41,11 +42,11 @@ import org.patheloper.util.ErrorLogger;
  * The AbstractPathfinder class provides a skeletal implementation of the Pathfinder interface and
  * defines the common behavior for all pathfinding algorithms. It provides a default implementation
  * for determining the offset and snapshot manager based on the pathing rule set.
- * <p>
- * This class now operates in a tick-wise manner, meaning that the pathfinding process progresses
- * incrementally, with each "tick" representing a small step in the algorithm's execution. At each tick,
- * the algorithm evaluates nodes, updates the priority queue, and checks for conditions such as
- * reaching the target or encountering an abort signal.
+ *
+ * <p>This class now operates in a tick-wise manner, meaning that the pathfinding process progresses
+ * incrementally, with each "tick" representing a small step in the algorithm's execution. At each
+ * tick, the algorithm evaluates nodes, updates the priority queue, and checks for conditions such
+ * as reaching the target or encountering an abort signal.
  */
 abstract class AbstractPathfinder implements Pathfinder {
 
@@ -295,17 +296,23 @@ abstract class AbstractPathfinder implements Pathfinder {
       return Optional.empty();
     }
 
-    AStarPathfinder aStarPathfinder =
-        new AStarPathfinder(
-            PathfinderConfiguration.deepCopy(pathfinderConfiguration).withCounterCheck(false));
+    PathfinderConfiguration pathConfig =
+        PathfinderConfiguration.deepCopy(pathfinderConfiguration).withCounterCheck(false);
     try {
+      Pathfinder pathfinder =
+          getClass().getConstructor(PathfinderConfiguration.class).newInstance(pathConfig);
       PathfinderResult pathfinderResult =
-          aStarPathfinder.findPath(start, target, filters).toCompletableFuture().get();
+          pathfinder.findPath(start, target, filters).toCompletableFuture().get();
 
       if (pathfinderResult.getPathState() == PathState.FOUND) {
         return Optional.of(pathfinderResult);
       }
-    } catch (InterruptedException | ExecutionException e) {
+    } catch (InstantiationException
+        | IllegalAccessException
+        | InvocationTargetException
+        | NoSuchMethodException
+        | ExecutionException
+        | InterruptedException e) {
       throw new RuntimeException(e);
     }
 
