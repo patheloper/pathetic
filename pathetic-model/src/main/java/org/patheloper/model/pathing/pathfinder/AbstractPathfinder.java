@@ -1,6 +1,5 @@
 package org.patheloper.model.pathing.pathfinder;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -24,6 +23,7 @@ import org.patheloper.api.event.PathingStartFindEvent;
 import org.patheloper.api.pathing.Pathfinder;
 import org.patheloper.api.pathing.configuration.PathfinderConfiguration;
 import org.patheloper.api.pathing.filter.PathFilter;
+import org.patheloper.api.pathing.filter.PathFilterStage;
 import org.patheloper.api.pathing.result.Path;
 import org.patheloper.api.pathing.result.PathState;
 import org.patheloper.api.pathing.result.PathfinderResult;
@@ -93,10 +93,19 @@ abstract class AbstractPathfinder implements Pathfinder {
       @NonNull PathPosition start,
       @NonNull PathPosition target,
       @Nullable List<PathFilter> filters) {
+    return findPath(start, target, filters, null);
+  }
 
-    if (filters == null) filters = Collections.emptyList();
+  @Override
+  public @NonNull CompletionStage<PathfinderResult> findPath(
+      @NonNull PathPosition start,
+      @NonNull PathPosition target,
+      @Nullable List<PathFilter> sharedFilters,
+      @Nullable List<@NonNull PathFilterStage> filterStages) {
+    if (sharedFilters == null) sharedFilters = Collections.emptyList();
+    if (filterStages == null) filterStages = Collections.emptyList();
 
-    raiseStartEvent(start, target, filters);
+    raiseStartEvent(start, target, sharedFilters, filterStages);
 
     if (shouldSkipPathing(start, target)) {
       return CompletableFuture.completedFuture(
@@ -105,17 +114,13 @@ abstract class AbstractPathfinder implements Pathfinder {
                   PathState.INITIALLY_FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET))));
     }
 
-    return initiatePathing(start, target, filters);
+    return initiatePathing(start, target, sharedFilters, filterStages);
   }
 
   /** Give the pathfinder the final shot */
   @Override
   public void abort() {
     this.aborted = true;
-  }
-
-  private void cleanupFilters(List<PathFilter> filters) {
-    filters.forEach(PathFilter::cleanup);
   }
 
   private boolean shouldSkipPathing(PathPosition start, PathPosition target) {
@@ -149,18 +154,24 @@ abstract class AbstractPathfinder implements Pathfinder {
   }
 
   private CompletionStage<PathfinderResult> initiatePathing(
-      PathPosition start, PathPosition target, List<PathFilter> filters) {
+      PathPosition start,
+      PathPosition target,
+      List<PathFilter> filters,
+      List<PathFilterStage> filterStages) {
     BStatsHandler.increasePathCount();
     return pathfinderConfiguration.isAsync()
         ? CompletableFuture.supplyAsync(
-                () -> executePathingAndCallCleanup(start, target, filters), PATHING_EXECUTOR)
+                () -> executePathing(start, target, filters, filterStages), PATHING_EXECUTOR)
             .thenApply(this::finishPathing)
             .exceptionally(throwable -> handleException(start, target))
-        : initiateSyncPathing(start, target, filters);
+        : initiateSyncPathing(start, target, filters, filterStages);
   }
 
   private PathfinderResult executePathing(
-      PathPosition start, PathPosition target, List<PathFilter> filters) {
+      PathPosition start,
+      PathPosition target,
+      List<PathFilter> filters,
+      List<PathFilterStage> filterStages) {
     try {
       Node startNode = createStartNode(start, target);
       FibonacciHeap<Double, Node> nodeQueue = new FibonacciHeap<>();
@@ -174,29 +185,34 @@ abstract class AbstractPathfinder implements Pathfinder {
           && depth.getDepth() <= pathfinderConfiguration.getMaxIterations()) {
 
         if (isAborted()) {
-          return resetAbortedAndFinishPathing(PathState.ABORTED, fallbackNode);
+          return finishPathing(PathState.ABORTED, fallbackNode);
         }
 
         Node currentNode = nodeQueue.deleteMin().getValue();
         fallbackNode = currentNode;
 
         if (hasReachedLengthLimit(currentNode)) {
-          return resetAbortedAndFinishPathing(PathState.LENGTH_LIMITED, currentNode);
+          return finishPathing(PathState.LENGTH_LIMITED, currentNode);
         }
 
         if (currentNode.isTarget()) {
-          return resetAbortedAndFinishPathing(PathState.FOUND, currentNode);
+          return finishPathing(PathState.FOUND, currentNode);
         }
 
-        tick(start, target, currentNode, depth, nodeQueue, examinedPositions, filters);
+        tick(
+            start,
+            target,
+            currentNode,
+            depth,
+            nodeQueue,
+            examinedPositions,
+            filters,
+            filterStages);
       }
 
-      Optional<PathfinderResult> maxIterationsResult = maxIterationsReached(depth, fallbackNode);
-      if (maxIterationsResult.isPresent()) {
-        return maxIterationsResult.get();
-      }
+      aborted = false;
 
-      return backupPathfindingOrFailure(start, target, filters, fallbackNode);
+      return backupPathfindingOrFailure(depth, start, target, filters, fallbackNode);
     } catch (Exception e) {
       throw ErrorLogger.logFatalErrorWithStacktrace("Failed to find path", e);
     }
@@ -207,20 +223,16 @@ abstract class AbstractPathfinder implements Pathfinder {
   }
 
   private CompletionStage<PathfinderResult> initiateSyncPathing(
-      PathPosition start, PathPosition target, List<PathFilter> filters) {
+      PathPosition start,
+      PathPosition target,
+      List<PathFilter> filters,
+      List<PathFilterStage> filterStages) {
     try {
       return CompletableFuture.completedFuture(
-          executePathingAndCallCleanup(start, target, filters));
+          executePathing(start, target, filters, filterStages));
     } catch (Exception e) {
       throw ErrorLogger.logFatalError("Failed to find path sync", e);
     }
-  }
-
-  private PathfinderResult executePathingAndCallCleanup(
-      PathPosition start, PathPosition target, List<PathFilter> filters) {
-    PathfinderResult result = executePathing(start, target, filters);
-    cleanupFilters(filters);
-    return result;
   }
 
   private PathfinderResult handleException(PathPosition start, PathPosition target) {
@@ -239,8 +251,13 @@ abstract class AbstractPathfinder implements Pathfinder {
     EventPublisher.raiseEvent(finishedEvent);
   }
 
-  private void raiseStartEvent(PathPosition start, PathPosition target, List<PathFilter> filters) {
-    PathingStartFindEvent startEvent = new PathingStartFindEvent(start, target, filters);
+  private void raiseStartEvent(
+      PathPosition start,
+      PathPosition target,
+      List<PathFilter> filters,
+      List<PathFilterStage> filterStages) {
+    PathingStartFindEvent startEvent =
+        new PathingStartFindEvent(start, target, filters, filterStages);
     EventPublisher.raiseEvent(startEvent);
   }
 
@@ -258,14 +275,22 @@ abstract class AbstractPathfinder implements Pathfinder {
         && currentNode.getDepth() > pathfinderConfiguration.getMaxLength();
   }
 
-  private PathfinderResult resetAbortedAndFinishPathing(PathState pathState, Node currentNode) {
-    aborted = false;
+  private PathfinderResult finishPathing(PathState pathState, Node currentNode) {
     return finishPathing(new PathfinderResultImpl(pathState, fetchRetracedPath(currentNode)));
   }
 
   /** If the pathfinder has failed to find a path, it will try to still give a result. */
   private PathfinderResult backupPathfindingOrFailure(
-      PathPosition start, PathPosition target, List<PathFilter> filters, Node fallbackNode) {
+      Depth depth,
+      PathPosition start,
+      PathPosition target,
+      List<PathFilter> filters,
+      Node fallbackNode) {
+
+    Optional<PathfinderResult> maxIterationsResult = maxIterationsReached(depth, fallbackNode);
+    if (maxIterationsResult.isPresent()) {
+      return maxIterationsResult.get();
+    }
 
     Optional<PathfinderResult> counterCheckResult = counterCheck(start, target, filters);
     if (counterCheckResult.isPresent()) {
@@ -303,23 +328,17 @@ abstract class AbstractPathfinder implements Pathfinder {
       return Optional.empty();
     }
 
-    PathfinderConfiguration pathConfig =
-        PathfinderConfiguration.deepCopy(pathfinderConfiguration).withCounterCheck(false);
+    AStarPathfinder aStarPathfinder =
+        new AStarPathfinder(
+            PathfinderConfiguration.deepCopy(pathfinderConfiguration).withCounterCheck(false));
     try {
-      Pathfinder pathfinder =
-          getClass().getConstructor(PathfinderConfiguration.class).newInstance(pathConfig);
       PathfinderResult pathfinderResult =
-          pathfinder.findPath(start, target, filters).toCompletableFuture().get();
+          aStarPathfinder.findPath(start, target, filters).toCompletableFuture().get();
 
       if (pathfinderResult.getPathState() == PathState.FOUND) {
         return Optional.of(pathfinderResult);
       }
-    } catch (InstantiationException
-        | IllegalAccessException
-        | InvocationTargetException
-        | NoSuchMethodException
-        | ExecutionException
-        | InterruptedException e) {
+    } catch (InterruptedException | ExecutionException e) {
       throw new RuntimeException(e);
     }
 
@@ -356,5 +375,6 @@ abstract class AbstractPathfinder implements Pathfinder {
       Depth depth,
       FibonacciHeap<Double, Node> nodeQueue,
       Set<PathPosition> examinedPositions,
-      List<PathFilter> filters);
+      List<PathFilter> filters,
+      List<PathFilterStage> filterStages);
 }
