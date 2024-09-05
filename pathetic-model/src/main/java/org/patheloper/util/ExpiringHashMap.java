@@ -1,44 +1,53 @@
 package org.patheloper.util;
 
 import java.util.concurrent.ConcurrentHashMap;
-
 import lombok.Getter;
 
+/**
+ * A {@link ConcurrentHashMap} that removes entries on access if they are expired.
+ *
+ * <p>The expiration time is 5 minutes. The cleanup itself is only being triggered every 5 minutes on
+ * access.
+ *
+ * @param <K>
+ * @param <V>
+ */
 public class ExpiringHashMap<K, V> extends ConcurrentHashMap<K, ExpiringHashMap.Entry<V>> {
 
   private static final long EXPIRATION_TIME = 5 * 60 * 1000;
+  private long lastCleanupTime = System.currentTimeMillis();
 
   @Override
   public Entry<V> put(K key, Entry<V> value) {
+    removeExpiredEntries();
     return super.put(key, value);
   }
 
   @Override
   public Entry<V> get(Object key) {
     Entry<V> entry = super.get(key);
-    if (entry != null) {
-      if (entry.isExpired()) {
-        super.remove(key);
-        return null;
-      } else {
-        return entry;
-      }
-    }
-    return null;
+    removeExpiredEntries();
+    return entry;
   }
 
   @Override
   public boolean containsKey(Object key) {
     Entry<V> entry = super.get(key);
-    if (entry != null) {
-      if (entry.isExpired()) {
-        super.remove(key);
-        return false;
-      } else {
-        return true;
-      }
+    removeExpiredEntries();
+    return entry != null;
+  }
+
+  private void removeExpiredEntries() {
+    if (System.currentTimeMillis() - lastCleanupTime < EXPIRATION_TIME) {
+      return;
     }
-    return false;
+    this.forEach(
+        (key, value) -> {
+          if (value.isExpired()) {
+            this.remove(key);
+          }
+        });
+    lastCleanupTime = System.currentTimeMillis();
   }
 
   public static class Entry<V> {

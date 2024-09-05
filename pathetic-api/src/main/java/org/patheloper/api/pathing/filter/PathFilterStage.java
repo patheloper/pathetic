@@ -1,12 +1,9 @@
 package org.patheloper.api.pathing.filter;
 
+import java.util.Set;
 import lombok.Value;
 
-import java.util.Set;
-
-/**
- * A stage for multiple PathFilters.
- */
+/** A stage for multiple PathFilters. */
 @Value
 public class PathFilterStage {
 
@@ -14,10 +11,16 @@ public class PathFilterStage {
 
   /**
    * Filters the given context with all filters in the stage.
+   *
    * @param context The context to filter.
    * @return true if the context passes all filters, false otherwise.
    */
   public boolean filter(PathValidationContext context) {
     return filters.stream().allMatch(filter -> filter.filter(context));
+  }
+
+  /** Cleans up all filters in the stage. */
+  public void cleanup() {
+    filters.forEach(PathFilter::cleanup);
   }
 }
