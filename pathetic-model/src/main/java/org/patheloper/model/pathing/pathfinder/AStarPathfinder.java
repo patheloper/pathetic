@@ -4,6 +4,7 @@ import java.util.*;
 import org.jheaps.tree.FibonacciHeap;
 import org.patheloper.api.pathing.configuration.PathfinderConfiguration;
 import org.patheloper.api.pathing.filter.PathFilter;
+import org.patheloper.api.pathing.filter.PathFilterStage;
 import org.patheloper.api.pathing.filter.PathValidationContext;
 import org.patheloper.api.wrapper.PathPosition;
 import org.patheloper.api.wrapper.PathVector;
@@ -14,10 +15,10 @@ import org.patheloper.util.GridRegionData;
 import org.patheloper.util.Tuple3;
 import org.patheloper.util.WatchdogUtil;
 
-
 public class AStarPathfinder extends AbstractPathfinder {
 
   private static final int DEFAULT_GRID_CELL_SIZE = 12;
+  private static final int PRIORITY_BOOST_IN_PERCENTAGE = 80;
 
   /**
    * The grid map used to store the regional examined positions and Bloom filters for each grid
@@ -38,7 +39,8 @@ public class AStarPathfinder extends AbstractPathfinder {
       Depth depth,
       FibonacciHeap<Double, Node> nodeQueue,
       Set<PathPosition> examinedPositions,
-      List<PathFilter> filters) {
+      List<PathFilter> filters,
+      List<PathFilterStage> filterStages) {
 
     tickWatchdogIfNeeded(depth);
 
@@ -47,6 +49,7 @@ public class AStarPathfinder extends AbstractPathfinder {
         examinedPositions,
         currentNode,
         filters,
+        filterStages,
         this.pathfinderConfiguration.isAllowingDiagonal());
     depth.increment();
   }
@@ -62,12 +65,37 @@ public class AStarPathfinder extends AbstractPathfinder {
       Set<PathPosition> examinedPositions,
       Node currentNode,
       List<PathFilter> filters,
+      List<PathFilterStage> filterStages,
       boolean allowingDiagonal) {
+
     Collection<Node> newNodes =
-        fetchValidNeighbours(examinedPositions, currentNode, filters, allowingDiagonal);
+        fetchValidNeighbours(
+            examinedPositions, currentNode, filters, filterStages, allowingDiagonal);
+
     for (Node newNode : newNodes) {
-      nodeQueue.insert(newNode.getHeuristic().get(), newNode);
+      double nodeCost = newNode.getHeuristic().get();
+      if (pathfinderConfiguration.isPrioritizing()) {
+        double priorityAdjustment = calculatePriorityAdjustment(newNode, filterStages);
+        nodeCost -= priorityAdjustment;
+      }
+      nodeQueue.insert(nodeCost, newNode);
     }
+  }
+
+  private double calculatePriorityAdjustment(Node node, List<PathFilterStage> filterStages) {
+    for (PathFilterStage filterStage : filterStages) {
+      boolean filterResult =
+          filterStage.filter(
+              new PathValidationContext(
+                  node.getPosition(),
+                  node.getParent() != null ? node.getParent().getPosition() : null,
+                  snapshotManager));
+
+      if (filterResult) {
+        return node.getHeuristic().get() * (PRIORITY_BOOST_IN_PERCENTAGE / 100.0);
+      }
+    }
+    return 0.0;
   }
 
   private boolean isNodeValid(
@@ -75,14 +103,16 @@ public class AStarPathfinder extends AbstractPathfinder {
       Node newNode,
       Set<PathPosition> examinedPositions,
       List<PathFilter> filters,
+      List<PathFilterStage> filterStages,
       boolean allowingDiagonal) {
-    if (isNodeInvalid(newNode, filters)) return false;
+
+    if (isNodeInvalid(newNode, filters, filterStages)) return false;
 
     if (!allowingDiagonal) return examinedPositions.add(newNode.getPosition());
 
     if (!isDiagonalMove(currentNode, newNode)) return examinedPositions.add(newNode.getPosition());
 
-    return isReachable(currentNode, newNode, filters)
+    return isReachable(currentNode, newNode, filters, filterStages)
         && examinedPositions.add(newNode.getPosition());
   }
 
@@ -97,7 +127,8 @@ public class AStarPathfinder extends AbstractPathfinder {
    * Returns whether the diagonal jump is possible by checking if the adjacent nodes are passable or
    * not. With adjacent nodes are the shared overlapping neighbours meant.
    */
-  private boolean isReachable(Node from, Node to, List<PathFilter> filters) {
+  private boolean isReachable(
+      Node from, Node to, List<PathFilter> filters, List<PathFilterStage> filterStages) {
     boolean hasYDifference = from.getPosition().getBlockY() != to.getPosition().getBlockY();
     PathVector[] offsets = Offset.VERTICAL_AND_HORIZONTAL.getVectors();
 
@@ -118,7 +149,10 @@ public class AStarPathfinder extends AbstractPathfinder {
           boolean heightDifferencePassable =
               isHeightDifferencePassable(from, to, vector1, hasYDifference);
 
-          if (doAllFiltersPass(filters, neighbour1) && heightDifferencePassable) return true;
+          if (doAllFiltersPass(filters, neighbour1)
+              && (!pathfinderConfiguration.isPrioritizing()
+                  && doAnyFilterStagePass(filterStages, neighbour1))
+              && heightDifferencePassable) return true;
         }
       }
     }
@@ -140,13 +174,15 @@ public class AStarPathfinder extends AbstractPathfinder {
       Set<PathPosition> examinedPositions,
       Node currentNode,
       List<PathFilter> filters,
+      List<PathFilterStage> filterStages,
       boolean allowingDiagonal) {
     Set<Node> newNodes = new HashSet<>(offset.getVectors().length);
 
     for (PathVector vector : offset.getVectors()) {
       Node newNode = createNeighbourNode(currentNode, vector);
 
-      if (isNodeValid(currentNode, newNode, examinedPositions, filters, allowingDiagonal)) {
+      if (isNodeValid(
+          currentNode, newNode, examinedPositions, filters, filterStages, allowingDiagonal)) {
         newNodes.add(newNode);
       }
     }
@@ -170,7 +206,9 @@ public class AStarPathfinder extends AbstractPathfinder {
    * Checks if the node is invalid. A node is invalid if it is outside the world bounds or is not
    * valid according to the filters.
    */
-  private boolean isNodeInvalid(Node node, List<PathFilter> filters) {
+  private boolean isNodeInvalid(
+      Node node, List<PathFilter> filters, List<PathFilterStage> filterStages) {
+
     int gridX = node.getPosition().getBlockX() / DEFAULT_GRID_CELL_SIZE;
     int gridY = node.getPosition().getBlockY() / DEFAULT_GRID_CELL_SIZE;
     int gridZ = node.getPosition().getBlockZ() / DEFAULT_GRID_CELL_SIZE;
@@ -186,16 +224,25 @@ public class AStarPathfinder extends AbstractPathfinder {
 
     if (regionData.getBloomFilter().mightContain(node.getPosition())) {
       if (regionData.getRegionalExaminedPositions().contains(node.getPosition())) {
-        return true;
+        return true; // Node is invalid if already examined
       }
     }
 
-    return !isWithinWorldBounds(node.getPosition()) || !doAllFiltersPass(filters, node);
+    if (!isWithinWorldBounds(node.getPosition())) {
+      return true; // Node is invalid if out of bounds
+    }
+
+    boolean filtersPass = doAllFiltersPass(filters, node);
+    boolean stagesPass = doAnyFilterStagePass(filterStages, node);
+
+    if (!filtersPass) {
+      return true; // Node is invalid if filters fail
+    }
+
+    return !pathfinderConfiguration.isPrioritizing() && !stagesPass;
   }
 
   private boolean doAllFiltersPass(List<PathFilter> filters, Node node) {
-    Map<Class<? extends PathFilter>, Boolean> cache = new HashMap<>();
-
     for (PathFilter filter : filters) {
       PathValidationContext context =
           new PathValidationContext(
@@ -203,11 +250,26 @@ public class AStarPathfinder extends AbstractPathfinder {
               node.getParent() != null ? node.getParent().getPosition() : null,
               snapshotManager);
 
-      if (!cache.computeIfAbsent(filter.getClass(), k -> filter.filter(context))) {
+      if (!filter.filter(context)) {
         return false;
       }
     }
     return true;
+  }
+
+  private boolean doAnyFilterStagePass(List<PathFilterStage> filterStages, Node node) {
+    if (filterStages.isEmpty()) return true;
+
+    for (PathFilterStage filterStage : filterStages) {
+      if (filterStage.filter(
+          new PathValidationContext(
+              node.getPosition(),
+              node.getParent() != null ? node.getParent().getPosition() : null,
+              snapshotManager))) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private boolean isWithinWorldBounds(PathPosition position) {

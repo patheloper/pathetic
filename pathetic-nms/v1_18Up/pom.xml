@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.patheloper</groupId>
         <artifactId>pathetic-main</artifactId>
-        <version>3.0</version>
+        <version>3.1</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>

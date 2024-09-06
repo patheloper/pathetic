@@ -18,7 +18,7 @@ public final class PatheticPlugin extends JavaPlugin {
     // Create a new Pathfinder instance with a custom configuration
     Pathfinder reusablePathfinder =
         PatheticMapper.newPathfinder(
-            PathfinderConfiguration.createAsyncConfiguration()
+            PathfinderConfiguration.createConfiguration()
                 .withAllowingFailFast(true) // Allow pathfinding to fail fast if necessary
                 .withAllowingFallback(true) // Allow fallback strategies if the primary fails
                 .withLoadingChunks(true) // Allow chunks to be loaded during pathfinding
