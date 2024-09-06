@@ -44,6 +44,9 @@
                                 <include>org/jheaps/tree/FibonacciHeap$Node.class</include>
                                 <include>org/jheaps/annotations/ConstantTime.class</include>
                                 <include>org/jheaps/annotations/LogarithmicTime.class</include>
+                                <include>org/jheaps/MergeableAddressableHeap.class</include>
+                                <include>org/jheaps/AddressableHeap.class</include>
+                                <include>org/jheaps/AddressableHeap$Handle.class</include>
                             </includes>
                         </filter>
                     </filters>

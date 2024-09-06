@@ -164,7 +164,7 @@ abstract class AbstractPathfinder implements Pathfinder {
                 () -> executePathingAndCleanupFilters(start, target, filters, filterStages),
                 PATHING_EXECUTOR)
             .thenApply(this::finishPathing)
-            .exceptionally(throwable -> handleException(start, target))
+            .exceptionally(throwable -> handleException(start, target, throwable))
         : initiateSyncPathing(start, target, filters, filterStages);
   }
 
@@ -240,7 +240,9 @@ abstract class AbstractPathfinder implements Pathfinder {
     return pathfinderResult;
   }
 
-  private PathfinderResult handleException(PathPosition start, PathPosition target) {
+  private PathfinderResult handleException(
+      PathPosition start, PathPosition target, Throwable throwable) {
+    ErrorLogger.logFatalError("Failed to find path async", throwable);
     return finishPathing(
         new PathfinderResultImpl(
             PathState.FAILED, new PathImpl(start, target, EMPTY_LINKED_HASHSET)));
