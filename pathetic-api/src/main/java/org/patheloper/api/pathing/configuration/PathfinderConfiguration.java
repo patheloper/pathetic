@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.With;
+import org.patheloper.api.annotation.Experimental;
 import org.patheloper.api.pathing.Pathfinder;
 import org.patheloper.api.wrapper.PathPosition;
 
@@ -88,7 +89,9 @@ public class PathfinderConfiguration {
    * process. Shared filters must still be passed.
    *
    * <p>{@link Pathfinder#findPath(PathPosition, PathPosition, List, List)}
+   * @experimental This feature is experimental and may be subject to change.
    */
+  @Experimental
   @Builder.Default boolean prioritizing = false;
 
   /**
