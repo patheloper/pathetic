@@ -1,5 +1,7 @@
 package org.patheloper.api.pathing.filter;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 import lombok.Value;
 
@@ -7,7 +9,11 @@ import lombok.Value;
 @Value
 public class PathFilterStage {
 
-  Set<PathFilter> filters;
+  Set<PathFilter> filters = new HashSet<>();
+
+  public PathFilterStage(PathFilter... pathFilter) {
+    filters.addAll(Arrays.asList(pathFilter));
+  }
 
   /**
    * Filters the given context with all filters in the stage.

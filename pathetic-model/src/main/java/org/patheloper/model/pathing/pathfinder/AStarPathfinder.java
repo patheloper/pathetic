@@ -18,7 +18,7 @@ import org.patheloper.util.WatchdogUtil;
 public class AStarPathfinder extends AbstractPathfinder {
 
   private static final int DEFAULT_GRID_CELL_SIZE = 12;
-  private static final int PRIORITY_BOOST_IN_PERCENTAGE = 20;
+  private static final int PRIORITY_BOOST_IN_PERCENTAGE = 80;
 
   /**
    * The grid map used to store the regional examined positions and Bloom filters for each grid
@@ -84,16 +84,22 @@ public class AStarPathfinder extends AbstractPathfinder {
 
   private double calculatePriorityAdjustment(Node node, List<PathFilterStage> filterStages) {
     for (PathFilterStage filterStage : filterStages) {
-      if (filterStage.filter(
-          new PathValidationContext(
-              node.getPosition(),
-              node.getParent() != null ? node.getParent().getPosition() : null,
-              snapshotManager))) {
+      boolean filterResult = filterStage.filter(
+        new PathValidationContext(
+          node.getPosition(),
+          node.getParent() != null ? node.getParent().getPosition() : null,
+          snapshotManager)
+      );
+      System.out.println("Filter stage result: " + filterResult);
+
+      if (filterResult) {
+        System.out.println("Priority adjustment applied for node at position: " + node.getPosition());
         return node.getHeuristic().get() * (PRIORITY_BOOST_IN_PERCENTAGE / 100.0);
       }
     }
     return 0.0;
   }
+
 
   private boolean isNodeValid(
       Node currentNode,
@@ -147,7 +153,8 @@ public class AStarPathfinder extends AbstractPathfinder {
               isHeightDifferencePassable(from, to, vector1, hasYDifference);
 
           if (doAllFiltersPass(filters, neighbour1)
-              && doAnyFilterStagePass(filterStages, neighbour1)
+              && (!pathfinderConfiguration.isPrioritizing()
+                  && doAnyFilterStagePass(filterStages, neighbour1))
               && heightDifferencePassable) return true;
         }
       }
@@ -204,6 +211,7 @@ public class AStarPathfinder extends AbstractPathfinder {
    */
   private boolean isNodeInvalid(
       Node node, List<PathFilter> filters, List<PathFilterStage> filterStages) {
+
     int gridX = node.getPosition().getBlockX() / DEFAULT_GRID_CELL_SIZE;
     int gridY = node.getPosition().getBlockY() / DEFAULT_GRID_CELL_SIZE;
     int gridZ = node.getPosition().getBlockZ() / DEFAULT_GRID_CELL_SIZE;
@@ -219,14 +227,23 @@ public class AStarPathfinder extends AbstractPathfinder {
 
     if (regionData.getBloomFilter().mightContain(node.getPosition())) {
       if (regionData.getRegionalExaminedPositions().contains(node.getPosition())) {
-        return true;
+        return true; // Node is invalid if already examined
       }
     }
 
-    return !isWithinWorldBounds(node.getPosition())
-        || !doAllFiltersPass(filters, node)
-            && (!pathfinderConfiguration.isPrioritizing()
-                && !doAnyFilterStagePass(filterStages, node));
+    if (!isWithinWorldBounds(node.getPosition())) {
+      return true; // Node is invalid if out of bounds
+    }
+
+    boolean filtersPass = doAllFiltersPass(filters, node);
+    boolean stagesPass = doAnyFilterStagePass(filterStages, node);
+
+    if (!filtersPass) {
+      return true; // Node is invalid if filters fail
+    }
+
+    return !pathfinderConfiguration.isPrioritizing()
+        && !stagesPass;
   }
 
   private boolean doAllFiltersPass(List<PathFilter> filters, Node node) {
