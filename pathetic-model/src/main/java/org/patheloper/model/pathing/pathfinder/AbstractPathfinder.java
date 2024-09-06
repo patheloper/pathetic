@@ -161,7 +161,8 @@ abstract class AbstractPathfinder implements Pathfinder {
     BStatsHandler.increasePathCount();
     return pathfinderConfiguration.isAsync()
         ? CompletableFuture.supplyAsync(
-                () -> executePathing(start, target, filters, filterStages), PATHING_EXECUTOR)
+                () -> executePathingAndCleanupFilters(start, target, filters, filterStages),
+                PATHING_EXECUTOR)
             .thenApply(this::finishPathing)
             .exceptionally(throwable -> handleException(start, target))
         : initiateSyncPathing(start, target, filters, filterStages);
@@ -200,14 +201,7 @@ abstract class AbstractPathfinder implements Pathfinder {
         }
 
         tick(
-            start,
-            target,
-            currentNode,
-            depth,
-            nodeQueue,
-            examinedPositions,
-            filters,
-            filterStages);
+            start, target, currentNode, depth, nodeQueue, examinedPositions, filters, filterStages);
       }
 
       aborted = false;
@@ -229,10 +223,21 @@ abstract class AbstractPathfinder implements Pathfinder {
       List<PathFilterStage> filterStages) {
     try {
       return CompletableFuture.completedFuture(
-          executePathing(start, target, filters, filterStages));
+          executePathingAndCleanupFilters(start, target, filters, filterStages));
     } catch (Exception e) {
       throw ErrorLogger.logFatalError("Failed to find path sync", e);
     }
+  }
+
+  private PathfinderResult executePathingAndCleanupFilters(
+      PathPosition start,
+      PathPosition target,
+      List<PathFilter> filters,
+      List<PathFilterStage> filterStages) {
+    PathfinderResult pathfinderResult = executePathing(start, target, filters, filterStages);
+    filters.forEach(PathFilter::cleanup);
+    filterStages.forEach(PathFilterStage::cleanup);
+    return pathfinderResult;
   }
 
   private PathfinderResult handleException(PathPosition start, PathPosition target) {
