@@ -84,22 +84,19 @@ public class AStarPathfinder extends AbstractPathfinder {
 
   private double calculatePriorityAdjustment(Node node, List<PathFilterStage> filterStages) {
     for (PathFilterStage filterStage : filterStages) {
-      boolean filterResult = filterStage.filter(
-        new PathValidationContext(
-          node.getPosition(),
-          node.getParent() != null ? node.getParent().getPosition() : null,
-          snapshotManager)
-      );
-      System.out.println("Filter stage result: " + filterResult);
+      boolean filterResult =
+          filterStage.filter(
+              new PathValidationContext(
+                  node.getPosition(),
+                  node.getParent() != null ? node.getParent().getPosition() : null,
+                  snapshotManager));
 
       if (filterResult) {
-        System.out.println("Priority adjustment applied for node at position: " + node.getPosition());
         return node.getHeuristic().get() * (PRIORITY_BOOST_IN_PERCENTAGE / 100.0);
       }
     }
     return 0.0;
   }
-
 
   private boolean isNodeValid(
       Node currentNode,
@@ -242,8 +239,7 @@ public class AStarPathfinder extends AbstractPathfinder {
       return true; // Node is invalid if filters fail
     }
 
-    return !pathfinderConfiguration.isPrioritizing()
-        && !stagesPass;
+    return !pathfinderConfiguration.isPrioritizing() && !stagesPass;
   }
 
   private boolean doAllFiltersPass(List<PathFilter> filters, Node node) {
