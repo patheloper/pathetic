@@ -7,11 +7,11 @@
     <parent>
         <artifactId>pathetic-main</artifactId>
         <groupId>org.patheloper</groupId>
-        <version>3.0</version>
+        <version>3.1</version>
     </parent>
 
     <artifactId>pathetic-example</artifactId>
-    <version>3.0</version>
+    <version>3.1</version>
     <packaging>jar</packaging>
 
     <name>PatheticTest</name>
@@ -73,7 +73,7 @@
         <dependency>
             <groupId>org.patheloper</groupId>
             <artifactId>pathetic-mapping</artifactId>
-            <version>3.0</version>
+            <version>3.1</version>
         </dependency>
     </dependencies>
 </project>
