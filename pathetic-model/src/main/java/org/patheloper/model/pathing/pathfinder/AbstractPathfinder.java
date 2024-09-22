@@ -185,9 +185,7 @@ abstract class AbstractPathfinder implements Pathfinder {
       while (!nodeQueue.isEmpty()
           && depth.getDepth() <= pathfinderConfiguration.getMaxIterations()) {
 
-        if (isAborted()) {
-          return finishPathing(PathState.ABORTED, fallbackNode);
-        }
+        if (isAborted()) return abortedPathing(fallbackNode);
 
         Node currentNode = nodeQueue.deleteMin().getValue();
         fallbackNode = currentNode;
@@ -204,12 +202,17 @@ abstract class AbstractPathfinder implements Pathfinder {
             start, target, currentNode, depth, nodeQueue, examinedPositions, filters, filterStages);
       }
 
-      aborted = false;
+      aborted = false; // just in case
 
       return backupPathfindingOrFailure(depth, start, target, filters, fallbackNode);
     } catch (Exception e) {
       throw ErrorLogger.logFatalErrorWithStacktrace("Failed to find path", e);
     }
+  }
+
+  private PathfinderResult abortedPathing(Node fallbackNode) {
+    aborted = false;
+    return finishPathing(PathState.ABORTED, fallbackNode);
   }
 
   private boolean isAborted() {
