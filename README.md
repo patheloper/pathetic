@@ -121,7 +121,7 @@ terrains. Key technical highlights include:
 
 - **Fibonacci Heap**:
     - Pathetic employs a **Fibonacci Heap** for managing the frontier (open set), optimizing node insertion and
-      retrieval with amortized \( O(1) \) insertion and \( O(\log n) \) extraction times.
+      retrieval with amortized O(1) insertion and O(log n) extraction times.
     - This significantly improves performance when handling large grids with numerous nodes, reducing overhead compared
       to traditional binary heaps.
 
