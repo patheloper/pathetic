@@ -9,7 +9,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.annotation.Nullable;
@@ -204,7 +203,7 @@ abstract class AbstractPathfinder implements Pathfinder {
 
       aborted = false; // just in case
 
-      return backupPathfindingOrFailure(depth, start, target, filters, fallbackNode);
+      return backupPathfindingOrFailure(depth, start, target, fallbackNode);
     } catch (Exception e) {
       throw ErrorLogger.logFatalErrorWithStacktrace("Failed to find path", e);
     }
@@ -291,20 +290,11 @@ abstract class AbstractPathfinder implements Pathfinder {
 
   /** If the pathfinder has failed to find a path, it will try to still give a result. */
   private PathfinderResult backupPathfindingOrFailure(
-      Depth depth,
-      PathPosition start,
-      PathPosition target,
-      List<PathFilter> filters,
-      Node fallbackNode) {
+      Depth depth, PathPosition start, PathPosition target, Node fallbackNode) {
 
     Optional<PathfinderResult> maxIterationsResult = maxIterationsReached(depth, fallbackNode);
     if (maxIterationsResult.isPresent()) {
       return maxIterationsResult.get();
-    }
-
-    Optional<PathfinderResult> counterCheckResult = counterCheck(start, target, filters);
-    if (counterCheckResult.isPresent()) {
-      return counterCheckResult.get();
     }
 
     Optional<PathfinderResult> fallbackResult = fallback(fallbackNode);
@@ -329,29 +319,6 @@ abstract class AbstractPathfinder implements Pathfinder {
       return Optional.of(
           finishPathing(
               new PathfinderResultImpl(PathState.FALLBACK, fetchRetracedPath(fallbackNode))));
-    return Optional.empty();
-  }
-
-  private Optional<PathfinderResult> counterCheck(
-      PathPosition start, PathPosition target, List<PathFilter> filters) {
-    if (!pathfinderConfiguration.isCounterCheck()) {
-      return Optional.empty();
-    }
-
-    AStarPathfinder aStarPathfinder =
-        new AStarPathfinder(
-            PathfinderConfiguration.deepCopy(pathfinderConfiguration).withCounterCheck(false));
-    try {
-      PathfinderResult pathfinderResult =
-          aStarPathfinder.findPath(start, target, filters).toCompletableFuture().get();
-
-      if (pathfinderResult.getPathState() == PathState.FOUND) {
-        return Optional.of(pathfinderResult);
-      }
-    } catch (InterruptedException | ExecutionException e) {
-      throw new RuntimeException(e);
-    }
-
     return Optional.empty();
   }
 

@@ -74,16 +74,6 @@ public class PathfinderConfiguration {
   boolean loadingChunks;
 
   /**
-   * If pathfinding fails, determines whether to run a reverse pathfinding check (from target to
-   * start) to verify the result. This is a computationally expensive fallback but can help identify
-   * some failure cases.
-   *
-   * @deprecated This feature is deprecated and may be removed in a future release.
-   */
-  @Deprecated
-  boolean counterCheck;
-
-  /**
    * Determines whether the pathfinding algorithm should see PathFilterStages as prioritization,
    * instead of filtering. This means that the pathfinding algorithm will prioritize paths that pass
    * the filters over paths that do not.
@@ -138,7 +128,6 @@ public class PathfinderConfiguration {
         .allowingFailFast(pathfinderConfiguration.allowingFailFast)
         .allowingFallback(pathfinderConfiguration.allowingFallback)
         .loadingChunks(pathfinderConfiguration.loadingChunks)
-        .counterCheck(pathfinderConfiguration.counterCheck)
         .heuristicWeights(pathfinderConfiguration.heuristicWeights)
         .build();
   }
