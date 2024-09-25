@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
-/** A Class to represent a block in the world, except exempt of Bukkit */
+/** Represents a block in the world, independent of Bukkit. */
 @Getter
 @RequiredArgsConstructor
 @ToString
@@ -16,48 +16,54 @@ public final class PathBlock {
   private final BlockInformation blockInformation;
 
   /**
-   * @return Whether the block is air
+   * Checks if the block is air.
+   *
+   * @return {@code true} if the block is air, {@code false} otherwise
    */
   public boolean isAir() {
     return blockInformation.getMaterial().isAir();
   }
 
   /**
-   * @return Whether the block is possible to walk through
+   * Checks if the block is passable (i.e., not solid).
+   *
+   * @return {@code true} if the block is passable, {@code false} if it's solid
    */
   public boolean isPassable() {
     return !isSolid();
   }
 
   /**
-   * @return Whether the block is solid
+   * Checks if the block is solid.
+   *
+   * @return {@code true} if the block is solid, {@code false} if it's passable
    */
   public boolean isSolid() {
     return blockInformation.getMaterial().isSolid();
   }
 
   /**
-   * Gets the X coordinate of the block
+   * Gets the X coordinate of the block's position.
    *
-   * @return The X coordinate of the block
+   * @return the X coordinate of the block
    */
   public int getBlockX() {
     return this.pathPosition.getBlockX();
   }
 
   /**
-   * Gets the Y coordinate of the block
+   * Gets the Y coordinate of the block's position.
    *
-   * @return The Y coordinate of the block
+   * @return the Y coordinate of the block
    */
   public int getBlockY() {
     return this.pathPosition.getBlockY();
   }
 
   /**
-   * Gets the Z coordinate of the block
+   * Gets the Z coordinate of the block's position.
    *
-   * @return The Z coordinate of the block
+   * @return the Z coordinate of the block
    */
   public int getBlockZ() {
     return this.pathPosition.getBlockZ();
