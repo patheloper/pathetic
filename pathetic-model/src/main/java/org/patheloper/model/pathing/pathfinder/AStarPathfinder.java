@@ -73,7 +73,7 @@ public class AStarPathfinder extends AbstractPathfinder {
             examinedPositions, currentNode, filters, filterStages, allowingDiagonal);
 
     for (Node newNode : newNodes) {
-      double nodeCost = newNode.getHeuristic().get();
+      double nodeCost = newNode.getHeuristicCache().get();
       if (pathfinderConfiguration.isPrioritizing()) {
         double priorityAdjustment = calculatePriorityAdjustment(newNode, filterStages);
         nodeCost -= priorityAdjustment;
@@ -92,7 +92,7 @@ public class AStarPathfinder extends AbstractPathfinder {
                   snapshotManager));
 
       if (filterResult) {
-        return node.getHeuristic().get() * (PRIORITY_BOOST_IN_PERCENTAGE / 100.0);
+        return node.getHeuristicCache().get() * (PRIORITY_BOOST_IN_PERCENTAGE / 100.0);
       }
     }
     return 0.0;
@@ -197,7 +197,8 @@ public class AStarPathfinder extends AbstractPathfinder {
             currentNode.getStart(),
             currentNode.getTarget(),
             pathfinderConfiguration.getHeuristicWeights(),
-            currentNode.getDepth() + 1);
+            currentNode.getDepth() + 1,
+            pathfinderConfiguration);
     newNode.setParent(currentNode);
     return newNode;
   }

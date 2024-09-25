@@ -276,7 +276,8 @@ abstract class AbstractPathfinder implements Pathfinder {
         start.floor(),
         target.floor(),
         pathfinderConfiguration.getHeuristicWeights(),
-        0);
+        0,
+        pathfinderConfiguration);
   }
 
   private boolean hasReachedLengthLimit(Node currentNode) {
