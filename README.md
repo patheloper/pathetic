@@ -39,9 +39,9 @@ filters for greater flexibility.
 </repositories>
 
 <dependency>
-<groupId>com.github.patheloper.pathetic</groupId>
-<artifactId>pathetic-mapping</artifactId>
-<version>VERSION</version>
+    <groupId>com.github.patheloper.pathetic</groupId>
+    <artifactId>pathetic-mapping</artifactId>
+    <version>VERSION</version>
 </dependency>
 ```
 
