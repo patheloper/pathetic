@@ -1,16 +1,15 @@
 package org.patheloper.api.wrapper;
 
 import javax.annotation.Nullable;
-import lombok.EqualsAndHashCode;
 import lombok.NonNull;
-import lombok.ToString;
 import lombok.Value;
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
 
+/**
+ * Represents information about a block in the world, independent of Bukkit.
+ */
 @Value
-@ToString
-@EqualsAndHashCode
 public class BlockInformation {
 
   /** The material of the represented block */

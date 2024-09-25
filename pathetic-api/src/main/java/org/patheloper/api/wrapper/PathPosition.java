@@ -1,16 +1,13 @@
 package org.patheloper.api.wrapper;
 
 import java.util.Objects;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.ToString;
+import lombok.Value;
 import org.patheloper.api.util.NumberUtils;
 
-@AllArgsConstructor
-@Getter
-@ToString
-public class PathPosition implements Cloneable {
+@Value
+public class PathPosition {
 
   /** The cost of moving straight in a grid. */
   private static final double STRAIGHT_MOVEMENT_COST = 1.0;
@@ -22,16 +19,16 @@ public class PathPosition implements Cloneable {
   private static final double TRI_DIAGONAL_MOVEMENT_COST = Math.sqrt(3);
 
   /** The environment in which the position exists */
-  @NonNull private PathEnvironment pathEnvironment;
+  @NonNull PathEnvironment pathEnvironment;
 
   /** The X coordinate of the position. -- GETTER -- Returns the X coordinate of the position. */
-  private double x;
+  double x;
 
   /** The Y coordinate of the position. -- GETTER -- Returns the Y coordinate of the position. */
-  private double y;
+  double y;
 
   /** The Z coordinate of the position. -- GETTER -- Returns the Z coordinate of the position. */
-  private double z;
+  double z;
 
   /**
    * Interpolates between the current position and another position based on a given progress
@@ -182,6 +179,36 @@ public class PathPosition implements Cloneable {
     return NumberUtils.square(this.x - otherPosition.x)
         + NumberUtils.square(this.y - otherPosition.y)
         + NumberUtils.square(this.z - otherPosition.z);
+  }
+
+  /**
+   * Creates a new PathPosition with the modified X coordinate.
+   *
+   * @param x the new X coordinate
+   * @return a new {@link PathPosition} with the updated X value
+   */
+  public PathPosition withX(double x) {
+    return new PathPosition(this.pathEnvironment, x, this.y, this.z);
+  }
+
+  /**
+   * Creates a new PathPosition with the modified Y coordinate.
+   *
+   * @param y the new Y coordinate
+   * @return a new {@link PathPosition} with the updated Y value
+   */
+  public PathPosition withY(double y) {
+    return new PathPosition(this.pathEnvironment, this.x, y, this.z);
+  }
+
+  /**
+   * Creates a new PathPosition with the modified Z coordinate.
+   *
+   * @param z the new Z coordinate
+   * @return a new {@link PathPosition} with the updated Z value
+   */
+  public PathPosition withZ(double z) {
+    return new PathPosition(this.pathEnvironment, this.x, this.y, z);
   }
 
   /**
@@ -381,23 +408,6 @@ public class PathPosition implements Cloneable {
       this.y = y;
       this.z = z;
     }
-  }
-
-  @Override
-  public PathPosition clone() {
-
-    final PathPosition clone;
-    try {
-      clone = (PathPosition) super.clone();
-    } catch (CloneNotSupportedException ex) {
-      throw new IllegalStateException("Superclass messed up", ex);
-    }
-
-    clone.pathEnvironment = this.pathEnvironment;
-    clone.x = this.x;
-    clone.y = this.y;
-    clone.z = this.z;
-    return clone;
   }
 
   @Override

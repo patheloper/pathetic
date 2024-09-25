@@ -1,16 +1,10 @@
 package org.patheloper.api.wrapper;
 
 import java.util.UUID;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import lombok.Value;
 
+/** Represents a pathing environment which attributes */
 @Value
-@Getter
-@ToString
-@RequiredArgsConstructor
-/** Represents the pathing environment */
 public class PathEnvironment {
 
   UUID uuid;

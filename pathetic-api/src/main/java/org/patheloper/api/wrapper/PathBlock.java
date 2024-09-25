@@ -1,19 +1,13 @@
 package org.patheloper.api.wrapper;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import lombok.Value;
 
 /** Represents a block in the world, independent of Bukkit. */
-@Getter
-@RequiredArgsConstructor
-@ToString
-@EqualsAndHashCode
-public final class PathBlock {
+@Value
+public class PathBlock {
 
-  private final PathPosition pathPosition;
-  private final BlockInformation blockInformation;
+  PathPosition pathPosition;
+  BlockInformation blockInformation;
 
   /**
    * Checks if the block is air.
