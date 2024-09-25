@@ -12,12 +12,45 @@ import org.patheloper.api.util.NumberUtils;
 @ToString
 public class PathPosition implements Cloneable {
 
+  /** The cost of moving straight in a grid. */
+  private static final double STRAIGHT_MOVEMENT_COST = 1.0;
+
+  /** The cost of moving diagonally in a grid. */
+  private static final double DIAGONAL_MOVEMENT_COST = Math.sqrt(2);
+
+  /** The cost of moving in a tri-diagonal direction in a grid. */
+  private static final double TRI_DIAGONAL_MOVEMENT_COST = Math.sqrt(3);
+
+  /** The environment in which the position exists */
   @NonNull private PathEnvironment pathEnvironment;
 
+  /** The X coordinate of the position. -- GETTER -- Returns the X coordinate of the position. */
   private double x;
+
+  /** The Y coordinate of the position. -- GETTER -- Returns the Y coordinate of the position. */
   private double y;
+
+  /** The Z coordinate of the position. -- GETTER -- Returns the Z coordinate of the position. */
   private double z;
 
+  /**
+   * Interpolates between the current position and another position based on a given progress
+   * factor.
+   *
+   * <p>This method performs linear interpolation (lerp) on each of the X, Y, and Z coordinates of
+   * the current position and the provided {@code other} position. The interpolation factor {@code
+   * progress} should be between 0 and 1, where:
+   *
+   * <ul>
+   *   <li>{@code 0.0} results in the current position
+   *   <li>{@code 1.0} results in the {@code other} position
+   *   <li>Any value in between results in a position proportionally between the two
+   * </ul>
+   *
+   * @param other the {@link PathPosition} to interpolate towards
+   * @param progress the interpolation factor (range: 0.0 to 1.0)
+   * @return a new {@link PathPosition} representing the interpolated position
+   */
   public PathPosition interpolate(PathPosition other, double progress) {
     double x = NumberUtils.interpolate(this.x, other.x, progress);
     double y = NumberUtils.interpolate(this.y, other.y, progress);
@@ -50,26 +83,94 @@ public class PathPosition implements Cloneable {
   }
 
   /**
-   * Gets the octile distance between the current and another position
+   * Calculates the octile distance between this position and another.
    *
-   * @param otherPosition the other {@link PathPosition} to get the distance to
-   * @return the distance
+   * <p>Explanation: We’re in a 3D grid, and movement isn’t just straight lines. You can move along
+   * one axis, two axes at once (diagonal), or even all three axes (tri-diagonal). This method takes
+   * the differences between the current and target positions on the X, Y, and Z axes, then
+   * calculates the distance based on the type of movement involved.
+   *
+   * <p>Movement types and their costs: - Straight (D1): Moving along one axis. Cost = 1.0 -
+   * Diagonal (D2): Moving along two axes at once. Cost = √2 (1.414...) - Tri-Diagonal (D3): Moving
+   * along all three axes at once. Cost = √3 (1.732...)
+   *
+   * <p>The method calculates three key values: - Smallest: The smallest difference, which we assume
+   * is for tri-diagonal movement (D3). - Mid: The middle difference, typically for diagonal
+   * movement (D2). - Highest: The largest difference, for straight movement (D1).
+   *
+   * <p>Finally, we throw these into a formula that blends them with the movement costs. The result
+   * is a distance estimate that takes the multi-axis movement into account.
+   *
+   * @param pathPosition the other position we’re calculating the distance to
+   * @return the octile distance based on straight, diagonal, and tri-diagonal movement
    */
-  public double octileDistance(PathPosition otherPosition) {
+  public double octileDistance(PathPosition pathPosition) {
+    TripletDouble diff = calculateAxisDifferences(pathPosition);
 
-    double dx = Math.abs(this.x - otherPosition.x);
-    double dy = Math.abs(this.y - otherPosition.y);
-    double dz = Math.abs(this.z - otherPosition.z);
+    double smallest = findSmallest(diff);
+    double highest = findHighest(diff);
+    double mid = findMid(diff);
 
-    double smallest = Math.min(Math.min(dx, dz), dy);
-    double highest = Math.max(Math.max(dx, dz), dy);
-    double mid = Math.max(Math.min(dx, dz), Math.min(Math.max(dx, dz), dy));
+    return calculateOctileDistance(smallest, mid, highest);
+  }
 
-    double D1 = 1;
-    double D2 = 1.4142135623730951;
-    double D3 = 1.7320508075688772;
+  /**
+   * Calculates the absolute differences between the current position and the other position.
+   *
+   * @param pathPosition the other position
+   * @return a {@link TripletDouble} representing the absolute differences on the X, Y, and Z axes
+   */
+  private TripletDouble calculateAxisDifferences(PathPosition pathPosition) {
+    return new TripletDouble(
+        Math.abs(this.x - pathPosition.x),
+        Math.abs(this.y - pathPosition.y),
+        Math.abs(this.z - pathPosition.z));
+  }
 
-    return (D3 - D2) * smallest + (D2 - D1) * mid + D1 * highest;
+  /**
+   * Finds the smallest axis difference from the given {@link TripletDouble}.
+   *
+   * @param diff the triplet containing axis differences
+   * @return the smallest difference
+   */
+  private double findSmallest(TripletDouble diff) {
+    return Math.min(Math.min(diff.getX(), diff.getZ()), diff.getY());
+  }
+
+  /**
+   * Finds the highest axis difference from the given {@link TripletDouble}.
+   *
+   * @param diff the triplet containing axis differences
+   * @return the highest difference
+   */
+  private double findHighest(TripletDouble diff) {
+    return Math.max(Math.max(diff.getX(), diff.getZ()), diff.getY());
+  }
+
+  /**
+   * Finds the mid-axis difference from the given {@link TripletDouble}.
+   *
+   * @param diff the triplet containing axis differences
+   * @return the mid-range axis difference
+   */
+  private double findMid(TripletDouble diff) {
+    return diff.getX() + diff.getY() + diff.getZ() - findSmallest(diff) - findHighest(diff);
+  }
+
+  /**
+   * Calculates the octile distance based on the smallest, mid, and highest axis differences. The
+   * octile distance is a heuristic used in pathfinding to estimate the distance between two points
+   * in a grid where diagonal and straight movements have different costs.
+   *
+   * @param smallest the smallest of the axis differences (x, y, or z)
+   * @param mid the mid-range axis difference (x, y, or z)
+   * @param highest the largest of the axis differences (x, y, or z)
+   * @return the calculated octile distance
+   */
+  private static double calculateOctileDistance(double smallest, double mid, double highest) {
+    return (TRI_DIAGONAL_MOVEMENT_COST - DIAGONAL_MOVEMENT_COST) * smallest
+        + (DIAGONAL_MOVEMENT_COST - STRAIGHT_MOVEMENT_COST) * mid
+        + STRAIGHT_MOVEMENT_COST * highest;
   }
 
   /**
@@ -230,9 +331,56 @@ public class PathPosition implements Cloneable {
         this.getBlockZ() + 0.5);
   }
 
+  /**
+   * Gets the middle point between the current position and another position
+   *
+   * @param end The other position
+   * @return The middle point
+   */
   public PathPosition midPoint(PathPosition end) {
     return new PathPosition(
         this.pathEnvironment, (this.x + end.x) / 2, (this.y + end.y) / 2, (this.z + end.z) / 2);
+  }
+
+  /**
+   * A class representing a triplet of double values. This can be used to store three related double
+   * values, such as coordinates or vector components.
+   */
+  @Getter
+  private static class TripletDouble {
+    /**
+     * The x component of the triplet. -- GETTER -- Returns the value of the x component.
+     *
+     * @return the x component value
+     */
+    private final double x;
+
+    /**
+     * The y component of the triplet. -- GETTER -- Returns the value of the y component.
+     *
+     * @return the y component value
+     */
+    private final double y;
+
+    /**
+     * The z component of the triplet. -- GETTER -- Returns the value of the z component.
+     *
+     * @return the z component value
+     */
+    private final double z;
+
+    /**
+     * Constructs a new {@code TripletDouble} with the specified values for x, y, and z.
+     *
+     * @param x the value for the x component
+     * @param y the value for the y component
+     * @param z the value for the z component
+     */
+    TripletDouble(double x, double y, double z) {
+      this.x = x;
+      this.y = y;
+      this.z = z;
+    }
   }
 
   @Override
