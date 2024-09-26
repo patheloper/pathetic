@@ -76,8 +76,8 @@ abstract class AbstractPathfinder implements Pathfinder {
 
   private Offset determineOffset(PathfinderConfiguration pathfinderConfiguration) {
     return pathfinderConfiguration.isAllowingDiagonal()
-        ? Offset.MERGED
-        : Offset.VERTICAL_AND_HORIZONTAL;
+        ? Offset.ALL_DIRECTIONS
+        : Offset.ORTHOGONAL;
   }
 
   private SnapshotManager determineSnapshotManager(

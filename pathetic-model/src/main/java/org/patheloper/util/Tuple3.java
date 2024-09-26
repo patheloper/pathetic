@@ -1,30 +1,29 @@
 package org.patheloper.util;
 
-import java.util.Objects;
+import lombok.Value;
 
+/**
+ * A generic immutable tuple class representing a triplet of values.
+ *
+ * @param <T> the type of the elements in this tuple
+ */
+@Value
 public class Tuple3<T> {
-  public final T x;
-  public final T y;
-  public final T z;
 
+  T x;
+  T y;
+  T z;
+
+  /**
+   * Constructs a Tuple3 with three values.
+   *
+   * @param x the first value
+   * @param y the second value
+   * @param z the third value
+   */
   public Tuple3(T x, T y, T z) {
     this.x = x;
     this.y = y;
     this.z = z;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    Tuple3<?> tuple3 = (Tuple3<?>) o;
-    return Objects.equals(x, tuple3.x)
-        && Objects.equals(y, tuple3.y)
-        && Objects.equals(z, tuple3.z);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(x, y, z);
   }
 }

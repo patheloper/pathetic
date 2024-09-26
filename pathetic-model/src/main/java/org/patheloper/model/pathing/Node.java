@@ -183,22 +183,56 @@ public class Node implements Comparable<Node> {
       return calculateWeightedHeuristic(manhattan, octile, perpendicular, heightDiff);
     }
 
+    /**
+     * Calculates the Manhattan distance between the current position and the target.
+     *
+     * @return the Manhattan distance as a double
+     */
     private double calculateManhattanDistance() {
       return position.manhattanDistance(target);
     }
 
+    /**
+     * Calculates the Octile distance between the current position and the target.
+     *
+     * @return the Octile distance as a double
+     */
     private double calculateOctileDistance() {
       return position.octileDistance(target);
     }
 
+    /**
+     * Calculates the perpendicular distance from the current position to the line connecting the
+     * start and target points.
+     *
+     * @return the perpendicular distance as a double
+     */
     private double calculatePerpendicularDistance() {
       return new PerpendicularDistanceCalculator(start, position, target).calculate();
     }
 
+    /**
+     * Calculates the absolute height difference between the current position and the target.
+     *
+     * @return the absolute height difference as a double
+     */
     private double calculateHeightDifference() {
       return Math.abs(position.getBlockY() - target.getBlockY());
     }
 
+    /**
+     * Calculates a weighted heuristic value using the provided distance metrics.
+     *
+     * <p>This method combines the Manhattan, Octile, perpendicular distances, and height
+     * difference, and applies the respective heuristic weights to compute a final weighted
+     * heuristic.
+     *
+     * @param manhattan the Manhattan distance
+     * @param octile the Octile distance
+     * @param perpendicular the perpendicular distance
+     * @param heightDiff the height difference
+     * @return the weighted heuristic value as a double
+     */
     private double calculateWeightedHeuristic(
         double manhattan, double octile, double perpendicular, double heightDiff) {
       return Math.max(
