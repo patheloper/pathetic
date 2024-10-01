@@ -74,12 +74,13 @@ public class Node implements Comparable<Node> {
     double perpendicularWeight = heuristicWeights.getPerpendicularWeight();
     double heightWeight = heuristicWeights.getHeightWeight();
 
-    // Ensure the combined heuristic is consistent
-    return Math.max(
-        manhattanDistance * manhattanWeight,
-        octileDistance * octileWeight
-            + perpendicularDistance * perpendicularWeight
-            + heightDifference * heightWeight);
+    double directionalPenalty = Math.abs(this.position.getBlockY() - start.getBlockY());
+
+    return (manhattanDistance * manhattanWeight)
+        + (octileDistance * octileWeight)
+        + (perpendicularDistance * perpendicularWeight)
+        + (heightDifference * heightWeight)
+        + (directionalPenalty * 0.5);
   }
 
   private double calculatePerpendicularDistance() {

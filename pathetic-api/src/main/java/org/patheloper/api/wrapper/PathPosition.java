@@ -18,6 +18,13 @@ public class PathPosition implements Cloneable {
   private double y;
   private double z;
 
+  /**
+   * Interpolates between two positions based on the given progress.
+   *
+   * @param other The other position to interpolate with
+   * @param progress The interpolation progress (0.0 to 1.0)
+   * @return The interpolated position
+   */
   public PathPosition interpolate(PathPosition other, double progress) {
     double x = NumberUtils.interpolate(this.x, other.x, progress);
     double y = NumberUtils.interpolate(this.y, other.y, progress);
