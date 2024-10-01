@@ -13,6 +13,5 @@ import org.patheloper.api.pathing.result.PathfinderResult;
 @AllArgsConstructor
 public class PathingFinishedEvent implements PathingEvent {
 
-  /** The {@link PathfinderResult} of the pathfinding process. */
   @NonNull private final PathfinderResult pathfinderResult;
 }

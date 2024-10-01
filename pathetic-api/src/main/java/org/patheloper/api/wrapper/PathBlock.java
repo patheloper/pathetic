@@ -1,63 +1,63 @@
 package org.patheloper.api.wrapper;
 
-import lombok.Value;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
-/** Represents a block in the world, independent of Bukkit. */
-@Value
-public class PathBlock {
+/** A Class to represent a block in the world, except exempt of Bukkit */
+@Getter
+@RequiredArgsConstructor
+@ToString
+@EqualsAndHashCode
+public final class PathBlock {
 
-  PathPosition pathPosition;
-  BlockInformation blockInformation;
+  private final PathPosition pathPosition;
+  private final BlockInformation blockInformation;
 
   /**
-   * Checks if the block is air.
-   *
-   * @return {@code true} if the block is air, {@code false} otherwise
+   * @return Whether the block is air
    */
   public boolean isAir() {
     return blockInformation.getMaterial().isAir();
   }
 
   /**
-   * Checks if the block is passable (i.e., not solid).
-   *
-   * @return {@code true} if the block is passable, {@code false} if it's solid
+   * @return Whether the block is possible to walk through
    */
   public boolean isPassable() {
     return !isSolid();
   }
 
   /**
-   * Checks if the block is solid.
-   *
-   * @return {@code true} if the block is solid, {@code false} if it's passable
+   * @return Whether the block is solid
    */
   public boolean isSolid() {
     return blockInformation.getMaterial().isSolid();
   }
 
   /**
-   * Gets the X coordinate of the block's position.
+   * Gets the X coordinate of the block
    *
-   * @return the X coordinate of the block
+   * @return The X coordinate of the block
    */
   public int getBlockX() {
     return this.pathPosition.getBlockX();
   }
 
   /**
-   * Gets the Y coordinate of the block's position.
+   * Gets the Y coordinate of the block
    *
-   * @return the Y coordinate of the block
+   * @return The Y coordinate of the block
    */
   public int getBlockY() {
     return this.pathPosition.getBlockY();
   }
 
   /**
-   * Gets the Z coordinate of the block's position.
+   * Gets the Z coordinate of the block
    *
-   * @return the Z coordinate of the block
+   * @return The Z coordinate of the block
    */
   public int getBlockZ() {
     return this.pathPosition.getBlockZ();

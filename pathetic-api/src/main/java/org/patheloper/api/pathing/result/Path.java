@@ -4,11 +4,6 @@ import lombok.NonNull;
 import org.patheloper.api.util.ParameterizedSupplier;
 import org.patheloper.api.wrapper.PathPosition;
 
-/**
- * The {@code Path} interface represents a series of {@link PathPosition} instances, forming a path
- * in a pathfinding system. It provides methods for accessing, interpolating, simplifying, trimming,
- * mutating, and joining paths, allowing manipulation of the path structure and its positions.
- */
 public interface Path extends Iterable<PathPosition> {
 
   /**

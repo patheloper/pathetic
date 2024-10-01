@@ -4,53 +4,53 @@ import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnel;
 import java.util.HashSet;
 import java.util.Set;
+
 import lombok.Getter;
 import org.patheloper.api.wrapper.PathPosition;
 
 /**
- * Represents the data associated with a grid region. This data includes a Bloom filter used to
- * quickly check if a position is within the region and a set of positions that have been examined
- * by the pathfinder to avoid duplicate examinations.
+ * The GridRegionData class represents the data associated with a grid region. This data includes a
+ * Bloom filter used to quickly check if a position is within the region and a set of positions that
+ * have been examined by the pathfinder.
  */
 @Getter
 public class GridRegionData {
 
   /**
    * The default size of the Bloom filter. A larger size will reduce the false positive probability
-   * but increase memory usage.
+   * of the Bloom filter, but will also increase the memory usage.
    */
   private static final int DEFAULT_BLOOM_FILTER_SIZE = 1000;
 
   /**
-   * The default false positive probability (FPP) of the Bloom filter. A lower FPP reduces the
-   * chance of false positives but requires a larger Bloom filter.
+   * The default false positive probability of the Bloom filter. A lower FPP means a smaller chance
+   * of incorrectly identifying a position as being in the region, but it also requires a larger
+   * Bloom filter.
    */
-  private static final double DEFAULT_FPP = 0.01; // 1% false positive probability
+  private static final double DEFAULT_FPP = 0.01; // 1%
 
   /**
-   * The Bloom filter used to track positions within the region. This allows efficient checks for
-   * position existence without iterating over all positions.
+   * The Bloom filter used to store the positions of the region. This filter is used to quickly
+   * check if a position is within the region without having to iterate over all the positions in
+   * the region.
    */
   private final BloomFilter<PathPosition> bloomFilter;
 
-  /** The set of positions that have been examined by the pathfinder to prevent re-examination. */
+  /**
+   * The set of positions that have been examined by the pathfinder. This set is used to track the
+   * positions that have been examined by the pathfinder to avoid examining the same position
+   * multiple times.
+   */
   private final Set<PathPosition> regionalExaminedPositions;
 
-  /**
-   * Constructs a new GridRegionData instance, initializing the Bloom filter and the examined
-   * positions set.
-   */
   public GridRegionData() {
-    // Defines how the PathPosition is serialized into the Bloom filter for storage.
     Funnel<PathPosition> pathPositionFunnel =
         (pathPosition, into) ->
             into.putInt(pathPosition.getBlockX())
                 .putInt(pathPosition.getBlockY())
                 .putInt(pathPosition.getBlockZ());
 
-    // Initializes the Bloom filter with the given funnel, size, and false positive probability.
-    this.bloomFilter =
-        BloomFilter.create(pathPositionFunnel, DEFAULT_BLOOM_FILTER_SIZE, DEFAULT_FPP);
-    this.regionalExaminedPositions = new HashSet<>();
+    bloomFilter = BloomFilter.create(pathPositionFunnel, DEFAULT_BLOOM_FILTER_SIZE, DEFAULT_FPP);
+    regionalExaminedPositions = new HashSet<>();
   }
 }

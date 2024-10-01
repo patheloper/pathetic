@@ -76,8 +76,8 @@ abstract class AbstractPathfinder implements Pathfinder {
 
   private Offset determineOffset(PathfinderConfiguration pathfinderConfiguration) {
     return pathfinderConfiguration.isAllowingDiagonal()
-        ? Offset.ALL_DIRECTIONS
-        : Offset.ORTHOGONAL;
+        ? Offset.MERGED
+        : Offset.VERTICAL_AND_HORIZONTAL;
   }
 
   private SnapshotManager determineSnapshotManager(
@@ -276,8 +276,7 @@ abstract class AbstractPathfinder implements Pathfinder {
         start.floor(),
         target.floor(),
         pathfinderConfiguration.getHeuristicWeights(),
-        0,
-        pathfinderConfiguration);
+        0);
   }
 
   private boolean hasReachedLengthLimit(Node currentNode) {

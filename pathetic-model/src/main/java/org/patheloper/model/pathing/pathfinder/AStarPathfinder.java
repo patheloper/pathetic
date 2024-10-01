@@ -72,41 +72,27 @@ public class AStarPathfinder extends AbstractPathfinder {
         fetchValidNeighbours(
             examinedPositions, currentNode, filters, filterStages, allowingDiagonal);
 
-    processAndQueueNewNodes(nodeQueue, filterStages, newNodes);
-  }
-
-  private void processAndQueueNewNodes(
-      FibonacciHeap<Double, Node> nodeQueue,
-      List<PathFilterStage> filterStages,
-      Collection<Node> newNodes) {
     for (Node newNode : newNodes) {
-      double nodeCost = newNode.getHeuristicCache().get();
-      nodeCost = applyPriorityAdjustment(filterStages, newNode, nodeCost);
+      double nodeCost = newNode.getHeuristic().get();
+      if (pathfinderConfiguration.isPrioritizing()) {
+        double priorityAdjustment = calculatePriorityAdjustment(newNode, filterStages);
+        nodeCost -= priorityAdjustment;
+      }
       nodeQueue.insert(nodeCost, newNode);
     }
   }
 
-  private double applyPriorityAdjustment(
-      List<PathFilterStage> filterStages, Node newNode, double nodeCost) {
-    if (pathfinderConfiguration.isPrioritizing()) {
-      double priorityAdjustment = calculatePriorityAdjustment(newNode, filterStages);
-      nodeCost -= priorityAdjustment;
-    }
-    return nodeCost;
-  }
-
-  private boolean isFilterResult(Node node, PathFilterStage filterStage) {
-    return filterStage.filter(
-        new PathValidationContext(
-            node.getPosition(),
-            node.getParent() != null ? node.getParent().getPosition() : null,
-            snapshotManager));
-  }
-
   private double calculatePriorityAdjustment(Node node, List<PathFilterStage> filterStages) {
     for (PathFilterStage filterStage : filterStages) {
-      if (isFilterResult(node, filterStage)) {
-        return node.getHeuristicCache().get() * (PRIORITY_BOOST_IN_PERCENTAGE / 100.0);
+      boolean filterResult =
+          filterStage.filter(
+              new PathValidationContext(
+                  node.getPosition(),
+                  node.getParent() != null ? node.getParent().getPosition() : null,
+                  snapshotManager));
+
+      if (filterResult) {
+        return node.getHeuristic().get() * (PRIORITY_BOOST_IN_PERCENTAGE / 100.0);
       }
     }
     return 0.0;
@@ -133,6 +119,7 @@ public class AStarPathfinder extends AbstractPathfinder {
   private boolean isDiagonalMove(Node from, Node to) {
     int xDifference = Math.abs(from.getPosition().getBlockX() - to.getPosition().getBlockX());
     int zDifference = Math.abs(from.getPosition().getBlockZ() - to.getPosition().getBlockZ());
+
     return xDifference != 0 && zDifference != 0;
   }
 
@@ -143,7 +130,7 @@ public class AStarPathfinder extends AbstractPathfinder {
   private boolean isReachable(
       Node from, Node to, List<PathFilter> filters, List<PathFilterStage> filterStages) {
     boolean hasYDifference = from.getPosition().getBlockY() != to.getPosition().getBlockY();
-    List<PathVector> offsets = Offset.ORTHOGONAL.getVectors();
+    PathVector[] offsets = Offset.VERTICAL_AND_HORIZONTAL.getVectors();
 
     for (PathVector vector1 : offsets) {
       if (vector1.getY() != 0) continue;
@@ -189,7 +176,7 @@ public class AStarPathfinder extends AbstractPathfinder {
       List<PathFilter> filters,
       List<PathFilterStage> filterStages,
       boolean allowingDiagonal) {
-    Set<Node> newNodes = new HashSet<>(offset.getVectors().size());
+    Set<Node> newNodes = new HashSet<>(offset.getVectors().length);
 
     for (PathVector vector : offset.getVectors()) {
       Node newNode = createNeighbourNode(currentNode, vector);
@@ -210,8 +197,7 @@ public class AStarPathfinder extends AbstractPathfinder {
             currentNode.getStart(),
             currentNode.getTarget(),
             pathfinderConfiguration.getHeuristicWeights(),
-            currentNode.getDepth() + 1,
-            pathfinderConfiguration);
+            currentNode.getDepth() + 1);
     newNode.setParent(currentNode);
     return newNode;
   }

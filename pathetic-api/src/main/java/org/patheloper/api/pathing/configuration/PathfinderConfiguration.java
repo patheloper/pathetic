@@ -78,15 +78,14 @@ public class PathfinderConfiguration {
    * instead of filtering. This means that the pathfinding algorithm will prioritize paths that pass
    * the filters over paths that do not.
    *
-   * <p>Setting this to true will no longer take the {@link
-   * org.patheloper.api.pathing.filter.PathFilterStage}s into the validation process. Shared filters
-   * must still be passed.
+   * <p>Setting this to true will no longer take the {@link org.patheloper.api.pathing.filter.PathFilterStage}s into the validation
+   * process. Shared filters must still be passed.
    *
    * <p>{@link Pathfinder#findPath(PathPosition, PathPosition, List, List)}
-   *
    * @experimental This feature is experimental and may be subject to change.
    */
-  @Experimental @Builder.Default boolean prioritizing = false;
+  @Experimental
+  @Builder.Default boolean prioritizing = false;
 
   /**
    * The set of weights used to calculate heuristics within the A* algorithm. These influence the
@@ -95,14 +94,6 @@ public class PathfinderConfiguration {
    * @default HeuristicWeights.NATURAL_PATH_WEIGHTS
    */
   @Builder.Default HeuristicWeights heuristicWeights = HeuristicWeights.NATURAL_PATH_WEIGHTS;
-
-  /**
-   * The optimization goal for the pathfinding algorithm. This parameter determines whether the
-   * algorithm should prioritize accuracy or performance.
-   *
-   * @default OptimizationGoal.PERFORMANCE
-   */
-  @Builder.Default OptimizationGoal optimizationGoal = OptimizationGoal.PERFORMANCE;
 
   /**
    * @return A new {@link PathfinderConfiguration} with default parameters but async.
