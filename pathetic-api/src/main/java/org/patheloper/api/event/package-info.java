@@ -28,7 +28,7 @@
  *  // Define a listener for the new event
  *  public class CustomEventListener {
  *
- *   @Subscribe
+ *   {@literal @}Subscribe
  *   public void onCustomEvent(CustomEvent event) {
  *     System.out.println("Received custom event with message: " + event.getMessage());
  *    }
