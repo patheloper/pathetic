@@ -35,8 +35,6 @@ public class Pathetic {
     instance = javaPlugin;
     Bukkit.getPluginManager().registerEvents(new ChunkInvalidateListener(), javaPlugin);
 
-    BStatsHandler.init(javaPlugin);
-
     loadModelVersion();
 
     if (BukkitVersionUtil.getVersion().isUnder(16, 0)

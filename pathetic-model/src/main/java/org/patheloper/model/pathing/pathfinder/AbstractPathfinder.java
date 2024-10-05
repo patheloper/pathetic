@@ -157,7 +157,7 @@ abstract class AbstractPathfinder implements Pathfinder {
       PathPosition target,
       List<PathFilter> filters,
       List<PathFilterStage> filterStages) {
-    BStatsHandler.increasePathCount();
+    pushToBStatsIfActivated();
     return pathfinderConfiguration.isAsync()
         ? CompletableFuture.supplyAsync(
                 () -> executePathingAndCleanupFilters(start, target, filters, filterStages),
@@ -165,6 +165,12 @@ abstract class AbstractPathfinder implements Pathfinder {
             .thenApply(this::finishPathing)
             .exceptionally(throwable -> handleException(start, target, throwable))
         : initiateSyncPathing(start, target, filters, filterStages);
+  }
+
+  private void pushToBStatsIfActivated() {
+    if (pathfinderConfiguration.isBStats()) {
+      BStatsHandler.increasePathCount();
+    }
   }
 
   private PathfinderResult executePathing(
