@@ -21,20 +21,6 @@ import org.patheloper.util.BukkitVersionUtil;
 import org.patheloper.util.ChunkUtils;
 import org.patheloper.util.ErrorLogger;
 
-/**
- * The FailingSnapshotManager class implements the SnapshotManager interface and provides a default
- * implementation for retrieving block data snapshots from a Minecraft world. It utilizes chunk
- * snapshots to efficiently access block information, even in asynchronous contexts.
- *
- * <p>FailingSnapshotManager also uses NMS (net.minecraft.server) utilities to bypass the Spigot
- * AsyncCatcher and fetch snapshots natively from an asynchronous context. This allows for more
- * flexible and efficient access to world data.
- *
- * <p>Note: While this manager is designed to efficiently retrieve block data snapshots, it may
- * encounter failures or null results if the pathfinder is not permitted to load chunks or if chunks
- * are not loaded in the world. Developers using this manager should handle potential failures
- * gracefully.
- */
 public class FailingSnapshotManager implements SnapshotManager {
 
   private static final Map<UUID, WorldDomain> SNAPSHOTS_MAP = new ConcurrentHashMap<>();
@@ -51,7 +37,6 @@ public class FailingSnapshotManager implements SnapshotManager {
     if (SNAPSHOTS_MAP.containsKey(worldUUID)) {
       WorldDomain worldDomain = SNAPSHOTS_MAP.get(worldUUID);
       long chunkKey = ChunkUtils.getChunkKey(chunkX, chunkZ);
-
       worldDomain.removeSnapshot(chunkKey);
     }
   }
@@ -132,33 +117,24 @@ public class FailingSnapshotManager implements SnapshotManager {
       int chunkX = position.getBlockX() >> 4;
       int chunkZ = position.getBlockZ() >> 4;
 
-      for (int y = chunkSnapshot.getHighestBlockYAt(chunkX, chunkZ);
-          y >= position.getPathEnvironment().getMinHeight();
-          y--) {
-        Material material = chunkSnapshot.getBlockType(chunkX, y, chunkZ);
+      int highestY = chunkSnapshot.getHighestBlockYAt(chunkX, chunkZ);
 
-        if (!material.isAir()) {
-          PathPosition highestBlockPosition =
-              new PathPosition(
-                  position.getPathEnvironment(), position.getBlockX(), y, position.getBlockZ());
-          BlockState blockState =
-              CHUNK_DATA_PROVIDER_RESOLVER
-                  .getChunkDataProvider()
-                  .getBlockState(chunkSnapshot, chunkX, y, chunkZ);
-          return new PathBlock(highestBlockPosition, new BlockInformation(material, blockState));
-        }
-      }
+      PathPosition highestBlockPosition =
+          new PathPosition(
+              position.getPathEnvironment(), position.getBlockX(), highestY, position.getBlockZ());
+      BlockState blockState =
+          CHUNK_DATA_PROVIDER_RESOLVER
+              .getChunkDataProvider()
+              .getBlockState(chunkSnapshot, chunkX, highestY, chunkZ);
+
+      Material material = chunkSnapshot.getBlockType(chunkX, highestY, chunkZ);
+      return new PathBlock(highestBlockPosition, new BlockInformation(material, blockState));
     }
 
-    // If no non-air block was found or the chunk snapshot wasn't present
+    // if no valid chunk snapshot was found
     return null;
   }
 
-  /**
-   * The RequestingSnapshotManager is an inner class of FailingSnapshotManager, extending it. This
-   * class provides additional functionality for ensuring that block data snapshots are available,
-   * even if not initially loaded.
-   */
   public static class RequestingSnapshotManager extends FailingSnapshotManager {
 
     private static ChunkSnapshot retrieveChunkSnapshot(
@@ -222,29 +198,21 @@ public class FailingSnapshotManager implements SnapshotManager {
       int chunkX = pathPosition.getBlockX() >> 4;
       int chunkZ = pathPosition.getBlockZ() >> 4;
 
-      int minY = pathPosition.getPathEnvironment().getMinHeight();
-      for (int y = chunkSnapshot.getHighestBlockYAt(chunkX, chunkZ); y >= minY; y--) {
-        Material material = ChunkUtils.getMaterial(chunkSnapshot, chunkX, y, chunkZ);
+      int highestY = chunkSnapshot.getHighestBlockYAt(chunkX, chunkZ);
 
-        if (!material.isAir()) {
-          BlockState blockState =
-              CHUNK_DATA_PROVIDER_RESOLVER
-                  .getChunkDataProvider()
-                  .getBlockState(chunkSnapshot, chunkX, y, chunkZ);
+      PathPosition highestBlockPosition =
+          new PathPosition(
+              pathPosition.getPathEnvironment(),
+              pathPosition.getBlockX(),
+              highestY,
+              pathPosition.getBlockZ());
+      BlockState blockState =
+          CHUNK_DATA_PROVIDER_RESOLVER
+              .getChunkDataProvider()
+              .getBlockState(chunkSnapshot, chunkX, highestY, chunkZ);
 
-          PathPosition highestBlockPosition =
-              new PathPosition(
-                  pathPosition.getPathEnvironment(),
-                  pathPosition.getBlockX(),
-                  y,
-                  pathPosition.getBlockZ());
-
-          return new PathBlock(highestBlockPosition, new BlockInformation(material, blockState));
-        }
-      }
-
-      // If no non-air block was found
-      return null;
+      Material material = chunkSnapshot.getBlockType(chunkX, highestY, chunkZ);
+      return new PathBlock(highestBlockPosition, new BlockInformation(material, blockState));
     }
   }
 }
