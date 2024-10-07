@@ -3,8 +3,6 @@ package org.patheloper.api.pathing.filter;
 import lombok.NonNull;
 import org.patheloper.api.pathing.Pathfinder;
 
-import java.util.List;
-
 /**
  * A PathFilter is a functional interface that allows customization of the pathfinding process
  * within the {@link Pathfinder}. It provides a mechanism to influence the selection of paths during
@@ -19,13 +17,15 @@ import java.util.List;
 public interface PathFilter {
 
   /**
-   * Evaluates the given {@link PathValidationContext} to determine if the path is valid. This
-   * method is used during the pathfinding process to filter out unwanted paths.
+   * Evaluates the given {@link PathValidationContext} to determine if the path is valid and
+   * optionally modifies the target.
    *
-   * @param pathValidationContext The context providing the information necessary to evaluate
-   * @return true if the path is valid, false otherwise
+   * @param pathValidationContext The context providing the information necessary to evaluate.
+   * @return a {@link FilterOutcome} that contains the validation result and possibly an updated
+   *     target block.
    */
-  boolean filter(@NonNull PathValidationContext pathValidationContext);
+  @NonNull
+  FilterOutcome filter(@NonNull PathValidationContext pathValidationContext);
 
   /**
    * Cleans up the resources used during the pathfinding process. This method is guaranteed to

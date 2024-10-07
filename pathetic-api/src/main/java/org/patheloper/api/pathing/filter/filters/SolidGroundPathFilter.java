@@ -1,21 +1,26 @@
 package org.patheloper.api.pathing.filter.filters;
 
 import lombok.NonNull;
-import org.patheloper.api.pathing.filter.PathValidationContext;
+import org.patheloper.api.pathing.filter.FilterOutcome;
+import org.patheloper.api.pathing.filter.FilterResult;
 import org.patheloper.api.pathing.filter.PathFilter;
+import org.patheloper.api.pathing.filter.PathValidationContext;
 import org.patheloper.api.snapshot.SnapshotManager;
 import org.patheloper.api.wrapper.PathBlock;
 
-/**
- * A PathFilter implementation that determines if a path is on solid ground.
- */
+/** A PathFilter implementation that determines if a path is on solid ground. */
 public class SolidGroundPathFilter implements PathFilter {
 
   @Override
-  public boolean filter(@NonNull PathValidationContext pathValidationContext) {
+  public FilterOutcome filter(@NonNull PathValidationContext pathValidationContext) {
     SnapshotManager snapshotManager = pathValidationContext.getSnapshotManager();
-    PathBlock block = snapshotManager.getBlock(pathValidationContext.getPosition());
-    return hasGround(block, snapshotManager);
+    PathBlock block = snapshotManager.getBlock(pathValidationContext.getTargetPosition());
+
+    if (hasGround(block, snapshotManager)) {
+      return new FilterOutcome(FilterResult.PASS, pathValidationContext.getTargetPosition());
+    } else {
+      return new FilterOutcome(FilterResult.FAIL, pathValidationContext.getTargetPosition());
+    }
   }
 
   protected boolean hasGround(PathBlock block, SnapshotManager snapshotManager) {

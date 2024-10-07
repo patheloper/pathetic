@@ -2,8 +2,10 @@ package org.patheloper.api.pathing.filter.filters;
 
 import lombok.NonNull;
 import org.bukkit.Material;
-import org.patheloper.api.pathing.filter.PathValidationContext;
+import org.patheloper.api.pathing.filter.FilterOutcome;
+import org.patheloper.api.pathing.filter.FilterResult;
 import org.patheloper.api.pathing.filter.PathFilter;
+import org.patheloper.api.pathing.filter.PathValidationContext;
 import org.patheloper.api.snapshot.SnapshotManager;
 import org.patheloper.api.wrapper.PathPosition;
 
@@ -11,11 +13,15 @@ import org.patheloper.api.wrapper.PathPosition;
 public class WaterPathFilter implements PathFilter {
 
   @Override
-  public boolean filter(@NonNull PathValidationContext pathValidationContext) {
+  public FilterOutcome filter(@NonNull PathValidationContext pathValidationContext) {
     SnapshotManager snapshotManager = pathValidationContext.getSnapshotManager();
-    PathPosition pathPosition = pathValidationContext.getPosition();
+    PathPosition pathPosition = pathValidationContext.getTargetPosition();
 
-    return snapshotManager.getBlock(pathPosition).getBlockInformation().getMaterial()
-        == Material.WATER;
+    if (snapshotManager.getBlock(pathPosition).getBlockInformation().getMaterial()
+        == Material.WATER) {
+      return new FilterOutcome(FilterResult.PASS, pathPosition);
+    } else {
+      return new FilterOutcome(FilterResult.FAIL, pathPosition);
+    }
   }
 }

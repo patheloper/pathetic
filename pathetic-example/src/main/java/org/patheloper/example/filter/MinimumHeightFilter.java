@@ -1,5 +1,7 @@
 package org.patheloper.example.filter;
 
+import org.patheloper.api.pathing.filter.FilterOutcome;
+import org.patheloper.api.pathing.filter.FilterResult;
 import org.patheloper.api.pathing.filter.PathFilter;
 import org.patheloper.api.pathing.filter.PathValidationContext;
 import org.patheloper.api.wrapper.PathPosition;
@@ -27,8 +29,11 @@ public class MinimumHeightFilter implements PathFilter {
    * @return true if the node is above or equal to the minimum height, false otherwise.
    */
   @Override
-  public boolean filter(PathValidationContext context) {
-    PathPosition position = context.getPosition();
-    return position.getBlockY() >= minHeight;
+  public FilterOutcome filter(PathValidationContext context) {
+    PathPosition position = context.getTargetPosition();
+    if (position.getBlockY() < minHeight) {
+      return new FilterOutcome(FilterResult.FAIL, position);
+    }
+    return new FilterOutcome(FilterResult.PASS, position);
   }
 }
