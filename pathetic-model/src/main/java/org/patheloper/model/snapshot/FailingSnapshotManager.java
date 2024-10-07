@@ -21,6 +21,20 @@ import org.patheloper.util.BukkitVersionUtil;
 import org.patheloper.util.ChunkUtils;
 import org.patheloper.util.ErrorLogger;
 
+/**
+ * The FailingSnapshotManager class implements the SnapshotManager interface and provides a default
+ * implementation for retrieving block data snapshots from a Minecraft world. It utilizes chunk
+ * snapshots to efficiently access block information, even in asynchronous contexts.
+ *
+ * <p>FailingSnapshotManager also uses NMS (net.minecraft.server) utilities to bypass the Spigot
+ * AsyncCatcher and fetch snapshots natively from an asynchronous context. This allows for more
+ * flexible and efficient access to world data.
+ *
+ * <p>Note: While this manager is designed to efficiently retrieve block data snapshots, it may
+ * encounter failures or null results if the pathfinder is not permitted to load chunks or if chunks
+ * are not loaded in the world. Developers using this manager should handle potential failures
+ * gracefully.
+ */
 public class FailingSnapshotManager implements SnapshotManager {
 
   private static final Map<UUID, WorldDomain> SNAPSHOTS_MAP = new ConcurrentHashMap<>();
@@ -135,6 +149,11 @@ public class FailingSnapshotManager implements SnapshotManager {
     return null;
   }
 
+  /**
+   * The RequestingSnapshotManager is an inner class of FailingSnapshotManager, extending it. This
+   * class provides additional functionality for ensuring that block data snapshots are available,
+   * even if not initially loaded.
+   */
   public static class RequestingSnapshotManager extends FailingSnapshotManager {
 
     private static ChunkSnapshot retrieveChunkSnapshot(
