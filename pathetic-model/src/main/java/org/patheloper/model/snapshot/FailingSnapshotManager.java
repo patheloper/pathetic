@@ -1,8 +1,9 @@
 package org.patheloper.model.snapshot;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.ChunkSnapshot;
@@ -19,8 +20,6 @@ import org.patheloper.provider.ChunkDataProviderResolver;
 import org.patheloper.util.BukkitVersionUtil;
 import org.patheloper.util.ChunkUtils;
 import org.patheloper.util.ErrorLogger;
-
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The FailingSnapshotManager class implements the SnapshotManager interface and provides a default
@@ -123,6 +122,36 @@ public class FailingSnapshotManager implements SnapshotManager {
     return block.orElse(null);
   }
 
+  @Override
+  public PathBlock getHighestBlockAt(PathPosition position) {
+    Optional<ChunkSnapshot> chunkSnapshotOptional = getChunkSnapshot(position);
+
+    if (chunkSnapshotOptional.isPresent()) {
+      ChunkSnapshot chunkSnapshot = chunkSnapshotOptional.get();
+
+      int chunkX = position.getBlockX() & 0xF;
+      int chunkZ = position.getBlockZ() & 0xF;
+
+      for (int y = chunkSnapshot.getHighestBlockYAt(chunkX, chunkZ); y >= 0; y--) {
+        Material material = chunkSnapshot.getBlockType(chunkX, y, chunkZ);
+
+        if (!material.isAir() && material.isSolid()) {
+          PathPosition highestBlockPosition =
+              new PathPosition(
+                  position.getPathEnvironment(), position.getBlockX(), y, position.getBlockZ());
+          BlockState blockState =
+              CHUNK_DATA_PROVIDER_RESOLVER
+                  .getChunkDataProvider()
+                  .getBlockState(chunkSnapshot, chunkX, y, chunkZ);
+          return new PathBlock(highestBlockPosition, new BlockInformation(material, blockState));
+        }
+      }
+    }
+
+    // If no solid block was found or the chunk snapshot wasn't present
+    return null;
+  }
+
   /**
    * The RequestingSnapshotManager is an inner class of FailingSnapshotManager, extending it. This
    * class provides additional functionality for ensuring that block data snapshots are available,
@@ -177,6 +206,42 @@ public class FailingSnapshotManager implements SnapshotManager {
     public PathBlock getBlock(@NonNull PathPosition position) {
       PathBlock block = super.getBlock(position);
       return block == null ? ensureBlock(position) : block;
+    }
+
+    @Override
+    public PathBlock getHighestBlockAt(@NonNull PathPosition position) {
+      PathBlock block = super.getHighestBlockAt(position);
+      return block == null ? ensureHighestBlock(position) : block;
+    }
+
+    private PathBlock ensureHighestBlock(PathPosition pathPosition) {
+      ChunkSnapshot chunkSnapshot = retrieveSnapshot(pathPosition);
+
+      int chunkX = pathPosition.getBlockX() & 0xF;
+      int chunkZ = pathPosition.getBlockZ() & 0xF;
+
+      for (int y = chunkSnapshot.getHighestBlockYAt(chunkX, chunkZ); y >= 0; y--) {
+        Material material = ChunkUtils.getMaterial(chunkSnapshot, chunkX, y, chunkZ);
+
+        if (!material.isAir() && material.isSolid()) {
+          BlockState blockState =
+              CHUNK_DATA_PROVIDER_RESOLVER
+                  .getChunkDataProvider()
+                  .getBlockState(chunkSnapshot, chunkX, y, chunkZ);
+
+          PathPosition highestBlockPosition =
+              new PathPosition(
+                  pathPosition.getPathEnvironment(),
+                  pathPosition.getBlockX(),
+                  y,
+                  pathPosition.getBlockZ());
+
+          return new PathBlock(highestBlockPosition, new BlockInformation(material, blockState));
+        }
+      }
+
+      // If no solid block is found
+      return null;
     }
   }
 }
