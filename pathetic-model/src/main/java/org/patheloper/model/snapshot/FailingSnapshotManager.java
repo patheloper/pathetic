@@ -132,10 +132,12 @@ public class FailingSnapshotManager implements SnapshotManager {
       int chunkX = position.getBlockX() & 0xF;
       int chunkZ = position.getBlockZ() & 0xF;
 
-      for (int y = chunkSnapshot.getHighestBlockYAt(chunkX, chunkZ); y >= 0; y--) {
+      for (int y = chunkSnapshot.getHighestBlockYAt(chunkX, chunkZ);
+          y >= position.getPathEnvironment().getMinHeight();
+          y--) {
         Material material = chunkSnapshot.getBlockType(chunkX, y, chunkZ);
 
-        if (!material.isAir() && material.isSolid()) {
+        if (!material.isAir()) {
           PathPosition highestBlockPosition =
               new PathPosition(
                   position.getPathEnvironment(), position.getBlockX(), y, position.getBlockZ());
@@ -148,7 +150,7 @@ public class FailingSnapshotManager implements SnapshotManager {
       }
     }
 
-    // If no solid block was found or the chunk snapshot wasn't present
+    // If no non-air block was found or the chunk snapshot wasn't present
     return null;
   }
 
@@ -220,10 +222,11 @@ public class FailingSnapshotManager implements SnapshotManager {
       int chunkX = pathPosition.getBlockX() & 0xF;
       int chunkZ = pathPosition.getBlockZ() & 0xF;
 
-      for (int y = chunkSnapshot.getHighestBlockYAt(chunkX, chunkZ); y >= 0; y--) {
+      int minY = pathPosition.getPathEnvironment().getMinHeight();
+      for (int y = chunkSnapshot.getHighestBlockYAt(chunkX, chunkZ); y >= minY; y--) {
         Material material = ChunkUtils.getMaterial(chunkSnapshot, chunkX, y, chunkZ);
 
-        if (!material.isAir() && material.isSolid()) {
+        if (!material.isAir()) {
           BlockState blockState =
               CHUNK_DATA_PROVIDER_RESOLVER
                   .getChunkDataProvider()
@@ -240,7 +243,7 @@ public class FailingSnapshotManager implements SnapshotManager {
         }
       }
 
-      // If no solid block is found
+      // If no non-air block was found
       return null;
     }
   }
