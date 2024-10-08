@@ -128,8 +128,8 @@ public class FailingSnapshotManager implements SnapshotManager {
     if (chunkSnapshotOptional.isPresent()) {
       ChunkSnapshot chunkSnapshot = chunkSnapshotOptional.get();
 
-      int chunkX = position.getBlockX() >> 4;
-      int chunkZ = position.getBlockZ() >> 4;
+      int chunkX = position.getBlockX() & 0xF;
+      int chunkZ = position.getBlockZ() & 0xF;
 
       int highestY = chunkSnapshot.getHighestBlockYAt(chunkX, chunkZ);
 
@@ -214,8 +214,8 @@ public class FailingSnapshotManager implements SnapshotManager {
     private PathBlock ensureHighestBlock(PathPosition pathPosition) {
       ChunkSnapshot chunkSnapshot = retrieveSnapshot(pathPosition);
 
-      int chunkX = pathPosition.getBlockX() >> 4;
-      int chunkZ = pathPosition.getBlockZ() >> 4;
+      int chunkX = pathPosition.getBlockX() & 0xF;
+      int chunkZ = pathPosition.getBlockZ() & 0xF;
 
       int highestY = chunkSnapshot.getHighestBlockYAt(chunkX, chunkZ);
 
