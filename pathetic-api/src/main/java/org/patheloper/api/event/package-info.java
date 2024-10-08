@@ -11,32 +11,33 @@
  *
  * <p>For example:
  *
- * <pre>
+ * <pre>{@code
  * // Define a new event
- * public class CustomEvent extends PathingEvent {
- *     private final String message;
+ *  public class CustomEvent extends PathingEvent {
+ *    private final String message;
  *
- *     public CustomEvent(String message) {
- *         this.message = message;
- *     }
+ *    public CustomEvent(String message) {
+ *      this.message = message;
+ *    }
  *
- *     public String getMessage() {
- *         return message;
- *     }
- * }
+ *    public String getMessage() {
+ *      return message;
+ *    }
+ *  }
  *
- * // Define a listener for the new event
- * public class CustomEventListener {
+ *  // Define a listener for the new event
+ *  public class CustomEventListener {
  *
- *     @Subscribe
- *     public void onCustomEvent(CustomEvent event) {
- *         System.out.println("Received custom event with message: " + event.getMessage());
- *     }
- * }
+ *   {@literal @}Subscribe
+ *   public void onCustomEvent(CustomEvent event) {
+ *     System.out.println("Received custom event with message: " + event.getMessage());
+ *    }
+ *  }
  *
  * // Register the listener and raise the event
  * EventPublisher.registerListener(new CustomEventListener());
  * EventPublisher.raiseEvent(new CustomEvent("Hello, world!"));
- * </pre>
+ *
+ * }</pre>
  */
 package org.patheloper.api.event;

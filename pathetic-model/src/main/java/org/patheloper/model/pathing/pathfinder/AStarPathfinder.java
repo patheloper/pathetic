@@ -89,6 +89,8 @@ public class AStarPathfinder extends AbstractPathfinder {
               new PathValidationContext(
                   node.getPosition(),
                   node.getParent() != null ? node.getParent().getPosition() : null,
+                  node.getStart(),
+                  node.getTarget(),
                   snapshotManager));
 
       if (filterResult) {
@@ -248,6 +250,8 @@ public class AStarPathfinder extends AbstractPathfinder {
           new PathValidationContext(
               node.getPosition(),
               node.getParent() != null ? node.getParent().getPosition() : null,
+              node.getStart(),
+              node.getTarget(),
               snapshotManager);
 
       if (!filter.filter(context)) {
@@ -265,6 +269,8 @@ public class AStarPathfinder extends AbstractPathfinder {
           new PathValidationContext(
               node.getPosition(),
               node.getParent() != null ? node.getParent().getPosition() : null,
+              node.getStart(),
+              node.getTarget(),
               snapshotManager))) {
         return true;
       }
