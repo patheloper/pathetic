@@ -23,7 +23,5 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4.3.4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          branch: javadoc
           clean: true
           folder: javadoc
-          target-folder: docs
