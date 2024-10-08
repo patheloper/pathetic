@@ -2,9 +2,9 @@ org.patheloper.api.annotation
 org.patheloper.api.event
 org.patheloper.api.pathing
 org.patheloper.api.pathing.configuration
+org.patheloper.api.pathing.filter
+org.patheloper.api.pathing.filter.filters
 org.patheloper.api.pathing.result
-org.patheloper.api.pathing.strategy
-org.patheloper.api.pathing.strategy.strategies
 org.patheloper.api.snapshot
 org.patheloper.api.util
 org.patheloper.api.wrapper
