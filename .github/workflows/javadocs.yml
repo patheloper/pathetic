@@ -1,6 +1,7 @@
 name: Deploy Javadoc
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - production
