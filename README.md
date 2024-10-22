@@ -183,3 +183,8 @@ For help and support, join our community on
 the [SpigotMC forum thread](https://www.spigotmc.org/threads/how-pathetic.578998/)
 or [Discord Server](https://discord.gg/HMqCbdQjX9).
 
+### Sponsored By:
+
+<img src="https://github.com/user-attachments/assets/262672b9-a673-4732-8392-5771e7aadfd0" alt="JetBrains_beam_logo" width="400"/>
+
+We'd like to thank JetBrains for sponsoring the development of this project with an amazing toolset!
