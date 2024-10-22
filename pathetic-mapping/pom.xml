@@ -5,12 +5,12 @@
     <parent>
         <artifactId>pathetic-main</artifactId>
         <groupId>org.patheloper</groupId>
-        <version>3.2</version>
+        <version>3.2.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>pathetic-mapping</artifactId>
-    <version>3.2</version>
+    <version>3.2.1</version>
 
     <build>
         <plugins>
@@ -34,7 +34,7 @@
         <dependency>
             <groupId>org.patheloper</groupId>
             <artifactId>pathetic-model</artifactId>
-            <version>3.2</version>
+            <version>3.2.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
