@@ -1,7 +1,6 @@
 name: Deploy Javadoc
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - production
@@ -24,5 +23,7 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4.3.4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          branch: javadoc
           clean: true
-          folder: javadoc
+          folder: pathetic-api/target/reports/apidocs
+          target-folder: docs
