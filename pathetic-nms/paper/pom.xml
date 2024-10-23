@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.patheloper</groupId>
         <artifactId>pathetic-main</artifactId>
-        <version>3.2</version>
+        <version>3.2.1</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -30,7 +30,7 @@
         <dependency>
             <groupId>org.patheloper</groupId>
             <artifactId>pathetic-api</artifactId>
-            <version>3.2</version>
+            <version>3.2.1</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
